@@ -9,32 +9,6 @@ import Foundation
 import SnabbleCore
 import SwiftUI
 
-extension CouponViewModel {
-    var buttonTitle: String {
-        Asset.localizedString(forKey: coupon.isActivated ? "Snabble.Coupon.deactivate" : "Snabble.Coupon.activate")
-    }
-    
-    @objc
-    func activateCoupon() {
-        Snabble.shared.couponManager.activate(coupon: coupon)
-    }
-    
-    @objc
-    func deactivateCoupon() {
-        Snabble.shared.couponManager.deactivate(coupon: coupon)
-    }
-
-    @objc
-    func toggleActivation() {
-        if coupon.isActivated {
-            self.deactivateCoupon()
-        } else {
-            self.activateCoupon()
-        }
-        self.objectWillChange.send()
-    }
-}
-
 public struct CouponView: View {
     @ObservedObject var couponModel: CouponViewModel
     
@@ -135,6 +109,8 @@ public struct CouponView: View {
 
 /// A UIViewController wrapping SwiftUI's ShoppingCartView
 open class CouponViewController: UIHostingController<CouponView> {
+    public weak var delegate: CouponViewControllerDelegate?
+
     var viewModel: CouponViewModel {
         rootView.couponModel
     }
@@ -147,4 +123,19 @@ open class CouponViewController: UIHostingController<CouponView> {
     @MainActor required dynamic public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
+
+    open override func viewDidLoad() {
+        super.viewDidLoad()
+        viewModel.delegate = self
+    }
+}
+
+extension CouponViewController: CouponViewModelDelegate {
+    func couponViewModel(_ couponViewModel: CouponViewModel, shouldActivateCoupon coupon: Coupon) -> Bool {
+        delegate?.couponViewController(self, shouldActivateCoupon: coupon) ?? true
+    }
+}
+
+public protocol CouponViewControllerDelegate: AnyObject {
+    func couponViewController(_ couponViewController: CouponViewController, shouldActivateCoupon coupon: Coupon) -> Bool
 }

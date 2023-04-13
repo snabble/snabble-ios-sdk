@@ -10,8 +10,11 @@ import SnabbleCore
 import Combine
 import SwiftUI
 
-class CouponViewModel: ObservableObject {
+protocol CouponViewModelDelegate: AnyObject {
+    func couponViewModel(_ couponViewModel: CouponViewModel, shouldActivateCoupon coupon: Coupon) -> Bool
+}
 
+class CouponViewModel: ObservableObject {
     let coupon: Coupon
 
     var title: String { coupon.name }
@@ -19,9 +22,9 @@ class CouponViewModel: ObservableObject {
     var text: String? { coupon.promotionDescription }
     var disclaimer: String? { coupon.disclaimer }
     
-    @Published
-    var image: UIImage?
+    @Published var image: UIImage?
 
+    weak var delegate: CouponViewModelDelegate?
     private weak var imageTask: URLSessionDataTask?
 
     var code: String? { coupon.code }
@@ -88,5 +91,33 @@ class CouponViewModel: ObservableObject {
         }
         imageTask?.resume()
         return imageTask
+    }
+}
+
+extension CouponViewModel {
+    var buttonTitle: String {
+        Asset.localizedString(forKey: coupon.isActivated ? "Snabble.Coupon.deactivate" : "Snabble.Coupon.activate")
+    }
+
+    @objc
+    func activateCoupon() {
+        if delegate?.couponViewModel(self, shouldActivateCoupon: coupon) ?? true {
+            Snabble.shared.couponManager.activate(coupon: coupon)
+        }
+    }
+
+    @objc
+    func deactivateCoupon() {
+        Snabble.shared.couponManager.deactivate(coupon: coupon)
+    }
+
+    @objc
+    func toggleActivation() {
+        if coupon.isActivated {
+            deactivateCoupon()
+        } else {
+            activateCoupon()
+        }
+        objectWillChange.send()
     }
 }
