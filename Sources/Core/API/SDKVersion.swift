@@ -5,5 +5,5 @@
 //
 
 public var SDKVersion: String {
-    "0.32.0"
+    "0.33.0"
 }

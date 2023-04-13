@@ -11,6 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 
 ### Changed
+
+### Updated
+
+## [0.33.0] - 2023-04-13
+
+### Added
+
+### Removed
+
+### Changed
 * Refactured ShoppingCart #APPS-730
 * Coupons can be deactivated on coupon page #APPS-764
 * Inform user if an activated coupon could not applied to a cart #APPS-792
