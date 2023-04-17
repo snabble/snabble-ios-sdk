@@ -37,8 +37,8 @@ public struct TeleCashCreditCardData: Codable, EncryptedPaymentData, Equatable, 
         case cardHolder, brand, expirationMonth, expirationYear, version, projectId
     }
 
-    public init?(_ response: ConnectGatewayResponse, _ projectId: Identifier<Project>, _ storeId: String, certificate: Data?) {
-        guard let brand = CreditCardBrand(rawValue: response.brand.lowercased()) else {
+    public init?(_ response: ConnectGatewayResponse, _ projectId: Identifier<Project>, certificate: Data?) {
+        guard let brand = CreditCardBrand(rawValue: response.ccBrand.lowercased()) else {
             return nil
         }
 
@@ -51,7 +51,7 @@ public struct TeleCashCreditCardData: Codable, EncryptedPaymentData, Equatable, 
         self.projectId = projectId
 
         let requestOrigin = TeleCashRequestOrigin(hostedDataID: response.hostedDataId,
-                                                  hostedDataStoreID: storeId,
+                                                  hostedDataStoreID: response.storeId,
                                                   cardType: brand.cardType,
                                                   projectID: projectId.rawValue,
                                                   schemeTransactionID: response.schemeTransactionId)
