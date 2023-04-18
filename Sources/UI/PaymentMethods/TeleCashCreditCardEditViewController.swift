@@ -164,9 +164,9 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
             self.cardNumber.text = self.ccNumber
             self.expirationDate.text = self.expDate
 
-            self.cardNumberLabel.text = Asset.localizedString(forKey: "Snabble.Cc.cardNumber")
-            self.expDateLabel.text = Asset.localizedString(forKey: "Snabble.Cc.validUntil")
-            self.explanation.text = Asset.localizedString(forKey: "Snabble.Cc.editingHint")
+            self.cardNumberLabel.text = Asset.localizedString(forKey: "Snabble.CC.cardNumber")
+            self.expDateLabel.text = Asset.localizedString(forKey: "Snabble.CC.validUntil")
+            self.explanation.text = Asset.localizedString(forKey: "Snabble.CC.editingHint")
 
             let deleteButton = UIBarButtonItem(image: Asset.image(named: "trash"), style: .plain, target: self, action: #selector(self.deleteButtonTapped(_:)))
             self.navigationItem.rightBarButtonItem = deleteButton
@@ -209,7 +209,7 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
     }
 
     private func loadForm(withProjectId projectId: Identifier<Project>, forCreditCardBrand creditCardBrand: CreditCardBrand) {
-        var urlComponents = URLComponents(string: "https://api.snabble-testing.io/\(projectId)/telecash/form")
+        var urlComponents = URLComponents(string: "\(Snabble.shared.environment.urlString)/\(projectId)/telecash/form")
         urlComponents?.queryItems = [
             .init(name: "platform", value: "ios"),
             .init(name: "paymentMethod", value: creditCardBrand.rawValue)
