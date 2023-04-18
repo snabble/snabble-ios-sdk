@@ -212,7 +212,7 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
         var urlComponents = URLComponents(string: "https://api.snabble-testing.io/\(projectId)/telecash/form")
         urlComponents?.queryItems = [
             .init(name: "platform", value: "ios"),
-            .init(name: "paymentMethod", value: creditCardBrand.paymentMethod)
+            .init(name: "paymentMethod", value: creditCardBrand.rawValue)
         ]
         if let appUserId = Snabble.shared.appUserId?.value {
             urlComponents?.queryItems?.append(.init(name: "appUserID", value: appUserId))
