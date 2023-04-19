@@ -159,7 +159,7 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
         }
 
         formatter.currencyCode = preAuthInfo.currency
-        let chargeDecimal = Decimal(string: preAuthInfo.chargeTotal.replacingOccurrences(of: ",", with: "."))
+        let chargeDecimal = Decimal(string: preAuthInfo.charge.replacingOccurrences(of: ",", with: "."))
         let chargeTotal = formatter.string(for: chargeDecimal) ?? "1,00 €"
 
         return Asset.localizedString(forKey: "Snabble.CC.3dsecureHint.retailerWithPrice", arguments: chargeTotal, name)
@@ -244,12 +244,12 @@ extension TeleCashCreditCardAddViewController: WKScriptMessageHandler {
 }
 
 private struct PreAuthInfo: Decodable {
-    let chargeTotal: String
+    let charge: String
     let currency: String
 }
 
 extension PreAuthInfo {
     static var mock: Self {
-        .init(chargeTotal: "1.00", currency: "EUR")
+        .init(charge: "1.00", currency: "EUR")
     }
 }
