@@ -31,16 +31,8 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
     private var brand: CreditCardBrand?
     private var ccNumber: String?
     private var expDate: String?
-//    private var projectId: Identifier<Project>?
-    private weak var analyticsDelegate: AnalyticsDelegate?
 
-//    public init(brand: CreditCardBrand?, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) {
-//        self.brand = brand
-//        self.analyticsDelegate = analyticsDelegate
-//        self.projectId = projectId
-//
-//        super.init(nibName: nil, bundle: nil)
-//    }
+    private weak var analyticsDelegate: AnalyticsDelegate?
 
     init(_ detail: PaymentMethodDetail, _ analyticsDelegate: AnalyticsDelegate?) {
         if case .teleCashCreditCard(let data) = detail.methodData {
@@ -50,7 +42,6 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
             self.detail = detail
         }
         self.analyticsDelegate = analyticsDelegate
-//        self.projectId = nil
 
         super.init(nibName: nil, bundle: nil)
     }
@@ -171,81 +162,3 @@ public final class TeleCashCreditCardEditViewController: UIViewController {
         self.present(alert, animated: true)
     }
 }
-
-//extension TeleCashCreditCardEditViewController: WKNavigationDelegate {
-//    public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
-//        if navigationAction.navigationType == .linkActivated, let url = navigationAction.request.url {
-//            UIApplication.shared.open(url)
-//            decisionHandler(.cancel)
-//            return
-//        }
-//
-//        decisionHandler(.allow)
-//    }
-//}
-//
-//extension TeleCashCreditCardEditViewController: WKScriptMessageHandler {
-//    public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-//        switch message.name {
-//        case "save":
-//            save(message.body)
-//        case "fail":
-//            fail()
-//        case "abort":
-//            abort()
-//        default:
-//            fail()
-//        }
-//    }
-//
-//    private func save(_ jsonObject: Any) {
-//        guard
-//            let projectId = self.projectId,
-//            let cert = Snabble.shared.certificates.first else {
-//                return showError()
-//        }
-//        do {
-//            let jsonData = try JSONSerialization.data(withJSONObject: jsonObject)
-//            let connectGatewayReponse = try JSONDecoder().decode(ConnectGatewayResponse.self, from: jsonData)
-//            if let ccData = TeleCashCreditCardData(connectGatewayReponse, projectId, certificate: cert.data) {
-//                let detail = PaymentMethodDetail(ccData)
-//                PaymentMethodDetails.save(detail)
-//                self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
-//                goBack()
-//            } else {
-//                Snabble.shared.project(for: projectId)?.logError("can't create CC data from IPG response: \(connectGatewayReponse)")
-//                showError()
-//            }
-//        } catch {
-//            showError()
-//        }
-//    }
-//
-//    private func fail() {
-//        showError()
-//    }
-//
-//    private func abort() {
-//        goBack()
-//    }
-//
-//    private func showError() {
-//        let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.Payment.CreditCard.error"), message: nil, preferredStyle: .alert)
-//        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { _ in
-//            self.goBack()
-//        })
-//
-//        self.present(alert, animated: true)
-//    }
-//}
-//
-////public struct PreAuthInfo: Decodable {
-////    let chargeTotal: String
-////    let currency: String
-////}
-////
-////extension PreAuthInfo {
-////    static var mock: Self {
-////        .init(chargeTotal: "1.00", currency: "EUR")
-////    }
-////}
