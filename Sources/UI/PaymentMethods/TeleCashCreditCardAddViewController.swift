@@ -21,19 +21,17 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
     private weak var webView: WKWebView?
     private weak var activityIndicatorView: UIActivityIndicatorView?
 
-    private var detail: PaymentMethodDetail?
     private var brand: CreditCardBrand?
-    private var ccNumber: String?
-    private var expDate: String?
-    private var projectId: Identifier<Project>?
+    private var projectId: Identifier<Project>
+
     private weak var analyticsDelegate: AnalyticsDelegate?
 
     public init(brand: CreditCardBrand?, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) {
         self.brand = brand
         self.analyticsDelegate = analyticsDelegate
         self.projectId = projectId
-
         super.init(nibName: nil, bundle: nil)
+        title = brand?.displayName ?? Asset.localizedString(forKey: "Snabble.Payment.creditCard")
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -89,13 +87,6 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
         self.view = view
     }
 
-    override public func viewDidLoad() {
-        super.viewDidLoad()
-        self.title = brand?.displayName ?? Asset.localizedString(forKey: "Snabble.Payment.creditCard")
-
-//        explanationLabel?.text = threeDSecureHint(for: projectId, preAuthInfo: .mock)
-    }
-
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
@@ -108,6 +99,7 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
 
     public override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+
         let userContentController = webView?.configuration.userContentController
         userContentController?.removeScriptMessageHandler(forName: "save")
         userContentController?.removeScriptMessageHandler(forName: "fail")
@@ -118,24 +110,17 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
+        analyticsDelegate?.track(.viewPaymentMethodDetail)
+
         guard
-            self.detail == nil,
-            let brand = self.brand,
-            let projectId = self.projectId,
+            let brand = brand,
             let project = Snabble.shared.project(for: projectId),
-            let descriptor = project.paymentMethodDescriptors.first(where: { $0.id == brand.method })
+            let descriptor = project.paymentMethodDescriptors.first(where: { $0.id == brand.method }),
+            descriptor.acceptedOriginTypes?.contains(.ipgHostedDataID) == true
         else {
-            return
+            return showError()
         }
-
-        if descriptor.acceptedOriginTypes?.contains(.ipgHostedDataID) == true {
-            loadForm(withProjectId: projectId, forCreditCardBrand: brand)
-        } else {
-            // oops - somehow we got here for a non-IPG tokenization. Bail out.
-            showError()
-        }
-
-        self.analyticsDelegate?.track(.viewPaymentMethodDetail)
+        loadForm(withProjectId: project.id, forCreditCardBrand: brand)
     }
 
     private func goBack() {
@@ -157,21 +142,6 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
 
         let urlRequest = URLRequest(url: url)
         self.webView?.load(urlRequest)
-    }
-
-    @objc private func deleteButtonTapped(_ sender: Any) {
-        guard let detail = self.detail else {
-            return
-        }
-
-        let alert = UIAlertController(title: nil, message: Asset.localizedString(forKey: "Snabble.Payment.Delete.message"), preferredStyle: .alert)
-        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.yes"), style: .destructive) { _ in
-            PaymentMethodDetails.remove(detail)
-            self.analyticsDelegate?.track(.paymentMethodDeleted(self.brand?.rawValue ?? ""))
-            self.goBack()
-        })
-        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.no"), style: .cancel, handler: nil))
-        self.present(alert, animated: true)
     }
 
     private func threeDSecureHint(for projectId: Identifier<Project>?, preAuthInfo: PreAuthInfo) -> String {
@@ -225,9 +195,7 @@ extension TeleCashCreditCardAddViewController: WKScriptMessageHandler {
     }
 
     private func save(_ jsonObject: Any) {
-        guard
-            let projectId = self.projectId,
-            let cert = Snabble.shared.certificates.first else {
+        guard let cert = Snabble.shared.certificates.first else {
                 return showError()
         }
         do {
@@ -275,7 +243,7 @@ extension TeleCashCreditCardAddViewController: WKScriptMessageHandler {
     }
 }
 
-public struct PreAuthInfo: Decodable {
+private struct PreAuthInfo: Decodable {
     let chargeTotal: String
     let currency: String
 }
