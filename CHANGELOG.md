@@ -4,15 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [unreleased]
-
-### Added
-
-### Removed
+## [0.34.0] - 2023-04-20
 
 ### Changed
+* Fiserv via hosted form
 
 ### Updated
+* groue/GRDB.swift 6.11.0 (was 6.10.2)
+* datatrans/ios-sdk 2.7.2 (was 2.7.1)
 
 ## [0.33.0] - 2023-04-13
 
