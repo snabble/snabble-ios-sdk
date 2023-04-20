@@ -136,7 +136,7 @@ struct CheckoutView: View {
                 ScrollView(.vertical, showsIndicators: false) {
                     topContent
                     
-                    if model.isComplete {
+                    if model.isSuccessful {
                         CheckoutRatingView(model: model.ratingModel)
                             .padding(20)
                             .shadow(color: Color("Shadow"), radius: 8, x: 0, y: 4)

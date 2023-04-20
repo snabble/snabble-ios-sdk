@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 * Fixes alignment of done button on checkout view
 * Fixes to show successCheckoutCustomView only on success on checkout view
+* Fixes to show smilyes on failure
 
 ## [0.34.0] - 2023-04-20
 
