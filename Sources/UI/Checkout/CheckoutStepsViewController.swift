@@ -20,6 +20,13 @@ final class CheckoutModel: ObservableObject {
     @Published var stepsModel: CheckoutStepsViewModel
     @Published var isComplete: Bool = false
     @Published var checkoutSteps: [CheckoutStep] = []
+
+    var isSuccessful: Bool {
+        guard let paymentState = stepsModel.checkoutProcess?.paymentState else {
+            return false
+        }
+        return PaymentState.successStates.contains(paymentState)
+    }
     
     let ratingModel: RatingModel
 
@@ -122,7 +129,7 @@ struct CheckoutView: View {
     var body: some View {
         NavigationView {
             ZStack(alignment: .top) {
-                if model.isComplete {
+                if model.isSuccessful {
                     customView
                         .edgesIgnoringSafeArea(.top)
                 }
@@ -135,9 +142,9 @@ struct CheckoutView: View {
                             .shadow(color: Color("Shadow"), radius: 8, x: 0, y: 4)
                     }
                 }
-            }
-            .toolbar {
-                ToolbarItem(placement: .bottomBar) {
+
+                VStack {
+                    Spacer()
                     Button(action: {
                         model.done()
                     }) {
@@ -146,7 +153,9 @@ struct CheckoutView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .buttonStyle(AccentButtonStyle())
+                    .padding([.bottom, .horizontal], 16)
                 }
+
             }
         }
     }

@@ -59,6 +59,8 @@ public enum PaymentState: String, Decodable, UnknownCaseRepresentable {
     case failed
     case unauthorized
 
+    public static let successStates = Set<PaymentState>([ .successful, .transferred ])
+
     public static let endStates = Set<PaymentState>([ .successful, .failed, .transferred ])
 
     public static let unknownCase = PaymentState.unknown
