@@ -81,9 +81,6 @@ public enum LineItemType: String, Codable, UnknownCaseRepresentable {
     /// a price-reducing promotion like "1 € off"
     case discount
 
-    /// a giveaway product that is automatically added
-    case giveaway
-
     /// a coupon
     case coupon
 

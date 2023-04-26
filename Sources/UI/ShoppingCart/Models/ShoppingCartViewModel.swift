@@ -116,8 +116,6 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
         newItems.append(contentsOf: self.couponItems)
         // now gather the remaining lineItems. find the main items first
         newItems.append(contentsOf: self.remainingItems)
-        // find all giveaways
-        newItems.append(contentsOf: givawayItems)
         
         // add all discounts (without priceModifiers) for the "total discounts" entry
         if cart.totalCartDiscount != 0 {
@@ -409,25 +407,6 @@ extension ShoppingCartViewModel {
             coupons.append((coupon, couponItem))
         }
         return coupons
-    }
-}
-
-extension ShoppingCartViewModel {
-    var givawayItems: [CartEntry] {
-        var items = [CartEntry]()
-        
-        self.giveaways.forEach {
-            items.append(CartEntry.giveaway($0))
-        }
-        return items
-    }
-    
-    // all giveaways
-    var giveaways: [CheckoutInfo.LineItem] {
-        guard let lineItems = self.shoppingCart.backendCartInfo?.lineItems else {
-            return []
-        }
-        return lineItems.filter { $0.type == .giveaway }
     }
 }
 
