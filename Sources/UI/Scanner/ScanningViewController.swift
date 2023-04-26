@@ -248,7 +248,13 @@ final class ScanningViewController: UIViewController {
         NotificationCenter.default.post(name: .snabbleShowScanConfirmation, object: nil)
     }
 
+    private var reopenDrawer: Bool = false
+    
     private func displayScanConfirmationView(hidden: Bool, setBottomOffset: Bool = true) {
+        if !hidden {
+            reopenDrawer = self.pulleyViewController?.drawerPosition == .open
+        }
+
         if self.pulleyViewController?.supportedDrawerPositions().contains(.collapsed) == true {
             self.pulleyViewController?.setDrawerPosition(position: hidden ? .collapsed : .closed, animated: true)
         }
@@ -345,6 +351,8 @@ extension ScanningViewController: AnalyticsDelegate {
 // MARK: - scanning confirmation delegate
 extension ScanningViewController: ScanConfirmationViewDelegate {
     func closeConfirmation(forItem item: CartItem?) {
+        let reopen = reopenDrawer
+        
         self.displayScanConfirmationView(hidden: true)
         self.startLastScanTimer()
 
@@ -365,7 +373,12 @@ extension ScanningViewController: ScanConfirmationViewDelegate {
         }
 
         self.lastScannedCode = nil
-        self.barcodeDetector.resumeScanning()
+
+        if reopen {
+            self.pulleyViewController?.setDrawerPosition(position: .open, animated: true)
+        } else {
+            self.barcodeDetector.resumeScanning()
+        }
     }
 
     private func ageCheckRequired(for item: CartItem) -> ScanMessage? {

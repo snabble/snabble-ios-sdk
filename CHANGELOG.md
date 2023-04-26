@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## - unreleased
 
+### Fixed
+* Store and restore shopping cart opening state #APPS-820
+
 ### Changed
 * Removed unused giveaway lineItem type #APPS-814
 
