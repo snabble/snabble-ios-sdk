@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 * Removed unused giveaway lineItem type #APPS-814
+* Added HTTP request header fields #APPS-506
 
 ## [0.34.1] - 2023-04-21
 
