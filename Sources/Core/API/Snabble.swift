@@ -497,6 +497,9 @@ extension Snabble {
         if let userAgent = Snabble.userAgent {
             request.addValue(userAgent, forHTTPHeaderField: "User-Agent")
         }
+        for (key, value) in headerFields {
+            request.addValue(key, forHTTPHeaderField: value)
+        }
 
         if let timeout = timeout {
             request.timeoutInterval = timeout
@@ -517,7 +520,59 @@ extension Snabble {
 
         return request
     }
+
+    private static let osDescriptor: (name: String, version: String) = {
+        let version = ProcessInfo.processInfo.operatingSystemVersion
+        let versionString = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
+
+#if os(iOS)
+            return ("iOS", versionString)
+#elseif os(watchOS)
+            return ("watchOS", versionString)
+#elseif os(tvOS)
+            return ("tvOS", versionString)
+#elseif os(macOS)
+            return ("macOS", versionString)
+#else
+            return ("unknown", versionString)
+#endif
+    }()
+
+    private static let hardwareDescriptor: String = {
+        var size = 0
+        sysctlbyname("hw.machine", nil, &size, nil, 0)
+        var machine = [CChar](repeating: 0, count: size)
+        sysctlbyname("hw.machine", &machine, &size, nil, 0)
         
+        return String(cString: machine)
+    }()
+
+    private static let headerFields: [String: String] = {
+        guard
+            let bundleDict = Bundle.main.infoDictionary,
+            let appName = bundleDict["CFBundleName"] as? String,
+            let appVersion = bundleDict["CFBundleShortVersionString"] as? String,
+            let appBuild = bundleDict["CFBundleVersion"] as? String
+        else {
+            return [:]
+        }
+        return [
+            "brand": appName,
+            "full version": appVersion + "." + appBuild,
+            "platform brand": osDescriptor.name, // "\(osDescriptor.name) (\(hardwareDescriptor))",
+            "platform version": osDescriptor.version,
+            "significant version": SDKVersion
+
+            // when trying to set the user hint
+            // "platform architecture": hardwareDescriptor (e.g.: "iPhone13,3")
+            // any request will fail
+
+            // see: https://wicg.github.io/ua-client-hints/
+            // § 3. User Agent Hints
+            // platform architecture - The user agent's underlying CPU architecture (e.g., "ARM", or "x86")
+        ]
+    }()
+
     private static let userAgent: String? = {
         guard
             let bundleDict = Bundle.main.infoDictionary,
@@ -530,29 +585,7 @@ extension Snabble {
 
         let appDescriptor = appName + "/" + appVersion + "(" + appBuild + ")"
         
-        let osDescriptor: String = {
-            let version = ProcessInfo.processInfo.operatingSystemVersion
-            let versionString = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
-#if os(iOS)
-            return "iOS/\(versionString)"
-#elseif os(watchOS)
-            return "watchOS/\(versionString)"
-#elseif os(tvOS)
-            return "tvOS/\(versionString)"
-#elseif os(macOS)
-            return "macOS/\(versionString)"
-#else
-            return "unknown/\(versionString)"
-#endif
-        }()
-        
-        var size = 0
-        sysctlbyname("hw.machine", nil, &size, nil, 0)
-        var machine = [CChar](repeating: 0, count: size)
-        sysctlbyname("hw.machine", &machine, &size, nil, 0)
-        let hardwareString = String(cString: machine)
-
-        return "\(appDescriptor) \(osDescriptor) (\(hardwareString)) SDK/\(SDKVersion)"
+        return "\(appDescriptor) \(osDescriptor.name)/\(osDescriptor.version) (\(hardwareDescriptor)) SDK/\(SDKVersion)"
     }()
 }
 
