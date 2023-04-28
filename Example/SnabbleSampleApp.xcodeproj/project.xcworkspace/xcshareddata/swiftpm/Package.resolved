@@ -93,16 +93,18 @@
     {
       "identity" : "onetimepassword",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mattrubin/OneTimePassword.git",
+      "location" : "https://github.com/snabble/OneTimePassword.git",
       "state" : {
-        "revision" : "66f284e22c170ffcc2c9dcf055a1efeb260c766d"
+        "revision" : "66f284e22c170ffcc2c9dcf055a1efeb260c766d",
+        "version" : "4.0.0"
       }
     },
     {
       "identity" : "pulley",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/52inc/Pulley.git",
+      "location" : "https://github.com/snabble/Pulley.git",
       "state" : {
+        "branch" : "2.9.2",
         "revision" : "1728c7ce69857134db82ad82300772a4364d2af5"
       }
     },

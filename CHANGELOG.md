@@ -15,9 +15,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Removed unused giveaway lineItem type #APPS-814
 
 ### Updated
-* mattrubin/OneTimePassword 66f284e22c170ffcc2c9dcf055a1efeb260c766d (was 3.2.1)
+* snabble/OneTimePassword 4.0.0 (was 3.2.1)
 * datatheorem/TrustKit 3.0.2 (was 2.0.1)
-* 52inc/Pulley 1728c7ce69857134db82ad82300772a4364d2af5 (was 2.9.1)
+* snabble/Pulley 2.9.2 (was 2.9.1)
 
 ## [0.34.1] - 2023-04-21
 
