@@ -37,7 +37,7 @@ let package = Package(
         .package(url: "https://github.com/datatrans/ios-sdk.git", from: "2.7.2"),
         .package(url: "https://github.com/sberrevoets/SDCAlertView.git", from: "12.0.3"),
         .package(url: "https://github.com/devicekit/DeviceKit.git", from: "5.0.0"),
-        .package(url: "https://github.com/snabble/Pulley.git", revision: "2.9.2"),
+        .package(url: "https://github.com/snabble/Pulley.git", from: "2.9.2"),
         .package(url: "https://github.com/chrs1885/WCAG-Colors.git", from: "1.0.0"),
         .package(url: "https://github.com/realm/SwiftLint", exact: "0.51.0"),
     ],
