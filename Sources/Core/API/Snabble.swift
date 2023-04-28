@@ -567,10 +567,10 @@ extension Snabble {
         }
         let significantVersion = appVersion.components(separatedBy: ".").first ?? appVersion
         // e.g.: SnabbleSambleApp;v=1
-        let brand = "\(appName);v=\(significantVersion)"
+        let brand = "\"\(appName)\";v=\"\(significantVersion)\""
 
         // e.g.: SnabbleSambleApp;v=1.0.1,SDK;v=0.34.1
-        let fullVersionList = "\(appName);v=\(appVersion).\(appBuild),SDK;v=\(SDKVersion)"
+        let fullVersionList = "\"\(appName)\";v=\"\(appVersion).\(appBuild)\",\"SDK\";v=\"\(SDKVersion)\""
 
         return [
             // e.g.: SnabbleSambleApp;v=1
