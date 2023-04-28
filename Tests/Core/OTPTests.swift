@@ -29,7 +29,7 @@ class OTPTests: XCTestCase {
             let secretData = MF_Base32Codec.data(fromBase32String: secretString)
             XCTAssertNotNil(secretData)
 
-            let generator = Generator(factor: .timer(period: 30), secret: secretData!, algorithm: .sha256, digits: 8)
+            let generator = try? Generator(factor: .timer(period: 30), secret: secretData!, algorithm: .sha256, digits: 8)
             XCTAssertNotNil(generator)
 
             let token = Token(name: "", issuer: "", generator: generator!)
