@@ -498,8 +498,8 @@ extension Snabble {
             request.addValue(userAgent, forHTTPHeaderField: "User-Agent")
         }
         for (key, value) in headerFields {
-            request.addValue(key, forHTTPHeaderField: value)
-        }
+            request.addValue(value, forHTTPHeaderField: key)
+       }
 
         if let timeout = timeout {
             request.timeoutInterval = timeout
@@ -556,20 +556,28 @@ extension Snabble {
         else {
             return [:]
         }
+        let significantVersion = appVersion.components(separatedBy: ".").first ?? appVersion
+        // e.g.: SnabbleSambleApp;v=1
+        let brand = "\(appName);v=\(significantVersion)"
+
+        // e.g.: SnabbleSambleApp;v=1.0.1,SDK;v=0.34.1
+        let fullVersionList = "\(appName);v=\(appVersion).\(appBuild),SDK;v=\(SDKVersion)"
+
         return [
-            "brand": appName,
-            "full version": appVersion + "." + appBuild,
-            "platform brand": osDescriptor.name, // "\(osDescriptor.name) (\(hardwareDescriptor))",
-            "platform version": osDescriptor.version,
-            "significant version": SDKVersion
+            // e.g.: SnabbleSambleApp;v=1
+            "Sec-CH-UA": brand,
 
-            // when trying to set the user hint
-            // "platform architecture": hardwareDescriptor (e.g.: "iPhone13,3")
-            // any request will fail
-
-            // see: https://wicg.github.io/ua-client-hints/
-            // § 3. User Agent Hints
-            // platform architecture - The user agent's underlying CPU architecture (e.g., "ARM", or "x86")
+            // e.g.: SnabbleSambleApp;v=1.0.1,SDK;v=0.34.1
+            "Sec-CH-UA-Full-Version-List": fullVersionList,
+                        
+            // e.g.: iOS
+            "Sec-CH-UA-Platform": osDescriptor.name,
+            
+            // e.g.: 16.5.0
+            "Sec-CH-UA-Platform-Version": osDescriptor.version,
+                        
+            // e.g.: "arm64", "iPhone13,3", ...)
+            "Sec-CH-UA-Arch": hardwareDescriptor
         ]
     }()
 
