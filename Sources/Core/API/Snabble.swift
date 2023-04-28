@@ -547,6 +547,15 @@ extension Snabble {
         return String(cString: machine)
     }()
 
+    /// HTTP headerFields using user agent keys defined in https://wicg.github.io/ua-client-hints/
+    ///
+    /// `Sec-CH-UA: SnabbleSambleApp;v=1`
+    /// `Sec-CH-UA-Full-Version-List: SnabbleSambleApp;v=1.0.1,SDK;v=0.34.1`
+    /// `Sec-CH-UA-Platform: iOS`
+    /// `Sec-CH-UA-Platform-Version: 16.5.0`
+    /// `Sec-CH-UA-Arch: iPhone13,3
+    /// 
+    /// - Returns: Dictionary with keys and values `[String: String]`
     private static let headerFields: [String: String] = {
         guard
             let bundleDict = Bundle.main.infoDictionary,
