@@ -549,8 +549,8 @@ extension Snabble {
 
     /// HTTP headerFields using user agent keys defined in https://wicg.github.io/ua-client-hints/
     ///
-    /// `Sec-CH-UA: SnabbleSambleApp;v=1`
-    /// `Sec-CH-UA-Full-Version-List: SnabbleSambleApp;v=1.0.1,SDK;v=0.34.1`
+    /// `Sec-CH-UA: "SnabbleSambleApp";v="1`"
+    /// `Sec-CH-UA-Full-Version-List: "SnabbleSambleApp";v="1.0.1","SDK";v="0.34.1"
     /// `Sec-CH-UA-Platform: iOS`
     /// `Sec-CH-UA-Platform-Version: 16.5.0`
     /// `Sec-CH-UA-Arch: iPhone13,3
