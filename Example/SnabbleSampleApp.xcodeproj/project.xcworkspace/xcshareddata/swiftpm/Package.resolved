@@ -95,17 +95,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/snabble/OneTimePassword.git",
       "state" : {
-        "revision" : "b412d1f595cda264d98cb520bc7c8b9764914715",
-        "version" : "3.2.1"
+        "revision" : "66f284e22c170ffcc2c9dcf055a1efeb260c766d",
+        "version" : "4.0.0"
       }
     },
     {
       "identity" : "pulley",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/52inc/Pulley.git",
+      "location" : "https://github.com/snabble/Pulley.git",
       "state" : {
-        "revision" : "355bb7c53d4d430334422ad05a97fbe43ce326db",
-        "version" : "2.9.1"
+        "revision" : "1728c7ce69857134db82ad82300772a4364d2af5",
+        "version" : "2.9.2"
       }
     },
     {
@@ -194,8 +194,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/datatheorem/TrustKit.git",
       "state" : {
-        "revision" : "65d573e0e2687ea91ab0b1be377f9dd3eb1c2785",
-        "version" : "2.0.1"
+        "revision" : "e3a11e01d937e187cef45ad88f162d1892147aa3",
+        "version" : "3.0.2"
       }
     },
     {

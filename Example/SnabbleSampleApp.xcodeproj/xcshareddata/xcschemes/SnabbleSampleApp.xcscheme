@@ -47,6 +47,16 @@
                ReferencedContainer = "container:SnabbleSampleApp.xcodeproj">
             </BuildableReference>
          </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "SnabbleCoreTests"
+               BuildableName = "SnabbleCoreTests"
+               BlueprintName = "SnabbleCoreTests"
+               ReferencedContainer = "container:..">
+            </BuildableReference>
+         </TestableReference>
       </Testables>
    </TestAction>
    <LaunchAction
