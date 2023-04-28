@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/groue/GRDB.swift.git",
       "state" : {
-        "revision" : "318433453595369aedce0fda99dd2ec5f6ed86ce",
-        "version" : "6.10.1"
+        "revision" : "5aa385094b0d6b862bd1f8b671369044a6457ad0",
+        "version" : "6.11.0"
       }
     },
     {
@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/datatrans/ios-sdk.git",
       "state" : {
-        "revision" : "0be44f3e3a6d4b2a879bb82df7d6418a36e3531b",
-        "version" : "2.7.1"
+        "revision" : "4783996f662b4e24b3f045b39b0f9c585c7edbdd",
+        "version" : "2.7.2"
       }
     },
     {
@@ -59,17 +59,17 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/snabble/OneTimePassword.git",
       "state" : {
-        "revision" : "b412d1f595cda264d98cb520bc7c8b9764914715",
-        "version" : "3.2.1"
+        "revision" : "66f284e22c170ffcc2c9dcf055a1efeb260c766d",
+        "version" : "4.0.0"
       }
     },
     {
       "identity" : "pulley",
       "kind" : "remoteSourceControl",
-      "location" : "https://github.com/52inc/Pulley.git",
+      "location" : "https://github.com/snabble/Pulley.git",
       "state" : {
-        "revision" : "355bb7c53d4d430334422ad05a97fbe43ce326db",
-        "version" : "2.9.1"
+        "revision" : "1728c7ce69857134db82ad82300772a4364d2af5",
+        "version" : "2.9.2"
       }
     },
     {
@@ -140,8 +140,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/datatheorem/TrustKit.git",
       "state" : {
-        "revision" : "65d573e0e2687ea91ab0b1be377f9dd3eb1c2785",
-        "version" : "2.0.1"
+        "revision" : "e3a11e01d937e187cef45ad88f162d1892147aa3",
+        "version" : "3.0.2"
       }
     },
     {

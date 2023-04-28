@@ -497,6 +497,9 @@ extension Snabble {
         if let userAgent = Snabble.userAgent {
             request.addValue(userAgent, forHTTPHeaderField: "User-Agent")
         }
+        for (key, value) in headerFields {
+            request.addValue(value, forHTTPHeaderField: key)
+       }
 
         if let timeout = timeout {
             request.timeoutInterval = timeout
@@ -517,7 +520,76 @@ extension Snabble {
 
         return request
     }
+
+    private static let osDescriptor: (name: String, version: String) = {
+        let version = ProcessInfo.processInfo.operatingSystemVersion
+        let versionString = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
+
+#if os(iOS)
+            return ("iOS", versionString)
+#elseif os(watchOS)
+            return ("watchOS", versionString)
+#elseif os(tvOS)
+            return ("tvOS", versionString)
+#elseif os(macOS)
+            return ("macOS", versionString)
+#else
+            return ("unknown", versionString)
+#endif
+    }()
+
+    private static let hardwareDescriptor: String = {
+        var size = 0
+        sysctlbyname("hw.machine", nil, &size, nil, 0)
+        var machine = [CChar](repeating: 0, count: size)
+        sysctlbyname("hw.machine", &machine, &size, nil, 0)
         
+        return String(cString: machine)
+    }()
+
+    /// HTTP headerFields using user agent keys defined in https://wicg.github.io/ua-client-hints/
+    ///
+    /// `Sec-CH-UA: SnabbleSambleApp;v=1`
+    /// `Sec-CH-UA-Full-Version-List: SnabbleSambleApp;v=1.0.1,SDK;v=0.34.1`
+    /// `Sec-CH-UA-Platform: iOS`
+    /// `Sec-CH-UA-Platform-Version: 16.5.0`
+    /// `Sec-CH-UA-Arch: iPhone13,3
+    /// 
+    /// - Returns: Dictionary with keys and values `[String: String]`
+    private static let headerFields: [String: String] = {
+        guard
+            let bundleDict = Bundle.main.infoDictionary,
+            let appName = bundleDict["CFBundleName"] as? String,
+            let appVersion = bundleDict["CFBundleShortVersionString"] as? String,
+            let appBuild = bundleDict["CFBundleVersion"] as? String
+        else {
+            return [:]
+        }
+        let significantVersion = appVersion.components(separatedBy: ".").first ?? appVersion
+        // e.g.: "SnabbleSambleApp";v="1"
+        let brand = "\"\(appName)\";v=\"\(significantVersion)\""
+
+        // e.g.: "SnabbleSambleApp";v="1.0.1","SDK";v="0.34.1"
+        let fullVersionList = "\"\(appName)\";v=\"\(appVersion)-\(appBuild)\",\"SDK\";v=\"\(SDKVersion)\""
+
+        return [
+            // e.g.: "SnabbleSambleApp";v="1"
+            "Sec-CH-UA": brand,
+
+            // e.g.: "SnabbleSambleApp";v="1.0.1","SDK";v="0.34.1"
+            "Sec-CH-UA-Full-Version-List": fullVersionList,
+                        
+            // e.g.: iOS
+            "Sec-CH-UA-Platform": osDescriptor.name,
+            
+            // e.g.: 16.5.0
+            "Sec-CH-UA-Platform-Version": osDescriptor.version,
+                        
+            // e.g.: "arm64", "iPhone13,3", ...)
+            "Sec-CH-UA-Arch": hardwareDescriptor
+        ]
+    }()
+
     private static let userAgent: String? = {
         guard
             let bundleDict = Bundle.main.infoDictionary,
@@ -530,29 +602,7 @@ extension Snabble {
 
         let appDescriptor = appName + "/" + appVersion + "(" + appBuild + ")"
         
-        let osDescriptor: String = {
-            let version = ProcessInfo.processInfo.operatingSystemVersion
-            let versionString = "\(version.majorVersion).\(version.minorVersion).\(version.patchVersion)"
-#if os(iOS)
-            return "iOS/\(versionString)"
-#elseif os(watchOS)
-            return "watchOS/\(versionString)"
-#elseif os(tvOS)
-            return "tvOS/\(versionString)"
-#elseif os(macOS)
-            return "macOS/\(versionString)"
-#else
-            return "unknown/\(versionString)"
-#endif
-        }()
-        
-        var size = 0
-        sysctlbyname("hw.machine", nil, &size, nil, 0)
-        var machine = [CChar](repeating: 0, count: size)
-        sysctlbyname("hw.machine", &machine, &size, nil, 0)
-        let hardwareString = String(cString: machine)
-
-        return "\(appDescriptor) \(osDescriptor) (\(hardwareString)) SDK/\(SDKVersion)"
+        return "\(appDescriptor) \(osDescriptor.name)/\(osDescriptor.version) (\(hardwareDescriptor)) SDK/\(SDKVersion)"
     }()
 }
 
