@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Fixed
+* Duplicate Payments #APPS-834
+
 ## [0.35.0] - 2023-04-28
 
 ### Fixed
