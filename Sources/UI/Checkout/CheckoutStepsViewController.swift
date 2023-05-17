@@ -152,6 +152,7 @@ struct CheckoutView: View {
                             .fontWeight(.bold)
                             .frame(maxWidth: .infinity)
                     }
+                    .disabled(!model.isComplete)
                     .buttonStyle(AccentButtonStyle())
                     .padding([.bottom, .horizontal], 16)
                 }
