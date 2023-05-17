@@ -142,6 +142,7 @@ struct CheckoutView: View {
                             .shadow(color: Color("Shadow"), radius: 8, x: 0, y: 4)
                     }
                 }
+                .padding(.bottom, 80)
 
                 VStack {
                     Spacer()
@@ -155,7 +156,6 @@ struct CheckoutView: View {
                     .buttonStyle(AccentButtonStyle())
                     .padding([.bottom, .horizontal], 16)
                 }
-
             }
         }
     }
@@ -228,7 +228,14 @@ final class CheckoutStepsViewController: UIHostingController<CheckoutView> {
         super.viewWillDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: false)
     }
-    
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+#if !MOCK_CHECKOUT
+        viewModel.stopTimer()
+#endif
+    }
+
     @objc func stepAction(userInfo: [String: Any]?) {
         if let userInfo = userInfo {
             if let action = userInfo["action"] as? String, action == "done" {
