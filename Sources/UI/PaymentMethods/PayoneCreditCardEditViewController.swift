@@ -96,9 +96,9 @@ public final class PayoneCreditCardEditViewController: UIViewController {
             self.cardNumber.text = self.ccNumber
             self.expirationDate.text = self.expDate
 
-            self.cardNumberLabel.text = Asset.localizedString(forKey: "Snabble.Cc.cardNumber")
-            self.expDateLabel.text = Asset.localizedString(forKey: "Snabble.Cc.validUntil")
-            self.explanation.text = Asset.localizedString(forKey: "Snabble.Cc.editingHint")
+            self.cardNumberLabel.text = Asset.localizedString(forKey: "Snabble.CC.cardNumber")
+            self.expDateLabel.text = Asset.localizedString(forKey: "Snabble.CC.validUntil")
+            self.explanation.text = Asset.localizedString(forKey: "Snabble.CC.editingHint")
 
             let trash: UIImage? = Asset.image(named: "trash")
             let deleteButton = UIBarButtonItem(image: trash, style: .plain, target: self, action: #selector(self.deleteButtonTapped(_:)))
@@ -161,7 +161,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
             self?.activityIndicator?.stopAnimating()
             switch result {
             case .failure:
-                let alert = UIAlertController(title: "Oops", message: Asset.localizedString(forKey: "Snabble.Cc.noEntryPossible"), preferredStyle: .alert)
+                let alert = UIAlertController(title: "Oops", message: Asset.localizedString(forKey: "Snabble.CC.noEntryPossible"), preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { _ in
                     self?.goBack()
                 })

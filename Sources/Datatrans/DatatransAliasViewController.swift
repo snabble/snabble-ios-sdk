@@ -95,17 +95,17 @@ public final class DatatransAliasViewController: UIViewController {
         let explanationLabel = customLabel
         explanationLabel.numberOfLines = 0
         explanationLabel.font = .preferredFont(forTextStyle: .subheadline)
-        explanationLabel.text = Asset.localizedString(forKey: "Snabble.Cc.editingHint")
+        explanationLabel.text = Asset.localizedString(forKey: "Snabble.CC.editingHint")
 
         let cardNumberLabel = customLabel
         cardNumberLabel.font = .preferredFont(forTextStyle: .body)
-        cardNumberLabel.text = Asset.localizedString(forKey: "Snabble.Cc.cardNumber")
+        cardNumberLabel.text = Asset.localizedString(forKey: "Snabble.CC.cardNumber")
 
         let cardNumberField = customTextField
 
         let expirationDateLabel = customLabel
         expirationDateLabel.font = .preferredFont(forTextStyle: .body)
-        expirationDateLabel.text = Asset.localizedString(forKey: "Snabble.Cc.validUntil")
+        expirationDateLabel.text = Asset.localizedString(forKey: "Snabble.CC.validUntil")
 
         let expirationDateField = customTextField
 
