@@ -329,6 +329,5 @@ final class TokenRegistry {
         let pass = totp.generate(time: date)
         if verboseToken { Log.debug("TOTP for \(date) = \(String(describing: pass))") }
         return pass
-
     }
 }
