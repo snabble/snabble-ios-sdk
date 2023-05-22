@@ -5,7 +5,7 @@
 //
 
 import Foundation
-import OneTimePassword
+import SwiftOTP
 
 #if canImport(UIKit)
 import UIKit
@@ -320,21 +320,15 @@ final class TokenRegistry {
     }
 
     private func generatePassword(_ date: Date? = nil) -> String? {
-        guard
-            let secretData = NSData(base32String: secret) as? Data,
-            let generator = try? Generator(factor: .timer(period: 30), secret: secretData, algorithm: .sha256, digits: 8)
-        else {
+        guard let secretData = base32DecodeToData(secret),
+              let totp = TOTP(secret: secretData, digits: 8, timeInterval: 30, algorithm: .sha256) else {
             return nil
         }
 
-        let token = Token(name: "", issuer: "", generator: generator)
-        do {
-            let date = date ?? Date()
-            let pass = try token.generator.password(at: date)
-            if self.verboseToken { Log.debug("TOTP for \(date) = \(pass)") }
-            return pass
-        } catch {
-            return nil
-        }
+        let date = date ?? Date()
+        let pass = totp.generate(time: date)
+        if verboseToken { Log.debug("TOTP for \(date) = \(String(describing: pass))") }
+        return pass
+
     }
 }
