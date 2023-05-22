@@ -1,15 +1,6 @@
 {
   "pins" : [
     {
-      "identity" : "base32",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mattrubin/Base32.git",
-      "state" : {
-        "revision" : "6389546e8e9a34a9d9db452726900383f3e4ac57",
-        "version" : "1.2.0"
-      }
-    },
-    {
       "identity" : "collectionconcurrencykit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JohnSundell/CollectionConcurrencyKit.git",
