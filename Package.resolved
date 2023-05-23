@@ -1,15 +1,6 @@
 {
   "pins" : [
     {
-      "identity" : "base32",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/mattrubin/Base32.git",
-      "state" : {
-        "revision" : "6389546e8e9a34a9d9db452726900383f3e4ac57",
-        "version" : "1.2.0"
-      }
-    },
-    {
       "identity" : "collectionconcurrencykit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/JohnSundell/CollectionConcurrencyKit.git",
@@ -55,15 +46,6 @@
       }
     },
     {
-      "identity" : "onetimepassword",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/snabble/OneTimePassword.git",
-      "state" : {
-        "revision" : "66f284e22c170ffcc2c9dcf055a1efeb260c766d",
-        "version" : "4.0.0"
-      }
-    },
-    {
       "identity" : "pulley",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/snabble/Pulley.git",
@@ -100,6 +82,15 @@
       }
     },
     {
+      "identity" : "swift-crypto",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/apple/swift-crypto.git",
+      "state" : {
+        "revision" : "ddb07e896a2a8af79512543b1c7eb9797f8898a5",
+        "version" : "1.1.7"
+      }
+    },
+    {
       "identity" : "swift-syntax",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-syntax.git",
@@ -115,6 +106,15 @@
       "state" : {
         "revision" : "eb85125a5f293de3d3248af259980c98bc2b1faa",
         "version" : "0.51.0"
+      }
+    },
+    {
+      "identity" : "swiftotp",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/lachlanbell/SwiftOTP",
+      "state" : {
+        "revision" : "e43757cd3851b77ca7da195b3355c4a6f2991a0e",
+        "version" : "3.0.1"
       }
     },
     {

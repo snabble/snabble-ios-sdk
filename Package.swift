@@ -28,10 +28,9 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(url: "https://github.com/snabble/OneTimePassword.git", from: "4.0.0"),
+        .package(url: "https://github.com/lachlanbell/SwiftOTP", from: "3.0.1"),
         .package(url: "https://github.com/datatheorem/TrustKit.git", from: "3.0.2"),
         .package(url: "https://github.com/kishikawakatsumi/KeychainAccess.git", from: "4.2.2"),
-        .package(url: "https://github.com/mattrubin/Base32.git", from: "1.2.0"),
         .package(url: "https://github.com/groue/GRDB.swift.git", from: "6.11.0"),
         .package(url: "https://github.com/marmelroy/Zip.git", from: "2.1.2"),
         .package(url: "https://github.com/datatrans/ios-sdk.git", from: "2.7.2"),
@@ -47,8 +46,7 @@ let package = Package(
             dependencies: [
                 "TrustKit",
                 "KeychainAccess",
-                "Base32",
-                "OneTimePassword",
+                "SwiftOTP",
                 .product(name: "GRDB", package: "GRDB.swift"),
                 "Zip",
             ],

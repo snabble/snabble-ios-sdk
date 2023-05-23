@@ -7,8 +7,7 @@
 
 import XCTest
 
-import OneTimePassword
-import Base32
+import SwiftOTP
 
 class OTPTests: XCTestCase {
 
@@ -26,20 +25,14 @@ class OTPTests: XCTestCase {
 
         func generatePassword(at time: TimeInterval) -> String {
             let secretString = "GEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZDGNBVGY3TQOJQGEZA===="
-            let secretData = MF_Base32Codec.data(fromBase32String: secretString)
+            let secretData = base32DecodeToData(secretString)
             XCTAssertNotNil(secretData)
 
-            let generator = try? Generator(factor: .timer(period: 30), secret: secretData!, algorithm: .sha256, digits: 8)
-            XCTAssertNotNil(generator)
+            let totp = TOTP(secret: secretData!, digits: 8, timeInterval: 30, algorithm: .sha256)
+            XCTAssertNotNil(totp)
 
-            let token = Token(name: "", issuer: "", generator: generator!)
             let time = Date(timeIntervalSince1970: time)
-            do {
-                return try token.generator.password(at: time)
-            } catch {
-                XCTFail("generator failed: \(error)")
-                return ""
-            }
+            return totp?.generate(time: time) ?? ""
         }
 
         XCTAssertEqual(generatePassword(at: 59), "46119246")

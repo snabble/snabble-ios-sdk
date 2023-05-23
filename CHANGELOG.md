@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 * `Snabble.Cc` localized strings changed to `Snabble.CC`
 
+### Changed
+* Replaced `mattrubin/OneTimePassword` with `lachlanbell/SwiftOTP`
+
+### Updated
+* lachlanbell/SwiftOTP 3.0.1
+
 ## [0.35.1] - 2023-05-17
 
 ### Fixed
