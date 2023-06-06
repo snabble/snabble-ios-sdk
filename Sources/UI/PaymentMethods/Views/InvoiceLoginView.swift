@@ -76,9 +76,9 @@ public struct InvoiceLoginView: View {
                     }
                 })
         }
-        .onChange(of: model.invoiceLoginModel.isLoggedIn) { isLoggedIn in
-            if isLoggedIn {
-                print("user is logged in \(String(describing: model.invoiceLoginModel.loginInfo))")
+        .onChange(of: model.invoiceLoginModel.isLoggedIn) { loggedIn in
+            if loggedIn, let info = model.invoiceLoginModel.loginInfo {
+                print("user is logged in \(info))")
                 model.invoiceLoginModel.actionPublisher.send(["action": LoginViewModel.Action.save.rawValue])
             }
         }
@@ -117,7 +117,7 @@ public struct InvoiceDetailView: View {
                         if let image = model.invoiceLoginModel.image {
                             image
                         }
-                        Text(model.invoiceLoginModel.paymentUsername ?? "n/a")
+                        Text(model.invoiceLoginModel.username)
                     }
                 },
                 header: {
@@ -139,17 +139,27 @@ public struct InvoiceDetailView: View {
 
 public struct InvoiceView: View {
     @ObservedObject var model: InvoiceLoginProcessor
+    @State private var showDetail = false
     
     @ViewBuilder
     var content: some View {
-        if model.invoiceLoginModel.paymentUsername != nil {
+        if showDetail {
             InvoiceDetailView(model: model)
         } else {
             InvoiceLoginView(model: model)
         }
     }
+
     public var body: some View {
         content
+            .onChange(of: model.invoiceLoginModel.isLoggedIn) { loggedIn in
+                showDetail = loggedIn
+            }
+            .onAppear {
+                if model.invoiceLoginModel.paymentUsername != nil {
+                    showDetail = true
+                }
+            }
             .navigationTitle(Asset.localizedString(forKey: "Snabble.Payment.ExternalBilling.title"))
     }
 }

@@ -63,7 +63,7 @@ public final class InvoiceLoginModel: LoginViewModel {
     }
     public var loginInfo: InvoiceLoginInfo? {
         didSet {
-            if let info = loginInfo, info.isValid(username: username) {
+            if let info = loginInfo, info.isValid(username: self.username) {
                 isLoggedIn = true
             }
         }
@@ -110,7 +110,6 @@ public final class InvoiceLoginModel: LoginViewModel {
 
             paymentDetail = detail
             isSaved = true
-
         } else {
             throw PaymentMethodError.encryptionError
         }
