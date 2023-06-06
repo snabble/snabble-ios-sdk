@@ -99,7 +99,7 @@ public final class PaymentMethodListViewController: UITableViewController {
         let methods = Snabble.shared.projects
             .filter { $0.id == projectId }
             .flatMap { $0.paymentMethods }
-            .filter { $0.editable }
+            .filter { $0.visible }
 
         if methods.count == 1 {
             showEditController(for: methods[0])
@@ -177,7 +177,7 @@ extension PaymentMethodListViewController {
                 if let projectId = projectId, let project = Snabble.shared.project(for: projectId) {
                     let model = InvoiceLoginProcessor(invoiceLoginModel: InvoiceLoginModel(paymentDetail: detail, project: project))
 
-                    editVC = InvoiceLoginViewController(viewModel: model)
+                    editVC = InvoiceViewController(viewModel: model)
                 }
 
             case .datatransAlias, .datatransCardAlias:

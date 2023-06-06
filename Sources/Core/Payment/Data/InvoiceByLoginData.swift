@@ -20,11 +20,12 @@ public struct InvoiceByLoginData: Codable, EncryptedPaymentData, Equatable {
     public let originType = AcceptedOriginType.contactPersonCredentials
 
     public let username: String
-
+    public let contactPersonID: String
+    
     public let projectId: Identifier<Project>
 
     enum CodingKeys: String, CodingKey {
-        case encryptedPaymentData, serial, username, displayName, projectId
+        case encryptedPaymentData, serial, username, contactPersonID, displayName, projectId
     }
 
     private struct InvoiceByLoginOrigin: PaymentRequestOrigin {
@@ -33,7 +34,7 @@ public struct InvoiceByLoginData: Codable, EncryptedPaymentData, Equatable {
         let contactPersonID: String
     }
 
-    init?(_ gatewayCert: Data?, _ username: String, _ password: String, _ contactPersonID: String, _ projectId: Identifier<Project>) {
+    public init?(cert gatewayCert: Data?, _ username: String, _ password: String, _ contactPersonID: String, _ projectId: Identifier<Project>) {
         let requestOrigin = InvoiceByLoginOrigin(username: username, password: password, contactPersonID: contactPersonID)
 
         guard
@@ -47,6 +48,7 @@ public struct InvoiceByLoginData: Codable, EncryptedPaymentData, Equatable {
         self.serial = serial
 
         self.username = username
+        self.contactPersonID = contactPersonID
         self.displayName = username
         self.projectId = projectId
     }
@@ -56,6 +58,7 @@ public struct InvoiceByLoginData: Codable, EncryptedPaymentData, Equatable {
         self.encryptedPaymentData = try container.decode(String.self, forKey: .encryptedPaymentData)
         self.serial = try container.decode(String.self, forKey: .serial)
         self.username = try container.decode(String.self, forKey: .username)
+        self.contactPersonID = try container.decode(String.self, forKey: .contactPersonID)
         self.displayName = try container.decode(String.self, forKey: .displayName)
         self.projectId = try container.decode(Identifier<Project>.self, forKey: .projectId)
     }

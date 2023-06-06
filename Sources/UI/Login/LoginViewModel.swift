@@ -19,7 +19,7 @@ public protocol Loginable {
     var errorMessage: String { get set }
     
     /// subscribe to this Publisher to start your login process
-    var actionPublisher: PassthroughSubject<Void, Never> { get }
+    var actionPublisher: PassthroughSubject<[String: Any]?, Never> { get }
 }
 
 public enum LoginError: Error {
@@ -27,6 +27,7 @@ public enum LoginError: Error {
 }
 
 public enum LoginStrings: String {
+    case info = "message"
     case login
     case username
     case password
@@ -34,8 +35,14 @@ public enum LoginStrings: String {
     case passwordIsEmpty
     case usernameAndPasswordIsEmpty
     
-    public var localizedString: String {
-        return Asset.localizedString(forKey: "Login.\(self.rawValue)")
+    public func localizedString(_ string: String? = nil) -> String {
+        if let prefix = string {
+            let key = prefix + "." + self.rawValue
+            
+            return Asset.localizedString(forKey: key)
+        } else {
+            return Asset.localizedString(forKey: "Snabble.Login.\(self.rawValue)")
+        }
     }
 }
 
@@ -82,19 +89,26 @@ public class LoginViewModel: Loginable, ObservableObject {
             .eraseToAnyPublisher()
     }
     
-    /// Emits if the login button is tapped
-    public let actionPublisher = PassthroughSubject<Void, Never>()
-
+    /// Emits if the login button is tapped the action `login`
+    /// if a login request was successfull the action `save` is published.
+    /// if a remove was successfull the action `remove` is published.
+    public let actionPublisher = PassthroughSubject<[String: Any]?, Never>()
+    public enum Action: String {
+        case login
+        case save
+        case remove
+    }
+    
     init() {
         isUsernameValidPublisher
             .combineLatest(isPasswordValidPublisher)
             .map { validUsername, validPassword in
                 if !validUsername && !validPassword {
-                    return LoginStrings.usernameAndPasswordIsEmpty.localizedString
+                    return LoginStrings.usernameAndPasswordIsEmpty.localizedString()
                 } else if !validUsername {
-                    return LoginStrings.usernameIsEmpty.localizedString
+                    return LoginStrings.usernameIsEmpty.localizedString()
                 } else if !validPassword {
-                    return LoginStrings.passwordIsEmpty.localizedString
+                    return LoginStrings.passwordIsEmpty.localizedString()
                 }
                 return ""
             }

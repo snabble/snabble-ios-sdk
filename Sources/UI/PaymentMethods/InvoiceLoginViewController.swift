@@ -12,15 +12,15 @@ import Combine
 import SnabbleCore
 
 /// Methods for managing callbacks
-public protocol InvoiceLoginViewControllerDelegate: AnyObject {
+public protocol InvoiceViewControllerDelegate: AnyObject {
 
     /// Tells the delegate that an widget will perform an action
-    func invoiceLoginViewControllerDidEnd(_ viewController: InvoiceLoginViewController, userInfo: [String: Any]?)
+    func invoiceViewControllerDidEnd(_ viewController: InvoiceViewController, userInfo: [String: Any]?)
 }
 
 /// A UIViewController wrapping SwiftUI's DynamicStackView
-open class InvoiceLoginViewController: UIHostingController<InvoiceLoginView> {
-    public weak var delegate: InvoiceLoginViewControllerDelegate?
+open class InvoiceViewController: UIHostingController<InvoiceView> {
+    public weak var delegate: InvoiceViewControllerDelegate?
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -30,7 +30,7 @@ open class InvoiceLoginViewController: UIHostingController<InvoiceLoginView> {
     /// Creates and returns an dynamic stack  view controller with the specified viewModel
     /// - Parameter viewModel: A view model that specifies the details to be shown. Default value is `.default`
     public init(viewModel: InvoiceLoginProcessor) {
-        super.init(rootView: InvoiceLoginView(model: viewModel))
+        super.init(rootView: InvoiceView(model: viewModel))
 
         delegate = self
     }
@@ -41,21 +41,21 @@ open class InvoiceLoginViewController: UIHostingController<InvoiceLoginView> {
 
     open override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.actionPublisher
+        viewModel.invoiceLoginModel.actionPublisher
             .sink { [unowned self] info in
-                delegate?.invoiceLoginViewControllerDidEnd(self, userInfo: info)
+                delegate?.invoiceViewControllerDidEnd(self, userInfo: info)
             }
             .store(in: &cancellables)
     }
 }
 
-extension InvoiceLoginViewController: InvoiceLoginViewControllerDelegate {
+extension InvoiceViewController: InvoiceViewControllerDelegate {
     
-    func remove(model: InvoiceLoginModel) {
-        model.delete()
+    func remove(model: InvoiceLoginProcessor) {
+        model.remove()
     }
     
-    func save(model: InvoiceLoginModel) {
+    func save(model: InvoiceLoginProcessor) {
         Task {
             do {
                 try await model.save()
@@ -70,14 +70,17 @@ extension InvoiceLoginViewController: InvoiceLoginViewControllerDelegate {
         }
     }
 
-    public func invoiceLoginViewControllerDidEnd(_ viewController: InvoiceLoginViewController, userInfo: [String: Any]?) {
+    public func invoiceViewControllerDidEnd(_ viewController: InvoiceViewController, userInfo: [String: Any]?) {
         if let action = userInfo?["action"] as? String {
             switch action {
-            case "save":
-                self.save(model: viewController.viewModel.invoiceLoginModel)
+            case LoginViewModel.Action.login.rawValue:
+                viewModel.login()
+
+            case LoginViewModel.Action.save.rawValue:
+                self.save(model: viewController.viewModel)
                 
-            case "remove":
-                self.remove(model: viewController.viewModel.invoiceLoginModel)
+            case LoginViewModel.Action.remove.rawValue:
+                self.remove(model: viewController.viewModel)
                 
             default:
                 print("unhandled action: \(action)")

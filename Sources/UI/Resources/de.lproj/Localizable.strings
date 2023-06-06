@@ -208,6 +208,28 @@
 
 "Snabble.Payment.errorStarting" = "Fehler beim Anlegen des Bezahlprozesses";
 
+"Snabble.Payment.ExternalBilling.add" = "Hinzufügen";
+
+"Snabble.Payment.ExternalBilling.AlertDialog.add" = "Hinzufügen";
+
+"Snabble.Payment.ExternalBilling.AlertDialog.hint" = "Betreff";
+
+"Snabble.Payment.ExternalBilling.AlertDialog.message" = "Hier kannst du einen \nBetreff eingeben";
+
+"Snabble.Payment.ExternalBilling.AlertDialog.skip" = "Überspringen";
+
+"Snabble.Payment.ExternalBilling.Error.badRequest" = "Ups, es ist etwas schief gelaufen! Bitte versuch es erneut!";
+
+"Snabble.Payment.ExternalBilling.Error.wrongCredentials" = "Die eingegebenen Daten sind falsch. Bitte überprüfe diese und versuch es erneut!";
+
+"Snabble.Payment.ExternalBilling.message" = "Gib deine Daten ein. Anschließend bekommst du deine Rechnung zu dir nach Hause geschickt. Nach Erhalt der Rechnung hast du 14 Tage Zeit den Kaufbetrag zu überweisen.";
+
+"Snabble.Payment.ExternalBilling.password" = "Passwort";
+
+"Snabble.Payment.ExternalBilling.title" = "Kauf auf Rechnung";
+
+"Snabble.Payment.ExternalBilling.username" = "Benutzername";
+
 "Snabble.Payment.noMethodAvailable" = "Leider kann dieser Einkauf nicht mit der App durchgeführt werden.";
 
 "Snabble.Payment.offlineHint" = "Du bist derzeit offline und einige Zahlungsmethoden sind möglicherweise nicht verfügbar";

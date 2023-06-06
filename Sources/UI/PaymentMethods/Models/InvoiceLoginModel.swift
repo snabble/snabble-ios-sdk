@@ -9,7 +9,51 @@ import Foundation
 import Combine
 import SnabbleCore
 
-public final class InvoiceLoginModel: ObservableObject {
+public struct InvoiceLoginInfo: Decodable {
+    public static let invalid = InvoiceLoginInfo(username: "#$§*!", contactPersonID: "")
+    
+    public let username: String
+    public let contactPersonID: String
+    
+    public func isValid(username: String) -> Bool {
+        guard username != InvoiceLoginInfo.invalid.username else {
+            return false
+        }
+        return username == self.username
+    }
+}
+
+public struct InvoiceLoginCredentials: Encodable {
+    public let username: String
+    public let password: String
+}
+
+extension Project {
+    public func getUserLoginInfo(with credentials: InvoiceLoginCredentials,
+                                 completion: @escaping (Result<InvoiceLoginInfo, SnabbleError>) -> Void) {
+        let url = "https://api.snabble-testing.io/\(self.id)/external-billing/credentials/auth"
+        
+        do {
+            let data = try JSONEncoder().encode(credentials)
+
+            self.request(.post, url, body: data, timeout: 2) { request in
+                guard let request = request else {
+                    return completion(.failure(SnabbleError.noRequest))
+                }
+
+                self.perform(request, completion)
+            }
+        } catch {
+            print(error)
+            completion(.failure(SnabbleError.invalid))
+        }
+    }
+}
+
+public final class InvoiceLoginModel: LoginViewModel {
+    @Published public var isLoggedIn = false
+    @Published public var isSaved = false
+
     private var paymentDetail: PaymentMethodDetail? {
         didSet {
             DispatchQueue.main.async {
@@ -17,35 +61,77 @@ public final class InvoiceLoginModel: ObservableObject {
             }
         }
     }
-
+    public var loginInfo: InvoiceLoginInfo? {
+        didSet {
+            if let info = loginInfo, info.isValid(username: username) {
+                isLoggedIn = true
+            }
+        }
+    }
+    
     var project: Project?
-    @Published var isValid: Bool = false
-    @Published var username: String = ""
-    @Published var password: String = ""
 
     public init(paymentDetail: PaymentMethodDetail? = nil, project: Project? = nil) {
         self.paymentDetail = paymentDetail
         self.project = project
+
+        super.init()
         
+        if let name = paymentUsername {
+            self.username = name
+        }
     }
+
     func delete() {
-        print("*** TODO: implement delete() function in class InvoiceLoginModel.")
+        guard let detail = paymentDetail else {
+            return
+        }
+        PaymentMethodDetails.remove(detail)
+
+        self.username = ""
+        self.password = ""
+        self.paymentDetail = nil
+        isLoggedIn = false
+        isSaved = false
+        isValid = false
     }
 
     func save() async throws {
-        print("*** TODO: implement save() function in class InvoiceLoginModel.")
-    }
+        guard let personID = loginInfo?.contactPersonID, !password.isEmpty else {
+            return
+        }
+        isSaved = false
+        
+        if let cert = Snabble.shared.certificates.first,
+           let invoiceData = InvoiceByLoginData(cert: cert.data, username, password, personID, project?.id ?? SnabbleCI.project.id) {
 
+            let detail = PaymentMethodDetail(invoiceData)
+            PaymentMethodDetails.save(detail)
+
+            paymentDetail = detail
+            isSaved = true
+
+        } else {
+            throw PaymentMethodError.encryptionError
+        }
+    }
 }
 
 extension InvoiceLoginModel {
-    public var userName: String? {
+    public var paymentUsername: String? {
         if let detail = paymentDetail, case .invoiceByLogin(let data) = detail.methodData {
             return data.username
         }
         return nil
     }
-
+    public var paymentContactPersonID: String? {
+        if let detail = paymentDetail, case .invoiceByLogin(let data) = detail.methodData {
+            return data.contactPersonID
+        }
+        return nil
+    }
+}
+extension InvoiceLoginModel {
     public var imageName: String? {
         return paymentDetail?.imageName
     }
@@ -53,30 +139,26 @@ extension InvoiceLoginModel {
 
 /// CustomerCardLoginProcessor provides the logic to get customer card info using a login service
 public final class InvoiceLoginProcessor: LoginProcessor, ObservableObject {
-    let invoiceLoginModel: InvoiceLoginModel
-
-    /// subscribe to this Publisher to start your login process
-    public var actionPublisher = PassthroughSubject<[String: Any]?, Never>()
+    @Published public var invoiceLoginModel: InvoiceLoginModel
+    @Published public var isWaiting = false
 
     init(invoiceLoginModel: InvoiceLoginModel) {
-        
         self.invoiceLoginModel = invoiceLoginModel
-
-        super.init(loginModel: invoiceLoginModel as? Loginable)
+        super.init(loginModel: invoiceLoginModel)
     }
-        
-    private var loginPublisher: Future<String, LoginError> {
+    
+    private var loginPublisher: Future<InvoiceLoginInfo, LoginError> {
         Future { [weak self] promise in
             guard let strongSelf = self, strongSelf.invoiceLoginModel.isValid else {
                 return promise(.failure(.loginFailed))
             }
             
-            let credentials = CustomerLoyaltyCredentials(username: strongSelf.invoiceLoginModel.username, password: strongSelf.invoiceLoginModel.password)
-            
-            strongSelf.invoiceLoginModel.project?.getCustomerLoyaltyInfo(with: credentials) { result in
+            let credentials = InvoiceLoginCredentials(username: strongSelf.invoiceLoginModel.username, password: strongSelf.invoiceLoginModel.password)
+                                          
+            strongSelf.invoiceLoginModel.project?.getUserLoginInfo(with: credentials) { result in
                 switch result {
                 case .success(let info):
-                    promise(.success(info.loyaltyCardNumber))
+                    promise(.success(info))
                 case .failure:
                     promise(.failure(.loginFailed))
                 }
@@ -85,14 +167,23 @@ public final class InvoiceLoginProcessor: LoginProcessor, ObservableObject {
     }
     
     public override func login() {
+        isWaiting = true
         loginPublisher
             .receive(on: RunLoop.main)
-            .replaceError(with: "")
-            .sink(receiveValue: { [weak self] string in
-                guard let self = self else { return }
+            .replaceError(with: InvoiceLoginInfo.invalid)
+            .sink(receiveValue: { [weak self] loginInfo in
+                guard let strongSelf = self else { return }
 
-                print("loginPublisher \(String(describing: self.loginModel?.username)) received: \(string)")
+                strongSelf.invoiceLoginModel.loginInfo = loginInfo
+                strongSelf.isWaiting = false
             })
             .store(in: &cancellables)
+    }
+    
+    public override func remove() {
+        invoiceLoginModel.delete()
+    }
+    public func save() async throws {
+        try await invoiceLoginModel.save()
     }
 }

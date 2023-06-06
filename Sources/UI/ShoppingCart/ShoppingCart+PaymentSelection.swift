@@ -326,33 +326,49 @@ final class PaymentMethodSelector {
 
         switch method {
         case .externalBilling, .customerCardPOS:
-            let actions = paymentMethodDetails.map { paymentMethodDetail -> PaymentMethodAction in
-                var color: UIColor = .label
-                var detailText: String?
-                if case let PaymentMethodUserData.tegutEmployeeCard(data) = paymentMethodDetail.methodData {
-                    detailText = data.cardNumber
+            if isPaymentMethodDetailAvailable {
+                let actions = paymentMethodDetails.map { paymentMethodDetail -> PaymentMethodAction in
+                    var color: UIColor = .label
+                    var detailText: String?
+                    if case let PaymentMethodUserData.tegutEmployeeCard(data) = paymentMethodDetail.methodData {
+                        detailText = data.cardNumber
+                    }
+                    
+                    if hasCartMethods && !isCartMethod {
+                        detailText = Asset.localizedString(forKey: "Snabble.Shoppingcart.notForThisPurchase")
+                        color = .secondaryLabel
+                    }
+                    
+                    let title = Self.attributedString(
+                        forText: paymentMethodDetail.displayName,
+                        withSubtitle: detailText,
+                        inColor: color
+                    )
+                    return PaymentMethodAction(
+                        title: title,
+                        paymentMethod: method,
+                        paymentMethodDetail: paymentMethodDetail,
+                        selectable: true,
+                        active: hasCartMethods ? isCartMethod : false
+                    )
                 }
-
-                if hasCartMethods && !isCartMethod {
-                    detailText = Asset.localizedString(forKey: "Snabble.Shoppingcart.notForThisPurchase")
-                    color = .secondaryLabel
-                }
-
+                return actions
+            } else {
+                let subtitle = Asset.localizedString(forKey: "Snabble.Shoppingcart.noPaymentData")
                 let title = Self.attributedString(
-                    forText: paymentMethodDetail.displayName,
-                    withSubtitle: detailText,
-                    inColor: color
-                )
-                return PaymentMethodAction(
+                    forText: method.displayName,
+                    withSubtitle: subtitle,
+                    inColor: .label)
+                let action = PaymentMethodAction(
                     title: title,
                     paymentMethod: method,
-                    paymentMethodDetail: paymentMethodDetail,
+                    paymentMethodDetail: nil,
                     selectable: true,
-                    active: hasCartMethods ? isCartMethod : false
+                    active: false
                 )
+                return [action]
             }
-            return actions
-
+            
         case .creditCardAmericanExpress, .creditCardVisa, .creditCardMastercard, .deDirectDebit, .paydirektOneKlick, .twint, .postFinanceCard:
             if isPaymentMethodDetailAvailable {
                 if hasCartMethods {

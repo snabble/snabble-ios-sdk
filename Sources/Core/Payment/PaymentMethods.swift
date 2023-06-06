@@ -73,7 +73,20 @@ public enum RawPaymentMethod: String, Decodable {
             return false
         }
     }
+    
+    /// true if this method is visible on the PaymentMethod[Add|List]ViewControllers
+    public var visible: Bool {
+        switch self {
+        case .deDirectDebit, .paydirektOneKlick,
+             .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress,
+             .twint, .postFinanceCard,
+             .externalBilling:
+            return true
+        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS, .applePay:
+            return false
+        }
 
+    }
     /// true if editing/entering this method requires a device passcode or biometry
     public var codeRequired: Bool {
         switch self {
