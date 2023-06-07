@@ -62,7 +62,7 @@ public class LoginViewModel: Loginable, ObservableObject {
     @Published public var errorMessage: String = ""
 
     public var debounce: RunLoop.SchedulerTimeType.Stride = 0.5
-    public var minimumInputCount: Int = 3
+    public var minimumInputCount: Int = 4
     
     private var cancellables = Set<AnyCancellable>()
 
@@ -97,6 +97,7 @@ public class LoginViewModel: Loginable, ObservableObject {
         case login
         case save
         case remove
+        case loggedOut
     }
     
     init() {

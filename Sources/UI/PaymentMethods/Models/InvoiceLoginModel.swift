@@ -54,19 +54,24 @@ public final class InvoiceLoginModel: LoginViewModel {
     @Published public var isLoggedIn = false
     @Published public var isSaved = false
 
-    private var paymentDetail: PaymentMethodDetail? {
-        didSet {
+    private var paymentDetail: PaymentMethodDetail?
+    
+    @Published public var loginInfo: InvoiceLoginInfo? {
+        willSet {
             DispatchQueue.main.async {
                 self.objectWillChange.send()
             }
         }
-    }
-    public var loginInfo: InvoiceLoginInfo? {
         didSet {
-            if let info = loginInfo, info.isValid(username: self.username) {
-                isLoggedIn = true
+            if let info = self.loginInfo, info.isValid(username: self.username) {
+                self.isValid = true
+                self.isLoggedIn = true
+            } else if self.loginInfo == nil {
+                self.isLoggedIn = false
+                self.isValid = false
+                self.isSaved = false
             }
-        }
+       }
     }
     
     var project: Project?
@@ -82,7 +87,7 @@ public final class InvoiceLoginModel: LoginViewModel {
         }
     }
 
-    func delete() {
+    func reset() {
         guard let detail = paymentDetail else {
             return
         }
@@ -91,16 +96,13 @@ public final class InvoiceLoginModel: LoginViewModel {
         self.username = ""
         self.password = ""
         self.paymentDetail = nil
-        isLoggedIn = false
-        isSaved = false
-        isValid = false
+        self.loginInfo = nil
     }
 
     func save() async throws {
         guard let personID = loginInfo?.contactPersonID, !password.isEmpty else {
             return
         }
-        isSaved = false
         
         if let cert = Snabble.shared.certificates.first,
            let invoiceData = InvoiceByLoginData(cert: cert.data, username, password, personID, project?.id ?? SnabbleCI.project.id) {
@@ -109,7 +111,9 @@ public final class InvoiceLoginModel: LoginViewModel {
             PaymentMethodDetails.save(detail)
 
             paymentDetail = detail
-            isSaved = true
+            DispatchQueue.main.async {
+                self.isSaved = true
+            }
         } else {
             throw PaymentMethodError.encryptionError
         }
@@ -140,6 +144,8 @@ extension InvoiceLoginModel {
 public final class InvoiceLoginProcessor: LoginProcessor, ObservableObject {
     @Published public var invoiceLoginModel: InvoiceLoginModel
     @Published public var isWaiting = false
+    
+    var cancellables = Set<AnyCancellable>()
 
     init(invoiceLoginModel: InvoiceLoginModel) {
         self.invoiceLoginModel = invoiceLoginModel
@@ -180,7 +186,7 @@ public final class InvoiceLoginProcessor: LoginProcessor, ObservableObject {
     }
     
     public override func remove() {
-        invoiceLoginModel.delete()
+        invoiceLoginModel.reset()
     }
     public func save() async throws {
         try await invoiceLoginModel.save()

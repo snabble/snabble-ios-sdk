@@ -25,7 +25,7 @@ open class InvoiceViewController: UIHostingController<InvoiceView> {
     private var cancellables = Set<AnyCancellable>()
 
     public var viewModel: InvoiceLoginProcessor {
-        rootView.model
+        rootView.loginProcessor
     }
     /// Creates and returns an dynamic stack  view controller with the specified viewModel
     /// - Parameter viewModel: A view model that specifies the details to be shown. Default value is `.default`

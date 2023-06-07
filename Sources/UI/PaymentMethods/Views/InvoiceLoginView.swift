@@ -9,6 +9,15 @@ import Foundation
 import SwiftUI
 import UIKit
 
+extension InvoiceLoginModel {
+    public var image: SwiftUI.Image? {
+        guard let imageName = imageName, let uiImage: UIImage = Asset.image(named: "SnabbleSDK/payment/" + imageName) else {
+            return nil
+        }
+        return Image(uiImage: uiImage)
+    }
+}
+
 public struct InvoiceLoginView: View {
     @ObservedObject var model: InvoiceLoginProcessor
     @Environment(\.presentationMode) var presentationMode
@@ -91,15 +100,6 @@ public struct InvoiceLoginView: View {
     }
 }
 
-extension InvoiceLoginModel {
-    public var image: SwiftUI.Image? {
-        guard let imageName = imageName, let uiImage: UIImage = Asset.image(named: "SnabbleSDK/payment/" + imageName) else {
-            return nil
-        }
-        return Image(uiImage: uiImage)
-    }
-}
-
 public struct InvoiceDetailView: View {
     @ObservedObject var model: InvoiceLoginProcessor
     @Environment(\.presentationMode) var presentationMode
@@ -125,6 +125,11 @@ public struct InvoiceDetailView: View {
                 })
             .textCase(nil)
         }
+        .onChange(of: model.invoiceLoginModel.isLoggedIn) { loggedIn in
+            if !loggedIn {
+                presentationMode.wrappedValue.dismiss()
+            }
+        }
         .toolbar {
             ToolbarItem(placement: .destructiveAction) {
                 Button(action: {
@@ -138,25 +143,34 @@ public struct InvoiceDetailView: View {
 }
 
 public struct InvoiceView: View {
-    @ObservedObject var model: InvoiceLoginProcessor
+    @ObservedObject var loginProcessor: InvoiceLoginProcessor
+    @ObservedObject var loginModel: InvoiceLoginModel
+
     @State private var showDetail = false
     
+    init(model: InvoiceLoginProcessor) {
+        self.loginProcessor = model
+        self.loginModel = model.invoiceLoginModel
+    }
     @ViewBuilder
     var content: some View {
         if showDetail {
-            InvoiceDetailView(model: model)
+            InvoiceDetailView(model: self.loginProcessor)
         } else {
-            InvoiceLoginView(model: model)
+            InvoiceLoginView(model: self.loginProcessor)
         }
     }
 
     public var body: some View {
         content
-            .onChange(of: model.invoiceLoginModel.isLoggedIn) { loggedIn in
+            .onChange(of: self.loginModel.isLoggedIn) { loggedIn in
                 showDetail = loggedIn
             }
+            .onChange(of: self.loginModel.isSaved) { saved in
+                showDetail = saved
+            }
             .onAppear {
-                if model.invoiceLoginModel.paymentUsername != nil {
+                if self.loginModel.paymentUsername != nil {
                     showDetail = true
                 }
             }

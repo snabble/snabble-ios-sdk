@@ -18,17 +18,7 @@ protocol LoginProcessing {
 
 open class LoginProcessor: LoginProcessing {
     
-    var cancellables = Set<AnyCancellable>()
-
-    public var loginModel: Loginable? {
-        didSet {
-            loginModel?.actionPublisher
-                .sink { [weak self] _ in
-                self?.login()
-            }
-            .store(in: &cancellables)
-        }
-    }
+    public var loginModel: Loginable?
 
     public init(loginModel: Loginable? = nil) {
         self.loginModel = loginModel
