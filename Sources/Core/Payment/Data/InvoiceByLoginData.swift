@@ -24,8 +24,10 @@ public struct InvoiceByLoginData: Codable, EncryptedPaymentData, Equatable {
     
     public let projectId: Identifier<Project>
 
+    public var billingInfo: String?
+    
     enum CodingKeys: String, CodingKey {
-        case encryptedPaymentData, serial, username, contactPersonID, displayName, projectId
+        case encryptedPaymentData, serial, displayName, username, contactPersonID, projectId
     }
 
     private struct InvoiceByLoginOrigin: PaymentRequestOrigin {
@@ -34,7 +36,7 @@ public struct InvoiceByLoginData: Codable, EncryptedPaymentData, Equatable {
         let contactPersonID: String
     }
 
-    public init?(cert gatewayCert: Data?, _ username: String, _ password: String, _ contactPersonID: String, _ projectId: Identifier<Project>) {
+    public init?(cert gatewayCert: Data?, _ displayName: String, _ username: String, _ password: String, _ contactPersonID: String, _ projectId: Identifier<Project>) {
         let requestOrigin = InvoiceByLoginOrigin(username: username, password: password, contactPersonID: contactPersonID)
 
         guard
@@ -47,9 +49,10 @@ public struct InvoiceByLoginData: Codable, EncryptedPaymentData, Equatable {
         self.encryptedPaymentData = cipherText
         self.serial = serial
 
+        self.displayName = displayName
+
         self.username = username
         self.contactPersonID = contactPersonID
-        self.displayName = username
         self.projectId = projectId
     }
 
@@ -57,9 +60,17 @@ public struct InvoiceByLoginData: Codable, EncryptedPaymentData, Equatable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.encryptedPaymentData = try container.decode(String.self, forKey: .encryptedPaymentData)
         self.serial = try container.decode(String.self, forKey: .serial)
+        self.displayName = try container.decode(String.self, forKey: .displayName)
         self.username = try container.decode(String.self, forKey: .username)
         self.contactPersonID = try container.decode(String.self, forKey: .contactPersonID)
-        self.displayName = try container.decode(String.self, forKey: .displayName)
         self.projectId = try container.decode(Identifier<Project>.self, forKey: .projectId)
+    }
+    
+    var additionalData: [String: String] {
+        guard let billingInfo = self.billingInfo else {
+            return [:]
+        }
+
+        return ["subject": billingInfo]
     }
 }

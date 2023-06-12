@@ -222,7 +222,9 @@
 
 "Snabble.Payment.ExternalBilling.Error.wrongCredentials" = "The given information is wrong. Please check them and try again!";
 
-"Snabble.Payment.ExternalBilling.message" = "Enter your details. You will then receive your invoice at home. After receiving the invoice, you have 14 days to transfer the purchase amount.";
+"Snabble.Payment.ExternalBilling.hint" = "Please note the term of payment on your invoice!";
+
+"Snabble.Payment.ExternalBilling.message" = "Enter your details. Please note the term of payment on your invoice, which will be sent to your stored address after your purchase.";
 
 "Snabble.Payment.ExternalBilling.password" = "Password";
 
@@ -824,6 +826,10 @@
 "Snabble.Taxation.consumeWhere" = "Chceš svoj nákup";
 
 "Snabble.Taxation.pleaseChoose" = "Vyber niektorú možnosť";
+
+"Snabble.Textfield.HidePassword.Accessibility" = "Hide password";
+
+"Snabble.Textfield.ShowPassword.Accessibility" = "Show password";
 
 "Snabble.TWINT.payNow" = "Zaplatiť cez TWINT teraz";
 

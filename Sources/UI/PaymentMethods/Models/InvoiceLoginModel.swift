@@ -105,7 +105,7 @@ public final class InvoiceLoginModel: LoginViewModel {
         }
         
         if let cert = Snabble.shared.certificates.first,
-           let invoiceData = InvoiceByLoginData(cert: cert.data, username, password, personID, project?.id ?? SnabbleCI.project.id) {
+           let invoiceData = InvoiceByLoginData(cert: cert.data, Asset.localizedString(forKey: "Snabble.Payment.ExternalBilling.title"), username, password, personID, project?.id ?? SnabbleCI.project.id) {
 
             let detail = PaymentMethodDetail(invoiceData)
             PaymentMethodDetails.save(detail)

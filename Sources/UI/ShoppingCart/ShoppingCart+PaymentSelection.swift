@@ -332,6 +332,10 @@ final class PaymentMethodSelector {
                     var detailText: String?
                     if case let PaymentMethodUserData.tegutEmployeeCard(data) = paymentMethodDetail.methodData {
                         detailText = data.cardNumber
+                    } else if case let PaymentMethodUserData.invoiceByLogin(data) = paymentMethodDetail.methodData {
+                        detailText = Asset.localizedString(forKey: "Snabble.Payment.ExternalBilling.hint")
+                        
+//                        detailText = data.username
                     }
                     
                     if hasCartMethods && !isCartMethod {

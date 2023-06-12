@@ -337,7 +337,9 @@ extension RawPaymentMethod {
             return "payment-twint"
         case .postFinanceCard:
             return "payment-postfinance"
-        case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS:
+        case .externalBilling:
+            return "payment-invoice"
+        case .qrCodePOS, .qrCodeOffline, .customerCardPOS:
             return "payment-pos"
         }
     }

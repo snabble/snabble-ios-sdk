@@ -222,7 +222,9 @@
 
 "Snabble.Payment.ExternalBilling.Error.wrongCredentials" = "Die eingegebenen Daten sind falsch. Bitte überprüfe diese und versuch es erneut!";
 
-"Snabble.Payment.ExternalBilling.message" = "Gib deine Daten ein. Anschließend bekommst du deine Rechnung zu dir nach Hause geschickt. Nach Erhalt der Rechnung hast du 14 Tage Zeit den Kaufbetrag zu überweisen.";
+"Snabble.Payment.ExternalBilling.hint" = "Bitte beachte das Zahlungsziel auf deiner Rechnung!";
+
+"Snabble.Payment.ExternalBilling.message" = "Gib deine Daten ein. Bitte beachte das Zahlungsziel auf deiner Rechnung, die nach deinem Kauf an deine hinterlegte Adresse geschickt wird.";
 
 "Snabble.Payment.ExternalBilling.password" = "Passwort";
 
@@ -824,6 +826,10 @@
 "Snabble.Taxation.consumeWhere" = "Möchtest du deinen Einkauf";
 
 "Snabble.Taxation.pleaseChoose" = "Bitte wählen";
+
+"Snabble.Textfield.HidePassword.Accessibility" = "Passwort verbergen";
+
+"Snabble.Textfield.ShowPassword.Accessibility" = "Passwort anzeigen";
 
 "Snabble.TWINT.payNow" = "Jetzt mit TWINT bezahlen";
 

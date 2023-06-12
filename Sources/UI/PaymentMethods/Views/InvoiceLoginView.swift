@@ -110,9 +110,11 @@ public struct InvoiceDetailView: View {
     @ObservedObject var model: InvoiceLoginProcessor
     @Environment(\.presentationMode) var presentationMode
     let domain = "Snabble.Payment.ExternalBilling"
-    
+    @StateObject private var loginModel: InvoiceLoginModel
+
     public init(model: InvoiceLoginProcessor) {
         self.model = model
+        self._loginModel = StateObject(wrappedValue: model.invoiceLoginModel)
     }
         
     public var body: some View {
@@ -120,10 +122,10 @@ public struct InvoiceDetailView: View {
             Section(
                 content: {
                     HStack {
-                        if let image = model.invoiceLoginModel.image {
+                        if let image = loginModel.image {
                             image
                         }
-                        Text(model.invoiceLoginModel.username)
+                        Text(loginModel.username)
                     }
                 },
                 header: {
@@ -131,7 +133,7 @@ public struct InvoiceDetailView: View {
                 })
             .textCase(nil)
         }
-        .onChange(of: model.invoiceLoginModel.isLoggedIn) { loggedIn in
+        .onChange(of: loginModel.isLoggedIn) { loggedIn in
             if !loggedIn {
                 presentationMode.wrappedValue.dismiss()
             }
@@ -139,7 +141,7 @@ public struct InvoiceDetailView: View {
         .toolbar {
             ToolbarItem(placement: .destructiveAction) {
                 Button(action: {
-                    model.invoiceLoginModel.actionPublisher.send(["action": LoginViewModel.Action.remove.rawValue])
+                    loginModel.actionPublisher.send(["action": LoginViewModel.Action.remove.rawValue])
                 }) {
                     Image(systemName: "trash")
                 }
@@ -150,11 +152,14 @@ public struct InvoiceDetailView: View {
 
 public struct InvoiceView: View {
     @ObservedObject var loginProcessor: InvoiceLoginProcessor
+    @StateObject private var loginModel: InvoiceLoginModel
 
     @State private var showDetail = false
     
     init(model: InvoiceLoginProcessor) {
         self.loginProcessor = model
+        self._loginModel = StateObject(wrappedValue: model.invoiceLoginModel)
+
     }
     @ViewBuilder
     var content: some View {
@@ -167,14 +172,14 @@ public struct InvoiceView: View {
 
     public var body: some View {
         content
-            .onChange(of: self.loginProcessor.invoiceLoginModel.isLoggedIn) { loggedIn in
+            .onChange(of: loginModel.isLoggedIn) { loggedIn in
                 showDetail = loggedIn
             }
-            .onChange(of: self.loginProcessor.invoiceLoginModel.isSaved) { saved in
+            .onChange(of: loginModel.isSaved) { saved in
                 showDetail = saved
             }
             .onAppear {
-                if self.loginProcessor.invoiceLoginModel.paymentUsername != nil {
+                if loginModel.paymentUsername != nil {
                     showDetail = true
                 }
             }

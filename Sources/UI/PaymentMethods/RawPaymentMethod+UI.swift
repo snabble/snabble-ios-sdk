@@ -32,7 +32,7 @@ extension RawPaymentMethod {
         case .qrCodePOS, .qrCodeOffline:
             return Asset.localizedString(forKey: "Snabble.Payment.payAtCashDesk")
         case .externalBilling:
-            return Asset.localizedString(forKey: "Snabble.Payment.payViaInvoice")
+            return Asset.localizedString(forKey: "Snabble.Payment.ExternalBilling.title")
         case .customerCardPOS:
             return Asset.localizedString(forKey: "Snabble.Payment.payUsingCustomerCard")
         case .applePay:
