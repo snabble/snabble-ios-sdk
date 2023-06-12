@@ -13,7 +13,7 @@ public protocol Loginable {
     var password: String { get set }
     
     /// return true if username and password successfully passed validation
-    var isValid: Bool { get }
+    var isValid: Bool { get set }
 
     /// set an individual error message, if login fails
     var errorMessage: String { get set }

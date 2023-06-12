@@ -21,17 +21,16 @@ extension InvoiceLoginModel {
 public struct InvoiceLoginView: View {
     @ObservedObject var model: InvoiceLoginProcessor
     @Environment(\.presentationMode) var presentationMode
+    @State private var canLogin = false
+    @StateObject private var loginModel: InvoiceLoginModel
 
     let domain = "Snabble.Payment.ExternalBilling"
     
     public init(model: InvoiceLoginProcessor) {
         self.model = model
+        self._loginModel = StateObject(wrappedValue: model.invoiceLoginModel)
     }
-    
-    private var isDisabled: Bool {
-        return !model.invoiceLoginModel.isValid || model.isWaiting
-    }
-    
+        
     @ViewBuilder
     var button: some View {
         Button(action: {
@@ -46,12 +45,12 @@ public struct InvoiceLoginView: View {
             .frame(maxWidth: .infinity)
         }
         .buttonStyle(AccentButtonStyle())
-        .disabled(isDisabled)
-        .opacity(isDisabled ? 0.5 : 1.0)
+        .disabled(!canLogin)
+        .opacity(!canLogin ? 0.5 : 1.0)
     }
     
     private func login() {
-        guard model.invoiceLoginModel.isValid else {
+        guard loginModel.isValid else {
             return
         }
         hideKeyboard()
@@ -62,9 +61,9 @@ public struct InvoiceLoginView: View {
         Form {
             Section(
                 content: {
-                    TextField(LoginStrings.username.localizedString(domain), text: $model.invoiceLoginModel.username)
+                    TextField(LoginStrings.username.localizedString(domain), text: $loginModel.username)
                         .keyboardType(.emailAddress)
-                    SecureField(LoginStrings.password.localizedString(domain), text: $model.invoiceLoginModel.password) {
+                    SecureField(LoginStrings.password.localizedString(domain), text: $loginModel.password) {
                         login()
                     }
                     .keyboardType(.default)
@@ -78,20 +77,27 @@ public struct InvoiceLoginView: View {
                     button
                 },
                 footer: {
-                    if !model.invoiceLoginModel.errorMessage.isEmpty {
-                        Text(model.invoiceLoginModel.errorMessage)
+                    if !loginModel.errorMessage.isEmpty {
+                        Text(loginModel.errorMessage)
                             .font(.footnote)
                             .foregroundColor(.red)
                     }
                 })
         }
-        .onChange(of: model.invoiceLoginModel.isLoggedIn) { loggedIn in
-            if loggedIn, let info = model.invoiceLoginModel.loginInfo {
+        .onChange(of: loginModel.isLoggedIn) { loggedIn in
+            if loggedIn, let info = loginModel.loginInfo {
                 print("user is logged in \(info))")
-                model.invoiceLoginModel.actionPublisher.send(["action": LoginViewModel.Action.save.rawValue])
+                loginModel.actionPublisher.send(["action": LoginViewModel.Action.save.rawValue])
             }
         }
-        .onChange(of: model.invoiceLoginModel.isSaved) { isSaved in
+        .onChange(of: loginModel.isValid) { isValid in
+            if model.isWaiting {
+                canLogin = false
+            } else {
+                canLogin = isValid
+            }
+        }
+        .onChange(of: loginModel.isSaved) { isSaved in
             if isSaved {
                 print("invoiceLoginModel saved.")
                 presentationMode.wrappedValue.dismiss()
@@ -144,13 +150,11 @@ public struct InvoiceDetailView: View {
 
 public struct InvoiceView: View {
     @ObservedObject var loginProcessor: InvoiceLoginProcessor
-    @ObservedObject var loginModel: InvoiceLoginModel
 
     @State private var showDetail = false
     
     init(model: InvoiceLoginProcessor) {
         self.loginProcessor = model
-        self.loginModel = model.invoiceLoginModel
     }
     @ViewBuilder
     var content: some View {
@@ -163,14 +167,14 @@ public struct InvoiceView: View {
 
     public var body: some View {
         content
-            .onChange(of: self.loginModel.isLoggedIn) { loggedIn in
+            .onChange(of: self.loginProcessor.invoiceLoginModel.isLoggedIn) { loggedIn in
                 showDetail = loggedIn
             }
-            .onChange(of: self.loginModel.isSaved) { saved in
+            .onChange(of: self.loginProcessor.invoiceLoginModel.isSaved) { saved in
                 showDetail = saved
             }
             .onAppear {
-                if self.loginModel.paymentUsername != nil {
+                if self.loginProcessor.invoiceLoginModel.paymentUsername != nil {
                     showDetail = true
                 }
             }
