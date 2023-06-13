@@ -47,6 +47,7 @@ public enum AcceptedOriginType: String, Codable {
     case payonePseudoCardPAN
     case payoneSepaData
     case leinweberCustomerID
+    case contactPersonCredentials
 }
 
 public enum PaymentState: String, Decodable, UnknownCaseRepresentable {
