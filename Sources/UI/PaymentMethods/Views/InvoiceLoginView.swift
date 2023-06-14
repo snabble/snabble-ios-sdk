@@ -107,14 +107,14 @@ public struct InvoiceLoginView: View {
 }
 
 public struct InvoiceDetailView: View {
-    @ObservedObject var model: InvoiceLoginProcessor
+    @ObservedObject private var loginModel: InvoiceLoginModel
+//    @ObservedObject var model: InvoiceLoginProcessor
     @Environment(\.presentationMode) var presentationMode
     let domain = "Snabble.Payment.ExternalBilling"
-    @StateObject private var loginModel: InvoiceLoginModel
 
-    public init(model: InvoiceLoginProcessor) {
-        self.model = model
-        self._loginModel = StateObject(wrappedValue: model.invoiceLoginModel)
+    public init(model: InvoiceLoginModel) {
+        self.loginModel = model
+//        self._loginModel = StateObject(wrappedValue: model.invoiceLoginModel)
     }
         
     public var body: some View {
@@ -164,7 +164,7 @@ public struct InvoiceView: View {
     @ViewBuilder
     var content: some View {
         if showDetail {
-            InvoiceDetailView(model: self.loginProcessor)
+            InvoiceDetailView(model: loginModel)
         } else {
             InvoiceLoginView(model: self.loginProcessor)
         }

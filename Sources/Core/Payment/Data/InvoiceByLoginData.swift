@@ -23,8 +23,6 @@ public struct InvoiceByLoginData: Codable, EncryptedPaymentData, Equatable {
     public let contactPersonID: String
     
     public let projectId: Identifier<Project>
-
-    public var billingInfo: String?
     
     enum CodingKeys: String, CodingKey {
         case encryptedPaymentData, serial, displayName, username, contactPersonID, projectId
@@ -64,13 +62,5 @@ public struct InvoiceByLoginData: Codable, EncryptedPaymentData, Equatable {
         self.username = try container.decode(String.self, forKey: .username)
         self.contactPersonID = try container.decode(String.self, forKey: .contactPersonID)
         self.projectId = try container.decode(Identifier<Project>.self, forKey: .projectId)
-    }
-    
-    var additionalData: [String: String] {
-        guard let billingInfo = self.billingInfo else {
-            return [:]
-        }
-
-        return ["subject": billingInfo]
     }
 }

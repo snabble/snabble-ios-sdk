@@ -67,9 +67,13 @@ public final class InvoiceLoginModel: LoginViewModel {
                 self.isValid = true
                 self.isLoggedIn = true
             } else if self.loginInfo == nil {
+                if self.loginInfo?.username == InvoiceLoginInfo.invalid.username {
+                    self.errorMessage = "Snabble.Payment.ExternalBilling.Error.wrongCredentials"
+                }
                 self.isLoggedIn = false
                 self.isValid = false
                 self.isSaved = false
+
             }
        }
     }

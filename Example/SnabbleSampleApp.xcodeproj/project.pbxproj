@@ -226,7 +226,6 @@
 			);
 			dependencies = (
 				E1BFF2C729E6AB4100E6AE37 /* PBXTargetDependency */,
-				E16C0F0329DF018D00C8515F /* PBXTargetDependency */,
 			);
 			name = SnabbleSampleApp;
 			packageProductDependencies = (
@@ -366,10 +365,6 @@
 			isa = PBXTargetDependency;
 			target = 607FACCF1AFB9204008FA782 /* SnabbleSampleApp */;
 			targetProxy = E131CF1B28A3D45C00A844E1 /* PBXContainerItemProxy */;
-		};
-		E16C0F0329DF018D00C8515F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = E16C0F0229DF018D00C8515F /* SwiftLintPlugin */;
 		};
 		E1BFF2C729E6AB4100E6AE37 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -668,10 +663,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E16C0F0229DF018D00C8515F /* SwiftLintPlugin */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = "plugin:SwiftLintPlugin";
-		};
 		E1AABF0729E53A2D00D83490 /* Snabble */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Snabble;
