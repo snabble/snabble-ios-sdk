@@ -20,15 +20,16 @@ extension InvoiceLoginModel {
 
 public struct InvoiceLoginView: View {
     @ObservedObject var model: InvoiceLoginProcessor
-    @Environment(\.presentationMode) var presentationMode
+    
     @State private var canLogin = false
-    @StateObject private var loginModel: InvoiceLoginModel
+    @State private var errorMessage = ""
+    
+    @Environment(\.presentationMode) var presentationMode
 
     let domain = "Snabble.Payment.ExternalBilling"
     
     public init(model: InvoiceLoginProcessor) {
         self.model = model
-        self._loginModel = StateObject(wrappedValue: model.invoiceLoginModel)
     }
         
     @ViewBuilder
@@ -50,54 +51,69 @@ public struct InvoiceLoginView: View {
     }
     
     private func login() {
-        guard loginModel.isValid else {
+        guard model.invoiceLoginModel.isValid else {
             return
         }
         hideKeyboard()
         model.invoiceLoginModel.actionPublisher.send(["action": LoginViewModel.Action.login.rawValue])
     }
     
+    @ViewBuilder
+    var footerView: some View {
+        if !model.invoiceLoginModel.errorMessage.isEmpty /* !errorMessage.isEmpty*/ {
+            Label(model.invoiceLoginModel.errorMessage, systemImage: "xmark.circle.fill")
+                .font(.footnote)
+                .foregroundColor(.red)
+        }
+    }
+
     public var body: some View {
         Form {
             Section(
                 content: {
-                    TextField(LoginStrings.username.localizedString(domain), text: $loginModel.username)
+                    TextField(LoginStrings.username.localizedString(domain), text:  $model.invoiceLoginModel.username)
                         .keyboardType(.emailAddress)
-                    SecureField(LoginStrings.password.localizedString(domain), text: $loginModel.password) {
+                    SecureField(LoginStrings.password.localizedString(domain), text:  $model.invoiceLoginModel.password) {
                         login()
                     }
                     .keyboardType(.default)
                 },
                 header: {
                     Text(LoginStrings.info.localizedString(domain))
-                })
+                }
+            )
             .textCase(nil)
             Section(
                 content: {
                     button
                 },
                 footer: {
-                    if !loginModel.errorMessage.isEmpty {
-                        Text(loginModel.errorMessage)
+                    if !model.invoiceLoginModel.errorMessage.isEmpty {
+                        Label( model.invoiceLoginModel.errorMessage, systemImage: "xmark.circle.fill")
                             .font(.footnote)
                             .foregroundColor(.red)
                     }
-                })
+                } )
         }
-        .onChange(of: loginModel.isLoggedIn) { loggedIn in
-            if loggedIn, let info = loginModel.loginInfo {
-                print("user is logged in \(info))")
-                loginModel.actionPublisher.send(["action": LoginViewModel.Action.save.rawValue])
+        .onChange(of: model.loginModel?.errorMessage) { message in
+            if let string = message, !string.isEmpty {
+                errorMessage = string
             }
         }
-        .onChange(of: loginModel.isValid) { isValid in
+        .onChange(of:  model.invoiceLoginModel.isLoggedIn) { loggedIn in
+            if loggedIn, let info =  model.invoiceLoginModel.loginInfo {
+                print("user is logged in \(info))")
+                model.invoiceLoginModel.actionPublisher.send(["action": LoginViewModel.Action.save.rawValue])
+            }
+        }
+        .onChange(of:  model.invoiceLoginModel.isValid) { isValid in
             if model.isWaiting {
                 canLogin = false
             } else {
                 canLogin = isValid
             }
         }
-        .onChange(of: loginModel.isSaved) { isSaved in
+        .onChange(of:  model.invoiceLoginModel.isSaved) { isSaved in
             if isSaved {
                 print("invoiceLoginModel saved.")
                 presentationMode.wrappedValue.dismiss()
@@ -108,13 +124,11 @@ public struct InvoiceLoginView: View {
 
 public struct InvoiceDetailView: View {
     @ObservedObject private var loginModel: InvoiceLoginModel
-//    @ObservedObject var model: InvoiceLoginProcessor
     @Environment(\.presentationMode) var presentationMode
     let domain = "Snabble.Payment.ExternalBilling"
 
     public init(model: InvoiceLoginModel) {
         self.loginModel = model
-//        self._loginModel = StateObject(wrappedValue: model.invoiceLoginModel)
     }
         
     public var body: some View {
@@ -163,7 +177,7 @@ public struct InvoiceView: View {
     }
     @ViewBuilder
     var content: some View {
-        if showDetail {
+        if loginModel.paymentUsername != nil {
             InvoiceDetailView(model: loginModel)
         } else {
             InvoiceLoginView(model: self.loginProcessor)
@@ -172,12 +186,6 @@ public struct InvoiceView: View {
 
     public var body: some View {
         content
-            .onChange(of: loginModel.isLoggedIn) { loggedIn in
-                showDetail = loggedIn
-            }
-            .onChange(of: loginModel.isSaved) { saved in
-                showDetail = saved
-            }
             .onAppear {
                 if loginModel.paymentUsername != nil {
                     showDetail = true

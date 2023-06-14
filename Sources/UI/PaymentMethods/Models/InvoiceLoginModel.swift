@@ -21,6 +21,12 @@ public struct InvoiceLoginInfo: Decodable {
         }
         return username == self.username
     }
+    public static func isValid(loginInfo: InvoiceLoginInfo?) -> Bool {
+        guard let info = loginInfo else {
+            return false
+        }
+        return info.isValid(username: info.username)
+    }
 }
 
 public struct InvoiceLoginCredentials: Encodable {
@@ -66,12 +72,11 @@ public final class InvoiceLoginModel: LoginViewModel {
             if let info = self.loginInfo, info.isValid(username: self.username) {
                 self.isValid = true
                 self.isLoggedIn = true
-            } else if self.loginInfo == nil {
-                if self.loginInfo?.username == InvoiceLoginInfo.invalid.username {
+            } else if InvoiceLoginInfo.isValid(loginInfo: self.loginInfo) == false {
+                if let info = self.loginInfo, info.username == InvoiceLoginInfo.invalid.username {
                     self.errorMessage = "Snabble.Payment.ExternalBilling.Error.wrongCredentials"
                 }
                 self.isLoggedIn = false
-                self.isValid = false
                 self.isSaved = false
 
             }
@@ -145,7 +150,12 @@ extension InvoiceLoginModel {
 }
 
 /// CustomerCardLoginProcessor provides the logic to get customer card info using a login service
-public final class InvoiceLoginProcessor: LoginProcessor, ObservableObject {
+public final class InvoiceLoginProcessor: LoginProcessing, ObservableObject {
+    
+    var loginModel: Loginable? {
+        return self.invoiceLoginModel
+    }
+        
     @Published public var invoiceLoginModel: InvoiceLoginModel
     @Published public var isWaiting = false
     
@@ -153,7 +163,6 @@ public final class InvoiceLoginProcessor: LoginProcessor, ObservableObject {
 
     init(invoiceLoginModel: InvoiceLoginModel) {
         self.invoiceLoginModel = invoiceLoginModel
-        super.init(loginModel: invoiceLoginModel)
     }
     
     private var loginPublisher: Future<InvoiceLoginInfo, LoginError> {
@@ -175,8 +184,10 @@ public final class InvoiceLoginProcessor: LoginProcessor, ObservableObject {
         }
     }
     
-    public override func login() {
+    public func login() {
         isWaiting = true
+        self.invoiceLoginModel.errorMessage = ""
+        
         loginPublisher
             .receive(on: RunLoop.main)
             .replaceError(with: InvoiceLoginInfo.invalid)
@@ -189,9 +200,10 @@ public final class InvoiceLoginProcessor: LoginProcessor, ObservableObject {
             .store(in: &cancellables)
     }
     
-    public override func remove() {
+    public func remove() {
         invoiceLoginModel.reset()
     }
+    
     public func save() async throws {
         try await invoiceLoginModel.save()
     }

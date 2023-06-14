@@ -9,26 +9,9 @@ import Foundation
 import Combine
 
 protocol LoginProcessing {
-    var loginModel: Loginable? { get set }
+    var loginModel: Loginable? { get }
 
     func login()
-    func save()
+    func save() async throws
     func remove()
-}
-
-open class LoginProcessor: LoginProcessing {
-    
-    public var loginModel: Loginable?
-
-    public init(loginModel: Loginable? = nil) {
-        self.loginModel = loginModel
-    }
-
-    /// should be overwritten by subclass
-    open func login() {
-    }
-    open func save() {
-    }
-    open func remove() {
-    }
 }
