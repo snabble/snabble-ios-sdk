@@ -18,7 +18,7 @@ public protocol InvoiceViewControllerDelegate: AnyObject {
     func invoiceViewControllerDidEnd(_ viewController: InvoiceViewController, userInfo: [String: Any]?)
 }
 
-/// A UIViewController wrapping SwiftUI's DynamicStackView
+/// A UIViewController wrapping SwiftUI's InvoiceView
 open class InvoiceViewController: UIHostingController<InvoiceView> {
     public weak var delegate: InvoiceViewControllerDelegate?
 
@@ -70,6 +70,17 @@ extension InvoiceViewController: InvoiceViewControllerDelegate {
         }
     }
 
+    private func deleteTapped(model: InvoiceLoginProcessor) {
+        let alert = UIAlertController(title: nil, message: Asset.localizedString(forKey: "Snabble.Payment.Delete.message"), preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.yes"), style: .destructive) { _ in
+            self.remove(model: model)
+            self.navigationController?.popViewController(animated: true)
+        })
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.no"), style: .cancel, handler: nil))
+
+        self.present(alert, animated: true)
+    }
+
     public func invoiceViewControllerDidEnd(_ viewController: InvoiceViewController, userInfo: [String: Any]?) {
         if let action = userInfo?["action"] as? String {
             switch action {
@@ -80,7 +91,7 @@ extension InvoiceViewController: InvoiceViewControllerDelegate {
                 self.save(model: viewController.viewModel)
                 
             case LoginViewModel.Action.remove.rawValue:
-                self.remove(model: viewController.viewModel)
+                deleteTapped(model: viewController.viewModel)
                 
             default:
                 print("unhandled action: \(action)")
