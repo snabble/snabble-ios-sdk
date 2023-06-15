@@ -52,7 +52,7 @@ private struct TokenData {
     }
 }
 
-final class TokenRegistry {
+public final class TokenRegistry {
     private let appId: String
     private let secret: String
 
@@ -77,7 +77,7 @@ final class TokenRegistry {
     }
 
     /// get the JWT for `project`, retrieving a new one if no token existed or it was expired
-    func getToken(for project: Project, completion: @escaping (String?) -> Void) {
+    public func getToken(for project: Project, completion: @escaping (String?) -> Void) {
         if let jwt = self.token(for: project.id) {
             return completion(jwt)
         }
@@ -87,8 +87,8 @@ final class TokenRegistry {
 
     /// get the JWT for `project` if it exists and isn't expired.
     /// this method does NOT fetch new tokens
-    func getExistingToken(for project: Project, completion: @escaping (String?) -> Void) {
-        completion(self.token(for: project.id))
+    public func getExistingToken(for project: Project) -> String? {
+        token(for: project.id)
     }
 
     private func performTokenRetrieval(for projectId: Identifier<Project>, _ completion: @escaping (String?) -> Void) {
