@@ -141,7 +141,7 @@ public class Snabble {
     let config: Config
 
     /// Will be created in setup(config:, completion:)
-    let tokenRegistry: TokenRegistry
+    public let tokenRegistry: TokenRegistry
 
     private(set) var metadata = Metadata.none {
         didSet {

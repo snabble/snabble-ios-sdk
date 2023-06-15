@@ -136,32 +136,29 @@ extension AppEvent {
         guard let url = Snabble.shared.urlFor(self.project.links.appEvents.href) else {
             return
         }
-
-        Snabble.shared.tokenRegistry.getExistingToken(for: self.project) { token in
-            guard let token = token else {
-                return
-            }
-
-            var request = Snabble.request(url: url, json: true)
-            request.httpMethod = "POST"
-
-            do {
-                let encoder = JSONEncoder()
-                encoder.dateEncodingStrategy = .iso8601
-                request.httpBody = try encoder.encode(self)
-                request.addValue(token, forHTTPHeaderField: "Client-Token")
-            } catch {
-                Log.error("\(error)")
-            }
-
-            // use a system default session here so we can still log pinning errors
-            let task = URLSession.shared.dataTask(with: request) { _, _, error in
-                if let error = error {
-                    Log.error("posting event failed: \(error)")
-                }
-            }
-            task.resume()
+        guard let token = Snabble.shared.tokenRegistry.getExistingToken(for: self.project) else {
+            return
         }
+
+        var request = Snabble.request(url: url, json: true)
+        request.httpMethod = "POST"
+
+        do {
+            let encoder = JSONEncoder()
+            encoder.dateEncodingStrategy = .iso8601
+            request.httpBody = try encoder.encode(self)
+            request.addValue(token, forHTTPHeaderField: "Client-Token")
+        } catch {
+            Log.error("\(error)")
+        }
+
+        // use a system default session here so we can still log pinning errors
+        let task = URLSession.shared.dataTask(with: request) { _, _, error in
+            if let error = error {
+                Log.error("posting event failed: \(error)")
+            }
+        }
+        task.resume()
     }
 }
 
