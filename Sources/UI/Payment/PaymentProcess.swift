@@ -169,13 +169,6 @@ public final class PaymentProcess {
                     let amex = PaymentMethod.americanExpress(data)
                     results.append(amex)
                 }
-            case .leinweberCustomerNumber:
-                let leinweber = methods.first {
-                    $0.method == .externalBilling && $0.acceptedOriginTypes?.contains(.leinweberCustomerID) == true
-                }
-                if leinweber != nil {
-                    results.append(PaymentMethod.externalBilling(detail.data))
-                }
             case .invoiceByLogin:
                 let invoice = methods.first {
                     $0.method == .externalBilling && $0.acceptedOriginTypes?.contains(.contactPersonCredentials) == true

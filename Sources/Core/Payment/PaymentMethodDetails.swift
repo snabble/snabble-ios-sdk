@@ -37,7 +37,6 @@ public enum PaymentMethodUserData: Codable, Equatable {
     case datatransCardAlias(DatatransCreditCardData)
     case payoneCreditCard(PayoneCreditCardData)
     case payoneSepa(PayoneSepaData)
-    case leinweberCustomerNumber(LeinweberCustomerData)
     case invoiceByLogin(InvoiceByLoginData)
 
     public enum CodingKeys: String, CodingKey {
@@ -48,7 +47,6 @@ public enum PaymentMethodUserData: Codable, Equatable {
         case datatransAlias, datatransCardAlias
         case payoneCreditCard
         case payoneSepa
-        case leinweberCustomerNumber
         case invoiceByLogin
         
         // old and bad name - only used in the migration code below
@@ -65,7 +63,6 @@ public enum PaymentMethodUserData: Codable, Equatable {
         case .datatransCardAlias(let data): return data
         case .payoneCreditCard(let data): return data
         case .payoneSepa(let data): return data
-        case .leinweberCustomerNumber(let data): return data
         case .invoiceByLogin(let data): return data
         }
     }
@@ -98,8 +95,6 @@ public enum PaymentMethodUserData: Codable, Equatable {
             self = .payoneCreditCard(payoneData)
         } else if let payoneSepa = try container.decodeIfPresent(PayoneSepaData.self, forKey: .payoneSepa) {
             self = .payoneSepa(payoneSepa)
-       } else if let leinweberData = try container.decodeIfPresent(LeinweberCustomerData.self, forKey: .leinweberCustomerNumber) {
-            self = .leinweberCustomerNumber(leinweberData)
        } else if let invoiceData = try container.decodeIfPresent(InvoiceByLoginData.self, forKey: .invoiceByLogin) {
             self = .invoiceByLogin(invoiceData)
         } else {
@@ -118,7 +113,6 @@ public enum PaymentMethodUserData: Codable, Equatable {
         case .datatransCardAlias(let data): try container.encode(data, forKey: .datatransCardAlias)
         case .payoneCreditCard(let data): try container.encode(data, forKey: .payoneCreditCard)
         case .payoneSepa(let data): try container.encode(data, forKey: .payoneSepa)
-        case .leinweberCustomerNumber(let data): try container.encode(data, forKey: .leinweberCustomerNumber)
         case .invoiceByLogin(let data): try container.encode(data, forKey: .invoiceByLogin)
         }
     }
@@ -195,11 +189,6 @@ public struct PaymentMethodDetail: Equatable {
         self.methodData = PaymentMethodUserData.tegutEmployeeCard(tegutData)
     }
 
-    public init(_ leinweberData: LeinweberCustomerData) {
-        self.id = UUID()
-        self.methodData = PaymentMethodUserData.leinweberCustomerNumber(leinweberData)
-    }
-
     public init(_ paydirektData: PaydirektData) {
         self.id = UUID()
         self.methodData = PaymentMethodUserData.paydirektAuthorization(paydirektData)
@@ -257,7 +246,6 @@ public struct PaymentMethodDetail: Equatable {
         switch self.methodData {
         case .sepa, .payoneSepa: return .deDirectDebit
         case .tegutEmployeeCard,
-                .leinweberCustomerNumber,
                 .invoiceByLogin:
             return .externalBilling
         case .paydirektAuthorization:
@@ -296,7 +284,7 @@ public struct PaymentMethodDetail: Equatable {
             return payoneSepaData.projectId
         case .invoiceByLogin(let invoiceData):
             return invoiceData.projectId
-        case .sepa, .tegutEmployeeCard, .paydirektAuthorization, .leinweberCustomerNumber:
+        case .sepa, .tegutEmployeeCard, .paydirektAuthorization:
             return nil
         }
     }
