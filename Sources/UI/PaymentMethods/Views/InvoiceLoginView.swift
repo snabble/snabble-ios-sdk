@@ -141,6 +141,7 @@ public struct InvoiceDetailView: View {
                 }) {
                     Image(systemName: "trash")
                 }
+                .foregroundColor(Color.accent())
             }
         }
     }
