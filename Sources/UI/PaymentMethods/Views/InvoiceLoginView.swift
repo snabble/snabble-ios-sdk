@@ -97,12 +97,6 @@ public struct InvoiceLoginView: View {
                     }
                 } )
         }
-        .onChange(of:  loginModel.isLoggedIn) { loggedIn in
-            if loggedIn, let info =  loginModel.loginInfo {
-                print("user is logged in \(info))")
-                loginModel.actionPublisher.send(["action": LoginViewModel.Action.save.rawValue])
-            }
-        }
         .onChange(of:  loginModel.isValid) { isValid in
             if model.isWaiting {
                 canLogin = false
@@ -141,11 +135,6 @@ public struct InvoiceDetailView: View {
                 })
             .textCase(nil)
         }
-        .onChange(of: loginModel.isLoggedIn) { loggedIn in
-            if !loggedIn {
-                presentationMode.wrappedValue.dismiss()
-            }
-        }
         .toolbar {
             ToolbarItem(placement: .destructiveAction) {
                 Button(action: {
@@ -161,8 +150,6 @@ public struct InvoiceDetailView: View {
 public struct InvoiceView: View {
     @ObservedObject var loginProcessor: InvoiceLoginProcessor
     @StateObject private var loginModel: InvoiceLoginModel
-
-    @State private var showDetail = false
     
     init(model: InvoiceLoginProcessor) {
         self.loginProcessor = model
@@ -171,7 +158,7 @@ public struct InvoiceView: View {
     }
     @ViewBuilder
     var content: some View {
-        if loginModel.paymentUsername != nil {
+        if loginModel.paymentUsername != nil || loginModel.isLoggedIn {
             InvoiceDetailView(model: loginModel)
         } else {
             InvoiceLoginView(model: self.loginProcessor)
@@ -180,9 +167,10 @@ public struct InvoiceView: View {
 
     public var body: some View {
         content
-            .onAppear {
-                if loginModel.paymentUsername != nil {
-                    showDetail = true
+            .onChange(of:  loginModel.isLoggedIn) { loggedIn in
+                if loggedIn, let info =  loginModel.loginInfo {
+                    print("user is logged in \(info))")
+                    loginModel.actionPublisher.send(["action": LoginViewModel.Action.save.rawValue])
                 }
             }
             .navigationTitle(Asset.localizedString(forKey: "Snabble.Payment.ExternalBilling.title"))

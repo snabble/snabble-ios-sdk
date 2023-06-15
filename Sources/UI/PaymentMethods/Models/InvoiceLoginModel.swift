@@ -10,7 +10,7 @@ import Combine
 import SnabbleCore
 
 public struct InvoiceLoginInfo: Decodable {
-    public static let invalid = InvoiceLoginInfo(username: "#$§*!", contactPersonID: "")
+    public static let invalid = InvoiceLoginInfo(username: "👻", contactPersonID: "")
     
     public let username: String
     public let contactPersonID: String
@@ -35,14 +35,16 @@ public struct InvoiceLoginCredentials: Encodable {
 }
 
 extension Project {
+    public var externalBillingAuthURLString: String {
+        return "\(Snabble.shared.environment.urlString)/\(self.id)/external-billing/credentials/auth"
+    }
+
     public func getUserLoginInfo(with credentials: InvoiceLoginCredentials,
                                  completion: @escaping (Result<InvoiceLoginInfo, SnabbleError>) -> Void) {
-        let url = "https://api.snabble-testing.io/\(self.id)/external-billing/credentials/auth"
-        
         do {
             let data = try JSONEncoder().encode(credentials)
 
-            self.request(.post, url, body: data, timeout: 2) { request in
+            self.request(.post, externalBillingAuthURLString, body: data, timeout: 2) { request in
                 guard let request = request else {
                     return completion(.failure(SnabbleError.noRequest))
                 }
@@ -58,7 +60,6 @@ extension Project {
 
 public final class InvoiceLoginModel: LoginViewModel {
     @Published public var isLoggedIn = false
-    @Published public var isSaved = false
 
     private var paymentDetail: PaymentMethodDetail?
     
@@ -70,15 +71,12 @@ public final class InvoiceLoginModel: LoginViewModel {
         }
         didSet {
             if let info = self.loginInfo, info.isValid(username: self.username) {
-                self.isValid = true
                 self.isLoggedIn = true
             } else if InvoiceLoginInfo.isValid(loginInfo: self.loginInfo) == false {
                 if let info = self.loginInfo, info.username == InvoiceLoginInfo.invalid.username {
                     self.errorMessage = "Snabble.Payment.ExternalBilling.Error.wrongCredentials"
                 }
                 self.isLoggedIn = false
-                self.isSaved = false
-
             }
        }
     }
@@ -120,9 +118,6 @@ public final class InvoiceLoginModel: LoginViewModel {
             PaymentMethodDetails.save(detail)
 
             paymentDetail = detail
-            DispatchQueue.main.async {
-                self.isSaved = true
-            }
         } else {
             throw PaymentMethodError.encryptionError
         }
@@ -149,7 +144,7 @@ extension InvoiceLoginModel {
     }
 }
 
-/// CustomerCardLoginProcessor provides the logic to get customer card info using a login service
+/// InvoiceLoginProcessor provides the logic to get customer card info using a login service
 public final class InvoiceLoginProcessor: LoginProcessing, ObservableObject {
     
     var loginModel: Loginable? {
