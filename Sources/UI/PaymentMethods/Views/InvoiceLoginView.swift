@@ -20,9 +20,9 @@ extension InvoiceLoginModel {
 
 public struct InvoiceLoginView: View {
     @ObservedObject var model: InvoiceLoginProcessor
-    
+    @StateObject private var loginModel: InvoiceLoginModel
+
     @State private var canLogin = false
-    @State private var errorMessage = ""
     
     @Environment(\.presentationMode) var presentationMode
 
@@ -30,8 +30,10 @@ public struct InvoiceLoginView: View {
     
     public init(model: InvoiceLoginProcessor) {
         self.model = model
+        self._loginModel = StateObject(wrappedValue: model.invoiceLoginModel)
     }
         
+
     @ViewBuilder
     var button: some View {
         Button(action: {
@@ -51,17 +53,17 @@ public struct InvoiceLoginView: View {
     }
     
     private func login() {
-        guard model.invoiceLoginModel.isValid else {
+        guard loginModel.isValid else {
             return
         }
         hideKeyboard()
-        model.invoiceLoginModel.actionPublisher.send(["action": LoginViewModel.Action.login.rawValue])
+        loginModel.actionPublisher.send(["action": LoginViewModel.Action.login.rawValue])
     }
     
     @ViewBuilder
     var footerView: some View {
-        if !model.invoiceLoginModel.errorMessage.isEmpty /* !errorMessage.isEmpty*/ {
-            Label(model.invoiceLoginModel.errorMessage, systemImage: "xmark.circle.fill")
+        if !loginModel.errorMessage.isEmpty {
+            Label(loginModel.errorMessage, systemImage: "xmark.circle.fill")
                 .font(.footnote)
                 .foregroundColor(.red)
         }
@@ -71,9 +73,9 @@ public struct InvoiceLoginView: View {
         Form {
             Section(
                 content: {
-                    TextField(LoginStrings.username.localizedString(domain), text:  $model.invoiceLoginModel.username)
+                    TextField(LoginStrings.username.localizedString(domain), text:  $loginModel.username)
                         .keyboardType(.emailAddress)
-                    SecureField(LoginStrings.password.localizedString(domain), text:  $model.invoiceLoginModel.password) {
+                    SecureField(LoginStrings.password.localizedString(domain), text:  $loginModel.password) {
                         login()
                     }
                     .keyboardType(.default)
@@ -88,35 +90,24 @@ public struct InvoiceLoginView: View {
                     button
                 },
                 footer: {
-                    if !model.invoiceLoginModel.errorMessage.isEmpty {
-                        Label( model.invoiceLoginModel.errorMessage, systemImage: "xmark.circle.fill")
+                    if !loginModel.errorMessage.isEmpty {
+                        Text(keyed: loginModel.errorMessage)
                             .font(.footnote)
                             .foregroundColor(.red)
                     }
                 } )
         }
-        .onChange(of: model.loginModel?.errorMessage) { message in
-            if let string = message, !string.isEmpty {
-                errorMessage = string
-            }
-        }
-        .onChange(of:  model.invoiceLoginModel.isLoggedIn) { loggedIn in
-            if loggedIn, let info =  model.invoiceLoginModel.loginInfo {
+        .onChange(of:  loginModel.isLoggedIn) { loggedIn in
+            if loggedIn, let info =  loginModel.loginInfo {
                 print("user is logged in \(info))")
-                model.invoiceLoginModel.actionPublisher.send(["action": LoginViewModel.Action.save.rawValue])
+                loginModel.actionPublisher.send(["action": LoginViewModel.Action.save.rawValue])
             }
         }
-        .onChange(of:  model.invoiceLoginModel.isValid) { isValid in
+        .onChange(of:  loginModel.isValid) { isValid in
             if model.isWaiting {
                 canLogin = false
             } else {
                 canLogin = isValid
-            }
-        }
-        .onChange(of:  model.invoiceLoginModel.isSaved) { isSaved in
-            if isSaved {
-                print("invoiceLoginModel saved.")
-                presentationMode.wrappedValue.dismiss()
             }
         }
     }
@@ -144,6 +135,9 @@ public struct InvoiceDetailView: View {
                 },
                 header: {
                     Text(LoginStrings.username.localizedString(domain))
+                },
+                footer: {
+                    Text(keyed: "Snabble.Payment.ExternalBilling.hint")
                 })
             .textCase(nil)
         }

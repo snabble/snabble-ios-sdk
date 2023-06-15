@@ -97,7 +97,6 @@ public class LoginViewModel: Loginable, ObservableObject {
         case login
         case save
         case remove
-        case loggedOut
     }
     
     init() {
