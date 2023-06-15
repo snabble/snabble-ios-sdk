@@ -225,6 +225,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				763A27722A3B13AB00D2A6FC /* PBXTargetDependency */,
 				E1BFF2C729E6AB4100E6AE37 /* PBXTargetDependency */,
 			);
 			name = SnabbleSampleApp;
@@ -360,6 +361,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		763A27722A3B13AB00D2A6FC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 763A27712A3B13AB00D2A6FC /* SwiftLintPlugin */;
+		};
 		E131CF1C28A3D45C00A844E1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 607FACCF1AFB9204008FA782 /* SnabbleSampleApp */;
@@ -654,6 +659,10 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		763A27712A3B13AB00D2A6FC /* SwiftLintPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = "plugin:SwiftLintPlugin";
+		};
 		E1AABF0729E53A2D00D83490 /* Snabble */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Snabble;

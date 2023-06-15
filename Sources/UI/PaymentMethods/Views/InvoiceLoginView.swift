@@ -32,7 +32,6 @@ public struct InvoiceLoginView: View {
         self.model = model
         self._loginModel = StateObject(wrappedValue: model.invoiceLoginModel)
     }
-        
 
     @ViewBuilder
     var button: some View {
@@ -73,9 +72,9 @@ public struct InvoiceLoginView: View {
         Form {
             Section(
                 content: {
-                    TextField(LoginStrings.username.localizedString(domain), text:  $loginModel.username)
+                    TextField(LoginStrings.username.localizedString(domain), text: $loginModel.username)
                         .keyboardType(.emailAddress)
-                    SecureField(LoginStrings.password.localizedString(domain), text:  $loginModel.password) {
+                    SecureField(LoginStrings.password.localizedString(domain), text: $loginModel.password) {
                         login()
                     }
                     .keyboardType(.default)
@@ -95,9 +94,9 @@ public struct InvoiceLoginView: View {
                             .font(.footnote)
                             .foregroundColor(.red)
                     }
-                } )
+                })
         }
-        .onChange(of:  loginModel.isValid) { isValid in
+        .onChange(of: loginModel.isValid) { isValid in
             if model.isWaiting {
                 canLogin = false
             } else {
@@ -167,8 +166,8 @@ public struct InvoiceView: View {
 
     public var body: some View {
         content
-            .onChange(of:  loginModel.isLoggedIn) { loggedIn in
-                if loggedIn, let info =  loginModel.loginInfo {
+            .onChange(of: loginModel.isLoggedIn) { loggedIn in
+                if loggedIn, let info = loginModel.loginInfo {
                     print("user is logged in \(info))")
                     loginModel.actionPublisher.send(["action": LoginViewModel.Action.save.rawValue])
                 }
