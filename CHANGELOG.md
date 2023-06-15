@@ -17,6 +17,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Updated
 * lachlanbell/SwiftOTP 3.0.1
+* realm/SwiftLint 0.52.2 (was 0.51.0)
 
 ## [0.35.1] - 2023-05-17
 
