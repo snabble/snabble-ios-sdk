@@ -519,6 +519,19 @@ extension PaymentMethodDetails {
 
 // extensions for leinweber customer numbers that can be used as payment methods
 extension PaymentMethodDetails {
+    public static func addLeinweberCustomerNumber(_ number: String, _ name: String, _ projectId: Identifier<Project>) {
+        guard
+            let cert = Snabble.shared.certificates.first,
+            let employeeData = LeinweberCustomerData(cert.data, number, name, projectId)
+        else {
+            return
+        }
+
+        var details = self.read().filter { $0.originType != .leinweberCustomerID }
+        details.append(PaymentMethodDetail(employeeData))
+        self.save(details)
+    }
+
     public static func removeLeinweberCustomerNumber() {
         let details = self.read().filter { $0.originType != .leinweberCustomerID }
         self.save(details)
