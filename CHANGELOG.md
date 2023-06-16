@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Replaced `mattrubin/OneTimePassword` with `lachlanbell/SwiftOTP`
 
 ### Updated
+* mono0926/LicensePlist 3.24.10 (was 3.24.9)
 * lachlanbell/SwiftOTP 3.0.1
 * realm/SwiftLint 0.52.2 (was 0.51.0)
 

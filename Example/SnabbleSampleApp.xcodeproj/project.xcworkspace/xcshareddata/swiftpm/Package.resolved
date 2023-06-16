@@ -77,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mono0926/LicensePlist",
       "state" : {
-        "revision" : "718763fd674d186842338e24b4cbedcf35aed5f6",
-        "version" : "3.24.9"
+        "revision" : "302a0a4433ff9328e68212e9dc379f3ea4aa9c0c",
+        "version" : "3.24.10"
       }
     },
     {
@@ -223,15 +223,6 @@
       "state" : {
         "revision" : "cd466d6e8c5ffd2f2b61165d37b0646f09068e1e",
         "version" : "2.9.0"
-      }
-    },
-    {
-      "identity" : "yamlswift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/behrang/YamlSwift.git",
-      "state" : {
-        "revision" : "287f5cab7da0d92eb947b5fd8151b203ae04a9a3",
-        "version" : "3.4.4"
       }
     },
     {
