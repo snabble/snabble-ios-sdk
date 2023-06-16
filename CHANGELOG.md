@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * mono0926/LicensePlist 3.24.10 (was 3.24.9)
 * lachlanbell/SwiftOTP 3.0.1
 * realm/SwiftLint 0.52.2 (was 0.51.0)
+* groue/GRDB.swift 6.15.0 (was 6.11.0)
 
 ## [0.35.1] - 2023-05-17
 
