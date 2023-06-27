@@ -289,6 +289,7 @@ final class PaymentMethodSelector {
 
             let icon = isAnyActive && !(action.active || action.methodDetail != nil) ? action.icon?.grayscale() : action.icon
             alertAction.imageView.image = icon
+            alertAction.imageView.setContentCompressionResistancePriority(.required, for: .vertical)
 
             if action.active {
                 iconMap[alertAction] = icon
