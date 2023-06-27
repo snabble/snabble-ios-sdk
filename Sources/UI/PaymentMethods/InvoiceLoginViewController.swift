@@ -94,7 +94,7 @@ extension InvoiceViewController: InvoiceViewControllerDelegate {
                 deleteTapped(model: viewController.viewModel)
                 
             default:
-                print("unhandled action: \(action)")
+                break
             }
         }
     }

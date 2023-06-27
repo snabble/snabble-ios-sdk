@@ -23,7 +23,9 @@ public struct InvoiceLoginView: View {
     @StateObject private var loginModel: InvoiceLoginModel
 
     @State private var canLogin = false
-    
+    @State private var username = ""
+    @State private var password = ""
+
     @Environment(\.presentationMode) var presentationMode
 
     let domain = "Snabble.Payment.ExternalBilling"
@@ -61,8 +63,8 @@ public struct InvoiceLoginView: View {
     
     @ViewBuilder
     var footerView: some View {
-        if !loginModel.errorMessage.isEmpty {
-            Label(loginModel.errorMessage, systemImage: "xmark.circle.fill")
+        if let message = loginModel.errorMessage {
+            Label(message, systemImage: "xmark.circle.fill")
                 .font(.footnote)
                 .foregroundColor(.red)
         }
@@ -72,9 +74,9 @@ public struct InvoiceLoginView: View {
         Form {
             Section(
                 content: {
-                    TextField(LoginStrings.username.localizedString(domain), text: $loginModel.username)
+                    TextField(LoginStrings.username.localizedString(domain), text: $username)
                         .keyboardType(.emailAddress)
-                    SecureField(LoginStrings.password.localizedString(domain), text: $loginModel.password) {
+                    SecureField(LoginStrings.password.localizedString(domain), text: $password) {
                         login()
                     }
                     .keyboardType(.default)
@@ -89,12 +91,14 @@ public struct InvoiceLoginView: View {
                     button
                 },
                 footer: {
-                    if !loginModel.errorMessage.isEmpty {
-                        Text(keyed: loginModel.errorMessage)
-                            .font(.footnote)
-                            .foregroundColor(.red)
-                    }
+                    footerView
                 })
+        }
+        .onChange(of: username) { string in
+            loginModel.username = string
+        }
+        .onChange(of: password) { string in
+            loginModel.password = string
         }
         .onChange(of: loginModel.isValid) { isValid in
             if model.isWaiting {
@@ -123,7 +127,7 @@ public struct InvoiceDetailView: View {
                         if let image = loginModel.image {
                             image
                         }
-                        Text(loginModel.username)
+                        Text(loginModel.username ?? "")
                     }
                 },
                 header: {
@@ -168,8 +172,7 @@ public struct InvoiceView: View {
     public var body: some View {
         content
             .onChange(of: loginModel.isLoggedIn) { loggedIn in
-                if loggedIn, let info = loginModel.loginInfo {
-                    print("user is logged in \(info))")
+                if loggedIn, loginModel.loginInfo != nil {
                     loginModel.actionPublisher.send(["action": LoginViewModel.Action.save.rawValue])
                 }
             }

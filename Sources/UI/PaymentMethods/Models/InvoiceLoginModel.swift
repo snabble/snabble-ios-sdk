@@ -10,12 +10,16 @@ import Combine
 import SnabbleCore
 
 public struct InvoiceLoginInfo: Decodable {
-    public static let invalid = InvoiceLoginInfo(username: "👻", contactPersonID: "")
+    public static let invalid = InvoiceLoginInfo()
     
-    public let username: String
-    public let contactPersonID: String
+    public let username: String?
+    public let contactPersonID: String?
     
-    public func isValid(username: String) -> Bool {
+    public init(username: String? = nil, contactPersonID: String? = nil) {
+        self.username = username
+        self.contactPersonID = contactPersonID
+    }
+    public func isValid(username: String?) -> Bool {
         guard username != InvoiceLoginInfo.invalid.username else {
             return false
         }
@@ -52,7 +56,6 @@ extension Project {
                 self.perform(request, completion)
             }
         } catch {
-            print(error)
             completion(.failure(SnabbleError.invalid))
         }
     }
@@ -107,10 +110,12 @@ public final class InvoiceLoginModel: LoginViewModel {
     }
 
     func save() async throws {
-        guard let personID = loginInfo?.contactPersonID, !password.isEmpty else {
+        guard let personID = loginInfo?.contactPersonID else {
             return
         }
-        
+        guard let username = username, let password = password else {
+            return
+        }
         if let cert = Snabble.shared.certificates.first,
            let invoiceData = InvoiceByLoginData(cert: cert.data, Asset.localizedString(forKey: "Snabble.Payment.ExternalBilling.title"), username, password, personID, project?.id ?? SnabbleCI.project.id) {
 
@@ -166,7 +171,12 @@ public final class InvoiceLoginProcessor: LoginProcessing, ObservableObject {
                 return promise(.failure(.loginFailed))
             }
             
-            let credentials = InvoiceLoginCredentials(username: strongSelf.invoiceLoginModel.username, password: strongSelf.invoiceLoginModel.password)
+            guard let username = strongSelf.invoiceLoginModel.username,
+                  let password = strongSelf.invoiceLoginModel.password else {
+                
+                return promise(.failure(.loginFailed))
+            }
+            let credentials = InvoiceLoginCredentials(username: username, password: password)
                                           
             strongSelf.invoiceLoginModel.project?.getUserLoginInfo(with: credentials) { result in
                 switch result {
