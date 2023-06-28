@@ -10,8 +10,6 @@ import Combine
 import SnabbleCore
 
 public struct InvoiceLoginInfo: Decodable {
-    public static let invalid = InvoiceLoginInfo()
-    
     public let username: String?
     public let contactPersonID: String?
     
@@ -20,7 +18,7 @@ public struct InvoiceLoginInfo: Decodable {
         self.contactPersonID = contactPersonID
     }
     public func isValid(username: String?) -> Bool {
-        guard username != InvoiceLoginInfo.invalid.username else {
+        guard let username = username, !username.isEmpty else {
             return false
         }
         return username == self.username
@@ -73,13 +71,10 @@ public final class InvoiceLoginModel: LoginViewModel {
             }
         }
         didSet {
-            if let info = self.loginInfo, info.isValid(username: self.username) {
-                self.isLoggedIn = true
-            } else if InvoiceLoginInfo.isValid(loginInfo: self.loginInfo) == false {
-                if let info = self.loginInfo, info.username == InvoiceLoginInfo.invalid.username {
-                    self.errorMessage = Asset.localizedString(forKey: "Snabble.Payment.ExternalBilling.Error.wrongCredentials")
-                }
-                self.isLoggedIn = false
+            if let info = loginInfo, info.isValid(username: username) {
+                isLoggedIn = true
+            } else {
+                isLoggedIn = false
             }
        }
     }
@@ -195,12 +190,16 @@ public final class InvoiceLoginProcessor: LoginProcessing, ObservableObject {
         
         loginPublisher
             .receive(on: RunLoop.main)
-            .replaceError(with: InvoiceLoginInfo.invalid)
-            .sink(receiveValue: { [weak self] loginInfo in
-                guard let strongSelf = self else { return }
-
-                strongSelf.invoiceLoginModel.loginInfo = loginInfo
-                strongSelf.isWaiting = false
+            .sink(receiveCompletion: { [weak self] completion in
+                self?.isWaiting = false
+                switch completion {
+                case .finished:
+                    break
+                case .failure:
+                    self?.invoiceLoginModel.errorMessage = Asset.localizedString(forKey: "Snabble.Payment.ExternalBilling.Error.wrongCredentials")
+                }
+            }, receiveValue: { [weak self] loginInfo in
+                self?.invoiceLoginModel.loginInfo = loginInfo
             })
             .store(in: &cancellables)
     }
