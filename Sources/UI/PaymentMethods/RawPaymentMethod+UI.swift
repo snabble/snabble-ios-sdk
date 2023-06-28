@@ -79,7 +79,6 @@ extension RawPaymentMethod {
             return nil
         }
         if descriptor.acceptedOriginTypes?.contains(.contactPersonCredentials) == true {
-//            let paymentDetail = PaymentMethodDetail.paymentDetailFor(rawMethod: self)
             let model = InvoiceLoginProcessor(invoiceLoginModel: InvoiceLoginModel(project: project))
             
             return InvoiceViewController(viewModel: model)
