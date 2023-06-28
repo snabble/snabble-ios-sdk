@@ -77,7 +77,7 @@ public final class InvoiceLoginModel: LoginViewModel {
                 self.isLoggedIn = true
             } else if InvoiceLoginInfo.isValid(loginInfo: self.loginInfo) == false {
                 if let info = self.loginInfo, info.username == InvoiceLoginInfo.invalid.username {
-                    self.errorMessage = "Snabble.Payment.ExternalBilling.Error.wrongCredentials"
+                    self.errorMessage = Asset.localizedString(forKey: "Snabble.Payment.ExternalBilling.Error.wrongCredentials")
                 }
                 self.isLoggedIn = false
             }
