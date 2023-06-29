@@ -77,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mono0926/LicensePlist",
       "state" : {
-        "revision" : "718763fd674d186842338e24b4cbedcf35aed5f6",
-        "version" : "3.24.9"
+        "revision" : "302a0a4433ff9328e68212e9dc379f3ea4aa9c0c",
+        "version" : "3.24.10"
       }
     },
     {
@@ -158,8 +158,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-syntax.git",
       "state" : {
-        "revision" : "27cd6190ce0628847a3f8050794d6e627ad79c08",
-        "version" : "509.0.0-swift-DEVELOPMENT-SNAPSHOT-2023-05-02-a"
+        "revision" : "f1e9245226002bb134884345d4809b9543da3666",
+        "version" : "509.0.0-swift-DEVELOPMENT-SNAPSHOT-2023-06-17-a"
       }
     },
     {
@@ -167,8 +167,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/SwiftLint",
       "state" : {
-        "revision" : "34f5ffa7f706ed2dfe11bd300e5197e8878e3856",
-        "version" : "0.52.2"
+        "revision" : "117405ce36cf364ece2c7aaf9ee7afed7efbabcc",
+        "version" : "0.52.3"
       }
     },
     {
@@ -194,8 +194,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/drmohundro/SWXMLHash.git",
       "state" : {
-        "revision" : "4d0f62f561458cbe1f732171e625f03195151b60",
-        "version" : "7.0.1"
+        "revision" : "a853604c9e9a83ad9954c7e3d2a565273982471f",
+        "version" : "7.0.2"
       }
     },
     {
@@ -226,21 +226,12 @@
       }
     },
     {
-      "identity" : "yamlswift",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/behrang/YamlSwift.git",
-      "state" : {
-        "revision" : "287f5cab7da0d92eb947b5fd8151b203ae04a9a3",
-        "version" : "3.4.4"
-      }
-    },
-    {
       "identity" : "yams",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jpsim/Yams.git",
       "state" : {
-        "revision" : "f47ba4838c30dbd59998a4e4c87ab620ff959e8a",
-        "version" : "5.0.5"
+        "revision" : "0d9ee7ea8c4ebd4a489ad7a73d5c6cad55d6fed3",
+        "version" : "5.0.6"
       }
     },
     {

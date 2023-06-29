@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/groue/GRDB.swift.git",
       "state" : {
-        "revision" : "57aa4c30bfa0fe6a1913f83042937c4fb943e79c",
-        "version" : "6.15.0"
+        "revision" : "284a4ee1acf9bf6c8b3d045494d0a7e3046ebf92",
+        "version" : "6.15.1"
       }
     },
     {
@@ -104,8 +104,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-syntax.git",
       "state" : {
-        "revision" : "27cd6190ce0628847a3f8050794d6e627ad79c08",
-        "version" : "509.0.0-swift-DEVELOPMENT-SNAPSHOT-2023-05-02-a"
+        "revision" : "f1e9245226002bb134884345d4809b9543da3666",
+        "version" : "509.0.0-swift-DEVELOPMENT-SNAPSHOT-2023-06-17-a"
       }
     },
     {
@@ -113,8 +113,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/realm/SwiftLint",
       "state" : {
-        "revision" : "34f5ffa7f706ed2dfe11bd300e5197e8878e3856",
-        "version" : "0.52.2"
+        "revision" : "117405ce36cf364ece2c7aaf9ee7afed7efbabcc",
+        "version" : "0.52.3"
       }
     },
     {
@@ -167,8 +167,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/jpsim/Yams.git",
       "state" : {
-        "revision" : "f47ba4838c30dbd59998a4e4c87ab620ff959e8a",
-        "version" : "5.0.5"
+        "revision" : "0d9ee7ea8c4ebd4a489ad7a73d5c6cad55d6fed3",
+        "version" : "5.0.6"
       }
     },
     {
