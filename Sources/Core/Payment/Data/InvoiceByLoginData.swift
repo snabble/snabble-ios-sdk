@@ -13,8 +13,11 @@ public struct InvoiceByLoginData: Codable, EncryptedPaymentData, Equatable {
     public let serial: String
 
     // name of this payment method for display in table
-    public let displayName: String
-
+    public let invoiceName: String
+    
+    public var displayName: String {
+        return invoiceName
+    }
     public let isExpired = false
 
     public let originType = AcceptedOriginType.contactPersonCredentials
@@ -25,7 +28,7 @@ public struct InvoiceByLoginData: Codable, EncryptedPaymentData, Equatable {
     public let projectId: Identifier<Project>
     
     enum CodingKeys: String, CodingKey {
-        case encryptedPaymentData, serial, displayName, username, contactPersonID, projectId
+        case encryptedPaymentData, serial, invoiceName, username, contactPersonID, projectId
     }
 
     private struct InvoiceByLoginOrigin: PaymentRequestOrigin {
@@ -34,7 +37,7 @@ public struct InvoiceByLoginData: Codable, EncryptedPaymentData, Equatable {
         let contactPersonID: String
     }
 
-    public init?(cert gatewayCert: Data?, _ displayName: String, _ username: String, _ password: String, _ contactPersonID: String, _ projectId: Identifier<Project>) {
+    public init?(cert gatewayCert: Data?, _ invoiceName: String, _ username: String, _ password: String, _ contactPersonID: String, _ projectId: Identifier<Project>) {
         let requestOrigin = InvoiceByLoginOrigin(username: username, password: password, contactPersonID: contactPersonID)
 
         guard
@@ -47,9 +50,9 @@ public struct InvoiceByLoginData: Codable, EncryptedPaymentData, Equatable {
         self.encryptedPaymentData = cipherText
         self.serial = serial
 
-        self.displayName = displayName
-
         self.username = username
+        self.invoiceName = invoiceName
+
         self.contactPersonID = contactPersonID
         self.projectId = projectId
     }
@@ -58,7 +61,7 @@ public struct InvoiceByLoginData: Codable, EncryptedPaymentData, Equatable {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self.encryptedPaymentData = try container.decode(String.self, forKey: .encryptedPaymentData)
         self.serial = try container.decode(String.self, forKey: .serial)
-        self.displayName = try container.decode(String.self, forKey: .displayName)
+        self.invoiceName = try container.decode(String.self, forKey: .invoiceName)
         self.username = try container.decode(String.self, forKey: .username)
         self.contactPersonID = try container.decode(String.self, forKey: .contactPersonID)
         self.projectId = try container.decode(Identifier<Project>.self, forKey: .projectId)
