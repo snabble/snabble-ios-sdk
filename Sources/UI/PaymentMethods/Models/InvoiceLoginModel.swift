@@ -186,7 +186,7 @@ public final class InvoiceLoginProcessor: LoginProcessing, ObservableObject {
     
     public func login() {
         isWaiting = true
-        self.invoiceLoginModel.errorMessage = ""
+        self.invoiceLoginModel.errorMessage = nil
         
         loginPublisher
             .receive(on: RunLoop.main)
