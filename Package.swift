@@ -31,14 +31,14 @@ let package = Package(
         .package(url: "https://github.com/lachlanbell/SwiftOTP", from: "3.0.1"),
         .package(url: "https://github.com/datatheorem/TrustKit.git", from: "3.0.2"),
         .package(url: "https://github.com/kishikawakatsumi/KeychainAccess.git", from: "4.2.2"),
-        .package(url: "https://github.com/groue/GRDB.swift.git", from: "6.11.0"),
+        .package(url: "https://github.com/groue/GRDB.swift.git", from: "6.15.0"),
         .package(url: "https://github.com/marmelroy/Zip.git", from: "2.1.2"),
         .package(url: "https://github.com/datatrans/ios-sdk.git", from: "2.7.2"),
         .package(url: "https://github.com/sberrevoets/SDCAlertView.git", from: "12.0.3"),
         .package(url: "https://github.com/devicekit/DeviceKit.git", from: "5.0.0"),
         .package(url: "https://github.com/snabble/Pulley.git", from: "2.9.2"),
         .package(url: "https://github.com/chrs1885/WCAG-Colors.git", from: "1.0.0"),
-        .package(url: "https://github.com/realm/SwiftLint", exact: "0.51.0"),
+        .package(url: "https://github.com/realm/SwiftLint", exact: "0.52.3"),
     ],
     targets: [
         .target(
