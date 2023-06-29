@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/groue/GRDB.swift.git",
       "state" : {
-        "revision" : "57aa4c30bfa0fe6a1913f83042937c4fb943e79c",
-        "version" : "6.15.0"
+        "revision" : "284a4ee1acf9bf6c8b3d045494d0a7e3046ebf92",
+        "version" : "6.15.1"
       }
     },
     {
@@ -77,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mono0926/LicensePlist",
       "state" : {
-        "revision" : "302a0a4433ff9328e68212e9dc379f3ea4aa9c0c",
-        "version" : "3.24.10"
+        "revision" : "718763fd674d186842338e24b4cbedcf35aed5f6",
+        "version" : "3.24.9"
       }
     },
     {
@@ -194,8 +194,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/drmohundro/SWXMLHash.git",
       "state" : {
-        "revision" : "a853604c9e9a83ad9954c7e3d2a565273982471f",
-        "version" : "7.0.2"
+        "revision" : "4d0f62f561458cbe1f732171e625f03195151b60",
+        "version" : "7.0.1"
       }
     },
     {
@@ -223,6 +223,15 @@
       "state" : {
         "revision" : "cd466d6e8c5ffd2f2b61165d37b0646f09068e1e",
         "version" : "2.9.0"
+      }
+    },
+    {
+      "identity" : "yamlswift",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/behrang/YamlSwift.git",
+      "state" : {
+        "revision" : "287f5cab7da0d92eb947b5fd8151b203ae04a9a3",
+        "version" : "3.4.4"
       }
     },
     {
