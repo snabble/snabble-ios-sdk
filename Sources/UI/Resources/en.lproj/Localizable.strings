@@ -208,6 +208,30 @@
 
 "Snabble.Payment.errorStarting" = "Error creating the payment process";
 
+"Snabble.Payment.ExternalBilling.add" = "Add";
+
+"Snabble.Payment.ExternalBilling.AlertDialog.add" = "Add";
+
+"Snabble.Payment.ExternalBilling.AlertDialog.hint" = "Subject";
+
+"Snabble.Payment.ExternalBilling.AlertDialog.message" = "Enter your subject here";
+
+"Snabble.Payment.ExternalBilling.AlertDialog.skip" = "Skip";
+
+"Snabble.Payment.ExternalBilling.Error.badRequest" = "Oops, something went wrong! Please try again!";
+
+"Snabble.Payment.ExternalBilling.Error.wrongCredentials" = "The given information is wrong. Please check them and try again!";
+
+"Snabble.Payment.ExternalBilling.hint" = "Please note the term of payment on your invoice!";
+
+"Snabble.Payment.ExternalBilling.message" = "Enter your details. Please note the term of payment on your invoice, which will be sent to your stored address after your purchase.";
+
+"Snabble.Payment.ExternalBilling.password" = "Password";
+
+"Snabble.Payment.ExternalBilling.title" = "Purchase on invoice";
+
+"Snabble.Payment.ExternalBilling.username" = "Username";
+
 "Snabble.Payment.noMethodAvailable" = "Unfortunately, this purchase can't be made using the app.";
 
 "Snabble.Payment.offlineHint" = "You are currently offline and some payment methods may not be available";
@@ -802,6 +826,10 @@
 "Snabble.Taxation.consumeWhere" = "Will you be eating here or is this to go?";
 
 "Snabble.Taxation.pleaseChoose" = "Please choose";
+
+"Snabble.Textfield.HidePassword.Accessibility" = "Hide password";
+
+"Snabble.Textfield.ShowPassword.Accessibility" = "Show password";
 
 "Snabble.TWINT.payNow" = "Pay now using TWINT";
 

@@ -208,6 +208,30 @@
 
 "Snabble.Payment.errorStarting" = "Fehler beim Anlegen des Bezahlprozesses";
 
+"Snabble.Payment.ExternalBilling.add" = "Hinzufügen";
+
+"Snabble.Payment.ExternalBilling.AlertDialog.add" = "Hinzufügen";
+
+"Snabble.Payment.ExternalBilling.AlertDialog.hint" = "Betreff";
+
+"Snabble.Payment.ExternalBilling.AlertDialog.message" = "Hier kannst du einen \nBetreff eingeben";
+
+"Snabble.Payment.ExternalBilling.AlertDialog.skip" = "Überspringen";
+
+"Snabble.Payment.ExternalBilling.Error.badRequest" = "Ups, es ist etwas schief gelaufen! Bitte versuch es erneut!";
+
+"Snabble.Payment.ExternalBilling.Error.wrongCredentials" = "Die eingegebenen Daten sind falsch. Bitte überprüfe diese und versuch es erneut!";
+
+"Snabble.Payment.ExternalBilling.hint" = "Bitte beachte das Zahlungsziel auf deiner Rechnung!";
+
+"Snabble.Payment.ExternalBilling.message" = "Gib deine Daten ein. Bitte beachte das Zahlungsziel auf deiner Rechnung, die nach deinem Kauf an deine hinterlegte Adresse geschickt wird.";
+
+"Snabble.Payment.ExternalBilling.password" = "Passwort";
+
+"Snabble.Payment.ExternalBilling.title" = "Kauf auf Rechnung";
+
+"Snabble.Payment.ExternalBilling.username" = "Benutzername";
+
 "Snabble.Payment.noMethodAvailable" = "Leider kann dieser Einkauf nicht mit der App durchgeführt werden.";
 
 "Snabble.Payment.offlineHint" = "Du bist derzeit offline und einige Zahlungsmethoden sind möglicherweise nicht verfügbar";
@@ -802,6 +826,10 @@
 "Snabble.Taxation.consumeWhere" = "Möchtest du deinen Einkauf";
 
 "Snabble.Taxation.pleaseChoose" = "Bitte wählen";
+
+"Snabble.Textfield.HidePassword.Accessibility" = "Passwort verbergen";
+
+"Snabble.Textfield.ShowPassword.Accessibility" = "Passwort anzeigen";
 
 "Snabble.TWINT.payNow" = "Jetzt mit TWINT bezahlen";
 
