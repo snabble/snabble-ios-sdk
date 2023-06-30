@@ -379,10 +379,6 @@ public struct WidgetMultiValue: Widget {
         public let id: String
         public let text: String
         
-        init(id: String, text: String) {
-            self.id = id
-            self.text = text
-        }
         enum CodingKeys: String, CodingKey {
             case id
             case text
