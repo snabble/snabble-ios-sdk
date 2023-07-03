@@ -32,7 +32,7 @@ extension RawPaymentMethod {
         case .qrCodePOS, .qrCodeOffline:
             return Asset.localizedString(forKey: "Snabble.Payment.payAtCashDesk")
         case .externalBilling:
-            return Asset.localizedString(forKey: "Snabble.Payment.payViaInvoice")
+            return Asset.localizedString(forKey: "Snabble.Payment.ExternalBilling.title")
         case .customerCardPOS:
             return Asset.localizedString(forKey: "Snabble.Payment.payUsingCustomerCard")
         case .applePay:
@@ -57,7 +57,9 @@ extension RawPaymentMethod {
             return PaydirektEditViewController(nil, for: projectId, with: analyticsDelegate)
         case .creditCardMastercard, .creditCardVisa, .creditCardAmericanExpress:
             return creditCardEditViewController(projectId, analyticsDelegate)
-        case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS, .gatekeeperTerminal, .applePay:
+        case .externalBilling:
+            return externalBillingEditViewController(projectId, analyticsDelegate)
+        case .qrCodePOS, .qrCodeOffline, .customerCardPOS, .gatekeeperTerminal, .applePay:
             break
         case .twint, .postFinanceCard:
             if let projectId = projectId {
@@ -68,6 +70,22 @@ extension RawPaymentMethod {
         return nil
     }
     
+    private func externalBillingEditViewController(_ projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
+        guard
+            let projectId = projectId,
+            let project = Snabble.shared.project(for: projectId),
+            let descriptor = project.paymentMethodDescriptors.first(where: { $0.id == self })
+        else {
+            return nil
+        }
+        if descriptor.acceptedOriginTypes?.contains(.contactPersonCredentials) == true {
+            let model = InvoiceLoginProcessor(invoiceLoginModel: InvoiceLoginModel(project: project))
+            
+            return InvoiceViewController(viewModel: model)
+        }
+        return nil
+    }
+
     private func sepaEditViewController(_ projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
         guard
             let projectId = projectId,

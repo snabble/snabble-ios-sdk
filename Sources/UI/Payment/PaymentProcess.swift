@@ -176,6 +176,14 @@ public final class PaymentProcess {
                 if leinweber != nil {
                     results.append(PaymentMethod.externalBilling(detail.data))
                 }
+            case .invoiceByLogin:
+                let invoice = methods.first {
+                    $0.method == .externalBilling && $0.acceptedOriginTypes?.contains(.contactPersonCredentials) == true
+                }
+                if invoice != nil {
+                    results.append(PaymentMethod.externalBilling(detail.data))
+                }
+
             }
         }
 

@@ -57,6 +57,27 @@ extension Locale {
     }
 }
 
+extension Publisher where Output == String?, Failure == Never {
+    func minimumOptional(_ minimum: Int) -> AnyPublisher<Bool, Never> {
+        map { input in
+            input?.count ?? 0 >= minimum
+        }
+        .eraseToAnyPublisher()
+    }
+    func maximumOptional(_ maximum: Int) -> AnyPublisher<Bool, Never> {
+        map { input in
+            input?.count ?? 0 <= maximum
+        }
+        .eraseToAnyPublisher()
+    }
+    func exactOptional(_ length: Int) -> AnyPublisher<Bool, Never> {
+        map { input in
+            input?.count == length
+        }
+        .eraseToAnyPublisher()
+    }
+}
+
 extension Publisher where Output == String, Failure == Never {
     func minimum(_ minimum: Int) -> AnyPublisher<Bool, Never> {
         map { input in

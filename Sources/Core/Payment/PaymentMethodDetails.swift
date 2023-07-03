@@ -12,6 +12,21 @@ public enum PaymentMethodError: Error {
     case invalidCertificate
     case encryptionError
 }
+///
+/// Checklist for adding a new payment method:
+/// * create a new struct eg. `InvoiceByLoginData` to store the payment data by implementing the `EncryptedPaymentData` protocol.
+/// * extend the `AcceptedOriginType` to identify the new paymentMethod from a backend response `case contactPersonCredentials`
+/// 
+/// * add a new case to `public enum PaymentMethodUserData` eg. `invoiceByLogin(InvoiceByLoginData)`
+/// * add a new `CodingKey` case eg. `invoiceByLogin`
+/// * implement all required switch statements:
+/// * `public var data: EncryptedPaymentData` eg. `case .invoiceByLogin(let data): return data`
+/// * `init(from decoder: Decoder)`
+/// * `encode(to encoder: Encoder)`
+///  * Implement an init function fro struct `PaymentMethodDetail` like eg. `init(_ invoiceByLoginData: InvoiceByLoginData)`
+///  * extent the `public var rawMethod: RawPaymentMethod` to return a valid value `case .invoiceByLoginData: return .externalBilling`
+///  * and the `public var projectId: Identifier<Project>?`
+///  * check `public var imageName: String` of the extension to `PaymentMethodDetail` if you need a separate imageName for the new payment menthod
 
 public enum PaymentMethodUserData: Codable, Equatable {
     case sepa(SepaData)
@@ -23,6 +38,7 @@ public enum PaymentMethodUserData: Codable, Equatable {
     case payoneCreditCard(PayoneCreditCardData)
     case payoneSepa(PayoneSepaData)
     case leinweberCustomerNumber(LeinweberCustomerData)
+    case invoiceByLogin(InvoiceByLoginData)
 
     public enum CodingKeys: String, CodingKey {
         case sepa
@@ -33,7 +49,8 @@ public enum PaymentMethodUserData: Codable, Equatable {
         case payoneCreditCard
         case payoneSepa
         case leinweberCustomerNumber
-
+        case invoiceByLogin
+        
         // old and bad name - only used in the migration code below
         case creditcard
     }
@@ -49,6 +66,7 @@ public enum PaymentMethodUserData: Codable, Equatable {
         case .payoneCreditCard(let data): return data
         case .payoneSepa(let data): return data
         case .leinweberCustomerNumber(let data): return data
+        case .invoiceByLogin(let data): return data
         }
     }
 
@@ -82,6 +100,8 @@ public enum PaymentMethodUserData: Codable, Equatable {
             self = .payoneSepa(payoneSepa)
        } else if let leinweberData = try container.decodeIfPresent(LeinweberCustomerData.self, forKey: .leinweberCustomerNumber) {
             self = .leinweberCustomerNumber(leinweberData)
+       } else if let invoiceData = try container.decodeIfPresent(InvoiceByLoginData.self, forKey: .invoiceByLogin) {
+            self = .invoiceByLogin(invoiceData)
         } else {
             throw PaymentMethodError.unknownMethodError("unknown payment method")
         }
@@ -99,6 +119,7 @@ public enum PaymentMethodUserData: Codable, Equatable {
         case .payoneCreditCard(let data): try container.encode(data, forKey: .payoneCreditCard)
         case .payoneSepa(let data): try container.encode(data, forKey: .payoneSepa)
         case .leinweberCustomerNumber(let data): try container.encode(data, forKey: .leinweberCustomerNumber)
+        case .invoiceByLogin(let data): try container.encode(data, forKey: .invoiceByLogin)
         }
     }
 }
@@ -203,6 +224,11 @@ public struct PaymentMethodDetail: Equatable {
         self.methodData = PaymentMethodUserData.payoneSepa(payoneSepaData)
     }
 
+    public init(_ invoiceByLoginData: InvoiceByLoginData) {
+        self.id = UUID()
+        self.methodData = PaymentMethodUserData.invoiceByLogin(invoiceByLoginData)
+    }
+
     public var displayName: String {
         return self.methodData.data.displayName
     }
@@ -230,7 +256,9 @@ public struct PaymentMethodDetail: Equatable {
     public var rawMethod: RawPaymentMethod {
         switch self.methodData {
         case .sepa, .payoneSepa: return .deDirectDebit
-        case .tegutEmployeeCard, .leinweberCustomerNumber:
+        case .tegutEmployeeCard,
+                .leinweberCustomerNumber,
+                .invoiceByLogin:
             return .externalBilling
         case .paydirektAuthorization:
             return .paydirektOneKlick
@@ -266,6 +294,8 @@ public struct PaymentMethodDetail: Equatable {
             return payoneData.projectId
         case .payoneSepa(let payoneSepaData):
             return payoneSepaData.projectId
+        case .invoiceByLogin(let invoiceData):
+            return invoiceData.projectId
         case .sepa, .tegutEmployeeCard, .paydirektAuthorization, .leinweberCustomerNumber:
             return nil
         }
@@ -277,7 +307,9 @@ extension PaymentMethodDetail {
         switch self.methodData {
         case .tegutEmployeeCard:
             return "payment-tegut"
-
+        case .invoiceByLogin:
+            return "payment-invoice"
+            
         default:
             return self.rawMethod.imageName
         }
@@ -305,7 +337,9 @@ extension RawPaymentMethod {
             return "payment-twint"
         case .postFinanceCard:
             return "payment-postfinance"
-        case .qrCodePOS, .qrCodeOffline, .externalBilling, .customerCardPOS:
+        case .externalBilling:
+            return "payment-invoice"
+        case .qrCodePOS, .qrCodeOffline, .customerCardPOS:
             return "payment-pos"
         }
     }

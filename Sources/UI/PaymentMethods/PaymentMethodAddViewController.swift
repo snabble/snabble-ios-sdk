@@ -150,7 +150,7 @@ public final class PaymentMethodAddViewController: UITableViewController {
                 return payoneData.projectId == projectId
             case .payoneSepa(let payoneSepaData):
                 return payoneSepaData.projectId == projectId
-            case .sepa, .tegutEmployeeCard, .paydirektAuthorization, .leinweberCustomerNumber:
+            case .sepa, .tegutEmployeeCard, .paydirektAuthorization, .leinweberCustomerNumber, .invoiceByLogin:
                 return Snabble.shared.project(for: projectId)?.paymentMethods.contains(detail.rawMethod) ?? false
             }
         }.count
@@ -215,7 +215,7 @@ extension PaymentMethodAddViewController {
         }
 
         let methods = project.paymentMethods
-            .filter { $0.editable }
+            .filter { $0.visible }
             .sorted { $0.displayName < $1.displayName }
 
         let sheet = SelectionSheetController(title: Asset.localizedString(forKey: "Snabble.PaymentMethods.choose"), message: nil)

@@ -225,8 +225,8 @@
 			buildRules = (
 			);
 			dependencies = (
+				763A27722A3B13AB00D2A6FC /* PBXTargetDependency */,
 				E1BFF2C729E6AB4100E6AE37 /* PBXTargetDependency */,
-				E16C0F0329DF018D00C8515F /* PBXTargetDependency */,
 			);
 			name = SnabbleSampleApp;
 			packageProductDependencies = (
@@ -294,8 +294,8 @@
 			);
 			mainGroup = 607FACC71AFB9204008FA782;
 			packageReferences = (
-				E16C0F0129DF018400C8515F /* XCRemoteSwiftPackageReference "SwiftLint" */,
 				E1BFF2C529E6A98800E6AE37 /* XCRemoteSwiftPackageReference "LicensePlist" */,
+				763A27792A3C4B3E00D2A6FC /* XCRemoteSwiftPackageReference "SwiftLint" */,
 			);
 			productRefGroup = 607FACD11AFB9204008FA782 /* Products */;
 			projectDirPath = "";
@@ -362,14 +362,14 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
+		763A27722A3B13AB00D2A6FC /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 763A27712A3B13AB00D2A6FC /* SwiftLintPlugin */;
+		};
 		E131CF1C28A3D45C00A844E1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 607FACCF1AFB9204008FA782 /* SnabbleSampleApp */;
 			targetProxy = E131CF1B28A3D45C00A844E1 /* PBXContainerItemProxy */;
-		};
-		E16C0F0329DF018D00C8515F /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = E16C0F0229DF018D00C8515F /* SwiftLintPlugin */;
 		};
 		E1BFF2C729E6AB4100E6AE37 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
@@ -649,12 +649,12 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
-		E16C0F0129DF018400C8515F /* XCRemoteSwiftPackageReference "SwiftLint" */ = {
+		763A27792A3C4B3E00D2A6FC /* XCRemoteSwiftPackageReference "SwiftLint" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/realm/SwiftLint.git";
 			requirement = {
 				kind = upToNextMajorVersion;
-				minimumVersion = 0.51.0;
+				minimumVersion = 0.52.2;
 			};
 		};
 		E1BFF2C529E6A98800E6AE37 /* XCRemoteSwiftPackageReference "LicensePlist" */ = {
@@ -668,7 +668,7 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E16C0F0229DF018D00C8515F /* SwiftLintPlugin */ = {
+		763A27712A3B13AB00D2A6FC /* SwiftLintPlugin */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = "plugin:SwiftLintPlugin";
 		};

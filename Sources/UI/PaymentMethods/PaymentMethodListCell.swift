@@ -73,7 +73,11 @@ final class PaymentMethodListCell: UITableViewCell {
         let selectionStyle: UITableViewCell.SelectionStyle
 
         init(detail: PaymentMethodDetail) {
-            displayName = detail.displayName
+            if detail.originType == .contactPersonCredentials, case let PaymentMethodUserData.invoiceByLogin(data) = detail.methodData {
+                displayName = detail.displayName + ": " + data.username
+            } else {
+                displayName = detail.displayName
+            }
             icon = detail.icon
             switch detail.originType {
             case .tegutEmployeeID, .leinweberCustomerID:

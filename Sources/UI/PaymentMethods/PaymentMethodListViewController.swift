@@ -73,7 +73,7 @@ public final class PaymentMethodListViewController: UITableViewController {
                     return payoneData.projectId == projectId
                 case .payoneSepa(let payoneSepaData):
                     return payoneSepaData.projectId == projectId
-                case .tegutEmployeeCard, .sepa, .paydirektAuthorization, .leinweberCustomerNumber:
+                case .tegutEmployeeCard, .sepa, .paydirektAuthorization, .leinweberCustomerNumber, .invoiceByLogin:
                     return Snabble.shared.project(for: projectId)?.paymentMethods.contains(where: { $0 == detail.rawMethod }) ?? false
                 }
             }
@@ -99,7 +99,7 @@ public final class PaymentMethodListViewController: UITableViewController {
         let methods = Snabble.shared.projects
             .filter { $0.id == projectId }
             .flatMap { $0.paymentMethods }
-            .filter { $0.editable }
+            .filter { $0.visible }
 
         if methods.count == 1 {
             showEditController(for: methods[0])
@@ -173,6 +173,13 @@ extension PaymentMethodListViewController {
                 editVC = PayoneCreditCardEditViewController(detail, self.analyticsDelegate)
             case .tegutEmployeeCard, .leinweberCustomerNumber:
                 editVC = nil
+            case .invoiceByLogin:
+                if let projectId = projectId, let project = Snabble.shared.project(for: projectId) {
+                    let model = InvoiceLoginProcessor(invoiceLoginModel: InvoiceLoginModel(paymentDetail: detail, project: project))
+
+                    editVC = InvoiceViewController(viewModel: model)
+                }
+
             case .datatransAlias, .datatransCardAlias:
                 editVC = Snabble.methodRegistry.create(detail: detail, analyticsDelegate: self.analyticsDelegate)
             }

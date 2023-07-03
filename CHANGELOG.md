@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.36.0] - 2023-06-29
 
+### Added
+* Invoice payment method by login #APPS-852
+
 ### Fixed
 * `Snabble.Cc` localized strings changed to `Snabble.CC`
 
@@ -13,7 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Replaced `mattrubin/OneTimePassword` with `lachlanbell/SwiftOTP`
 
 ### Updated
+* mono0926/LicensePlist 3.24.10 (was 3.24.9)
 * lachlanbell/SwiftOTP 3.0.1
+* realm/SwiftLint 0.52.2 (was 0.51.0)
+* groue/GRDB.swift 6.15.0 (was 6.11.0)
 * groue/GRDB.swift 6.15.0 (was 6.11.0)
 * realm/SwiftLint 0.52.3 (was 0.51.0)
 
