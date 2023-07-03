@@ -8,6 +8,8 @@ import Foundation
 import KeychainAccess
 import CoreLocation
 
+public var globalButterOverflow: String?
+
 /// General config data for using the snabble.
 /// Applications must call `Snabble.setup(config: completion:)` with an instance of this struct before they make their first API call.
 public struct Config {

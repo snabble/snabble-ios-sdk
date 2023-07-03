@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 * Invoice payment method by login #APPS-852
+* Added view to input subject for invoice payment #APPS-819
 
 ### Fixed
 * `Snabble.Cc` localized strings changed to `Snabble.CC`

@@ -6,6 +6,7 @@
 
 import UIKit
 import SnabbleCore
+import Combine
 
 public final class PaymentMethodStartCheck {
     private var method: PaymentMethod
@@ -13,6 +14,8 @@ public final class PaymentMethodStartCheck {
     private weak var presenter: UIViewController?
     public weak var messageDelegate: MessageDelegate?
     private var completionHandler: ((Bool) -> Void)?
+
+    private var cancellables = Set<AnyCancellable>()
 
     public init(for method: PaymentMethod,
                 detail: PaymentMethodDetail?,
@@ -58,10 +61,43 @@ public final class PaymentMethodStartCheck {
             self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.Twint.payNow"), completion)
         case .postFinanceCard:
             self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.PostFinanceCard.payNow"), completion)
+        case .externalBilling:
+            if let detail = self.detail, detail.originType == .contactPersonCredentials, case .invoiceByLogin = detail.methodData {
+                let viewController = PaymentSubjectViewController()
+                
+                viewController.viewModel.actionPublisher
+                    .sink { [weak self] userDict in
+                        self?.performAction(viewModel: viewController.viewModel, userDict: userDict)
+                    }
+                    .store(in: &cancellables)
 
-        case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS, .applePay:
+                presenter.showOverlay(with: viewController.view)
+            } else {
+                completion(true)
+            }
+        case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS, .applePay:
             completion(true)
         }
+    }
+   
+    private func performAction(viewModel: PaymentSubjectViewModel, userDict: [String: Any]?) {
+        guard let presenter = self.presenter,
+              let completionHandler = self.completionHandler,
+              let action = userDict?["action"] as? String else {
+            return
+        }
+        if action == "cancel" {
+            presenter.dismissOverlay()
+            completionHandler(false)
+            return
+        }
+        globalButterOverflow = nil
+        if action == "add", let subject = viewModel.subject {
+            globalButterOverflow = subject
+        }
+
+        presenter.dismissOverlay()
+        self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.Payment.ExternalBilling.title"), completionHandler)
     }
 
     // MARK: - Sepa
