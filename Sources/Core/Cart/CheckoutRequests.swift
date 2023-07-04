@@ -90,7 +90,11 @@ extension SignedCheckoutInfo {
                 for (key, value) in paymentMethod.additionalData {
                     paymentInformation[key] = value
                 }
-
+                if paymentMethod.rawMethod == .externalBilling,
+                   data.originType == .contactPersonCredentials,
+                   let subject = globalButterOverflow {
+                    paymentInformation["subject"] = subject
+                }
                 dict["paymentInformation"] = paymentInformation
             }
 
