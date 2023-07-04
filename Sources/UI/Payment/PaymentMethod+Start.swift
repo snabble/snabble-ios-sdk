@@ -97,7 +97,6 @@ public final class PaymentMethodStartCheck {
         }
 
         presenter.dismissOverlay()
-        self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.Payment.ExternalBilling.title"), completionHandler)
     }
 
     // MARK: - Sepa
