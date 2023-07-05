@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.36.1] - unreleased
 
 ### Added
+* Make map view available for navigation in hosting apps #APPS-890
 * Added view to input subject for invoice payment #APPS-819
 
 ## [0.36.0] - 2023-06-29
