@@ -105,13 +105,23 @@ public struct ShopAnnotationView: View {
 public struct ShopMapView: View {
     let shop: ShopProviding
     let userLocation: CLLocation?
+    let showNavigationControl: Bool
 
     enum Mode {
         case shop
         case user
     }
 
+    public init(shop: ShopProviding, userLocation: CLLocation? = nil, showNavigationControl: Bool = false) {
+        self.shop = shop
+        self.userLocation = userLocation
+        self.showNavigationControl = showNavigationControl
+    }
+    
     @State private var mode: Mode = .shop
+    @State private var currentRegion: MKCoordinateRegion = .init()
+    @State private var showingAlert: Bool = false
+
     private var region: MKCoordinateRegion {
         switch mode {
         case .user:
@@ -123,7 +133,7 @@ public struct ShopMapView: View {
 
     @ViewBuilder
     var mapView: some View {
-        Map(coordinateRegion: .init(get: { region }, set: { _ in }),
+        Map(coordinateRegion: $currentRegion,
             interactionModes: .all,
             showsUserLocation: true,
             userTrackingMode: .constant(.none),
@@ -143,11 +153,29 @@ public struct ShopMapView: View {
             }) {
                 Asset.image(named: mode == .shop ? "house.fill" : "house")
             }
+
             Button(action: {
                 mode = .user
             }) {
                 Asset.image(named: mode == .user ? "location.fill" : "location")
             }
+            .opacity(userLocation?.region == nil ? 0.5 : 1.0)
+            .disabled(userLocation?.region == nil)
+
+            if showNavigationControl {
+                Button(action: {
+                    showingAlert.toggle()
+                }) {
+                    Asset.image(named: "arrow.triangle.turn.up.right.circle.fill")
+                }
+                .navigateToShopAlert(isPresented: $showingAlert, shop: shop)
+            }
+        }
+        .onAppear {
+            currentRegion = region
+        }
+        .onChange(of: mode) { _ in
+            currentRegion = region
         }
         .padding(10)
         .background(Color.systemBackground)

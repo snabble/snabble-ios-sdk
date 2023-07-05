@@ -11,6 +11,10 @@ import CoreLocation
 import MapKit
 import SnabbleCore
 
+public protocol ShopViewModelDelegate: AnyObject {
+    func shopViewModel(_ model: ShopsViewModel, didUpdateDistances: [Identifier<Shop>: Double])
+}
+
 /// ShopFinderViewModel for objects implermenting the ShopInfoProvider protocol
 public final class ShopsViewModel: NSObject, ObservableObject {
     public init(shops: [ShopProviding]) {
@@ -33,6 +37,8 @@ public final class ShopsViewModel: NSObject, ObservableObject {
     /// distances in meter to a shop by id
     @Published private(set) var distances: [Identifier<Shop>: Double]
 
+    public weak var delegate: ShopViewModelDelegate?
+    
     /// Emits if the button on ShopView is tapped
     /// - `Output` is the current visible shop
     public let actionPublisher = PassthroughSubject<ShopProviding, Never>()
@@ -48,7 +54,7 @@ public final class ShopsViewModel: NSObject, ObservableObject {
         return currentShop.id == shop.id
     }
 
-    let locationManager: CLLocationManager
+    public let locationManager: CLLocationManager
 
     public func startUpdating() {
         locationManager.startUpdatingLocation()
@@ -86,6 +92,7 @@ extension ShopsViewModel: CLLocationManagerDelegate {
         shops = shops.sorted { lhs, rhs in
             lhs.distance(from: location) < rhs.distance(from: location)
         }
+        delegate?.shopViewModel(self, didUpdateDistances: self.distances)
     }
 
     public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
