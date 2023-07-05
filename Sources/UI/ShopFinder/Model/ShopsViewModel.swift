@@ -87,6 +87,17 @@ extension ShopsViewModel: CLLocationManagerDelegate {
         shops.forEach {
             distances[$0.id] = $0.distance(from: location)
         }
+        var needsUpdate = self.distances.isEmpty ? true : false
+        
+        for (key, value) in distances {
+            if let storedValue = self.distances[key],
+               Int(value / 20) != Int(storedValue / 20) {
+                needsUpdate = true
+            }
+        }
+        guard needsUpdate else {
+            return
+        }
         self.distances = distances
 
         shops = shops.sorted { lhs, rhs in
