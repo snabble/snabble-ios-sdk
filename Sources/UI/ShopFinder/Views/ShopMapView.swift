@@ -116,12 +116,13 @@ public struct ShopMapView: View {
         self.shop = shop
         self.userLocation = userLocation
         self.showNavigationControl = showNavigationControl
+        self.shopLocation = ShopLocation(shop: shop)
     }
     
     @State private var mode: Mode = .shop
-    @State private var currentRegion: MKCoordinateRegion = .init()
     @State private var showingAlert: Bool = false
-
+    let shopLocation: ShopLocation
+    
     private var region: MKCoordinateRegion {
         switch mode {
         case .user:
@@ -133,15 +134,29 @@ public struct ShopMapView: View {
 
     @ViewBuilder
     var mapView: some View {
-        Map(coordinateRegion: $currentRegion,
+        if mode == .shop {
+            Map(coordinateRegion: .init(get: { region }, set: { _ in }),
             interactionModes: .all,
             showsUserLocation: true,
-            userTrackingMode: .constant(.none),
-            annotationItems: [ShopLocation(shop: shop)]) { place in
-            MapAnnotation(coordinate: place.shop.location.coordinate) {
-                ShopAnnotationView(shopLocation: place)
-                    .shadow(color: .gray, radius: 3, x: 2, y: 2)
+                userTrackingMode: .constant(.none),
+                annotationItems: [self.shopLocation]) { place in
+                MapAnnotation(coordinate: place.shop.location.coordinate) {
+                    ShopAnnotationView(shopLocation: place)
+                        .shadow(color: .gray, radius: 3, x: 2, y: 2)
+                }
             }
+        } else {
+            Map(coordinateRegion: .init(get: { region }, set: { _ in }),
+            interactionModes: .all,
+            showsUserLocation: true,
+            userTrackingMode: .constant(.follow),
+                annotationItems: [self.shopLocation]) { place in
+                MapAnnotation(coordinate: place.shop.location.coordinate) {
+                    ShopAnnotationView(shopLocation: place)
+                        .shadow(color: .gray, radius: 3, x: 2, y: 2)
+                }
+            }
+
         }
     }
 
@@ -149,13 +164,17 @@ public struct ShopMapView: View {
     var locationControl: some View {
         VStack(spacing: 12) {
             Button(action: {
-                mode = .shop
+                withAnimation {
+                    mode = .shop
+                }
             }) {
                 Asset.image(named: mode == .shop ? "house.fill" : "house")
             }
 
             Button(action: {
-                mode = .user
+                withAnimation {
+                    mode = .user
+                }
             }) {
                 Asset.image(named: mode == .user ? "location.fill" : "location")
             }
@@ -170,12 +189,6 @@ public struct ShopMapView: View {
                 }
                 .navigateToShopAlert(isPresented: $showingAlert, shop: shop)
             }
-        }
-        .onAppear {
-            currentRegion = region
-        }
-        .onChange(of: mode) { _ in
-            currentRegion = region
         }
         .padding(10)
         .background(Color.systemBackground)

@@ -35,7 +35,7 @@ public final class ShopsViewModel: NSObject, ObservableObject {
     @Published public var shop: ShopProviding?
 
     /// distances in meter to a shop by id
-    @Published private(set) var distances: [Identifier<Shop>: Double]
+    private(set) var distances: [Identifier<Shop>: Double]
 
     public weak var delegate: ShopViewModelDelegate?
     
@@ -86,17 +86,6 @@ extension ShopsViewModel: CLLocationManagerDelegate {
         var distances: [Identifier<Shop>: Double] = [:]
         shops.forEach {
             distances[$0.id] = $0.distance(from: location)
-        }
-        var needsUpdate = self.distances.isEmpty ? true : false
-        
-        for (key, value) in distances {
-            if let storedValue = self.distances[key],
-               Int(value / 20) != Int(storedValue / 20) {
-                needsUpdate = true
-            }
-        }
-        guard needsUpdate else {
-            return
         }
         self.distances = distances
 
