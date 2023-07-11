@@ -105,13 +105,24 @@ public struct ShopAnnotationView: View {
 public struct ShopMapView: View {
     let shop: ShopProviding
     let userLocation: CLLocation?
+    let showNavigationControl: Bool
 
     enum Mode {
         case shop
         case user
     }
 
+    public init(shop: ShopProviding, userLocation: CLLocation? = nil, showNavigationControl: Bool = false) {
+        self.shop = shop
+        self.userLocation = userLocation
+        self.showNavigationControl = showNavigationControl
+        self.shopLocation = ShopLocation(shop: shop)
+    }
+    
     @State private var mode: Mode = .shop
+    @State private var showingAlert: Bool = false
+    let shopLocation: ShopLocation
+    
     private var region: MKCoordinateRegion {
         switch mode {
         case .user:
@@ -123,15 +134,29 @@ public struct ShopMapView: View {
 
     @ViewBuilder
     var mapView: some View {
-        Map(coordinateRegion: .init(get: { region }, set: { _ in }),
+        if mode == .shop {
+            Map(coordinateRegion: .init(get: { region }, set: { _ in }),
             interactionModes: .all,
             showsUserLocation: true,
-            userTrackingMode: .constant(.none),
-            annotationItems: [ShopLocation(shop: shop)]) { place in
-            MapAnnotation(coordinate: place.shop.location.coordinate) {
-                ShopAnnotationView(shopLocation: place)
-                    .shadow(color: .gray, radius: 3, x: 2, y: 2)
+                userTrackingMode: .constant(.none),
+                annotationItems: [self.shopLocation]) { place in
+                MapAnnotation(coordinate: place.shop.location.coordinate) {
+                    ShopAnnotationView(shopLocation: place)
+                        .shadow(color: .gray, radius: 3, x: 2, y: 2)
+                }
             }
+        } else {
+            Map(coordinateRegion: .init(get: { region }, set: { _ in }),
+            interactionModes: .all,
+            showsUserLocation: true,
+            userTrackingMode: .constant(.follow),
+                annotationItems: [self.shopLocation]) { place in
+                MapAnnotation(coordinate: place.shop.location.coordinate) {
+                    ShopAnnotationView(shopLocation: place)
+                        .shadow(color: .gray, radius: 3, x: 2, y: 2)
+                }
+            }
+
         }
     }
 
@@ -139,14 +164,30 @@ public struct ShopMapView: View {
     var locationControl: some View {
         VStack(spacing: 12) {
             Button(action: {
-                mode = .shop
+                withAnimation {
+                    mode = .shop
+                }
             }) {
                 Asset.image(named: mode == .shop ? "house.fill" : "house")
             }
+
             Button(action: {
-                mode = .user
+                withAnimation {
+                    mode = .user
+                }
             }) {
                 Asset.image(named: mode == .user ? "location.fill" : "location")
+            }
+            .opacity(userLocation?.region == nil ? 0.5 : 1.0)
+            .disabled(userLocation?.region == nil)
+
+            if showNavigationControl {
+                Button(action: {
+                    showingAlert.toggle()
+                }) {
+                    Asset.image(named: "arrow.triangle.turn.up.right.circle.fill")
+                }
+                .navigateToShopAlert(isPresented: $showingAlert, shop: shop)
             }
         }
         .padding(10)
