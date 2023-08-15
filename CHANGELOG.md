@@ -4,6 +4,15 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [unreleased]
+
+### Changed
+* Make icon of PaymentMethodDetail public #APPS-963
+
+### Updated
+* apple/swift-log.git 1.5.3 (was 1.5.2)
+* groue/GRDB.swift 6.16.0 (was 6.15.0)
+
 ## [0.38.0] - 2023-07-11
 
 ### Added
