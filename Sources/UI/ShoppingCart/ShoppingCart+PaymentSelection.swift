@@ -357,6 +357,11 @@ final class PaymentMethodSelector {
                 }
                 return actions
             } else {
+                // Workaround: Bug Fix #APPS-995
+                // https://snabble.atlassian.net/browse/APPS-995
+                if method == .externalBilling && Snabble.shared.config.showExternalBilling == false {
+                    return []
+                }
                 let subtitle = Asset.localizedString(forKey: "Snabble.Shoppingcart.noPaymentData")
                 let title = Self.attributedString(
                     forText: method.displayName,
