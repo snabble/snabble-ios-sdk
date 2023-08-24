@@ -9,7 +9,7 @@ import SwiftUI
 import SnabbleCore
 
 extension PaymentMethodDetail {
-    var icon: UIImage? {
+    public var icon: UIImage? {
         return Asset.image(named: "SnabbleSDK/payment/" + self.imageName)
     }
 }
