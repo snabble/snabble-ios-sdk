@@ -6,12 +6,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.38.1]
 
+### Added
+* Make icon of PaymentMethodDetail public #APPS-963
+
 ### Fixed
 * `ExternalBilling` wird als Kauf auf Rechnung interpretiert, aber sollte eine Kundenkarte sein #APPS-995
-## [unreleased]
-
-### Changed
-* Make icon of PaymentMethodDetail public #APPS-963
 
 ### Updated
 * apple/swift-log.git 1.5.3 (was 1.5.2)
