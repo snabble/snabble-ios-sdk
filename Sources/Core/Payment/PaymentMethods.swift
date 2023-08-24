@@ -79,11 +79,14 @@ public enum RawPaymentMethod: String, Decodable {
         switch self {
         case .deDirectDebit, .paydirektOneKlick,
              .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress,
-             .twint, .postFinanceCard,
-             .externalBilling:
+             .twint, .postFinanceCard:
             return true
         case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS, .applePay:
             return false
+        // Workaround: Bug Fix #APPS-995
+        // https://snabble.atlassian.net/browse/APPS-995
+        case .externalBilling:
+            return Snabble.shared.config.showExternalBilling
         }
 
     }

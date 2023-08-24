@@ -45,6 +45,10 @@ public struct Config {
     /// load shop list from the `activeShops` endpoint?
     public var loadActiveShops = false
 
+    // Workaround: Bug Fix #APPS-995
+    // https://snabble.atlassian.net/browse/APPS-995
+    public var showExternalBilling = true
+
     // debug mode only:
     // SQL statements that are executed just before the product database is opened
     public var initialSQL: [String]?
@@ -140,7 +144,7 @@ public class Snabble {
     public lazy var shoppingCartManager = ShoppingCartManager()
 
     /// Will be set with setup(config:, completion:)
-    let config: Config
+    public let config: Config
 
     /// Will be created in setup(config:, completion:)
     public let tokenRegistry: TokenRegistry
