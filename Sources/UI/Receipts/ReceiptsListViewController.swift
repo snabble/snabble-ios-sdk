@@ -13,23 +13,69 @@ enum OrderEntry {
 }
 
 public final class ReceiptsListViewController: UITableViewController {
-    private let emptyLabel = UILabel()
-    private weak var activityIndicator: UIActivityIndicatorView?
+    public final class EmptyView: UIView {
+        private(set) weak var imageView: UIImage?
+        private(set) weak var textLabel: UILabel?
 
-    private var orderList: OrderList?
-    private var orders: [OrderEntry]?
-    private var process: CheckoutProcess?
-    private var orderId: String?
+        public override init(frame: CGRect) {
+            let symbolConfiguration = UIImage.SymbolConfiguration(pointSize: 72)
+            let image = UIImage(systemName: "scroll", withConfiguration: symbolConfiguration)
+            let imageView = UIImageView(image: image)
+            imageView.translatesAutoresizingMaskIntoConstraints = false
+            imageView.contentMode = .scaleAspectFit
 
+            let textLabel = UILabel()
+            textLabel.text = Asset.localizedString(forKey: "Snabble.Receipts.noReceipts")
+            textLabel.translatesAutoresizingMaskIntoConstraints = false
+            textLabel.numberOfLines = 0
+            textLabel.textAlignment = .center
+            textLabel.font = .preferredFont(forTextStyle: .body)
+            textLabel.adjustsFontForContentSizeCategory = true
+
+            super.init(frame: frame)
+
+            addSubview(imageView)
+            addSubview(textLabel)
+
+            NSLayoutConstraint.activate([
+                imageView.leadingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: leadingAnchor, multiplier: 1),
+                trailingAnchor.constraint(greaterThanOrEqualToSystemSpacingAfter: imageView.trailingAnchor, multiplier: 1),
+                imageView.centerXAnchor.constraint(equalTo: centerXAnchor),
+
+                textLabel.leadingAnchor.constraint(equalTo: leadingAnchor),
+                trailingAnchor.constraint(equalTo: textLabel.trailingAnchor),
+
+                imageView.topAnchor.constraint(equalTo: topAnchor),
+                textLabel.topAnchor.constraint(equalToSystemSpacingBelow: imageView.bottomAnchor, multiplier: 1),
+                bottomAnchor.constraint(equalTo: textLabel.bottomAnchor)
+            ])
+        }
+
+        required init?(coder: NSCoder) {
+            fatalError("init(coder:) has not been implemented")
+        }
+    }
+
+    private(set) weak var emptyView: EmptyView?
+    private(set) weak var activityIndicator: UIActivityIndicatorView?
+
+    private var orders: [OrderEntry]? {
+        didSet {
+            if let orders {
+                activityIndicator?.stopAnimating()
+                emptyView?.isHidden = !orders.isEmpty
+            } else {
+                activityIndicator?.startAnimating()
+                emptyView?.isHidden = true
+            }
+            tableView.reloadData()
+        }
+    }
     public weak var analyticsDelegate: AnalyticsDelegate?
 
-    public init(checkoutProcess process: CheckoutProcess?) {
-        self.process = process
-        self.orderId = process?.orderID
-
+    public init() {
         super.init(nibName: nil, bundle: nil)
-
-        self.title = Asset.localizedString(forKey: "Snabble.Receipts.title")
+        title = Asset.localizedString(forKey: "Snabble.Receipts.title")
     }
 
     required init?(coder aDecoder: NSCoder) {
@@ -38,12 +84,11 @@ public final class ReceiptsListViewController: UITableViewController {
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-        emptyLabel.translatesAutoresizingMaskIntoConstraints = false
-        emptyLabel.numberOfLines = 0
-        emptyLabel.textAlignment = .center
-        emptyLabel.font = .preferredFont(forTextStyle: .body)
-        emptyLabel.adjustsFontForContentSizeCategory = true
-        view.addSubview(emptyLabel)
+        let emptyView = EmptyView()
+        emptyView.translatesAutoresizingMaskIntoConstraints = false
+        emptyView.isHidden = true
+        view.addSubview(emptyView)
+        self.emptyView = emptyView
 
         let activityIndicator = UIActivityIndicatorView(style: .medium)
         activityIndicator.startAnimating()
@@ -57,25 +102,26 @@ public final class ReceiptsListViewController: UITableViewController {
             activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor),
 
-            emptyLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            emptyLabel.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-            emptyLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            emptyLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
+            emptyView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            emptyView.centerYAnchor.constraint(equalTo: view.centerYAnchor),
+            emptyView.leadingAnchor.constraint(greaterThanOrEqualTo: view.leadingAnchor, constant: 16),
+            emptyView.trailingAnchor.constraint(greaterThanOrEqualTo: view.trailingAnchor, constant: -16),
+            emptyView.topAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: view.topAnchor, multiplier: 1),
+            view.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: emptyView.bottomAnchor, multiplier: 1)
         ])
 
         self.tableView.register(ReceiptCell.self, forCellReuseIdentifier: "receiptCell")
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
 
-        self.emptyLabel.text = Asset.localizedString(forKey: "Snabble.Receipts.noReceipts")
-        self.emptyLabel.isHidden = true
+        let refreshControl = UIRefreshControl()
+        refreshControl.addTarget(self, action: #selector(self.handleRefresh(_:)), for: .valueChanged)
+        self.tableView.refreshControl = refreshControl
 
         self.loadOrderList()
-        self.startReceiptPolling()
     }
 
     deinit {
         orders = nil
-        orderList = nil
     }
     
     override public func viewDidAppear(_ animated: Bool) {
@@ -89,79 +135,29 @@ public final class ReceiptsListViewController: UITableViewController {
         guard let project = Snabble.shared.projects.first else {
             return
         }
-
-        OrderList.load(project) { result in
-            self.orderListLoaded(result)
-
-            if self.tableView.refreshControl == nil {
-                let refreshControl = UIRefreshControl()
-                refreshControl.addTarget(self, action: #selector(self.handleRefresh(_:)), for: .valueChanged)
-                self.tableView.refreshControl = refreshControl
-            }
-        }
-    }
-
-    private func startReceiptPolling() {
-        guard let process = self.process else {
-            return
-        }
-
-        let poller = PaymentProcessPoller(process, SnabbleCI.project)
-
-        poller.waitFor([.receipt]) { result in
-            self.orderId = poller.updatedProcess.orderID
-            if let receiptAvailable = result[.receipt], receiptAvailable, self.orderList != nil {
-                self.loadOrderList()
-            }
+        orders = nil
+        OrderList.load(project) { [weak self] result in
+            self?.orderListLoaded(result)
         }
     }
 
     private func orderListLoaded(_ result: Result<OrderList, SnabbleError>) {
         switch result {
         case .success(let orderList):
-            self.orderList = orderList
-            self.updateDisplay(orderList)
-
+            self.orders = orderList.receipts.map { OrderEntry.done($0) }
         case .failure:
-            // TODO: display error msg
-            break
+            self.orders = []
         }
     }
 
-    private func updateDisplay(_ orderList: OrderList) {
-        var orders = orderList.receipts.map { OrderEntry.done($0) }
-
-        let orderIds: [String] = orders.compactMap {
-            if case .done(let entry) = $0 {
-                return entry.id
-            } else {
-                return nil
-            }
-        }
-
-        if let orderId = self.orderId {
-            if !orderIds.contains(orderId) {
-                let pending = OrderEntry.pending(SnabbleCI.project.name, SnabbleCI.project.id)
-                orders.insert(pending, at: 0)
-            }
-        }
-        self.orders = orders
-
-        self.activityIndicator?.stopAnimating()
-        if orders.isEmpty {
-            self.emptyLabel.isHidden = false
-        }
-        self.tableView.reloadData()
-    }
-
-    @objc private func handleRefresh(_ sender: Any) {
+    @objc private func handleRefresh(_ sender: UIRefreshControl) {
         guard let project = Snabble.shared.projects.first else {
             return
         }
 
-        OrderList.load(project) { result in
-            self.tableView.refreshControl?.endRefreshing()
-            self.orderListLoaded(result)
+        OrderList.load(project) { [weak self] result in
+            sender.endRefreshing()
+            self?.orderListLoaded(result)
         }
     }
 }
@@ -169,7 +165,7 @@ public final class ReceiptsListViewController: UITableViewController {
 // MARK: - UITableViewDelegate, UITableViewDataSource
 extension ReceiptsListViewController {
     override public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return self.orders?.count ?? 0
+        orders?.count ?? 0
     }
 
     override public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
