@@ -46,7 +46,7 @@ extension AccountViewController: DynamicViewControllerDelegate {
         
         switch widget.id {
         case "Profile.lastPurchases":
-            let viewController = ReceiptsListViewController(checkoutProcess: nil)
+            let viewController = ReceiptsListViewController()
             navigationController?.pushViewController(viewController, animated: true)
 
         case "Profile.paymentMethods", "Profile.customerCard":
