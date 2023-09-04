@@ -37,8 +37,7 @@ final class PaymentMethodSelector {
 
     private(set) var methodTap: UITapGestureRecognizer!
 
-    private(set) var selectedPaymentMethod: RawPaymentMethod?
-    private(set) var selectedPaymentDetail: PaymentMethodDetail?
+    private(set) var selectedPayment: PaymentSelection?
 
     private var shoppingCart: ShoppingCart
     weak var delegate: PaymentMethodSelectorDelegate?
@@ -108,9 +107,9 @@ final class PaymentMethodSelector {
 
         self.methodSelectionView?.isHidden = hidden
 
-        if let selectedMethod = selectedPaymentMethod {
+        if let selectedMethod = selectedPayment?.method {
             if selectedMethod.dataRequired {
-                if let selectedDetail = selectedPaymentDetail {
+                if let selectedDetail = selectedPayment?.detail {
                     let method = details.first { $0 == selectedDetail }
                     if method != nil {
                         assert(method?.rawMethod == selectedMethod)
@@ -132,14 +131,13 @@ final class PaymentMethodSelector {
             let inCart = self.shoppingCart.paymentMethods?.contains { $0.method == detail.rawMethod }
             if inCart == true {
                 self.setSelectedPayment(detail.rawMethod, detail: detail)
-            } else if self.userPaymentMethodDetails.contains(detail), detail != self.selectedPaymentDetail {
+            } else if self.userPaymentMethodDetails.contains(detail), detail != self.selectedPayment?.detail {
                 self.setSelectedPayment(detail.rawMethod, detail: detail)
             }
         } else {
             // method was deleted, check if it was the selected one
-            if let selectedDetail = self.selectedPaymentDetail {
-                self.selectedPaymentDetail = nil
-                self.selectedPaymentMethod = nil
+            if let selectedDetail = self.selectedPayment?.detail {
+                self.selectedPayment = nil
                 let allMethods = PaymentMethodDetails.read()
                 if allMethods.firstIndex(of: selectedDetail) == nil {
                     self.setDefaultPaymentMethod()
@@ -155,16 +153,23 @@ final class PaymentMethodSelector {
     func updateAvailablePaymentMethods() {
         self.methodTap.isEnabled = true
 
-        if !availableMethods.contains(where: { $0 == selectedPaymentMethod }) {
+        if !availableMethods.contains(where: { $0 == selectedPayment?.method }) {
             self.setDefaultPaymentMethod()
         } else {
-            self.setSelectedPayment(self.selectedPaymentMethod, detail: self.selectedPaymentDetail)
+            self.setSelectedPayment(self.selectedPayment?.method, detail: self.selectedPayment?.detail)
         }
     }
 
     private func setSelectedPayment(_ method: RawPaymentMethod?, detail: PaymentMethodDetail?) {
-        self.selectedPaymentMethod = method
-        self.selectedPaymentDetail = detail
+        if let method = method {
+            self.selectedPayment = PaymentSelection(method: method, detail: detail)
+        } else if let detail = detail {
+            self.selectedPayment = PaymentSelection(method: detail.rawMethod, detail: detail)
+        } else {
+            self.selectedPayment = nil
+        }
+//        self.selectedPaymentMethod = method
+//        self.selectedPaymentDetail = detail
 
         let icon = detail?.icon ?? method?.icon
         self.methodIcon?.image = icon

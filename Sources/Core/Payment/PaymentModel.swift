@@ -10,6 +10,11 @@ import Foundation
 public struct PaymentSelection {
     public let method: RawPaymentMethod
     public var detail: PaymentMethodDetail?
+    
+    public init(method: RawPaymentMethod, detail: PaymentMethodDetail? = nil) {
+        self.method = method
+        self.detail = detail
+    }
 }
 
 public struct PaymentModel {
