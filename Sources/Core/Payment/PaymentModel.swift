@@ -8,8 +8,8 @@
 import Foundation
 
 public struct PaymentSelection {
-    let method: RawPaymentMethod
-    let detail: PaymentMethodDetail?
+    public let method: RawPaymentMethod
+    public var detail: PaymentMethodDetail?
 }
 
 public struct PaymentModel {
