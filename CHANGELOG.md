@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 * Emptystate mit Icon für die Kassenbons #APPS-1031
+* Eingangscode für Grab&Go anfragen #APPS-1042
 
 ## [0.38.1] - 2023-08-24
 
