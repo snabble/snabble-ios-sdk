@@ -29,7 +29,7 @@ public enum Autonomo {
 }
 
 private struct SessionRequest: Encodable {
-    let shopID: Int
+    let shopID: String
     let paymentMethod: String
     let paymentOrigin: String
 }
@@ -37,7 +37,7 @@ private struct SessionRequest: Encodable {
 extension Project {
     public func getAutonomoSession(for shop: Shop, paymentMethodDetail: PaymentMethodDetail, completion: @escaping (Result<Autonomo.Session, SnabbleError>) -> Void) {
         let tokenRequest = SessionRequest(
-            shopID: Int(shop.id.rawValue) ?? 0,
+            shopID: shop.id.rawValue,
             paymentMethod: paymentMethodDetail.rawMethod.rawValue,
             paymentOrigin: paymentMethodDetail.encryptedData
         )
