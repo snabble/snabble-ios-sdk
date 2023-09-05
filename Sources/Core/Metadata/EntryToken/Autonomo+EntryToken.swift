@@ -13,18 +13,10 @@ public enum Autonomo {
         public let entryToken: EntryToken
     }
 
-    public struct EntryToken: Codable {
+    public struct EntryToken: Codable, SnabbleCore.EntryToken {
         public let value: String
         public let validUntil: Date
         public let refreshAfter: Date
-        public let format: ScanFormat = .qr
-
-        public init(from decoder: Decoder) throws {
-            let container: KeyedDecodingContainer<Autonomo.EntryToken.CodingKeys> = try decoder.container(keyedBy: Autonomo.EntryToken.CodingKeys.self)
-            self.value = try container.decode(String.self, forKey: Autonomo.EntryToken.CodingKeys.value)
-            self.validUntil = try container.decode(Date.self, forKey: Autonomo.EntryToken.CodingKeys.validUntil)
-            self.refreshAfter = try container.decode(Date.self, forKey: Autonomo.EntryToken.CodingKeys.refreshAfter)
-        }
     }
 }
 
