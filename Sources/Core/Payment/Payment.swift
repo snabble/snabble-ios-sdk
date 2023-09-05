@@ -48,12 +48,15 @@ extension Payment {
         var availableOnlineMethods = self.availableOnlineMethods
 
         guard !availableOnlineMethods.isEmpty else {
-            return PaymentSelection.paymentSelection(availableOfflineMethods.first)
+            guard let method = availableOfflineMethods.first else {
+                return nil
+            }
+            return PaymentSelection(method: method)
         }
 
         // use Apple Pay, if possible
         if availableOnlineMethods.contains(.applePay) && ApplePay.canMakePayments(with: projectId) {
-            return PaymentSelection.paymentSelection(.applePay, detail: nil)
+            return PaymentSelection(method: .applePay)
         } else {
             availableOnlineMethods.removeAll { $0 == .applePay }
         }
@@ -78,7 +81,10 @@ extension Payment {
             guard let verified = verifyMethod(method) else {
                 continue
             }
-            return PaymentSelection.paymentSelection(verified.rawPaymentMethod, detail: verified.paymentMethodDetail)
+            guard let detail = verified.paymentMethodDetail else {
+                return PaymentSelection(method: verified.rawPaymentMethod)
+            }
+            return PaymentSelection(detail: detail)
         }
 
         // prefer in-app payment methods like SEPA or CC
@@ -86,7 +92,10 @@ extension Payment {
             guard let verified = verifyMethod(method) else {
                 continue
             }
-            return PaymentSelection.paymentSelection(verified.rawPaymentMethod, detail: verified.paymentMethodDetail)
+            guard let detail = verified.paymentMethodDetail else {
+                return PaymentSelection(method: verified.rawPaymentMethod)
+            }
+            return PaymentSelection(detail: detail)
         }
 
         return nil

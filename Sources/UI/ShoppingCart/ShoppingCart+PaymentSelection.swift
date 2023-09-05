@@ -149,7 +149,13 @@ final class PaymentMethodSelector {
     }
 
     private func setSelectedPayment(_ method: RawPaymentMethod?, detail: PaymentMethodDetail?) {
-        self.selectedPayment = PaymentSelection.paymentSelection(method, detail: detail)
+        if let detail {
+            self.selectedPayment = PaymentSelection(detail: detail)
+        } else if let method {
+            self.selectedPayment = PaymentSelection(method: method)
+        } else {
+            self.selectedPayment = nil
+        }
         
         let icon = detail?.icon ?? method?.icon
         self.methodIcon?.image = icon
