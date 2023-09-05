@@ -15,6 +15,10 @@ public struct PaymentSelection {
         self.method = method
         self.detail = detail
     }
+    public init(detail: PaymentMethodDetail) {
+        self.method = detail.rawMethod
+        self.detail = detail
+    }
 }
 
 public struct PaymentModel {
@@ -22,7 +26,7 @@ public struct PaymentModel {
     public var userDetails: [PaymentMethodDetail] = [] {
         didSet {
             if userDetails.count == 1, let first = userDetails.first {
-                preferredPayment = PaymentSelection(method: first.rawMethod, detail: first)
+                preferredPayment = PaymentSelection(detail: first)
             }
         }
     }
@@ -52,7 +56,6 @@ public extension Project {
     var paymentModel: PaymentModel {
         var model = PaymentModel(methods: paymentMethods)
         model.userDetails = PaymentModel.userDetails(for: id)
-        
         return model
     }
 }
