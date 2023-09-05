@@ -7,7 +7,7 @@
 import Foundation
 
 enum Wanzel {
-    public struct EntryToken: Decodable, SnabbleCore.EntryToken {
+    struct EntryToken: Decodable, SnabbleCore.EntryToken {
         public let value: String
         public let validUntil: Date
         public let refreshAfter: Date

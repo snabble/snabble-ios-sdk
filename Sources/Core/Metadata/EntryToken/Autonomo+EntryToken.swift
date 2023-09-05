@@ -7,13 +7,13 @@
 
 import Foundation
 
-public enum Autonomo {
-    public struct Session: Codable {
+enum Autonomo {
+    struct Session: Codable {
         public let id: String
         public let entryToken: EntryToken
     }
 
-    public struct EntryToken: Codable, SnabbleCore.EntryToken {
+    struct EntryToken: Codable, SnabbleCore.EntryToken {
         public let value: String
         public let validUntil: Date
         public let refreshAfter: Date
@@ -27,7 +27,7 @@ private struct SessionRequest: Encodable {
 }
 
 extension Project {
-    public func getAutonomoSession(for shop: Shop, paymentMethodDetail: PaymentMethodDetail, completion: @escaping (Result<Autonomo.Session, SnabbleError>) -> Void) {
+    func getAutonomoSession(for shop: Shop, paymentMethodDetail: PaymentMethodDetail, completion: @escaping (Result<Autonomo.Session, SnabbleError>) -> Void) {
         let tokenRequest = SessionRequest(
             shopID: shop.id.rawValue,
             paymentMethod: paymentMethodDetail.rawMethod.rawValue,

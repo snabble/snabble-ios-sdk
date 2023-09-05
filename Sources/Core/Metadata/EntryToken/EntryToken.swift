@@ -13,8 +13,8 @@ public protocol EntryToken: Codable {
     var refreshAfter: Date { get }
 }
 
-extension Project {
-    public func getEntryToken(for shop: Shop, paymentMethodDetail: PaymentMethodDetail?, completion: @escaping (Result<SnabbleCore.EntryToken, SnabbleError>) -> Void) {
+public extension Project {
+    func getEntryToken(for shop: Shop, paymentMethodDetail: PaymentMethodDetail?, completion: @escaping (Result<SnabbleCore.EntryToken, SnabbleError>) -> Void) {
         if shop.isGrabAndGo {
             guard let paymentMethodDetail else {
                 return completion(.failure(SnabbleError.noRequest))
