@@ -19,8 +19,15 @@ public struct PaymentSelection {
 
 public struct PaymentModel {
     public let methods: [RawPaymentMethod]
-    public var userDetails: [PaymentMethodDetail] = []
-    public var preferedPayment: PaymentSelection?
+    public var userDetails: [PaymentMethodDetail] = [] {
+        didSet {
+            if userDetails.count == 1, let first = userDetails.first {
+                preferredPayment = PaymentSelection(method: first.rawMethod, detail: first)
+            }
+        }
+    }
+
+    public var preferredPayment: PaymentSelection?
 
     public var availableMethods: [RawPaymentMethod] {
         methods.filter { $0.isAvailable }
