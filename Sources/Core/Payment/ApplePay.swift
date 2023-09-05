@@ -5,14 +5,13 @@
 //
 
 import PassKit
-import SnabbleCore
 
 // utility functions to check Apple Pay availability
 
 public enum ApplePay {
     // Does the device/OS support Apple Pay? This does not check if any cards have been added to the wallet!
     // Use this to decide whether to show Apple Pay in the popup or not
-    static func isSupported() -> Bool {
+    public static func isSupported() -> Bool {
         PKPaymentAuthorizationViewController.canMakePayments()
     }
 
@@ -25,11 +24,11 @@ public enum ApplePay {
             PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: paymentNetworks(with: projectId), capabilities: .capability3DS)
     }
 
-    static func paymentNetworks(with projectId: SnabbleCore.Identifier<Project>) -> [PKPaymentNetwork] {
+    public static func paymentNetworks(with projectId: SnabbleCore.Identifier<Project>) -> [PKPaymentNetwork] {
         return Snabble.shared.project(for: projectId)?.paymentMethods.compactMap { $0.paymentNetwork } ?? []
     }
 
-    static func openPaymentSetup() {
+    public static func openPaymentSetup() {
         let library = PKPassLibrary()
         library.openPaymentSetup()
     }

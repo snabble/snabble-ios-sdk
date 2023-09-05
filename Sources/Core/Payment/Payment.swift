@@ -15,20 +15,6 @@ public extension PaymentMethodDetails {
     }
 }
 
-public struct PaymentSelection {
-    public let method: RawPaymentMethod
-    public let detail: PaymentMethodDetail?
-    
-    public init(method: RawPaymentMethod, detail: PaymentMethodDetail? = nil) {
-        self.method = method
-        self.detail = detail
-    }
-    public init(detail: PaymentMethodDetail) {
-        self.method = detail.rawMethod
-        self.detail = detail
-    }
-}
-
 public struct Payment {
     public let projectId: Identifier<Project>
     public let methods: [RawPaymentMethod]
@@ -55,12 +41,55 @@ extension Payment {
     public var userDetails: [PaymentMethodDetail] {
         return PaymentMethodDetails.userDetails(for: projectId)
     }
-
+    
     public var preferredPayment: PaymentSelection? {
-        guard let detail = userDetails.first else {
-            return nil
+        
+        let userDetails = userDetails
+        var availableOnlineMethods = self.availableOnlineMethods
+
+        guard !availableOnlineMethods.isEmpty else {
+            return PaymentSelection.paymentSelection(availableOfflineMethods.first)
         }
-        return PaymentSelection(detail: detail)
+
+        // use Apple Pay, if possible
+        if availableOnlineMethods.contains(.applePay) && ApplePay.canMakePayments(with: projectId) {
+            return PaymentSelection.paymentSelection(.applePay, detail: nil)
+        } else {
+            availableOnlineMethods.removeAll { $0 == .applePay }
+        }
+
+        let verifyMethod: (RawPaymentMethod) -> (rawPaymentMethod: RawPaymentMethod, paymentMethodDetail: PaymentMethodDetail?)? = { method in
+            guard availableOnlineMethods.contains(method) else {
+                return nil
+            }
+
+            guard method.dataRequired else {
+                return (method, nil)
+            }
+
+            guard let userMethod = userDetails.first(where: { $0.rawMethod == method }) else {
+                return nil
+            }
+            return (userMethod.rawMethod, userMethod)
+        }
+
+        // prefer in-app payment methods like SEPA or CC
+        for method in RawPaymentMethod.preferredOnlineMethods {
+            guard let verified = verifyMethod(method) else {
+                continue
+            }
+            return PaymentSelection.paymentSelection(verified.rawPaymentMethod, detail: verified.paymentMethodDetail)
+        }
+
+        // prefer in-app payment methods like SEPA or CC
+        for method in RawPaymentMethod.orderedMethods {
+            guard let verified = verifyMethod(method) else {
+                continue
+            }
+            return PaymentSelection.paymentSelection(verified.rawPaymentMethod, detail: verified.paymentMethodDetail)
+        }
+
+        return nil
     }
 }
 
@@ -69,4 +98,3 @@ extension Project {
         return Payment(for: id, methods: paymentMethods)
     }
 }
-
