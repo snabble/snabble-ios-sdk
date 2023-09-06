@@ -102,6 +102,46 @@ extension Payment {
     }
 }
 
+public extension Payment {
+    func availablePayments() -> [PaymentGroup] {
+        var data: [PaymentGroup] = []
+        
+        if ApplePay.canMakePayments(with: projectId) {
+            let group = PaymentGroup(method: .applePay, items: [PaymentItem(item: PaymentSelection(method: .applePay))])
+            data.append(group)
+        }
+        
+        let details = PaymentMethodDetails.read().filter { detail in
+            switch detail.methodData {
+            case .teleCashCreditCard(let telecashData):
+                return telecashData.projectId == projectId
+            case .datatransCardAlias(let cardAlias):
+                return cardAlias.projectId == projectId
+            case .datatransAlias(let alias):
+                return alias.projectId == projectId
+            case .payoneCreditCard(let payoneData):
+                return payoneData.projectId == projectId
+            case .payoneSepa(let payoneSepaData):
+                return payoneSepaData.projectId == projectId
+            case .tegutEmployeeCard, .sepa, .paydirektAuthorization, .leinweberCustomerNumber, .invoiceByLogin:
+                return Snabble.shared.project(for: projectId)?.paymentMethods.contains(where: { $0 == detail.rawMethod }) ?? false
+            }
+        }
+        
+        Dictionary(grouping: details, by: { $0.rawMethod })
+            .values
+            .sorted { $0[0].displayName < $1[0].displayName }
+            .map { $0.map { PaymentItem(item: PaymentSelection(detail: $0)) } }
+            .forEach { items in
+                if let method = items.first?.value.method {
+                    let group = PaymentGroup(method: method, items: items)
+                    data.append(group)
+                }
+            }
+        return data
+    }
+}
+
 extension Project {
     public var payment: Payment {
         return Payment(for: id, methods: paymentMethods)
