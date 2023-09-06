@@ -59,7 +59,7 @@ public final class ReceiptsListViewController: UITableViewController {
     private(set) weak var emptyView: EmptyView?
     private(set) weak var activityIndicator: UIActivityIndicatorView?
 
-    private var orders: [OrderEntry]? {
+    private var orders: [Order]? {
         didSet {
             if let orders {
                 activityIndicator?.stopAnimating()
@@ -110,7 +110,7 @@ public final class ReceiptsListViewController: UITableViewController {
             view.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: emptyView.bottomAnchor, multiplier: 1)
         ])
 
-        self.tableView.register(ReceiptCell.self, forCellReuseIdentifier: "receiptCell")
+        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "receiptCell")
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
 
         let refreshControl = UIRefreshControl()
@@ -144,7 +144,7 @@ public final class ReceiptsListViewController: UITableViewController {
     private func orderListLoaded(_ result: Result<OrderList, SnabbleError>) {
         switch result {
         case .success(let orderList):
-            self.orders = orderList.receipts.map { OrderEntry.done($0) }
+            self.orders = orderList.receipts
         case .failure:
             self.orders = []
         }
@@ -169,28 +169,25 @@ extension ReceiptsListViewController {
     }
 
     override public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // swiftlint:disable:next force_cast
-        let cell = tableView.dequeueReusableCell(withIdentifier: "receiptCell", for: indexPath) as! ReceiptCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: "receiptCell", for: indexPath)
 
-        guard let orders = self.orders else {
-            return UITableViewCell(style: .default, reuseIdentifier: "invalidCell")
+        guard let orders = orders else {
+            cell.contentConfiguration = nil
+            cell.accessoryType = .none
+            return cell
         }
 
-        let orderEntry = orders[indexPath.row]
-        cell.show(orderEntry)
+        let configuration = ReceiptContentConfiguration(order: orders[indexPath.row])
+        cell.contentConfiguration = configuration
+        cell.accessoryType = configuration.accessoryType
 
         return cell
     }
 
     override public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard let orders = self.orders else {
-            return
-        }
-
-        let orderEntry = orders[indexPath.row]
         guard
-            case .done(let order) = orderEntry,
+            let order = self.orders?[indexPath.row],
             let project = Snabble.shared.project(for: order.projectId) ?? Snabble.shared.projects.first
         else {
             return
@@ -216,4 +213,49 @@ extension ReceiptsListViewController {
             }
         }
     }
+}
+
+extension ReceiptsListViewController {
+//    func configuration(for orderEntry: OrderEntry) -> ReceiptContentConfiguration {
+//        switch orderEntry {
+//        case .done(let order):
+//            let price: String
+//            if let project = Snabble.shared.project(for: order.projectId) {
+//                let formatter = PriceFormatter(project)
+//                price = formatter.format(order.price)
+//            } else {
+//                let formatter = PriceFormatter(2, "de_DE", "EUR", "€")
+//                price = formatter.format(order.price)
+//            }
+//
+//            let dateFormatter = DateFormatter()
+//            dateFormatter.dateStyle = .medium
+//            dateFormatter.timeStyle = .short
+//            dateFormatter.doesRelativeDateFormatting = true
+//            return .init(
+//                image: UIImage(systemName: "scroll"),
+//                title: order.shopName,
+//                subtitle: dateFormatter.string(for: order.date)!,
+//                disclosure: price
+//            )
+//        case .pending(let shopName, _):
+//            return .init(
+//                image: UIImage(systemName: "scroll"),
+//                title: shopName,
+//                subtitle: Asset.localizedString(forKey: "Snabble.Receipts.loading"),
+//                disclosure: nil)
+//        }
+//    }
+
+//    private func showIcon(_ projectId: Identifier<Project>) {
+//        self.projectId = projectId
+//
+//        SnabbleCI.getAsset(.storeIcon, projectId: projectId) { [weak self] img in
+//            if let img = img, self?.projectId == projectId {
+//                self?.storeIcon.image = img
+//            } else {
+//                self?.storeIcon.image = UIImage(named: projectId.rawValue)
+//            }
+//        }
+//    }
 }
