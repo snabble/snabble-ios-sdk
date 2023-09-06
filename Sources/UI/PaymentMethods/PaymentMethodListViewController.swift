@@ -7,26 +7,11 @@
 import UIKit
 import SnabbleCore
 
-private struct ViewModel {
-    init(detail: PaymentMethodDetail) {
-        self.rawPaymentMethod = detail.rawMethod
-        self.detail = detail
-    }
-
-    init(rawPaymentMethod: RawPaymentMethod) {
-        self.rawPaymentMethod = rawPaymentMethod
-        self.detail = nil
-    }
-
-    var rawPaymentMethod: RawPaymentMethod
-    var detail: PaymentMethodDetail?
-}
-
 public final class PaymentMethodListViewController: UITableViewController {
     private weak var analyticsDelegate: AnalyticsDelegate?
 
     private(set) var projectId: Identifier<Project>?
-    private var data: [[ViewModel]] = []
+    private var data: [PaymentGroup] = []
 
     public init(for projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) {
         self.projectId = projectId
@@ -58,7 +43,8 @@ public final class PaymentMethodListViewController: UITableViewController {
 
         if let projectId = self.projectId {
             if ApplePay.canMakePayments(with: projectId) {
-                data.append([ViewModel(rawPaymentMethod: .applePay)])
+                let group = PaymentGroup(method: .applePay, items: [PaymentItem(item: PaymentSelection(method: .applePay))])
+                data.append(group)
             }
 
             let details = PaymentMethodDetails.read().filter { detail in
@@ -81,9 +67,12 @@ public final class PaymentMethodListViewController: UITableViewController {
             Dictionary(grouping: details, by: { $0.rawMethod })
                 .values
                 .sorted { $0[0].displayName < $1[0].displayName }
-                .map { $0.map { ViewModel(detail: $0) } }
+                .map { $0.map { PaymentItem(item: PaymentSelection(detail: $0))/*ViewModel(detail: $0)*/ } }
                 .forEach { [self] in
-                    data.append($0)
+                    if let method = $0.first?.value.method {
+                        let group = PaymentGroup(method: method, items: $0)
+                        data.append(group)
+                    }
                 }
         }
 
@@ -127,6 +116,12 @@ public final class PaymentMethodListViewController: UITableViewController {
     }
 }
 
+extension PaymentMethodListViewController {
+    fileprivate func paymentSelection(at indexPath: IndexPath) -> PaymentSelection {
+        return data[indexPath.section].items[indexPath.row].value
+    }
+}
+
 // MARK: - table view delegate & data source
 extension PaymentMethodListViewController {
     override public func numberOfSections(in tableView: UITableView) -> Int {
@@ -134,32 +129,35 @@ extension PaymentMethodListViewController {
     }
 
     override public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        data[section].count
+        data[section].items.count
     }
 
     override public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         // swiftlint:disable:next force_cast
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! PaymentMethodListCell
 
-        let data = data[indexPath.section][indexPath.row]
+        let paymentSelection = paymentSelection(at: indexPath)
+
         let viewModel: PaymentMethodListCellViewModel
-        if let detail = data.detail {
+        if let detail = paymentSelection.detail {
             viewModel = PaymentMethodListCell.ViewModel(detail: detail)
         } else {
-            viewModel = PaymentMethodListCell.ViewModel(displayName: data.rawPaymentMethod.displayName, icon: data.rawPaymentMethod.icon)
+            let method = paymentSelection.method
+            
+            viewModel = PaymentMethodListCell.ViewModel(displayName: method.displayName, icon: method.icon)
         }
         cell.configure(with: viewModel)
 
         return cell
     }
-
+    
     override public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        let viewModel = data[indexPath.section][indexPath.row]
+        let paymentSelection = paymentSelection(at: indexPath)
 
         var editVC: UIViewController?
-        if let detail = viewModel.detail {
+        if let detail = paymentSelection.detail {
             switch detail.methodData {
             case .sepa:
                 editVC = SepaEditViewController(detail, self.analyticsDelegate)
@@ -190,7 +188,7 @@ extension PaymentMethodListViewController {
     }
 
     override public func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        data[indexPath.section][indexPath.row].detail != nil
+        return paymentSelection(at: indexPath).detail != nil
     }
 
     override public func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
@@ -198,7 +196,7 @@ extension PaymentMethodListViewController {
     }
 
     override public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if let detail = data[indexPath.section][indexPath.row].detail {
+        if let detail = paymentSelection(at: indexPath).detail {
             PaymentMethodDetails.remove(detail)
             data[indexPath.section].remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
