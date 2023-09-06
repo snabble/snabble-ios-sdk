@@ -197,7 +197,7 @@ final class CheckoutBar: UIView {
         self.checkoutButton?.isEnabled = numProducts > 0 && (totalPrice ?? 0) >= 0
 
         self.methodSelector?.updateAvailablePaymentMethods()
-        updateViewHierarchy(for: self.methodSelector?.selectedPaymentMethod)
+        updateViewHierarchy(for: self.methodSelector?.selectedPayment?.method)
     }
 
     func updateSelectionVisibility() {
@@ -233,7 +233,7 @@ final class CheckoutBar: UIView {
 
     private func startCheckout() {
         let project = SnabbleCI.project
-        guard let paymentMethod = self.methodSelector?.selectedPaymentMethod else {
+        guard let paymentMethod = self.methodSelector?.selectedPayment?.method else {
             let selection = PaymentMethodAddViewController(parentVC)
             parentVC?.navigationController?.pushViewController(selection, animated: true)
 
@@ -241,7 +241,7 @@ final class CheckoutBar: UIView {
         }
 
         // no detail data, and there is an editing VC? Show that instead of continuing
-        if self.methodSelector?.selectedPaymentDetail == nil,
+        if self.methodSelector?.selectedPayment?.detail == nil,
             let parentVC = self.parentVC,
             paymentMethod.isAddingAllowed(showAlertOn: parentVC),
             let editVC = paymentMethod.editViewController(with: project.id, parentVC) {
@@ -270,7 +270,7 @@ final class CheckoutBar: UIView {
                 // force any required info to be re-requested on the next attempt
                 self.shoppingCart.resetInformationData() // requiredInformationData = []
 
-                let detail = self.methodSelector?.selectedPaymentDetail
+                let detail = self.methodSelector?.selectedPayment?.detail
                 let cart = self.shoppingCart
                 self.shoppingCartDelegate?.gotoPayment(paymentMethod, detail, info, cart) { didStart in
                     if !didStart {

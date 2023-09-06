@@ -37,28 +37,15 @@ final class PaymentMethodSelector {
 
     private(set) var methodTap: UITapGestureRecognizer!
 
-    private(set) var selectedPaymentMethod: RawPaymentMethod?
-    private(set) var selectedPaymentDetail: PaymentMethodDetail?
+    private(set) var selectedPayment: PaymentSelection?
 
     private var shoppingCart: ShoppingCart
     weak var delegate: PaymentMethodSelectorDelegate?
 
-    private var userPaymentMethodDetails: [PaymentMethodDetail] {
-        PaymentMethodDetails.read()
-           .filter { $0.rawMethod.isAvailable }
-           .filter { $0.projectId != nil ? $0.projectId == SnabbleCI.project.id : true }
+    private var payment: Payment {
+        SnabbleCI.project.payment
     }
-
-    private var projectPaymentMethods: [RawPaymentMethod] {
-        SnabbleCI.project.paymentMethods.filter { $0.isAvailable }
-    }
-
-    private var availableMethods: [RawPaymentMethod] {
-        let hasCartMethods = shoppingCart.paymentMethods != nil
-        let cartMethods = shoppingCart.paymentMethods?.map { $0.method }.filter { $0.isAvailable } ?? []
-        return (hasCartMethods ? cartMethods : projectPaymentMethods)
-    }
-
+    
     init(_ parentVC: (UIViewController & AnalyticsDelegate)?,
          _ selectionView: UIView,
          _ methodIcon: UIImageView,
@@ -94,7 +81,7 @@ final class PaymentMethodSelector {
     func updateSelectionVisibility() {
         // get details for all payment methods that could be used here
         let details = PaymentMethodDetails.read().filter { detail in
-            projectPaymentMethods.contains { $0 == detail.rawMethod }
+            payment.availableMethods.contains { $0 == detail.rawMethod }
         }
 
         // hide selection if
@@ -102,15 +89,15 @@ final class PaymentMethodSelector {
         // - we have no payment method data for it,
         // - and none is needed for this method
         let hidden =
-            projectPaymentMethods.count < 2 &&
+        payment.availableMethods.count < 2 &&
             details.isEmpty &&
-            projectPaymentMethods.first?.dataRequired == false
+        payment.availableMethods.first?.dataRequired == false
 
         self.methodSelectionView?.isHidden = hidden
 
-        if let selectedMethod = selectedPaymentMethod {
+        if let selectedMethod = selectedPayment?.method {
             if selectedMethod.dataRequired {
-                if let selectedDetail = selectedPaymentDetail {
+                if let selectedDetail = selectedPayment?.detail {
                     let method = details.first { $0 == selectedDetail }
                     if method != nil {
                         assert(method?.rawMethod == selectedMethod)
@@ -132,14 +119,13 @@ final class PaymentMethodSelector {
             let inCart = self.shoppingCart.paymentMethods?.contains { $0.method == detail.rawMethod }
             if inCart == true {
                 self.setSelectedPayment(detail.rawMethod, detail: detail)
-            } else if self.userPaymentMethodDetails.contains(detail), detail != self.selectedPaymentDetail {
+            } else if self.payment.userDetails.contains(detail), detail != self.selectedPayment?.detail {
                 self.setSelectedPayment(detail.rawMethod, detail: detail)
             }
         } else {
             // method was deleted, check if it was the selected one
-            if let selectedDetail = self.selectedPaymentDetail {
-                self.selectedPaymentDetail = nil
-                self.selectedPaymentMethod = nil
+            if let selectedDetail = self.selectedPayment?.detail {
+                self.selectedPayment = nil
                 let allMethods = PaymentMethodDetails.read()
                 if allMethods.firstIndex(of: selectedDetail) == nil {
                     self.setDefaultPaymentMethod()
@@ -155,17 +141,22 @@ final class PaymentMethodSelector {
     func updateAvailablePaymentMethods() {
         self.methodTap.isEnabled = true
 
-        if !availableMethods.contains(where: { $0 == selectedPaymentMethod }) {
+        if !payment.availableMethods.contains(where: { $0 == selectedPayment?.method }) {
             self.setDefaultPaymentMethod()
         } else {
-            self.setSelectedPayment(self.selectedPaymentMethod, detail: self.selectedPaymentDetail)
+            self.setSelectedPayment(self.selectedPayment?.method, detail: self.selectedPayment?.detail)
         }
     }
 
     private func setSelectedPayment(_ method: RawPaymentMethod?, detail: PaymentMethodDetail?) {
-        self.selectedPaymentMethod = method
-        self.selectedPaymentDetail = detail
-
+        if let detail {
+            self.selectedPayment = PaymentSelection(detail: detail)
+        } else if let method {
+            self.selectedPayment = PaymentSelection(method: method)
+        } else {
+            self.selectedPayment = nil
+        }
+        
         let icon = detail?.icon ?? method?.icon
         self.methodIcon?.image = icon
         if method?.dataRequired == true && detail == nil {
@@ -176,53 +167,7 @@ final class PaymentMethodSelector {
     }
 
     private func setDefaultPaymentMethod() {
-        let userMethods = userPaymentMethodDetails
-        let availableOfflineMethods = availableMethods.filter { $0.offline }
-        var availableOnlineMethods = availableMethods.filter { !$0.offline }
-
-        guard !availableOnlineMethods.isEmpty else {
-            return setSelectedPayment(availableOfflineMethods.first, detail: nil)
-        }
-
-        // use Apple Pay, if possible
-        if availableOnlineMethods.contains(.applePay) && ApplePay.canMakePayments(with: SnabbleCI.project.id) {
-            return setSelectedPayment(.applePay, detail: nil)
-        } else {
-            availableOnlineMethods.removeAll { $0 == .applePay }
-        }
-
-        let verifyMethod: (RawPaymentMethod) -> (rawPaymentMethod: RawPaymentMethod, paymentMethodDetail: PaymentMethodDetail?)? = { method in
-            guard availableOnlineMethods.contains(method) else {
-                return nil
-            }
-
-            guard method.dataRequired else {
-                return (method, nil)
-            }
-
-            guard let userMethod = userMethods.first(where: { $0.rawMethod == method }) else {
-                return nil
-            }
-            return (userMethod.rawMethod, userMethod)
-        }
-
-        // prefer in-app payment methods like SEPA or CC
-        for method in RawPaymentMethod.preferredOnlineMethods {
-            guard let verified = verifyMethod(method) else {
-                continue
-            }
-            return setSelectedPayment(verified.rawPaymentMethod, detail: verified.paymentMethodDetail)
-        }
-
-        // prefer in-app payment methods like SEPA or CC
-        for method in RawPaymentMethod.orderedMethods {
-            guard let verified = verifyMethod(method) else {
-                continue
-            }
-            return setSelectedPayment(verified.rawPaymentMethod, detail: verified.paymentMethodDetail)
-        }
-
-        setSelectedPayment(nil, detail: nil)
+        self.selectedPayment = payment.preferredPayment
     }
 
     private func userSelectedPaymentMethod(with actionData: PaymentMethodAction) {
@@ -262,14 +207,14 @@ final class PaymentMethodSelector {
         // and get them in the desired display order
         let availableOrderedMethods = RawPaymentMethod.orderedMethods
             .filter { allAppMethods.contains($0) }
-            .filter { projectPaymentMethods.contains($0) }
+            .filter { payment.availableMethods.contains($0) }
 
         var actions = [PaymentMethodAction]()
         for method in availableOrderedMethods {
             actions.append(
                 contentsOf: actionsFor(
                     method,
-                    withPaymentMethodDetails: userPaymentMethodDetails,
+                    withPaymentMethodDetails: payment.userDetails,
                     andSupportedMethods: shoppingCart.paymentMethods?.map { $0.method }
                 )
             )
