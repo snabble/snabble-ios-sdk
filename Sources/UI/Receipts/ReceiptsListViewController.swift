@@ -159,7 +159,7 @@ extension ReceiptsListViewController {
 
         let order = orders[indexPath.row]
         var configuration = ReceiptContentConfiguration(order: order)
-        configuration.showProjectImage = Snabble.shared.projects.count > 1
+        configuration.showProjectImage = Snabble.shared.projects.count == 1
         cell.contentConfiguration = configuration
         cell.accessoryType = configuration.accessoryType
 
