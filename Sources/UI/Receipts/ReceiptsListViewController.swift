@@ -7,11 +7,6 @@
 import UIKit
 import SnabbleCore
 
-enum OrderEntry {
-    case pending(String, Identifier<Project>)    // shop name, project id
-    case done(Order)
-}
-
 public final class ReceiptsListViewController: UITableViewController {
     public final class EmptyView: UIView {
         private(set) weak var imageView: UIImage?
@@ -59,15 +54,11 @@ public final class ReceiptsListViewController: UITableViewController {
     private(set) weak var emptyView: EmptyView?
     private(set) weak var activityIndicator: UIActivityIndicatorView?
 
-    private var orders: [Order]? {
+    private var orders: [Order] = [] {
         didSet {
-            if let orders {
-                activityIndicator?.stopAnimating()
-                emptyView?.isHidden = !orders.isEmpty
-            } else {
-                activityIndicator?.startAnimating()
-                emptyView?.isHidden = true
-            }
+            activityIndicator?.stopAnimating()
+            emptyView?.isHidden = !orders.isEmpty
+
             tableView.reloadData()
         }
     }
@@ -119,10 +110,6 @@ public final class ReceiptsListViewController: UITableViewController {
 
         self.loadOrderList()
     }
-
-    deinit {
-        orders = nil
-    }
     
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
@@ -135,7 +122,6 @@ public final class ReceiptsListViewController: UITableViewController {
         guard let project = Snabble.shared.projects.first else {
             return
         }
-        orders = nil
         OrderList.load(project) { [weak self] result in
             self?.orderListLoaded(result)
         }
@@ -165,19 +151,15 @@ public final class ReceiptsListViewController: UITableViewController {
 // MARK: - UITableViewDelegate, UITableViewDataSource
 extension ReceiptsListViewController {
     override public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        orders?.count ?? 0
+        orders.count
     }
 
     override public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "receiptCell", for: indexPath)
 
-        guard let orders = orders else {
-            cell.contentConfiguration = nil
-            cell.accessoryType = .none
-            return cell
-        }
-
-        let configuration = ReceiptContentConfiguration(order: orders[indexPath.row])
+        let order = orders[indexPath.row]
+        var configuration = ReceiptContentConfiguration(order: order)
+        configuration.showProjectImage = Snabble.shared.projects.count > 1
         cell.contentConfiguration = configuration
         cell.accessoryType = configuration.accessoryType
 
@@ -186,10 +168,9 @@ extension ReceiptsListViewController {
 
     override public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard
-            let order = self.orders?[indexPath.row],
-            let project = Snabble.shared.project(for: order.projectId) ?? Snabble.shared.projects.first
-        else {
+        let order = self.orders[indexPath.row]
+
+        guard let project = Snabble.shared.project(for: order.projectId) ?? Snabble.shared.projects.first else {
             return
         }
 
@@ -203,59 +184,12 @@ extension ReceiptsListViewController {
             tableView.allowsSelection = true
             
             switch result {
-
             case .success:
                 self?.navigationController?.pushViewController(detailViewController, animated: true)
                 self?.analyticsDelegate?.track(.viewReceiptDetail)
-
             case .failure:
                 break
             }
         }
     }
-}
-
-extension ReceiptsListViewController {
-//    func configuration(for orderEntry: OrderEntry) -> ReceiptContentConfiguration {
-//        switch orderEntry {
-//        case .done(let order):
-//            let price: String
-//            if let project = Snabble.shared.project(for: order.projectId) {
-//                let formatter = PriceFormatter(project)
-//                price = formatter.format(order.price)
-//            } else {
-//                let formatter = PriceFormatter(2, "de_DE", "EUR", "€")
-//                price = formatter.format(order.price)
-//            }
-//
-//            let dateFormatter = DateFormatter()
-//            dateFormatter.dateStyle = .medium
-//            dateFormatter.timeStyle = .short
-//            dateFormatter.doesRelativeDateFormatting = true
-//            return .init(
-//                image: UIImage(systemName: "scroll"),
-//                title: order.shopName,
-//                subtitle: dateFormatter.string(for: order.date)!,
-//                disclosure: price
-//            )
-//        case .pending(let shopName, _):
-//            return .init(
-//                image: UIImage(systemName: "scroll"),
-//                title: shopName,
-//                subtitle: Asset.localizedString(forKey: "Snabble.Receipts.loading"),
-//                disclosure: nil)
-//        }
-//    }
-
-//    private func showIcon(_ projectId: Identifier<Project>) {
-//        self.projectId = projectId
-//
-//        SnabbleCI.getAsset(.storeIcon, projectId: projectId) { [weak self] img in
-//            if let img = img, self?.projectId == projectId {
-//                self?.storeIcon.image = img
-//            } else {
-//                self?.storeIcon.image = UIImage(named: projectId.rawValue)
-//            }
-//        }
-//    }
 }
