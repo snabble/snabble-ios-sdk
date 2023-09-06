@@ -124,6 +124,8 @@ class ReceiptContentView: UIView, UIContentView {
 }
 
 struct ReceiptContentConfiguration: UIContentConfiguration {
+    static let tableViewCellIdentifier = "receiptContentCellIdentifier"
+
     var image: UIImage? {
         UIImage(systemName: "scroll")
     }

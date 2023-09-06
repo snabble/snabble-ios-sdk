@@ -101,7 +101,7 @@ public final class ReceiptsListViewController: UITableViewController {
             view.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: emptyView.bottomAnchor, multiplier: 1)
         ])
 
-        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: "receiptCell")
+        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: ReceiptContentConfiguration.tableViewCellIdentifier)
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
 
         let refreshControl = UIRefreshControl()
@@ -155,7 +155,7 @@ extension ReceiptsListViewController {
     }
 
     override public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "receiptCell", for: indexPath)
+        let cell = tableView.dequeueReusableCell(withIdentifier: ReceiptContentConfiguration.tableViewCellIdentifier, for: indexPath)
 
         let order = orders[indexPath.row]
         var configuration = ReceiptContentConfiguration(order: order)
