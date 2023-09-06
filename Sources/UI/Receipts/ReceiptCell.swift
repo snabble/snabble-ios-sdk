@@ -139,8 +139,6 @@ struct ReceiptContentConfiguration: UIContentConfiguration {
             let formatter = PriceFormatter(2, "de_DE", "EUR", "€")
             disclosure = formatter.format(order.price)
         }
-
-        SnabbleCI.getAsset(<#T##asset: ImageAsset##ImageAsset#>, completion: <#T##(UIImage?) -> Void#>)
     }
 
     var accessoryType: UITableViewCell.AccessoryType {
