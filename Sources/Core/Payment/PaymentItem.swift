@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct PaymentSelection {
+public struct PaymentItem: Swift.Identifiable {
     public let method: RawPaymentMethod
     public let detail: PaymentMethodDetail?
 
@@ -19,5 +19,14 @@ public struct PaymentSelection {
     public init(detail: PaymentMethodDetail) {
         self.method = detail.rawMethod
         self.detail = detail
+    }
+}
+
+extension PaymentItem {
+    public var id: String {
+        guard let detail = detail else {
+            return method.rawValue
+        }
+        return detail.id.uuidString
     }
 }

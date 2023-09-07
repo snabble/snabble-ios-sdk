@@ -42,7 +42,7 @@ extension Payment {
         return PaymentMethodDetails.userDetails(for: projectId)
     }
     
-    public var preferredPayment: PaymentSelection? {
+    public var preferredPayment: PaymentItem? {
         
         let userDetails = userDetails
         var availableOnlineMethods = self.availableOnlineMethods
@@ -51,12 +51,12 @@ extension Payment {
             guard let method = availableOfflineMethods.first else {
                 return nil
             }
-            return PaymentSelection(method: method)
+            return PaymentItem(method: method)
         }
 
         // use Apple Pay, if possible
         if availableOnlineMethods.contains(.applePay) && ApplePay.canMakePayments(with: projectId) {
-            return PaymentSelection(method: .applePay)
+            return PaymentItem(method: .applePay)
         } else {
             availableOnlineMethods.removeAll { $0 == .applePay }
         }
@@ -82,9 +82,9 @@ extension Payment {
                 continue
             }
             guard let detail = verified.paymentMethodDetail else {
-                return PaymentSelection(method: verified.rawPaymentMethod)
+                return PaymentItem(method: verified.rawPaymentMethod)
             }
-            return PaymentSelection(detail: detail)
+            return PaymentItem(detail: detail)
         }
 
         // prefer in-app payment methods like SEPA or CC
@@ -93,9 +93,9 @@ extension Payment {
                 continue
             }
             guard let detail = verified.paymentMethodDetail else {
-                return PaymentSelection(method: verified.rawPaymentMethod)
+                return PaymentItem(method: verified.rawPaymentMethod)
             }
-            return PaymentSelection(detail: detail)
+            return PaymentItem(detail: detail)
         }
 
         return nil
@@ -107,7 +107,7 @@ public extension Payment {
         var data: [PaymentGroup] = []
         
         if ApplePay.canMakePayments(with: projectId) {
-            let group = PaymentGroup(method: .applePay, items: [PaymentItem(item: PaymentSelection(method: .applePay))])
+            let group = PaymentGroup(method: .applePay, items: [PaymentItem(method: .applePay)])
             data.append(group)
         }
         
@@ -131,9 +131,9 @@ public extension Payment {
         Dictionary(grouping: details, by: { $0.rawMethod })
             .values
             .sorted { $0[0].displayName < $1[0].displayName }
-            .map { $0.map { PaymentItem(item: PaymentSelection(detail: $0)) } }
+            .map { $0.map { PaymentItem(detail: $0) } }
             .forEach { items in
-                if let method = items.first?.value.method {
+                if let method = items.first?.method {
                     let group = PaymentGroup(method: method, items: items)
                     data.append(group)
                 }

@@ -37,7 +37,7 @@ final class PaymentMethodSelector {
 
     private(set) var methodTap: UITapGestureRecognizer!
 
-    private(set) var selectedPayment: PaymentSelection?
+    private(set) var selectedPayment: PaymentItem?
 
     private var shoppingCart: ShoppingCart
     weak var delegate: PaymentMethodSelectorDelegate?
@@ -150,9 +150,9 @@ final class PaymentMethodSelector {
 
     private func setSelectedPayment(_ method: RawPaymentMethod?, detail: PaymentMethodDetail?) {
         if let detail {
-            self.selectedPayment = PaymentSelection(detail: detail)
+            self.selectedPayment = PaymentItem(detail: detail)
         } else if let method {
-            self.selectedPayment = PaymentSelection(method: method)
+            self.selectedPayment = PaymentItem(method: method)
         } else {
             self.selectedPayment = nil
         }

@@ -81,8 +81,8 @@ public final class PaymentMethodListViewController: UITableViewController {
 }
 
 extension PaymentMethodListViewController {
-    fileprivate func paymentSelection(at indexPath: IndexPath) -> PaymentSelection {
-        return data[indexPath.section].items[indexPath.row].value
+    fileprivate func paymentItem(at indexPath: IndexPath) -> PaymentItem {
+        return data[indexPath.section].items[indexPath.row]
     }
 }
 
@@ -100,7 +100,7 @@ extension PaymentMethodListViewController {
         // swiftlint:disable:next force_cast
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! PaymentMethodListCell
 
-        let paymentSelection = paymentSelection(at: indexPath)
+        let paymentSelection = paymentItem(at: indexPath)
 
         let viewModel: PaymentMethodListCellViewModel
         if let detail = paymentSelection.detail {
@@ -118,7 +118,7 @@ extension PaymentMethodListViewController {
     override public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        let paymentSelection = paymentSelection(at: indexPath)
+        let paymentSelection = paymentItem(at: indexPath)
 
         var editVC: UIViewController?
         if let detail = paymentSelection.detail {
@@ -152,7 +152,7 @@ extension PaymentMethodListViewController {
     }
 
     override public func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return paymentSelection(at: indexPath).detail != nil
+        return paymentItem(at: indexPath).detail != nil
     }
 
     override public func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
@@ -160,7 +160,7 @@ extension PaymentMethodListViewController {
     }
 
     override public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if let detail = paymentSelection(at: indexPath).detail {
+        if let detail = paymentItem(at: indexPath).detail {
             PaymentMethodDetails.remove(detail)
             data[indexPath.section].remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)
