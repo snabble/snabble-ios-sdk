@@ -7,11 +7,6 @@
 import UIKit
 import SnabbleCore
 
-enum OrderEntry {
-    case pending(String, Identifier<Project>)    // shop name, project id
-    case done(Order)
-}
-
 public final class ReceiptsListViewController: UITableViewController {
     public final class EmptyView: UIView {
         private(set) weak var imageView: UIImage?
@@ -59,15 +54,11 @@ public final class ReceiptsListViewController: UITableViewController {
     private(set) weak var emptyView: EmptyView?
     private(set) weak var activityIndicator: UIActivityIndicatorView?
 
-    private var orders: [OrderEntry]? {
+    private var orders: [Order] = [] {
         didSet {
-            if let orders {
-                activityIndicator?.stopAnimating()
-                emptyView?.isHidden = !orders.isEmpty
-            } else {
-                activityIndicator?.startAnimating()
-                emptyView?.isHidden = true
-            }
+            activityIndicator?.stopAnimating()
+            emptyView?.isHidden = !orders.isEmpty
+
             tableView.reloadData()
         }
     }
@@ -110,7 +101,7 @@ public final class ReceiptsListViewController: UITableViewController {
             view.bottomAnchor.constraint(greaterThanOrEqualToSystemSpacingBelow: emptyView.bottomAnchor, multiplier: 1)
         ])
 
-        self.tableView.register(ReceiptCell.self, forCellReuseIdentifier: "receiptCell")
+        self.tableView.register(UITableViewCell.self, forCellReuseIdentifier: ReceiptContentConfiguration.tableViewCellIdentifier)
         self.tableView.tableFooterView = UIView(frame: CGRect.zero)
 
         let refreshControl = UIRefreshControl()
@@ -118,10 +109,6 @@ public final class ReceiptsListViewController: UITableViewController {
         self.tableView.refreshControl = refreshControl
 
         self.loadOrderList()
-    }
-
-    deinit {
-        orders = nil
     }
     
     override public func viewDidAppear(_ animated: Bool) {
@@ -135,7 +122,6 @@ public final class ReceiptsListViewController: UITableViewController {
         guard let project = Snabble.shared.projects.first else {
             return
         }
-        orders = nil
         OrderList.load(project) { [weak self] result in
             self?.orderListLoaded(result)
         }
@@ -144,7 +130,7 @@ public final class ReceiptsListViewController: UITableViewController {
     private func orderListLoaded(_ result: Result<OrderList, SnabbleError>) {
         switch result {
         case .success(let orderList):
-            self.orders = orderList.receipts.map { OrderEntry.done($0) }
+            self.orders = orderList.receipts
         case .failure:
             self.orders = []
         }
@@ -165,34 +151,26 @@ public final class ReceiptsListViewController: UITableViewController {
 // MARK: - UITableViewDelegate, UITableViewDataSource
 extension ReceiptsListViewController {
     override public func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        orders?.count ?? 0
+        orders.count
     }
 
     override public func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        // swiftlint:disable:next force_cast
-        let cell = tableView.dequeueReusableCell(withIdentifier: "receiptCell", for: indexPath) as! ReceiptCell
+        let cell = tableView.dequeueReusableCell(withIdentifier: ReceiptContentConfiguration.tableViewCellIdentifier, for: indexPath)
 
-        guard let orders = self.orders else {
-            return UITableViewCell(style: .default, reuseIdentifier: "invalidCell")
-        }
-
-        let orderEntry = orders[indexPath.row]
-        cell.show(orderEntry)
+        let order = orders[indexPath.row]
+        var configuration = ReceiptContentConfiguration(order: order)
+        configuration.showProjectImage = Snabble.shared.projects.count >= 1
+        cell.contentConfiguration = configuration
+        cell.accessoryType = .disclosureIndicator
 
         return cell
     }
 
     override public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        guard let orders = self.orders else {
-            return
-        }
+        let order = orders[indexPath.row]
 
-        let orderEntry = orders[indexPath.row]
-        guard
-            case .done(let order) = orderEntry,
-            let project = Snabble.shared.project(for: order.projectId) ?? Snabble.shared.projects.first
-        else {
+        guard let project = Snabble.shared.project(for: order.projectId) ?? Snabble.shared.projects.first else {
             return
         }
 
@@ -206,11 +184,9 @@ extension ReceiptsListViewController {
             tableView.allowsSelection = true
             
             switch result {
-
             case .success:
                 self?.navigationController?.pushViewController(detailViewController, animated: true)
                 self?.analyticsDelegate?.track(.viewReceiptDetail)
-
             case .failure:
                 break
             }
