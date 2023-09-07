@@ -41,8 +41,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/groue/GRDB.swift.git",
       "state" : {
-        "revision" : "e83f3eb25ef4d5a36a13dbee98f8ac67e24e5c8f",
-        "version" : "6.16.0"
+        "revision" : "ce63f697ed381383041d245b185af3c501de8bef",
+        "version" : "6.18.0"
       }
     },
     {
@@ -77,8 +77,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/mono0926/LicensePlist",
       "state" : {
-        "revision" : "302a0a4433ff9328e68212e9dc379f3ea4aa9c0c",
-        "version" : "3.24.10"
+        "revision" : "1b15dc59e3cedbebc5c58d4ed931dc1baf86dcb1",
+        "version" : "3.24.11"
       }
     },
     {
@@ -203,8 +203,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/datatheorem/TrustKit.git",
       "state" : {
-        "revision" : "e3a11e01d937e187cef45ad88f162d1892147aa3",
-        "version" : "3.0.2"
+        "revision" : "5718ba8720b4dafc5360aebfbc9762e2d5f2615e",
+        "version" : "3.0.3"
       }
     },
     {
@@ -221,8 +221,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/tomlokhorst/XcodeEdit.git",
       "state" : {
-        "revision" : "cd466d6e8c5ffd2f2b61165d37b0646f09068e1e",
-        "version" : "2.9.0"
+        "revision" : "221f451cb7432263d3713c877bea10f288b97e78",
+        "version" : "2.9.1"
       }
     },
     {

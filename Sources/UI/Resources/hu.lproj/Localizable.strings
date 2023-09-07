@@ -120,6 +120,8 @@
 
 "Snabble.edit" = "Szerkesztés";
 
+"Snabble.ExternalBilling.payNow" = "Pay now using purchase on invoice";
+
 "Snabble.goToSettings" = "A beállításokhoz";
 
 "Snabble.Hints.closedBags" = "Csak így tovább! Kérjük, könnyítsd meg a pénztáros munkáját, és ne csomagold közvetlenül lezárt tasakba a termékedet. Köszönjük!";

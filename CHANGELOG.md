@@ -6,10 +6,20 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+## [0.39.0] - 2023-09-13
+
 ### Added
 * Emptystate mit Icon für die Kassenbons #APPS-1031
 * Eingangscode für Grab&Go anfragen #APPS-1042
+* Kassenbons in Kassenbon-Liste anzeigen #APPS-1046
 * Zahlungsmethoden Präferenzen auslesen #APPS-1041
+
+### Fixed
+* Rechnungskauf mit Betreff funktioniert nicht #APPS-1056
+
+### Updated
+* groue/GRDB.swift 6.18.0 (was 6.15.0)
+* datatheorem/TrustKit 3.0.3 (was 3.0.2)
 
 ## [0.38.1] - 2023-08-24
 

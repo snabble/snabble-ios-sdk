@@ -120,6 +120,8 @@
 
 "Snabble.edit" = "Modifica";
 
+"Snabble.ExternalBilling.payNow" = "Pay now using purchase on invoice";
+
 "Snabble.goToSettings" = "Alle impostazioni";
 
 "Snabble.Hints.closedBags" = "Continua così! Agevola il compito del personale di cassa ed evita di mettere direttamente gli articoli in borse chiuse. Grazie!";

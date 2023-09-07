@@ -29,9 +29,9 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/lachlanbell/SwiftOTP", from: "3.0.1"),
-        .package(url: "https://github.com/datatheorem/TrustKit.git", from: "3.0.2"),
+        .package(url: "https://github.com/datatheorem/TrustKit.git", from: "3.0.3"),
         .package(url: "https://github.com/kishikawakatsumi/KeychainAccess.git", from: "4.2.2"),
-        .package(url: "https://github.com/groue/GRDB.swift.git", from: "6.15.0"),
+        .package(url: "https://github.com/groue/GRDB.swift.git", from: "6.18.0"),
         .package(url: "https://github.com/marmelroy/Zip.git", from: "2.1.2"),
         .package(url: "https://github.com/datatrans/ios-sdk.git", from: "2.7.2"),
         .package(url: "https://github.com/sberrevoets/SDCAlertView.git", from: "12.0.3"),

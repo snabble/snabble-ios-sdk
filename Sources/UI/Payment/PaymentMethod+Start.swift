@@ -72,6 +72,7 @@ public final class PaymentMethodStartCheck {
                     .store(in: &cancellables)
 
                 presenter.showOverlay(with: viewController.view)
+
             } else {
                 completion(true)
             }
@@ -97,6 +98,11 @@ public final class PaymentMethodStartCheck {
         }
 
         presenter.dismissOverlay()
+        self.requestBiometricAuthentication(
+            on: presenter,
+            reason: Asset.localizedString(forKey: "Snabble.ExternalBilling.payNow"),
+            completionHandler
+        )
     }
 
     // MARK: - Sepa
