@@ -7,6 +7,30 @@
 
 import Foundation
 
+public struct Payment {
+    public let method: RawPaymentMethod
+    public let detail: PaymentMethodDetail?
+
+    public init(method: RawPaymentMethod) {
+        self.method = method
+        self.detail = nil
+    }
+
+    public init(detail: PaymentMethodDetail) {
+        self.method = detail.rawMethod
+        self.detail = detail
+    }
+}
+
+extension Payment: Swift.Identifiable {
+    public var id: String {
+        guard let detail = detail else {
+            return method.rawValue
+        }
+        return detail.id.uuidString
+    }
+}
+
 public extension PaymentMethodDetails {
     static func userDetails(for projectId: Identifier<Project>?) -> [PaymentMethodDetail] {
         return PaymentMethodDetails.read()
@@ -15,95 +39,16 @@ public extension PaymentMethodDetails {
     }
 }
 
-public struct Payment {
-    public let projectId: Identifier<Project>
-    public let methods: [RawPaymentMethod]
-    
-    public init(for projectId: Identifier<Project>, methods: [RawPaymentMethod]) {
-        self.projectId = projectId
-        self.methods = methods
+extension Array where Element == RawPaymentMethod {
+    public var available: Self {
+        filter { $0.isAvailable }
     }
-}
 
-extension Payment {
-    public var availableMethods: [RawPaymentMethod] {
-        methods.filter { $0.isAvailable }
+    public var offlineAvailable: Self {
+        available.filter { $0.offline }
     }
-    public var availableOfflineMethods: [RawPaymentMethod] {
-        availableMethods.filter { $0.offline }
-    }
-    public var availableOnlineMethods: [RawPaymentMethod] {
-        availableMethods.filter { !$0.offline }
-    }
-}
 
-extension Payment {
-    public var userDetails: [PaymentMethodDetail] {
-        return PaymentMethodDetails.userDetails(for: projectId)
-    }
-    
-    public var preferredPayment: PaymentSelection? {
-        
-        let userDetails = userDetails
-        var availableOnlineMethods = self.availableOnlineMethods
-
-        guard !availableOnlineMethods.isEmpty else {
-            guard let method = availableOfflineMethods.first else {
-                return nil
-            }
-            return PaymentSelection(method: method)
-        }
-
-        // use Apple Pay, if possible
-        if availableOnlineMethods.contains(.applePay) && ApplePay.canMakePayments(with: projectId) {
-            return PaymentSelection(method: .applePay)
-        } else {
-            availableOnlineMethods.removeAll { $0 == .applePay }
-        }
-
-        let verifyMethod: (RawPaymentMethod) -> (rawPaymentMethod: RawPaymentMethod, paymentMethodDetail: PaymentMethodDetail?)? = { method in
-            guard availableOnlineMethods.contains(method) else {
-                return nil
-            }
-
-            guard method.dataRequired else {
-                return (method, nil)
-            }
-
-            guard let userMethod = userDetails.first(where: { $0.rawMethod == method }) else {
-                return nil
-            }
-            return (userMethod.rawMethod, userMethod)
-        }
-
-        // prefer in-app payment methods like SEPA or CC
-        for method in RawPaymentMethod.preferredOnlineMethods {
-            guard let verified = verifyMethod(method) else {
-                continue
-            }
-            guard let detail = verified.paymentMethodDetail else {
-                return PaymentSelection(method: verified.rawPaymentMethod)
-            }
-            return PaymentSelection(detail: detail)
-        }
-
-        // prefer in-app payment methods like SEPA or CC
-        for method in RawPaymentMethod.orderedMethods {
-            guard let verified = verifyMethod(method) else {
-                continue
-            }
-            guard let detail = verified.paymentMethodDetail else {
-                return PaymentSelection(method: verified.rawPaymentMethod)
-            }
-            return PaymentSelection(detail: detail)
-        }
-
-        return nil
-    }
-}
-
-extension Project {
-    public var payment: Payment {
-        return Payment(for: id, methods: paymentMethods)
+    public var onlineAvailable: Self {
+        available.filter { !$0.offline }
     }
 }

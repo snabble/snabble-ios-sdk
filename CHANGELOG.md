@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Eingangscode für Grab&Go anfragen #APPS-1042
 * Kassenbons in Kassenbon-Liste anzeigen #APPS-1046
 * Zahlungsmethoden Präferenzen auslesen #APPS-1041
+* Zahlungsmethoden Präferenzen verwenden #APPS-1048
 
 ## [0.38.1] - 2023-08-24
 
