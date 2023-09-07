@@ -130,8 +130,8 @@ struct ReceiptContentConfiguration: UIContentConfiguration {
         UIImage(systemName: "scroll")
     }
     let title: String
-    let subtitle: String?
-    let disclosure: String?
+    let subtitle: String
+    let disclosure: String
 
     var showProjectImage: Bool = true
 
@@ -145,7 +145,7 @@ struct ReceiptContentConfiguration: UIContentConfiguration {
         dateFormatter.dateStyle = .medium
         dateFormatter.timeStyle = .short
         dateFormatter.doesRelativeDateFormatting = true
-        subtitle = dateFormatter.string(for: order.date)
+        subtitle = dateFormatter.string(for: order.date)!
 
         if let project = Snabble.shared.project(for: order.projectId) {
             let formatter = PriceFormatter(project)
@@ -154,13 +154,6 @@ struct ReceiptContentConfiguration: UIContentConfiguration {
             let formatter = PriceFormatter(2, "de_DE", "EUR", "€")
             disclosure = formatter.format(order.price)
         }
-    }
-
-    var accessoryType: UITableViewCell.AccessoryType {
-        guard disclosure != nil else {
-            return .none
-        }
-        return .disclosureIndicator
     }
 
     func makeContentView() -> UIView & UIContentView {

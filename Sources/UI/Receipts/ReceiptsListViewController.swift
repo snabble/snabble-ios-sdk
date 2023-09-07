@@ -159,16 +159,16 @@ extension ReceiptsListViewController {
 
         let order = orders[indexPath.row]
         var configuration = ReceiptContentConfiguration(order: order)
-        configuration.showProjectImage = Snabble.shared.projects.count == 1
+        configuration.showProjectImage = Snabble.shared.projects.count >= 1
         cell.contentConfiguration = configuration
-        cell.accessoryType = configuration.accessoryType
+        cell.accessoryType = .disclosureIndicator
 
         return cell
     }
 
     override public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
-        let order = self.orders[indexPath.row]
+        let order = orders[indexPath.row]
 
         guard let project = Snabble.shared.project(for: order.projectId) ?? Snabble.shared.projects.first else {
             return
