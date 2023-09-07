@@ -39,7 +39,7 @@ public final class PaymentMethodListViewController: UITableViewController {
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        data = SnabbleCI.project.payment.availablePayments()
+        data = SnabbleCI.project.availablePayments()
         tableView.reloadData()
     }
 
@@ -81,7 +81,7 @@ public final class PaymentMethodListViewController: UITableViewController {
 }
 
 extension PaymentMethodListViewController {
-    fileprivate func paymentItem(at indexPath: IndexPath) -> PaymentItem {
+    fileprivate func payment(at indexPath: IndexPath) -> Payment {
         return data[indexPath.section].items[indexPath.row]
     }
 }
@@ -100,7 +100,7 @@ extension PaymentMethodListViewController {
         // swiftlint:disable:next force_cast
         let cell = tableView.dequeueReusableCell(withIdentifier: "cell", for: indexPath) as! PaymentMethodListCell
 
-        let paymentSelection = paymentItem(at: indexPath)
+        let paymentSelection = payment(at: indexPath)
 
         let viewModel: PaymentMethodListCellViewModel
         if let detail = paymentSelection.detail {
@@ -118,7 +118,7 @@ extension PaymentMethodListViewController {
     override public func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         tableView.deselectRow(at: indexPath, animated: true)
 
-        let paymentSelection = paymentItem(at: indexPath)
+        let paymentSelection = payment(at: indexPath)
 
         var editVC: UIViewController?
         if let detail = paymentSelection.detail {
@@ -152,7 +152,7 @@ extension PaymentMethodListViewController {
     }
 
     override public func tableView(_ tableView: UITableView, canEditRowAt indexPath: IndexPath) -> Bool {
-        return paymentItem(at: indexPath).detail != nil
+        return payment(at: indexPath).detail != nil
     }
 
     override public func tableView(_ tableView: UITableView, editingStyleForRowAt indexPath: IndexPath) -> UITableViewCell.EditingStyle {
@@ -160,7 +160,7 @@ extension PaymentMethodListViewController {
     }
 
     override public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
-        if let detail = paymentItem(at: indexPath).detail {
+        if let detail = payment(at: indexPath).detail {
             PaymentMethodDetails.remove(detail)
             data[indexPath.section].remove(at: indexPath.row)
             tableView.deleteRows(at: [indexPath], with: .automatic)

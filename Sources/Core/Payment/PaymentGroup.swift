@@ -8,15 +8,15 @@
 import Foundation
 
 public struct PaymentGroup: Swift.Identifiable {
-    public let value: PaymentItem
-    public var items: [PaymentItem]
+    public let value: Payment
+    public var items: [Payment]
 
     public var id: String {
         return value.method.rawValue
     }
     
-    public init(method: RawPaymentMethod, items: [PaymentItem]) {
-        self.value = PaymentItem(method: method)
+    public init(method: RawPaymentMethod, items: [Payment]) {
+        self.value = Payment(method: method)
         self.items = items
     }
 }

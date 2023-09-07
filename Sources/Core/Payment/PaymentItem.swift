@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct PaymentItem: Swift.Identifiable {
+public struct Payment: Swift.Identifiable {
     public let method: RawPaymentMethod
     public let detail: PaymentMethodDetail?
 
@@ -22,7 +22,7 @@ public struct PaymentItem: Swift.Identifiable {
     }
 }
 
-extension PaymentItem {
+extension Payment {
     public var id: String {
         guard let detail = detail else {
             return method.rawValue

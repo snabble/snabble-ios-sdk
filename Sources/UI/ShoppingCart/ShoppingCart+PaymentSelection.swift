@@ -37,13 +37,13 @@ final class PaymentMethodSelector {
 
     private(set) var methodTap: UITapGestureRecognizer!
 
-    private(set) var selectedPayment: PaymentItem?
+    private(set) var selectedPayment: Payment?
 
     private var shoppingCart: ShoppingCart
     weak var delegate: PaymentMethodSelectorDelegate?
 
-    private var payment: Payment {
-        SnabbleCI.project.payment
+    private var project: Project {
+        SnabbleCI.project
     }
     
     init(_ parentVC: (UIViewController & AnalyticsDelegate)?,
@@ -81,7 +81,7 @@ final class PaymentMethodSelector {
     func updateSelectionVisibility() {
         // get details for all payment methods that could be used here
         let details = PaymentMethodDetails.read().filter { detail in
-            payment.availableMethods.contains { $0 == detail.rawMethod }
+            project.paymentMethods.available.contains { $0 == detail.rawMethod }
         }
 
         // hide selection if
@@ -89,9 +89,9 @@ final class PaymentMethodSelector {
         // - we have no payment method data for it,
         // - and none is needed for this method
         let hidden =
-        payment.availableMethods.count < 2 &&
+        project.paymentMethods.available.count < 2 &&
             details.isEmpty &&
-        payment.availableMethods.first?.dataRequired == false
+        project.paymentMethods.available.first?.dataRequired == false
 
         self.methodSelectionView?.isHidden = hidden
 
@@ -119,7 +119,7 @@ final class PaymentMethodSelector {
             let inCart = self.shoppingCart.paymentMethods?.contains { $0.method == detail.rawMethod }
             if inCart == true {
                 self.setSelectedPayment(detail.rawMethod, detail: detail)
-            } else if self.payment.userDetails.contains(detail), detail != self.selectedPayment?.detail {
+            } else if self.project.paymentMethodDetails.contains(detail), detail != self.selectedPayment?.detail {
                 self.setSelectedPayment(detail.rawMethod, detail: detail)
             }
         } else {
@@ -141,7 +141,7 @@ final class PaymentMethodSelector {
     func updateAvailablePaymentMethods() {
         self.methodTap.isEnabled = true
 
-        if !payment.availableMethods.contains(where: { $0 == selectedPayment?.method }) {
+        if !project.paymentMethods.available.contains(where: { $0 == selectedPayment?.method }) {
             self.setDefaultPaymentMethod()
         } else {
             self.setSelectedPayment(self.selectedPayment?.method, detail: self.selectedPayment?.detail)
@@ -150,9 +150,9 @@ final class PaymentMethodSelector {
 
     private func setSelectedPayment(_ method: RawPaymentMethod?, detail: PaymentMethodDetail?) {
         if let detail {
-            self.selectedPayment = PaymentItem(detail: detail)
+            self.selectedPayment = Payment(detail: detail)
         } else if let method {
-            self.selectedPayment = PaymentItem(method: method)
+            self.selectedPayment = Payment(method: method)
         } else {
             self.selectedPayment = nil
         }
@@ -167,7 +167,7 @@ final class PaymentMethodSelector {
     }
 
     private func setDefaultPaymentMethod() {
-        self.selectedPayment = payment.preferredPayment
+        self.selectedPayment = project.preferredPayment
     }
 
     private func userSelectedPaymentMethod(with actionData: PaymentMethodAction) {
@@ -207,14 +207,14 @@ final class PaymentMethodSelector {
         // and get them in the desired display order
         let availableOrderedMethods = RawPaymentMethod.orderedMethods
             .filter { allAppMethods.contains($0) }
-            .filter { payment.availableMethods.contains($0) }
+            .filter { project.paymentMethods.available.contains($0) }
 
         var actions = [PaymentMethodAction]()
         for method in availableOrderedMethods {
             actions.append(
                 contentsOf: actionsFor(
                     method,
-                    withPaymentMethodDetails: payment.userDetails,
+                    withPaymentMethodDetails: project.paymentMethodDetails,
                     andSupportedMethods: shoppingCart.paymentMethods?.map { $0.method }
                 )
             )
