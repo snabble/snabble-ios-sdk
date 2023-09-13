@@ -32,8 +32,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/groue/GRDB.swift.git",
       "state" : {
-        "revision" : "284a4ee1acf9bf6c8b3d045494d0a7e3046ebf92",
-        "version" : "6.15.1"
+        "revision" : "ce63f697ed381383041d245b185af3c501de8bef",
+        "version" : "6.18.0"
       }
     },
     {
@@ -86,8 +86,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-argument-parser.git",
       "state" : {
-        "revision" : "fee6933f37fde9a5e12a1e4aeaa93fe60116ff2a",
-        "version" : "1.2.2"
+        "revision" : "8f4d2753f0e4778c76d5f05ad16c74f707390531",
+        "version" : "1.2.3"
       }
     },
     {
@@ -149,8 +149,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/datatheorem/TrustKit.git",
       "state" : {
-        "revision" : "e3a11e01d937e187cef45ad88f162d1892147aa3",
-        "version" : "3.0.2"
+        "revision" : "5718ba8720b4dafc5360aebfbc9762e2d5f2615e",
+        "version" : "3.0.3"
       }
     },
     {
