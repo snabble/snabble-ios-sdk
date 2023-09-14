@@ -108,6 +108,7 @@ extension UIViewController {
             ])
             view.layoutIfNeeded()
         }
+        self.overlayViewController = nil
     }
 
     public func dismissOverlay(animated: Bool = true) {
@@ -127,8 +128,11 @@ extension UIViewController {
                 completion: { [weak self] _ in
                     self?.backgroundView?.removeFromSuperview()
                     self?.overlayView?.removeFromSuperview()
+                    self?.overlayView = nil
+                    self?.backgroundView = nil
                 }
             )
         }
+        self.overlayViewController = nil
     }
 }
