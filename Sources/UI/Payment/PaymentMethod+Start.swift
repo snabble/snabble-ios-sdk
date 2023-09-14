@@ -64,15 +64,14 @@ public final class PaymentMethodStartCheck {
         case .externalBilling:
             if let detail = self.detail, detail.originType == .contactPersonCredentials, case .invoiceByLogin = detail.methodData {
                 let viewController = PaymentSubjectViewController()
-                
                 viewController.viewModel.actionPublisher
+                    .receive(on: RunLoop.main)
                     .sink { [weak self] userDict in
                         self?.performAction(viewModel: viewController.viewModel, userDict: userDict)
                     }
                     .store(in: &cancellables)
 
-                presenter.showOverlay(with: viewController.view)
-
+                presenter.showOverlay(with: viewController)
             } else {
                 completion(true)
             }
@@ -87,16 +86,10 @@ public final class PaymentMethodStartCheck {
               let action = userDict?["action"] as? String else {
             return
         }
-        if action == "cancel" {
-            presenter.dismissOverlay()
-            completionHandler(false)
-            return
-        }
         globalButterOverflow = nil
         if action == "add", let subject = viewModel.subject {
             globalButterOverflow = subject
         }
-
         presenter.dismissOverlay()
         self.requestBiometricAuthentication(
             on: presenter,
