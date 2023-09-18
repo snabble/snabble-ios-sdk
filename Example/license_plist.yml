@@ -1,5 +1,5 @@
 options:
   xcodeprojPath: "*.xcodeproj"
   suppressOpeningDirectory: true
-  force: true
+  force: false
   addVersionNumbers: false
