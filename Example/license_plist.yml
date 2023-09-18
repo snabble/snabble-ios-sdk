@@ -1,6 +1,6 @@
 options:
   xcodeprojPath: "*.xcodeproj"
-  prefix: io.snabble.LicensePlist
-  htmlPath: Snabble/Acknowledgements.html
+  #prefix: io.snabble.LicensePlist
+  #htmlPath: Snabble/Acknowledgements.html
   force: true
   addVersionNumbers: false

@@ -102,12 +102,6 @@
                     "resource": "privacy.html"
                 },
                 {
-                    "type": "navigation",
-                    "id": "4",
-                    "text": "Profile.licences",
-                    "resource": "Acknowledgements.html"
-                },
-                {
                     "type": "snabble.version",
                     "id": "5"
                 }
