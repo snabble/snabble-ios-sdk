@@ -36,7 +36,7 @@ public enum BiometricAuthentication {
         let authContext = LAContext()
         _ = authContext.canEvaluatePolicy(self.policy, error: nil)
         switch authContext.biometryType {
-        case .none:
+        case .none, .opticID:
             return .none
         case .touchID:
             return .touchID

@@ -12,30 +12,6 @@
 		</dict>
 		<dict>
 			<key>File</key>
-			<string>com.mono0926.LicensePlist/APIKit</string>
-			<key>Title</key>
-			<string>APIKit</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
-			<string>com.mono0926.LicensePlist/CollectionConcurrencyKit</string>
-			<key>Title</key>
-			<string>CollectionConcurrencyKit</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
-			<string>com.mono0926.LicensePlist/CryptoSwift</string>
-			<key>Title</key>
-			<string>CryptoSwift</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
 			<string>com.mono0926.LicensePlist/DeviceKit</string>
 			<key>Title</key>
 			<string>DeviceKit</string>
@@ -47,14 +23,6 @@
 			<string>com.mono0926.LicensePlist/GRDB.swift</string>
 			<key>Title</key>
 			<string>GRDB.swift</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
-			<string>com.mono0926.LicensePlist/HeliumLogger</string>
-			<key>Title</key>
-			<string>HeliumLogger</string>
 			<key>Type</key>
 			<string>PSChildPaneSpecifier</string>
 		</dict>
@@ -76,22 +44,6 @@
 		</dict>
 		<dict>
 			<key>File</key>
-			<string>com.mono0926.LicensePlist/LicensePlist</string>
-			<key>Title</key>
-			<string>LicensePlist</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
-			<string>com.mono0926.LicensePlist/LoggerAPI</string>
-			<key>Title</key>
-			<string>LoggerAPI</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
 			<string>com.mono0926.LicensePlist/Pulley</string>
 			<key>Title</key>
 			<string>Pulley</string>
@@ -108,22 +60,6 @@
 		</dict>
 		<dict>
 			<key>File</key>
-			<string>com.mono0926.LicensePlist/SourceKitten</string>
-			<key>Title</key>
-			<string>SourceKitten</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
-			<string>com.mono0926.LicensePlist/swift-argument-parser</string>
-			<key>Title</key>
-			<string>swift-argument-parser</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
 			<string>com.mono0926.LicensePlist/swift-crypto</string>
 			<key>Title</key>
 			<string>swift-crypto</string>
@@ -132,57 +68,9 @@
 		</dict>
 		<dict>
 			<key>File</key>
-			<string>com.mono0926.LicensePlist/swift-html-entities</string>
-			<key>Title</key>
-			<string>HTMLEntities</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
-			<string>com.mono0926.LicensePlist/swift-log</string>
-			<key>Title</key>
-			<string>swift-log</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
-			<string>com.mono0926.LicensePlist/swift-syntax</string>
-			<key>Title</key>
-			<string>swift-syntax</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
-			<string>com.mono0926.LicensePlist/SwiftLint</string>
-			<key>Title</key>
-			<string>SwiftLint</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
 			<string>com.mono0926.LicensePlist/SwiftOTP</string>
 			<key>Title</key>
 			<string>SwiftOTP</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
-			<string>com.mono0926.LicensePlist/SwiftyTextTable</string>
-			<key>Title</key>
-			<string>SwiftyTextTable</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
-			<string>com.mono0926.LicensePlist/SWXMLHash</string>
-			<key>Title</key>
-			<string>SWXMLHash</string>
 			<key>Type</key>
 			<string>PSChildPaneSpecifier</string>
 		</dict>
@@ -199,22 +87,6 @@
 			<string>com.mono0926.LicensePlist/WCAG-Colors</string>
 			<key>Title</key>
 			<string>WCAG-Colors</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
-			<string>com.mono0926.LicensePlist/XcodeEdit</string>
-			<key>Title</key>
-			<string>XcodeEdit</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
-			<string>com.mono0926.LicensePlist/Yams</string>
-			<key>Title</key>
-			<string>Yams</string>
 			<key>Type</key>
 			<string>PSChildPaneSpecifier</string>
 		</dict>
