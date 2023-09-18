@@ -369,7 +369,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if which mint > /dev/null; then\n  mint run mono0926/LicensePlist\nelse\n  echo \"warning: Mint not installed, download from https://github.com/yonaskolb/Mint\"\nfi\n\necho \"Will copy acknowledgements\"\nACKNOWLEDGEMENTS_DIR=${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/com.mono0926.LicensePlist.Output\nDESTINATION_PATH=${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Settings.bundle/\ncp -r ${ACKNOWLEDGEMENTS_DIR}/* ${DESTINATION_PATH}\nrm -rf ${ACKNOWLEDGEMENTS_DIR}\n";
+			shellScript = "if [ $CONFIGURATION = \"Debug\" ]; then\n    if which mint > /dev/null; then\n        mint run mono0926/LicensePlist --output-path Snabble/Settings.bundle\n    else\n        echo \"warning: Mint not installed, download from https://github.com/yonaskolb/Mint\"\n    fi\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
