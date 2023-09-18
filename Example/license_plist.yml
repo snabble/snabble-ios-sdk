@@ -2,3 +2,4 @@ options:
   xcodeprojPath: "*.xcodeproj"
   force: true
   addVersionNumbers: false
+  
