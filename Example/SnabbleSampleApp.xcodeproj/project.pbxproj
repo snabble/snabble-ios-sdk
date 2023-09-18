@@ -222,12 +222,11 @@
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
 				E16A6EA72AB847E800E6096D /* LicensePlist */,
+				E10C1A4C2AB8670C0071578D /* SwiftLint */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				E10C1A4B2AB864170071578D /* PBXTargetDependency */,
-				E1BFF2C729E6AB4100E6AE37 /* PBXTargetDependency */,
 			);
 			name = SnabbleSampleApp;
 			packageProductDependencies = (
@@ -336,6 +335,24 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
+		E10C1A4C2AB8670C0071578D /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if which mint > /dev/null; then\n  mint run swiftlint\nelse\n  echo \"warning: Mint not installed, download from https://github.com/yonaskolb/Mint\"\nfi\n";
+		};
 		E16A6EA72AB847E800E6096D /* LicensePlist */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -352,7 +369,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "echo \"Will copy acknowledgements\"\nACKNOWLEDGEMENTS_DIR=${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/com.mono0926.LicensePlist.Output\nDESTINATION_PATH=${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Settings.bundle/\ncp -r ${ACKNOWLEDGEMENTS_DIR}/* ${DESTINATION_PATH}\nrm -rf ${ACKNOWLEDGEMENTS_DIR}\n";
+			shellScript = "if which mint > /dev/null; then\n  mint run mono0926/LicensePlist\nelse\n  echo \"warning: Mint not installed, download from https://github.com/yonaskolb/Mint\"\nfi\n\necho \"Will copy acknowledgements\"\nACKNOWLEDGEMENTS_DIR=${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/com.mono0926.LicensePlist.Output\nDESTINATION_PATH=${BUILT_PRODUCTS_DIR}/${CONTENTS_FOLDER_PATH}/Settings.bundle/\ncp -r ${ACKNOWLEDGEMENTS_DIR}/* ${DESTINATION_PATH}\nrm -rf ${ACKNOWLEDGEMENTS_DIR}\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -384,18 +401,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		E10C1A4B2AB864170071578D /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = E10C1A4A2AB864170071578D /* SwiftLintPlugin */;
-		};
 		E131CF1C28A3D45C00A844E1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 607FACCF1AFB9204008FA782 /* SnabbleSampleApp */;
 			targetProxy = E131CF1B28A3D45C00A844E1 /* PBXContainerItemProxy */;
-		};
-		E1BFF2C729E6AB4100E6AE37 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = E1BFF2C629E6AB4100E6AE37 /* LicensePlistBuildTool */;
 		};
 /* End PBXTargetDependency section */
 
@@ -690,11 +699,6 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		E10C1A4A2AB864170071578D /* SwiftLintPlugin */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = 763A27792A3C4B3E00D2A6FC /* XCRemoteSwiftPackageReference "SwiftLint" */;
-			productName = "plugin:SwiftLintPlugin";
-		};
 		E1AABF0729E53A2D00D83490 /* Snabble */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Snabble;
@@ -710,11 +714,6 @@
 		E1AABF0D29E53A2D00D83490 /* SnabbleUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SnabbleUI;
-		};
-		E1BFF2C629E6AB4100E6AE37 /* LicensePlistBuildTool */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E1BFF2C529E6A98800E6AE37 /* XCRemoteSwiftPackageReference "LicensePlist" */;
-			productName = "plugin:LicensePlistBuildTool";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
