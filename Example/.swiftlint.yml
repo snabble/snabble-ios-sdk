@@ -1,5 +1,6 @@
 included:
  - Snabble
+ - ../Sources
 
 disabled_rules:
  - todo

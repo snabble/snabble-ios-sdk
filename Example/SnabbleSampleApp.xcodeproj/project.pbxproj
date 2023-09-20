@@ -3,7 +3,7 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 53;
+	objectVersion = 54;
 	objects = {
 
 /* Begin PBXBuildFile section */
@@ -14,7 +14,6 @@
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		7605C47328AC9794000105A8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7605C47528AC9794000105A8 /* Localizable.strings */; };
 		7605C5BF28AE4383000105A8 /* ShopsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7605C5BE28AE4383000105A8 /* ShopsViewController.swift */; };
-		7615200128D3559E00C08D97 /* Acknowledgements.html in Resources */ = {isa = PBXBuildFile; fileRef = 7615200028D3559E00C08D97 /* Acknowledgements.html */; };
 		76AD21B128D42513003D865A /* privacy.html in Resources */ = {isa = PBXBuildFile; fileRef = 76AD21B028D42513003D865A /* privacy.html */; };
 		76AD21B328D4331A003D865A /* terms.html in Resources */ = {isa = PBXBuildFile; fileRef = 76AD21B228D4331A003D865A /* terms.html */; };
 		76C7B74A28BFA10700D94F4F /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76C7B74928BFA10700D94F4F /* DashboardViewController.swift */; };
@@ -23,6 +22,7 @@
 		E131CF1A28A3D45C00A844E1 /* SnabbleSampleAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131CF1928A3D45C00A844E1 /* SnabbleSampleAppTests.swift */; };
 		E161B0EE28B76DD9005061C4 /* Onboarding.json in Resources */ = {isa = PBXBuildFile; fileRef = E161B0EB28B76357005061C4 /* Onboarding.json */; };
 		E161B0F228B78F89005061C4 /* LoadJSON.swift in Sources */ = {isa = PBXBuildFile; fileRef = E161B0F128B78F89005061C4 /* LoadJSON.swift */; };
+		E16A6EA62AB846E800E6096D /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E16A6EA52AB8449300E6096D /* Settings.bundle */; };
 		E1786CBF28BF351400CB7AF0 /* Dashboard.json in Resources */ = {isa = PBXBuildFile; fileRef = E1786CBE28BF351400CB7AF0 /* Dashboard.json */; };
 		E1AABF0829E53A2D00D83490 /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = E1AABF0729E53A2D00D83490 /* Snabble */; };
 		E1AABF0A29E53A2D00D83490 /* SnabbleCore in Frameworks */ = {isa = PBXBuildFile; productRef = E1AABF0929E53A2D00D83490 /* SnabbleCore */; };
@@ -57,7 +57,6 @@
 		7605C5C128AE44B1000105A8 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		7605C5C228AE44D7000105A8 /* de */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = de; path = de.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		76151FDB28D2FC4800C08D97 /* SnabbleSampleApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = SnabbleSampleApp.entitlements; sourceTree = "<group>"; };
-		7615200028D3559E00C08D97 /* Acknowledgements.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = Acknowledgements.html; sourceTree = "<group>"; };
 		76AD21B028D42513003D865A /* privacy.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = privacy.html; sourceTree = "<group>"; };
 		76AD21B228D4331A003D865A /* terms.html */ = {isa = PBXFileReference; lastKnownFileType = text.html; path = terms.html; sourceTree = "<group>"; };
 		76C7B74928BFA10700D94F4F /* DashboardViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DashboardViewController.swift; sourceTree = "<group>"; };
@@ -69,6 +68,7 @@
 		E161B03C28B64883005061C4 /* Snabble.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Snabble.gpx; sourceTree = "<group>"; };
 		E161B0EB28B76357005061C4 /* Onboarding.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Onboarding.json; sourceTree = "<group>"; };
 		E161B0F128B78F89005061C4 /* LoadJSON.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoadJSON.swift; sourceTree = "<group>"; };
+		E16A6EA52AB8449300E6096D /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 		E1786CBE28BF351400CB7AF0 /* Dashboard.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Dashboard.json; sourceTree = "<group>"; };
 		E1BEF67028B79B4900549104 /* imprint.html */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.html; path = imprint.html; sourceTree = "<group>"; };
 		E1DA445D28B3668C0034427D /* AppDelegate+AssetProviding.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "AppDelegate+AssetProviding.swift"; sourceTree = "<group>"; };
@@ -143,6 +143,7 @@
 				7605C47528AC9794000105A8 /* Localizable.strings */,
 				7605C5C028AE44B1000105A8 /* InfoPlist.strings */,
 				E161B03C28B64883005061C4 /* Snabble.gpx */,
+				E16A6EA52AB8449300E6096D /* Settings.bundle */,
 			);
 			name = "Supporting Files";
 			sourceTree = "<group>";
@@ -158,7 +159,6 @@
 			isa = PBXGroup;
 			children = (
 				76C7B78F28C1ACD900D94F4F /* Profile.json */,
-				7615200028D3559E00C08D97 /* Acknowledgements.html */,
 				76AD21B028D42513003D865A /* privacy.html */,
 				76AD21B228D4331A003D865A /* terms.html */,
 			);
@@ -221,12 +221,12 @@
 				607FACCC1AFB9204008FA782 /* Sources */,
 				607FACCD1AFB9204008FA782 /* Frameworks */,
 				607FACCE1AFB9204008FA782 /* Resources */,
+				E16A6EA72AB847E800E6096D /* LicensePlist */,
+				E10C1A4C2AB8670C0071578D /* SwiftLint */,
 			);
 			buildRules = (
 			);
 			dependencies = (
-				763A27722A3B13AB00D2A6FC /* PBXTargetDependency */,
-				E1BFF2C729E6AB4100E6AE37 /* PBXTargetDependency */,
 			);
 			name = SnabbleSampleApp;
 			packageProductDependencies = (
@@ -294,8 +294,6 @@
 			);
 			mainGroup = 607FACC71AFB9204008FA782;
 			packageReferences = (
-				E1BFF2C529E6A98800E6AE37 /* XCRemoteSwiftPackageReference "LicensePlist" */,
-				763A27792A3C4B3E00D2A6FC /* XCRemoteSwiftPackageReference "SwiftLint" */,
 			);
 			productRefGroup = 607FACD11AFB9204008FA782 /* Products */;
 			projectDirPath = "";
@@ -314,11 +312,11 @@
 			files = (
 				607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */,
 				E161B0EE28B76DD9005061C4 /* Onboarding.json in Resources */,
+				E16A6EA62AB846E800E6096D /* Settings.bundle in Resources */,
 				7605C47328AC9794000105A8 /* Localizable.strings in Resources */,
 				607FACDD1AFB9204008FA782 /* Assets.xcassets in Resources */,
 				E1786CBF28BF351400CB7AF0 /* Dashboard.json in Resources */,
 				76C7B79028C1ACD900D94F4F /* Profile.json in Resources */,
-				7615200128D3559E00C08D97 /* Acknowledgements.html in Resources */,
 				E1BEF67128B79B4900549104 /* imprint.html in Resources */,
 				76AD21B128D42513003D865A /* privacy.html in Resources */,
 				76AD21B328D4331A003D865A /* terms.html in Resources */,
@@ -333,6 +331,45 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		E10C1A4C2AB8670C0071578D /* SwiftLint */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = SwiftLint;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ -z \"$CI_XCODE_CLOUD\" ]]; then\n    if which mint > /dev/null; then\n        mint run swiftlint\n    else\n        echo \"warning: Mint not installed, download from https://github.com/yonaskolb/Mint\"\n    fi\nfi\n";
+		};
+		E16A6EA72AB847E800E6096D /* LicensePlist */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			name = LicensePlist;
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if [[ -z \"$CI_XCODE_CLOUD\" ]]; then\n    if [ $CONFIGURATION = \"Debug\" ]; then\n            if which mint > /dev/null; then\n            mint run mono0926/LicensePlist --output-path Snabble/Settings.bundle\n        else\n            echo \"warning: Mint not installed, download from https://github.com/yonaskolb/Mint\"\n        fi\n    fi\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		607FACCC1AFB9204008FA782 /* Sources */ = {
@@ -362,18 +399,10 @@
 /* End PBXSourcesBuildPhase section */
 
 /* Begin PBXTargetDependency section */
-		763A27722A3B13AB00D2A6FC /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = 763A27712A3B13AB00D2A6FC /* SwiftLintPlugin */;
-		};
 		E131CF1C28A3D45C00A844E1 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
 			target = 607FACCF1AFB9204008FA782 /* SnabbleSampleApp */;
 			targetProxy = E131CF1B28A3D45C00A844E1 /* PBXContainerItemProxy */;
-		};
-		E1BFF2C729E6AB4100E6AE37 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			productRef = E1BFF2C629E6AB4100E6AE37 /* LicensePlistBuildTool */;
 		};
 /* End PBXTargetDependency section */
 
@@ -648,30 +677,7 @@
 		};
 /* End XCConfigurationList section */
 
-/* Begin XCRemoteSwiftPackageReference section */
-		763A27792A3C4B3E00D2A6FC /* XCRemoteSwiftPackageReference "SwiftLint" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/realm/SwiftLint.git";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 0.52.2;
-			};
-		};
-		E1BFF2C529E6A98800E6AE37 /* XCRemoteSwiftPackageReference "LicensePlist" */ = {
-			isa = XCRemoteSwiftPackageReference;
-			repositoryURL = "https://github.com/mono0926/LicensePlist";
-			requirement = {
-				kind = upToNextMajorVersion;
-				minimumVersion = 3.0.0;
-			};
-		};
-/* End XCRemoteSwiftPackageReference section */
-
 /* Begin XCSwiftPackageProductDependency section */
-		763A27712A3B13AB00D2A6FC /* SwiftLintPlugin */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = "plugin:SwiftLintPlugin";
-		};
 		E1AABF0729E53A2D00D83490 /* Snabble */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Snabble;
@@ -687,11 +693,6 @@
 		E1AABF0D29E53A2D00D83490 /* SnabbleUI */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = SnabbleUI;
-		};
-		E1BFF2C629E6AB4100E6AE37 /* LicensePlistBuildTool */ = {
-			isa = XCSwiftPackageProductDependency;
-			package = E1BFF2C529E6A98800E6AE37 /* XCRemoteSwiftPackageReference "LicensePlist" */;
-			productName = "plugin:LicensePlistBuildTool";
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
