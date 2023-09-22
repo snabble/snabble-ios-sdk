@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 * Xcode 15 Support
 
+### Updated
+* devicekit/DeviceKit 5.1.0 (was 5.0.0)
 
 ## [0.39.1] - 2023-09-14
 

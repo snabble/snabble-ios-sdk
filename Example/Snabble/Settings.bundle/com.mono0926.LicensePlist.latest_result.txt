@@ -1,4 +1,4 @@
-name: DeviceKit, nameSpecified: DeviceKit, owner: devicekit, version: 5.0.0, source: https://github.com/devicekit/DeviceKit
+name: DeviceKit, nameSpecified: DeviceKit, owner: devicekit, version: 5.1.0, source: https://github.com/devicekit/DeviceKit
 
 name: GRDB.swift, nameSpecified: GRDB.swift, owner: groue, version: 6.18.0, source: https://github.com/groue/GRDB.swift
 
