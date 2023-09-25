@@ -43,10 +43,10 @@ public final class ReceiptsDetailViewController: UIViewController {
     public let orderId: String
     public let projectId: Identifier<Project>
 
-    public let order: Order?
-    public let project: Project?
+    public private(set) var order: Order?
+    public private(set) var project: Project?
 
-    private var quickLookDataSources: QuicklookPreviewControllerDataSource? = nil
+    public private(set) var quickLookDataSources: QuicklookPreviewControllerDataSource? = nil
 
     public weak var analyticsDelegate: AnalyticsDelegate?
 
@@ -157,6 +157,8 @@ extension ReceiptsDetailViewController {
             }).first else {
                 return completion(.failure(Error.missingOrder))
             }
+            self?.order = order
+            self?.project = project
             self?.getReceipt(order: order, project: project, completion: completion)
         }
     }
@@ -197,8 +199,8 @@ extension ReceiptsDetailViewController {
     }
 }
 
-final class QuicklookPreviewControllerDataSource: QLPreviewControllerDataSource {
-    let item: QLPreviewItem
+public final class QuicklookPreviewControllerDataSource: QLPreviewControllerDataSource {
+    public let item: QLPreviewItem
 
     init(item: QLPreviewItem) {
         self.item = item
