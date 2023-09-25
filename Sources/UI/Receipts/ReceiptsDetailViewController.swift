@@ -28,57 +28,153 @@ public final class ReceiptPreviewItem: NSObject, QLPreviewItem {
     }
 }
 
-public final class ReceiptsDetailViewController: QLPreviewController {
-    private var quickLookDataSources: [QuicklookPreviewControllerDataSource] = []
+public final class ReceiptsDetailViewController: UIViewController {
+    enum Error: Swift.Error {
+        case missingProject
+        case missingOrder
+    }
+
+    public let orderId: String
+    public let projectId: Identifier<Project>
+
+    public let order: Order?
+    public let project: Project?
+
+    private var quickLookDataSources: QuicklookPreviewControllerDataSource? = nil
+
+    public weak var analyticsDelegate: AnalyticsDelegate?
+
+    private(set) weak var activityIndicatorView: UIActivityIndicatorView?
+
+    private(set) weak var previewController: QLPreviewController?
+    private(set) weak var previewLayoutGuide: UILayoutGuide!
+
+    init(orderId: String, projectId: Identifier<Project>) {
+        self.orderId = orderId
+        self.order = nil
+        self.projectId = projectId
+        self.project = nil
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    init(order: Order, project: Project) {
+        self.order = order
+        self.orderId = order.id
+        self.projectId = project.id
+        self.project = project
+        super.init(nibName: nil, bundle: nil)
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     deinit {
-        quickLookDataSources = []
+        quickLookDataSources = nil
+    }
+
+    public override func loadView() {
+        let view = UIView(frame: UIScreen.main.bounds)
+        view.backgroundColor = .systemBackground
+
+        let activityIndicatorView = UIActivityIndicatorView(style: .large)
+        activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
+        activityIndicatorView.hidesWhenStopped = true
+        activityIndicatorView.startAnimating()
+        view.addSubview(activityIndicatorView)
+        self.activityIndicatorView = activityIndicatorView
+
+        let previewLayoutGuide = UILayoutGuide()
+        view.addLayoutGuide(previewLayoutGuide)
+        self.previewLayoutGuide = previewLayoutGuide
+
+        NSLayoutConstraint.activate([
+            view.centerXAnchor.constraint(equalTo: activityIndicatorView.centerXAnchor),
+            view.centerYAnchor.constraint(equalTo: activityIndicatorView.centerYAnchor),
+
+            view.topAnchor.constraint(equalTo: previewLayoutGuide.topAnchor),
+            view.bottomAnchor.constraint(equalTo: previewLayoutGuide.bottomAnchor),
+            view.leadingAnchor.constraint(equalTo: previewLayoutGuide.leadingAnchor),
+            view.trailingAnchor.constraint(equalTo: previewLayoutGuide.trailingAnchor)
+        ])
+
+        self.view = view
+    }
+
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        let completion: (Result<ReceiptPreviewItem, Swift.Error>) -> Void = { [weak self] result in
+            self?.activityIndicatorView?.stopAnimating()
+            switch result {
+            case .success(let previewItem):
+                self?.title = previewItem.title
+                self?.setupQuicklook(with: previewItem)
+            case .failure:
+                print("Show Error!") // No requirements available
+            }
+        }
+        if let order, let project {
+            getReceipt(order: order, project: project, completion: completion)
+        } else {
+            getReceipt(orderID: orderId, projectID: projectId, completion: completion)
+        }
+    }
+
+    public override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        analyticsDelegate?.track(.viewReceiptDetail)
     }
 }
 
 extension ReceiptsDetailViewController {
-    public func getReceipt(orderID: String, projectID: Identifier<Project>, receiptReceived: @escaping (Result<URL, Error>) -> Void) {
+    private func getReceipt(orderID: String, projectID: Identifier<Project>, completion: @escaping (Result<ReceiptPreviewItem, Swift.Error>) -> Void) {
         guard let project = Snabble.shared.project(for: projectID) ?? Snabble.shared.projects.first else {
-            return
+            return completion(.failure(Error.missingProject))
         }
 
         OrderList.load(project) { [weak self] result in
-            if let order: SnabbleCore.Order = try? result.get().receipts.filter({ order in
+            guard let order: SnabbleCore.Order = try? result.get().receipts.filter({ order in
                 order.projectId == project.id && order.id == orderID
-            }).first {
-                self?.getReceipt(order: order, project: project, receiptReceived: receiptReceived)
+            }).first else {
+                return completion(.failure(Error.missingOrder))
             }
+            self?.getReceipt(order: order, project: project, completion: completion)
         }
     }
     
-    public func getReceipt(order: Order, project: Project, receiptReceived: @escaping (Result<URL, Error>) -> Void) {
-        order.getReceipt(project) { [weak self] result in
-
+    private func getReceipt(order: Order, project: Project, completion: @escaping (Result<ReceiptPreviewItem, Swift.Error>) -> Void) {
+        order.getReceipt(project) { result in
             switch result {
             case .success(let targetURL):
                 let formatter = DateFormatter()
                 formatter.dateStyle = .medium
                 formatter.timeStyle = .none
-
                 let title = formatter.string(from: order.date)
-
-                self?.setupQuicklook(for: targetURL, with: title)
+                completion(.success(ReceiptPreviewItem(targetURL, title)))
             case .failure(let error):
-                Log.error("error saving receipt: \(error)")
+                completion(.failure(error))
             }
-            
-            receiptReceived(result)
         }
     }
 
-    private func setupQuicklook(for url: URL, with title: String) {
-        let receiptPreviewItem = ReceiptPreviewItem(url, title)
-        let dataSource = QuicklookPreviewControllerDataSource(item: receiptPreviewItem)
+    private func setupQuicklook(with previewItem: ReceiptPreviewItem) {
+        let dataSource = QuicklookPreviewControllerDataSource(item: previewItem)
 
-        self.dataSource = dataSource
-        self.delegate = self
+        let previewController = QLPreviewController()
+        previewController.dataSource = dataSource
+        addChild(previewController)
+        previewController.view.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(previewController.view)
+        previewController.didMove(toParent: self)
 
-        quickLookDataSources.append(dataSource)
+        NSLayoutConstraint.activate([
+            previewLayoutGuide.topAnchor.constraint(equalTo: previewController.view.topAnchor),
+            previewLayoutGuide.bottomAnchor.constraint(equalTo: previewController.view.bottomAnchor),
+            previewLayoutGuide.leadingAnchor.constraint(equalTo: previewController.view.leadingAnchor),
+            previewLayoutGuide.trailingAnchor.constraint(equalTo: previewController.view.trailingAnchor),
+        ])
+        self.previewController = previewController
+        self.quickLookDataSources = dataSource
     }
 }
 
@@ -95,13 +191,5 @@ final class QuicklookPreviewControllerDataSource: QLPreviewControllerDataSource 
 
     public func previewController(_ controller: QLPreviewController, previewItemAt index: Int) -> QLPreviewItem {
         item
-    }
-}
-
-extension ReceiptsDetailViewController: QLPreviewControllerDelegate {
-    public func previewControllerDidDismiss(_ controller: QLPreviewController) {
-        quickLookDataSources.removeAll {
-            $0.item.isEqual(controller.currentPreviewItem)
-        }
     }
 }

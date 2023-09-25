@@ -236,18 +236,8 @@ final class CheckoutStepsViewController: UIHostingController<CheckoutView> {
                 navigationController?.popToRootViewController(animated: false)
             }
             if let receiptLink = userInfo["receiptLink"] as? SnabbleCore.Link, let url = URL(string: receiptLink.href) {
-                let detailViewController = ReceiptsDetailViewController()
-
-                detailViewController.getReceipt(orderID: url.lastPathComponent, projectID: viewModel.shop.projectId) { [weak self] result in
-                    
-                    switch result {
-                    case .success:
-                        self?.present(detailViewController, animated: true)
-                        
-                    case .failure:
-                        break
-                    }
-                }
+                let detailViewController = ReceiptsDetailViewController(orderId: url.lastPathComponent, projectId: viewModel.shop.projectId)
+                present(detailViewController, animated: true)
                 return
             }
         }
