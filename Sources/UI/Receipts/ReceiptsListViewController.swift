@@ -63,6 +63,7 @@ public final class ReceiptsListViewController: UITableViewController {
         }
     }
     public weak var analyticsDelegate: AnalyticsDelegate?
+    public weak var detailDelegate: ReceiptsDetailViewControllerDelegate?
 
     public init() {
         super.init(nibName: nil, bundle: nil)
@@ -175,6 +176,7 @@ extension ReceiptsListViewController {
         }
 
         let detailViewController = ReceiptsDetailViewController(order: order, project: project)
+        detailViewController.delegate = detailDelegate
         detailViewController.analyticsDelegate = analyticsDelegate
         navigationController?.pushViewController(detailViewController, animated: true)
     }

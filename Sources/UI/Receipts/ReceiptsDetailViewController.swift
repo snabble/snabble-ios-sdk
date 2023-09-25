@@ -28,11 +28,17 @@ public final class ReceiptPreviewItem: NSObject, QLPreviewItem {
     }
 }
 
+public protocol ReceiptsDetailViewControllerDelegate: AnyObject {
+    func receiptsDetailViewController(_ viewController: ReceiptsDetailViewController, didTouchedUpInsideActionButton: UIBarButtonItem)
+}
+
 public final class ReceiptsDetailViewController: UIViewController {
     enum Error: Swift.Error {
         case missingProject
         case missingOrder
     }
+
+    public weak var delegate: ReceiptsDetailViewControllerDelegate?
 
     public let orderId: String
     public let projectId: Identifier<Project>
@@ -118,6 +124,19 @@ public final class ReceiptsDetailViewController: UIViewController {
         } else {
             getReceipt(orderID: orderId, projectID: projectId, completion: completion)
         }
+
+        if delegate != nil {
+            let barbuttonItem = UIBarButtonItem(image: UIImage(systemName: "ellipsis"),
+                                                style: .plain,
+                                                target: self,
+                                                action: #selector(rightBarButtonItemTouchedUpInside(_:)))
+            navigationItem.rightBarButtonItem = barbuttonItem
+        }
+
+    }
+
+    @objc func rightBarButtonItemTouchedUpInside(_ sender: UIBarButtonItem) {
+        delegate?.receiptsDetailViewController(self, didTouchedUpInsideActionButton: sender)
     }
 
     public override func viewDidAppear(_ animated: Bool) {
