@@ -46,7 +46,7 @@ public final class ReceiptsDetailViewController: UIViewController {
     public private(set) var order: Order?
     public private(set) var project: Project?
 
-    public private(set) var quickLookDataSources: QuicklookPreviewControllerDataSource? = nil
+    public private(set) var quickLookDataSources: QuicklookPreviewControllerDataSource?
 
     public weak var analyticsDelegate: AnalyticsDelegate?
 
@@ -55,7 +55,7 @@ public final class ReceiptsDetailViewController: UIViewController {
     private(set) weak var previewController: QLPreviewController?
     private(set) weak var previewLayoutGuide: UILayoutGuide!
 
-    init(orderId: String, projectId: Identifier<Project>) {
+    public init(orderId: String, projectId: Identifier<Project>) {
         self.orderId = orderId
         self.order = nil
         self.projectId = projectId
@@ -63,7 +63,7 @@ public final class ReceiptsDetailViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
-    init(order: Order, project: Project) {
+    public init(order: Order, project: Project) {
         self.order = order
         self.orderId = order.id
         self.projectId = project.id
@@ -192,7 +192,7 @@ extension ReceiptsDetailViewController {
             previewLayoutGuide.topAnchor.constraint(equalTo: previewController.view.topAnchor),
             previewLayoutGuide.bottomAnchor.constraint(equalTo: previewController.view.bottomAnchor),
             previewLayoutGuide.leadingAnchor.constraint(equalTo: previewController.view.leadingAnchor),
-            previewLayoutGuide.trailingAnchor.constraint(equalTo: previewController.view.trailingAnchor),
+            previewLayoutGuide.trailingAnchor.constraint(equalTo: previewController.view.trailingAnchor)
         ])
         self.previewController = previewController
         self.quickLookDataSources = dataSource
