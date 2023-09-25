@@ -63,6 +63,7 @@ public final class ReceiptsListViewController: UITableViewController {
         }
     }
     public weak var analyticsDelegate: AnalyticsDelegate?
+    public weak var detailDelegate: ReceiptsDetailViewControllerDelegate?
 
     public init() {
         super.init(nibName: nil, bundle: nil)
@@ -174,22 +175,9 @@ extension ReceiptsListViewController {
             return
         }
 
-        activityIndicator?.startAnimating()
-        tableView.allowsSelection = false
-
-        let detailViewController = ReceiptsDetailViewController()
-
-        detailViewController.getReceipt(order: order, project: project) { [weak self] result in
-            self?.activityIndicator?.stopAnimating()
-            tableView.allowsSelection = true
-            
-            switch result {
-            case .success:
-                self?.navigationController?.pushViewController(detailViewController, animated: true)
-                self?.analyticsDelegate?.track(.viewReceiptDetail)
-            case .failure:
-                break
-            }
-        }
+        let detailViewController = ReceiptsDetailViewController(order: order, project: project)
+        detailViewController.delegate = detailDelegate
+        detailViewController.analyticsDelegate = analyticsDelegate
+        navigationController?.pushViewController(detailViewController, animated: true)
     }
 }
