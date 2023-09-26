@@ -98,14 +98,22 @@ public class Snabble {
         case staging
         case production
 
-        public var urlString: String {
+        public var apiURLString: String {
+            return "https://api.\(host)"
+        }
+
+        public var retailerURLString: String {
+            return "https://retailer.\(host)"
+        }
+
+        public var host: String {
             switch self {
             case .testing:
-                return "https://api.snabble-testing.io"
+                return "snabble-testing.io"
             case .staging:
-                return "https://api.snabble-staging.io"
+                return "snabble-staging.io"
             case .production:
-                return "https://api.snabble.io"
+                return "snabble.io"
             }
         }
 
@@ -481,7 +489,7 @@ extension Snabble {
 
     private func absoluteUrl(_ url: String) -> String {
         if url.hasPrefix("/") {
-            return config.environment.urlString + url
+            return config.environment.apiURLString + url
         } else {
             return url
         }

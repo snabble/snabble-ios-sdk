@@ -128,7 +128,7 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
     }
 
     private func loadForm(withProjectId projectId: Identifier<Project>, forCreditCardBrand creditCardBrand: CreditCardBrand) {
-        var urlComponents = URLComponents(string: "\(Snabble.shared.environment.urlString)/\(projectId)/telecash/form")
+        var urlComponents = URLComponents(string: "\(Snabble.shared.environment.apiURLString)/\(projectId)/telecash/form")
         urlComponents?.queryItems = [
             .init(name: "platform", value: "ios"),
             .init(name: "paymentMethod", value: creditCardBrand.rawValue)

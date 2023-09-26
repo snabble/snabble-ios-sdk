@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.41.0] - unreleased
 
+### Added
+* added retailerURL #APPS-1067
+
 ### Fixed
 * Loading of Receipts in detail view #APPS-1067
 
