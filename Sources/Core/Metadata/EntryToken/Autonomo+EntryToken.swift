@@ -7,13 +7,13 @@
 
 import Foundation
 
-enum Autonomo {
-    struct Session: Codable {
-        public let id: String
+public enum Autonomo {
+    public struct Session: Codable, Identifiable {
+        public let id: Identifier<Session>
         public let entryToken: EntryToken
     }
 
-    struct EntryToken: Codable, SnabbleCore.EntryToken {
+    public struct EntryToken: Codable, SnabbleCore.EntryToken {
         public let value: String
         public let validUntil: Date
         public let refreshAfter: Date
@@ -27,7 +27,7 @@ private struct SessionRequest: Encodable {
 }
 
 extension Project {
-    func getAutonomoSession(for shop: Shop, paymentMethodDetail: PaymentMethodDetail, completion: @escaping (Result<Autonomo.Session, SnabbleError>) -> Void) {
+    public func getAutonomoSession(for shop: Shop, paymentMethodDetail: PaymentMethodDetail, completion: @escaping (Result<Autonomo.Session, SnabbleError>) -> Void) {
         let tokenRequest = SessionRequest(
             shopID: shop.id.rawValue,
             paymentMethod: paymentMethodDetail.rawMethod.rawValue,
@@ -39,6 +39,16 @@ extension Project {
         }
 
         self.request(.post, "/\(shop.projectId)/autonomo/sessions", body: data, timeout: 5) { request in
+            guard let request = request else {
+                return completion(.failure(SnabbleError.noRequest))
+            }
+
+            self.perform(request, completion)
+        }
+    }
+
+    public func updateAutonomoSession(for sessionId: Identifier<Autonomo.Session>, projectId: Identifier<Project>, completion: @escaping (Result<Autonomo.Session, SnabbleError>) -> Void) {
+        self.request(.get, "/\(projectId.rawValue)/autonomo/sessions/\(sessionId.rawValue)", timeout: 5) { request in
             guard let request = request else {
                 return completion(.failure(SnabbleError.noRequest))
             }

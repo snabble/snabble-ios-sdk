@@ -6,8 +6,8 @@
 
 import Foundation
 
-enum Wanzel {
-    struct EntryToken: Decodable, SnabbleCore.EntryToken {
+public enum Wanzel {
+    public struct EntryToken: Decodable, SnabbleCore.EntryToken {
         public let value: String
         public let validUntil: Date
         public let refreshAfter: Date
@@ -17,7 +17,7 @@ enum Wanzel {
             case validUntil
         }
 
-        init(from decoder: Decoder) throws {
+        public init(from decoder: Decoder) throws {
             let container: KeyedDecodingContainer<Wanzel.EntryToken.CodingKeys> = try decoder.container(keyedBy: Wanzel.EntryToken.CodingKeys.self)
             self.value = try container.decode(String.self, forKey: Wanzel.EntryToken.CodingKeys.value)
             self.validUntil = try container.decode(Date.self, forKey: Wanzel.EntryToken.CodingKeys.validUntil)
@@ -31,7 +31,7 @@ private struct EntryTokenRequest: Encodable {
 }
 
 extension Project {
-    func getWanzelEntryToken(for shopId: Identifier<Shop>, completion: @escaping (Result<Wanzel.EntryToken, SnabbleError>) -> Void) {
+    public func getWanzelEntryToken(for shopId: Identifier<Shop>, completion: @escaping (Result<Wanzel.EntryToken, SnabbleError>) -> Void) {
         let tokenRequest = EntryTokenRequest(shopID: shopId)
 
         guard
