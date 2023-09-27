@@ -29,7 +29,7 @@ public final class ReceiptPreviewItem: NSObject, QLPreviewItem {
 }
 
 public protocol ReceiptsDetailViewControllerDelegate: AnyObject {
-    func receiptsDetailViewController(_ viewController: ReceiptsDetailViewController, didTouchedUpInsideActionButton: UIBarButtonItem)
+    func receiptsDetailViewController(_ viewController: ReceiptsDetailViewController, wantsActionsWithOrder order: Order, localURL: URL)
 }
 
 public final class ReceiptsDetailViewController: UIViewController {
@@ -124,19 +124,13 @@ public final class ReceiptsDetailViewController: UIViewController {
         } else {
             getReceipt(orderID: orderId, projectID: projectId, completion: completion)
         }
-
-        if delegate != nil {
-            let barbuttonItem = UIBarButtonItem(image: UIImage(systemName: "ellipsis"),
-                                                style: .plain,
-                                                target: self,
-                                                action: #selector(rightBarButtonItemTouchedUpInside(_:)))
-            navigationItem.rightBarButtonItem = barbuttonItem
-        }
-
     }
 
     @objc func rightBarButtonItemTouchedUpInside(_ sender: UIBarButtonItem) {
-        delegate?.receiptsDetailViewController(self, didTouchedUpInsideActionButton: sender)
+        guard let order = order, let orderURL = quickLookDataSources?.item.previewItemURL else {
+            return
+        }
+        delegate?.receiptsDetailViewController(self, wantsActionsWithOrder: order, localURL: orderURL)
     }
 
     public override func viewDidAppear(_ animated: Bool) {
@@ -196,6 +190,20 @@ extension ReceiptsDetailViewController {
         ])
         self.previewController = previewController
         self.quickLookDataSources = dataSource
+
+        showRightBarButtonItemIfPossible(previewItem: previewItem)
+    }
+
+    private func showRightBarButtonItemIfPossible(previewItem: QLPreviewItem) {
+        if delegate != nil && QLPreviewController.canPreview(previewItem) {
+            let barbuttonItem = UIBarButtonItem(image: UIImage(systemName: "ellipsis"),
+                                                style: .plain,
+                                                target: self,
+                                                action: #selector(rightBarButtonItemTouchedUpInside(_:)))
+            navigationItem.rightBarButtonItem = barbuttonItem
+        } else {
+            navigationItem.rightBarButtonItem = nil
+        }
     }
 }
 
