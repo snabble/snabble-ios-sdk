@@ -46,13 +46,20 @@ public final class PaymentMethodListViewController: UITableViewController {
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.analyticsDelegate?.track(.viewPaymentMethodList)
+        if currentPaymentMethods().count == 0 {
+            addMethod()
+        }
     }
-
-    @objc private func addMethod() {
-        let methods = Snabble.shared.projects
+    
+    private func currentPaymentMethods() -> [RawPaymentMethod] {
+        return Snabble.shared.projects
             .filter { $0.id == projectId }
             .flatMap { $0.paymentMethods }
             .filter { $0.visible }
+    }
+    
+    @objc private func addMethod() {
+        let methods = currentPaymentMethods()
 
         if methods.count == 1 {
             showEditController(for: methods[0])

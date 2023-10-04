@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 * added retailerURL #APPS-1067
+* show payment add sheet if no payment method entered #APPS-1072
 
 ### Fixed
 * Loading of Receipts in detail view #APPS-1067
