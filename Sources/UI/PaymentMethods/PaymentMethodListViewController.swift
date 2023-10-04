@@ -46,8 +46,12 @@ public final class PaymentMethodListViewController: UITableViewController {
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.analyticsDelegate?.track(.viewPaymentMethodList)
+        
+        if data.isEmpty {
+            addMethod()
+        }
     }
-
+    
     @objc private func addMethod() {
         let methods = Snabble.shared.projects
             .filter { $0.id == projectId }
