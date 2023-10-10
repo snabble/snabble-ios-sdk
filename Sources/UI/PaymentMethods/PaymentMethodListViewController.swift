@@ -39,7 +39,11 @@ public final class PaymentMethodListViewController: UITableViewController {
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
 
-        data = SnabbleCI.project.availablePayments()
+        if let projectId {
+            data = Snabble.shared.project(for: projectId)?.availablePayments() ?? []
+        } else {
+            data = []
+        }
         tableView.reloadData()
     }
 
