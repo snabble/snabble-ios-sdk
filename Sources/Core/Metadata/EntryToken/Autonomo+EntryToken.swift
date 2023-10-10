@@ -24,14 +24,16 @@ private struct SessionRequest: Encodable {
     let shopID: String
     let paymentMethod: String
     let paymentOrigin: String
+    let numberOfPersons: Int
 }
 
 extension Project {
-    public func getAutonomoSession(for shop: Shop, paymentMethodDetail: PaymentMethodDetail, completion: @escaping (Result<Autonomo.Session, SnabbleError>) -> Void) {
+    public func getAutonomoSession(for shop: Shop, paymentMethodDetail: PaymentMethodDetail, numberOfPersons: Int, completion: @escaping (Result<Autonomo.Session, SnabbleError>) -> Void) {
         let tokenRequest = SessionRequest(
             shopID: shop.id.rawValue,
             paymentMethod: paymentMethodDetail.rawMethod.rawValue,
-            paymentOrigin: paymentMethodDetail.encryptedData
+            paymentOrigin: paymentMethodDetail.encryptedData,
+            numberOfPersons: numberOfPersons
         )
 
         guard let data = try? JSONEncoder().encode(tokenRequest) else {
