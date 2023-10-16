@@ -9,36 +9,36 @@ import SnabbleCore
 
 public final class PaymentMethodListViewController: UITableViewController {
     private weak var analyticsDelegate: AnalyticsDelegate?
-
+    
     private(set) var projectId: Identifier<Project>?
     private var data: [PaymentGroup] = []
-
+    
     public init(for projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) {
         self.projectId = projectId
         self.analyticsDelegate = analyticsDelegate
         super.init(style: .insetGrouped)
     }
-
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override public func viewDidLoad() {
         super.viewDidLoad()
-
+        
         self.title = Asset.localizedString(forKey: "Snabble.PaymentMethods.title")
-
+        
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addMethod))
         self.navigationItem.rightBarButtonItem = addButton
-
+        
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.register(PaymentMethodListCell.self, forCellReuseIdentifier: "cell")
     }
-
+    
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        
         if let projectId {
             data = Snabble.shared.project(for: projectId)?.availablePayments() ?? []
         } else {
@@ -46,7 +46,7 @@ public final class PaymentMethodListViewController: UITableViewController {
         }
         tableView.reloadData()
     }
-
+    
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.analyticsDelegate?.track(.viewPaymentMethodList)
@@ -55,36 +55,47 @@ public final class PaymentMethodListViewController: UITableViewController {
             addMethod()
         }
     }
-    
     @objc private func addMethod() {
-        let methods = Snabble.shared.projects
-            .filter { $0.id == projectId }
-            .flatMap { $0.paymentMethods }
-            .filter { $0.visible }
-
-        if methods.count == 1 {
-            showEditController(for: methods[0])
-        } else {
-            let sheet = SelectionSheetController(title: Asset.localizedString(forKey: "Snabble.PaymentMethods.choose"))
-
-            methods.forEach { method in
-                let action = SelectionSheetAction(title: method.displayName, image: method.icon) { [self] _ in
-                    showEditController(for: method)
-                }
-                sheet.addAction(action)
-            }
-
-            sheet.cancelButtonTitle = Asset.localizedString(forKey: "Snabble.cancel")
-
-            self.present(sheet, animated: true)
-        }
+        addPaymentMethod(in: projectId, analyticsDelegate: analyticsDelegate)
     }
+}
 
-    private func showEditController(for method: RawPaymentMethod) {
+extension UIViewController {
+    private func showEditController(
+        for method: RawPaymentMethod,
+        in projectId: Identifier<Project>?,
+        analyticsDelegate: AnalyticsDelegate?) {
+            
         if method.isAddingAllowed(showAlertOn: self),
             let controller = method.editViewController(with: projectId, analyticsDelegate) {
             navigationController?.pushViewController(controller, animated: true)
         }
+    }
+    public func addPaymentMethod(
+        in projectId: Identifier<Project>?,
+        analyticsDelegate: AnalyticsDelegate?) {
+            
+       let methods = Snabble.shared.projects
+           .filter { $0.id == projectId }
+           .flatMap { $0.paymentMethods }
+           .filter { $0.visible }
+
+       if methods.count == 1 {
+           showEditController(for: methods[0], in: projectId, analyticsDelegate: analyticsDelegate)
+       } else {
+           let sheet = SelectionSheetController(title: Asset.localizedString(forKey: "Snabble.PaymentMethods.choose"))
+
+           methods.forEach { method in
+               let action = SelectionSheetAction(title: method.displayName, image: method.icon) { [self] _ in
+                   showEditController(for: method, in: projectId, analyticsDelegate: analyticsDelegate)
+               }
+               sheet.addAction(action)
+           }
+
+           sheet.cancelButtonTitle = Asset.localizedString(forKey: "Snabble.cancel")
+
+           self.present(sheet, animated: true)
+       }
     }
 }
 
