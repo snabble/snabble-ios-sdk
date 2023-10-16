@@ -9,20 +9,20 @@ import SnabbleCore
 
 public final class PaymentMethodListViewController: UITableViewController {
     private weak var analyticsDelegate: AnalyticsDelegate?
-    
+
     private(set) var projectId: Identifier<Project>?
     private var data: [PaymentGroup] = []
-    
+
     public init(for projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) {
         self.projectId = projectId
         self.analyticsDelegate = analyticsDelegate
         super.init(style: .insetGrouped)
     }
-    
+
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    
+
     override public func viewDidLoad() {
         super.viewDidLoad()
         
@@ -35,7 +35,7 @@ public final class PaymentMethodListViewController: UITableViewController {
         tableView.rowHeight = UITableView.automaticDimension
         tableView.register(PaymentMethodListCell.self, forCellReuseIdentifier: "cell")
     }
-    
+
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         
@@ -46,7 +46,7 @@ public final class PaymentMethodListViewController: UITableViewController {
         }
         tableView.reloadData()
     }
-    
+
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.analyticsDelegate?.track(.viewPaymentMethodList)
@@ -55,6 +55,7 @@ public final class PaymentMethodListViewController: UITableViewController {
             addMethod()
         }
     }
+
     @objc private func addMethod() {
         addPaymentMethod(for: projectId, analyticsDelegate: analyticsDelegate)
     }
@@ -71,10 +72,15 @@ extension UIViewController {
             navigationController?.pushViewController(controller, animated: true)
         }
     }
+
+    /// show the payment selection sheet
+    ///
+    /// - Parameter for: the project identifier to add a payment method for
+    /// - Parameter analyticsDelegate: the optional analytics delegate
     public func addPaymentMethod(
         for projectId: Identifier<Project>?,
         analyticsDelegate: AnalyticsDelegate?) {
-            
+
        let methods = Snabble.shared.projects
            .filter { $0.id == projectId }
            .flatMap { $0.paymentMethods }
