@@ -56,7 +56,7 @@ public final class PaymentMethodListViewController: UITableViewController {
         }
     }
     @objc private func addMethod() {
-        addPaymentMethod(in: projectId, analyticsDelegate: analyticsDelegate)
+        addPaymentMethod(for: projectId, analyticsDelegate: analyticsDelegate)
     }
 }
 
@@ -72,7 +72,7 @@ extension UIViewController {
         }
     }
     public func addPaymentMethod(
-        in projectId: Identifier<Project>?,
+        for projectId: Identifier<Project>?,
         analyticsDelegate: AnalyticsDelegate?) {
             
        let methods = Snabble.shared.projects
