@@ -49,7 +49,8 @@ extension DashboardViewController: DynamicViewControllerDelegate {
                       let orderID = userInfo?["id"] as? String, let projectID = (widget as? WidgetLastPurchases)?.projectId {
                 
                 let detailViewController = ReceiptsDetailViewController(orderId: orderID, projectId: projectID)
-                present(detailViewController, animated: true)
+                let navigationController = UINavigationController(rootViewController: detailViewController)
+               present(navigationController, animated: true)
             }
         default:
             break

@@ -6,4 +6,19 @@
 //  Copyright © 2023 snabble. All rights reserved.
 //
 
-import Foundation
+import UIKit
+import SnabbleUI
+
+final class ReceiptsViewController: ReceiptsListViewController {
+    override init() {
+        super.init()
+        
+        self.title = NSLocalizedString("Receipts.title", comment: "")
+        self.tabBarItem.image = UIImage(systemName: "scroll")
+        self.tabBarItem.selectedImage = UIImage(systemName: "scroll.fill")
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+}

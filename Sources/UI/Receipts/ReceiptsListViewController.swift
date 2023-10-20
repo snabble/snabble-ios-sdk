@@ -20,15 +20,19 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
     
     private var cancellables = Set<AnyCancellable>()
     public weak var delegate: ReceiptsListDelegate?
-
+    
+    public var viewModel: LastPurchasesViewModel {
+        rootView.viewModel
+    }
+    
     public init() {
         let rootView = ReceiptsListScreen(projectId: Snabble.shared.projects.first?.id)
 
         super.init(rootView: rootView)
 
         viewModel.actionPublisher
-            .sink { [unowned self] action in
-                self.actionFor(provider: action)
+            .sink { [unowned self] provider in
+                self.actionFor(provider: provider)
             }
             .store(in: &cancellables)
     }
@@ -36,16 +40,23 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
     @MainActor required dynamic public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-    var viewModel: LastPurchasesViewModel {
-        rootView.viewModel
+
+    open override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        updateNewItems()
     }
-    
+
     private func actionFor(provider: PurchaseProviding) {
         if !self.handleAction(self, on: provider) {
             let detailController = ReceiptsDetailViewController(orderId: provider.id, projectId: provider.projectId)
 
             self.navigationController?.pushViewController(detailController, animated: true)
         }
+    }
+
+    private func updateNewItems() {
+        let new = self.viewModel.numberOfUnloaded
+        self.tabBarItem.badgeValue = new > 0 ? "\(new)" : nil
     }
 }
 

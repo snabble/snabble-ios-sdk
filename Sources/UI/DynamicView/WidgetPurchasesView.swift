@@ -26,7 +26,7 @@ extension Array where Element == PurchaseProviding {
     }
 }
 
-class LastPurchasesViewModel: ObservableObject, LoadableObject {
+public class LastPurchasesViewModel: ObservableObject, LoadableObject {
     typealias Output = [PurchaseProviding]
 
     @Published private(set) var projectId: Identifier<Project>? {
@@ -35,7 +35,12 @@ class LastPurchasesViewModel: ObservableObject, LoadableObject {
         }
     }
     @Published private(set) var state: LoadingState<[PurchaseProviding]> = .idle
-    @Published private(set) var numberOfUnloaded: Int = 0
+    
+    public var numberOfUnloaded: Int = 0 {
+        willSet {
+            self.objectWillChange.send()
+        }
+    }
     
     private var cancellables = Set<AnyCancellable>()
     
