@@ -33,6 +33,7 @@ public struct ReceiptsItemView: View {
             Spacer()
             Text(provider.amount)
                 .font(.footnote)
+            Image(systemName: "chevron.right")
         }
         .foregroundColor(provider.unloaded ? .primary : .secondary)
     }
@@ -81,11 +82,10 @@ public struct ReceiptsListScreen: View {
             VStack {
                 List {
                     ForEach(output, id: \.id) { provider in
-                        NavigationLink {
-                            ReceiptDetailScreen(provider: provider)
-                        } label: {
-                            ReceiptsItemView(provider: provider)
-                        }
+                        ReceiptsItemView(provider: provider)
+                            .onTapGesture {
+                                viewModel.actionPublisher.send(provider)
+                            }
                     }
                 }
                 .listStyle(.plain)
@@ -96,5 +96,6 @@ public struct ReceiptsListScreen: View {
         }.onAppear {
             viewModel.load()
         }
+        .navigationTitle(Asset.localizedString(forKey: "Snabble.Receipts.title"))
     }
 }

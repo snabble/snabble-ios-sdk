@@ -11,9 +11,15 @@ import SnabbleCore
 import SwiftUI
 import Combine
 
-/// A UIViewController wrapping SwiftUI's ShopsView
+public protocol ReceiptsListDelegate: AnyObject {
+    func handleAction(_ viewController: ReceiptsListViewController, on receipt: PurchaseProviding) -> Bool
+}
+
+/// A UIViewController wrapping SwiftUI's ReceiptsListViewController
 open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
+    
     private var cancellables = Set<AnyCancellable>()
+    public weak var delegate: ReceiptsListDelegate?
 
     public init() {
         let rootView = ReceiptsListScreen(projectId: Snabble.shared.projects.first?.id)
@@ -35,7 +41,17 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
     }
     
     private func actionFor(provider: PurchaseProviding) {
-        print("did got action: for \(provider)")
+        if !self.handleAction(self, on: provider) {
+            let detailController = ReceiptsDetailViewController(orderId: provider.id, projectId: provider.projectId)
+
+            self.navigationController?.pushViewController(detailController, animated: true)
+        }
+    }
+}
+
+extension ReceiptsListViewController: ReceiptsListDelegate {
+    public func handleAction(_ viewController: ReceiptsListViewController, on receipt: PurchaseProviding) -> Bool {
+        return delegate?.handleAction(viewController, on: receipt) ?? false
     }
 }
 
