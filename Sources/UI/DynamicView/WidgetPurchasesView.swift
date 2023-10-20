@@ -15,7 +15,8 @@ public protocol PurchaseProviding {
     var amount: String { get }
     var time: String { get }
     var date: Date { get }
-
+    var unloaded: Bool { get }
+    
     var projectId: Identifier<Project> { get }
 }
 
@@ -34,8 +35,13 @@ class LastPurchasesViewModel: ObservableObject, LoadableObject {
         }
     }
     @Published private(set) var state: LoadingState<[PurchaseProviding]> = .idle
-
+    @Published private(set) var numberOfUnloaded: Int = 0
+    
     private var cancellables = Set<AnyCancellable>()
+    
+    /// Emits some triigers the action
+    /// - `Output` is a `PurchaseProviding`
+    public let actionPublisher = PassthroughSubject<PurchaseProviding, Never>()
 
     init(projectId: Identifier<Project>?) {
         self.projectId = projectId
@@ -57,16 +63,24 @@ class LastPurchasesViewModel: ObservableObject, LoadableObject {
         }
         OrderList.load(project) { [weak self] result in
             if let self = self {
+                var unloaded = 0
+                
                 do {
-                    let providers = try result.get().receipts
+                    let orderList = try result.get()
+                    let providers = orderList.receipts
+                    
                     if providers.isEmpty {
                         self.state = .empty
                     } else {
                         self.state = .loaded(providers)
+                        if let new = orderList.numberOfUnloadedReceipts(project) {
+                            unloaded = new
+                        }
                     }
                 } catch {
                     self.state = .empty
                 }
+                self.numberOfUnloaded = unloaded
             }
         }
     }
@@ -142,6 +156,13 @@ private struct WidgetOrderView: View {
 }
 
 extension Order: PurchaseProviding {
+    public var unloaded: Bool {
+        guard let project = project else {
+            return false
+        }
+        return !hasCachedReceipt(project)
+    }
+    
     public var name: String {
         shopName
     }
@@ -155,7 +176,7 @@ extension Order: PurchaseProviding {
     public var amount: String {
         formattedPrice(price) ?? "N/A"
     }
-
+    
     private func formattedPrice(_ price: Int) -> String? {
         let divider = pow(10.0, project?.decimalDigits ?? 2 as Int)
         let decimalPrice = Decimal(price) / divider

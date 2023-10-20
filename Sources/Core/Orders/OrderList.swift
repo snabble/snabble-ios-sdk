@@ -82,22 +82,39 @@ extension OrderList {
             print(error)
         }
     }
+    public func numberOfUnloadedReceipts(_ project: Project) -> Int? {
+        guard !receipts.isEmpty else {
+            return nil
+        }
+        let loaded = self.receipts.filter({ $0.hasCachedReceipt(project) })
+        return Int(self.receipts.count - loaded.count)
+    }
 }
 
 extension Order {
-    public func getReceipt(_ project: Project, completion: @escaping (Result<URL, Error>) -> Void) {
-        let fileManager = FileManager.default
+    public func cachedReceiptURL(_ project: Project) -> URL {
         // swiftlint:disable:next force_try
-        let cacheDir = try! fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        let targetPath = cacheDir.appendingPathComponent("snabble-order-\(self.id).pdf")
+        let cacheDir = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        
+        return cacheDir.appendingPathComponent("snabble-order-\(self.id).pdf")
+    }
+    
+    public func hasCachedReceipt(_ project: Project) -> Bool {
+        let targetPath = cachedReceiptURL(project)
 
+        return FileManager.default.fileExists(atPath: targetPath.path)
+    }
+    
+    public func getReceipt(_ project: Project, completion: @escaping (Result<URL, Error>) -> Void) {
         // uncomment to force new downloads on every access
-        // try? fileManager.removeItem(at: targetPath)
+        // try? FileManager.default.removeItem(at: cachedReceiptURL(project))
 
-        if fileManager.fileExists(atPath: targetPath.path) {
-            completion(.success(targetPath))
+        let targetUrl = cachedReceiptURL(project)
+        
+        if hasCachedReceipt(project) {
+            completion(.success(targetUrl))
         } else {
-            self.download(project, targetPath) { result in
+            self.download(project, targetUrl) { result in
                 DispatchQueue.main.async {
                     completion(result)
                 }

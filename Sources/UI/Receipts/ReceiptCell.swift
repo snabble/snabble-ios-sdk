@@ -7,6 +7,8 @@
 import UIKit
 import SnabbleCore
 
+#if SWIFTUI_RECEIPT
+#else
 class ReceiptContentView: UIView, UIContentView {
     var configuration: UIContentConfiguration {
         didSet {
@@ -132,6 +134,7 @@ struct ReceiptContentConfiguration: UIContentConfiguration {
     let title: String
     let subtitle: String
     let disclosure: String
+    let unloaded: Bool
 
     var showProjectImage: Bool = true
 
@@ -150,10 +153,12 @@ struct ReceiptContentConfiguration: UIContentConfiguration {
         if let project = Snabble.shared.project(for: order.projectId) {
             let formatter = PriceFormatter(project)
             disclosure = formatter.format(order.price)
+            unloaded = !order.hasCachedReceipt(project)
         } else {
             let formatter = PriceFormatter(2, "de_DE", "EUR", "€")
             disclosure = formatter.format(order.price)
-        }
+            unloaded = true
+       }
     }
 
     func makeContentView() -> UIView & UIContentView {
@@ -170,3 +175,4 @@ struct ReceiptContentConfiguration: UIContentConfiguration {
         }
     }
 }
+#endif

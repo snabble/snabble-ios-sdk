@@ -7,6 +7,40 @@
 import UIKit
 import SnabbleCore
 
+#if SWIFTUI_RECEIPT
+import SwiftUI
+import Combine
+
+/// A UIViewController wrapping SwiftUI's ShopsView
+open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
+    private var cancellables = Set<AnyCancellable>()
+
+    public init() {
+        let rootView = ReceiptsListScreen(projectId: Snabble.shared.projects.first?.id)
+
+        super.init(rootView: rootView)
+
+        viewModel.actionPublisher
+            .sink { [unowned self] action in
+                self.actionFor(provider: action)
+            }
+            .store(in: &cancellables)
+    }
+
+    @MainActor required dynamic public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    var viewModel: LastPurchasesViewModel {
+        rootView.viewModel
+    }
+    
+    private func actionFor(provider: PurchaseProviding) {
+        print("did got action: for \(provider)")
+    }
+}
+
+#else
+
 public final class ReceiptsListViewController: UITableViewController {
     public final class EmptyView: UIView {
         private(set) weak var imageView: UIImage?
@@ -119,6 +153,26 @@ public final class ReceiptsListViewController: UITableViewController {
         self.tableView.flashScrollIndicators()
     }
 
+    private func updateUnloadedReceipts(_ orderList: OrderList?) {
+        guard let project = Snabble.shared.projects.first else {
+            return
+        }
+        let unloaded = orderList?.numberOfUnloadedReceipts(project) ?? 0
+        if unloaded > 0 {
+            DispatchQueue.main.async {
+                self.tabBarItem.badgeValue = "\(unloaded)"
+                self.tabBarItem.badgeColor = .red
+            }
+        }
+        UNUserNotificationCenter.current().requestAuthorization(options: .badge) { (granted, error) in
+            if granted, error == nil {
+                DispatchQueue.main.async {
+                    UIApplication.shared.applicationIconBadgeNumber = unloaded
+                }
+            }
+        }
+    }
+    
     private func loadOrderList() {
         guard let project = Snabble.shared.projects.first else {
             return
@@ -132,8 +186,11 @@ public final class ReceiptsListViewController: UITableViewController {
         switch result {
         case .success(let orderList):
             self.orders = orderList.receipts
+            self.updateUnloadedReceipts(orderList)
+            
         case .failure:
             self.orders = []
+            self.updateUnloadedReceipts(nil)
         }
     }
 
@@ -163,7 +220,7 @@ extension ReceiptsListViewController {
         configuration.showProjectImage = Snabble.shared.projects.count > 1
         cell.contentConfiguration = configuration
         cell.accessoryType = .disclosureIndicator
-
+        
         return cell
     }
 
@@ -181,3 +238,4 @@ extension ReceiptsListViewController {
         navigationController?.pushViewController(detailViewController, animated: true)
     }
 }
+#endif
