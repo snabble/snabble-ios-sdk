@@ -25,12 +25,12 @@ public final class PaymentMethodListViewController: UITableViewController {
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-
+        
         self.title = Asset.localizedString(forKey: "Snabble.PaymentMethods.title")
-
+        
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addMethod))
         self.navigationItem.rightBarButtonItem = addButton
-
+        
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.register(PaymentMethodListCell.self, forCellReuseIdentifier: "cell")
@@ -38,7 +38,7 @@ public final class PaymentMethodListViewController: UITableViewController {
 
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
+        
         if let projectId {
             data = Snabble.shared.project(for: projectId)?.availablePayments() ?? []
         } else {
@@ -55,36 +55,53 @@ public final class PaymentMethodListViewController: UITableViewController {
             addMethod()
         }
     }
-    
+
     @objc private func addMethod() {
-        let methods = Snabble.shared.projects
-            .filter { $0.id == projectId }
-            .flatMap { $0.paymentMethods }
-            .filter { $0.visible }
-
-        if methods.count == 1 {
-            showEditController(for: methods[0])
-        } else {
-            let sheet = SelectionSheetController(title: Asset.localizedString(forKey: "Snabble.PaymentMethods.choose"))
-
-            methods.forEach { method in
-                let action = SelectionSheetAction(title: method.displayName, image: method.icon) { [self] _ in
-                    showEditController(for: method)
-                }
-                sheet.addAction(action)
-            }
-
-            sheet.cancelButtonTitle = Asset.localizedString(forKey: "Snabble.cancel")
-
-            self.present(sheet, animated: true)
-        }
+        addPaymentMethod(for: projectId, analyticsDelegate: analyticsDelegate)
     }
+}
 
-    private func showEditController(for method: RawPaymentMethod) {
+extension UIViewController {
+    private func showEditController(
+        for method: RawPaymentMethod,
+        in projectId: Identifier<Project>?,
+        analyticsDelegate: AnalyticsDelegate?) {
+            
         if method.isAddingAllowed(showAlertOn: self),
             let controller = method.editViewController(with: projectId, analyticsDelegate) {
             navigationController?.pushViewController(controller, animated: true)
         }
+    }
+
+    /// show the payment selection sheet
+    ///
+    /// - Parameter for: the project identifier to add a payment method for
+    /// - Parameter analyticsDelegate: the optional analytics delegate
+    public func addPaymentMethod(
+        for projectId: Identifier<Project>?,
+        analyticsDelegate: AnalyticsDelegate?) {
+
+       let methods = Snabble.shared.projects
+           .filter { $0.id == projectId }
+           .flatMap { $0.paymentMethods }
+           .filter { $0.visible }
+
+       if methods.count == 1 {
+           showEditController(for: methods[0], in: projectId, analyticsDelegate: analyticsDelegate)
+       } else {
+           let sheet = SelectionSheetController(title: Asset.localizedString(forKey: "Snabble.PaymentMethods.choose"))
+
+           methods.forEach { method in
+               let action = SelectionSheetAction(title: method.displayName, image: method.icon) { [self] _ in
+                   showEditController(for: method, in: projectId, analyticsDelegate: analyticsDelegate)
+               }
+               sheet.addAction(action)
+           }
+
+           sheet.cancelButtonTitle = Asset.localizedString(forKey: "Snabble.cancel")
+
+           self.present(sheet, animated: true)
+       }
     }
 }
 
