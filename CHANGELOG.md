@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unreleased]
 
+### Added
+* add State to Autonomo session #APPS-1079
+
 ## [0.41.0] - 2023-10-23
 
 ### Added

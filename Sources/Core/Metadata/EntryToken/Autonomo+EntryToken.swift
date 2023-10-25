@@ -8,9 +8,17 @@
 import Foundation
 
 public enum Autonomo {
+    public enum State: String, Codable {
+        case entry_pending
+        case entry_denied
+        case client_entered
+        case cart_completed
+        case failed
+    }
     public struct Session: Codable, Identifiable {
         public let id: Identifier<Session>
         public let entryToken: EntryToken
+        public let state: State
     }
 
     public struct EntryToken: Codable, SnabbleCore.EntryToken {
