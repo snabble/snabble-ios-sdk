@@ -13,9 +13,8 @@ final class ReceiptsViewController: ReceiptsListViewController {
     override init() {
         super.init()
         
-        self.title = NSLocalizedString("Receipts.title", comment: "")
+        self.title = NSLocalizedString("receipts", comment: "")
         self.tabBarItem.image = UIImage(systemName: "scroll")
-        self.tabBarItem.selectedImage = UIImage(systemName: "scroll.fill")
     }
 
     required init?(coder: NSCoder) {

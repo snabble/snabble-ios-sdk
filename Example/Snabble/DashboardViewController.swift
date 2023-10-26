@@ -20,8 +20,7 @@ final class DashboardViewController: DynamicViewController {
 
         title = NSLocalizedString("home", comment: "")
 
-        tabBarItem.image = UIImage(named: "Navigation/TabBar/home-off")
-        tabBarItem.selectedImage = UIImage(named: "Navigation/TabBar/home-on")
+        tabBarItem.image = UIImage(systemName: "house")
         self.view.backgroundColor = UIColor(named: "DashboardBackground")
     }
 

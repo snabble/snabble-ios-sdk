@@ -24,10 +24,10 @@ class AppScannerViewController: UIViewController {
 
         super.init(nibName: nil, bundle: nil)
 
-        self.title = NSLocalizedString("scanner", comment: "")
+        self.title = NSLocalizedString("shopping", comment: "")
 
-        self.tabBarItem.image = UIImage(named: "Navigation/TabBar/scan-off")
-        self.tabBarItem.selectedImage = UIImage(named: "Navigation/TabBar/scan-on")
+        self.tabBarItem.image = UIImage(systemName: "basket")
+        self.tabBarItem.selectedImage = UIImage(systemName: "basket")
     }
 
     required init?(coder: NSCoder) {

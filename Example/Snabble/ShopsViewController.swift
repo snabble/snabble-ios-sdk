@@ -15,8 +15,7 @@ final class AppShopsViewController: ShopsViewController {
         super.init(shops: shops)
 
         self.title = NSLocalizedString("shops", comment: "")
-        self.tabBarItem.image = UIImage(named: "Navigation/TabBar/shops-off")
-        self.tabBarItem.selectedImage = UIImage(systemName: "Navigation/TabBar/shops-on")
+        self.tabBarItem.image = UIImage(systemName: "map")
         
         self.delegate = self
     }
