@@ -35,7 +35,6 @@ public struct ReceiptsItemView: View {
                 .font(.footnote)
             Image(systemName: "chevron.right")
         }
-        .foregroundColor(provider.unloaded ? .primary : .secondary)
     }
 }
 
@@ -49,6 +48,7 @@ private struct RefreshAction: ViewModifier {
                     action()
                 }
         } else {
+            // TODO: we need something here
             content
         }
     }
@@ -57,16 +57,6 @@ private struct RefreshAction: ViewModifier {
 extension View {
     func refreshAction(completion: @escaping () -> Void) -> some View {
         modifier(RefreshAction(action: completion))
-    }
-}
-
-public struct ReceiptDetailScreen: View {
-    public let provider: PurchaseProviding
-    
-    public var body: some View {
-        VStack {
-            ReceiptsItemView(provider: provider)
-        }
     }
 }
 
@@ -83,6 +73,7 @@ public struct ReceiptsListScreen: View {
                 List {
                     ForEach(output, id: \.id) { provider in
                         ReceiptsItemView(provider: provider)
+                            .foregroundColor(provider.unloaded ? .primary : .secondary)
                             .onTapGesture {
                                 viewModel.actionPublisher.send(provider)
                             }
