@@ -35,15 +35,18 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
                 self.actionFor(provider: provider)
             }
             .store(in: &cancellables)
+        
+        viewModel.$numberOfUnloaded
+            .sink { [unowned self] value in
+                self.tabBarItem.badgeValue = value > 0 ? "\(value)" : nil
+                UIApplication.shared.applicationIconBadgeNumber = value
+                self.view.setNeedsDisplay()
+            }
+            .store(in: &cancellables)
     }
 
     @MainActor required dynamic public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    open override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        updateNewItems()
     }
 
     private func actionFor(provider: PurchaseProviding) {
@@ -52,11 +55,6 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
 
             self.navigationController?.pushViewController(detailController, animated: true)
         }
-    }
-
-    private func updateNewItems() {
-        let new = self.viewModel.numberOfUnloaded
-        self.tabBarItem.badgeValue = new > 0 ? "\(new)" : nil
     }
 }
 
