@@ -35,12 +35,7 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
         }
     }
     @Published private(set) var state: LoadingState<[PurchaseProviding]> = .idle
-    
-    public var numberOfUnloaded: Int = 0 {
-        willSet {
-            self.objectWillChange.send()
-        }
-    }
+    @Published private(set) var numberOfUnloaded: Int = 0
     
     private var cancellables = Set<AnyCancellable>()
     
