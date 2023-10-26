@@ -39,17 +39,16 @@ extension DashboardViewController: DynamicViewControllerDelegate {
         case .allStores:
             tabBarController?.selectedIndex = 2
         case .lastPurchases:
-            if let action = userInfo?["action"] as? String, action == "more" {
-                let viewController = ReceiptsListViewController()
-                viewController.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismiss(_:)))
-                let navigationController = UINavigationController(rootViewController: viewController)
+            func presentController(_ previewController: UIViewController) {
+                previewController.navigationItem.rightBarButtonItem = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(dismiss(_:)))
+                let navigationController = UINavigationController(rootViewController: previewController)
                 present(navigationController, animated: true)
+            }
+            if let action = userInfo?["action"] as? String, action == "more" {
+                presentController(ReceiptsListViewController())
             } else if let action = userInfo?["action"] as? String, action == "purchase",
                       let orderID = userInfo?["id"] as? String, let projectID = (widget as? WidgetLastPurchases)?.projectId {
-                
-                let detailViewController = ReceiptsDetailViewController(orderId: orderID, projectId: projectID)
-                let navigationController = UINavigationController(rootViewController: detailViewController)
-               present(navigationController, animated: true)
+                presentController(ReceiptsDetailViewController(orderId: orderID, projectId: projectID))
             }
         default:
             break
