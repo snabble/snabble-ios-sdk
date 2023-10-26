@@ -9,10 +9,10 @@ import Foundation
 
 public enum Autonomo {
     public enum State: String, Codable {
-        case entry_pending
-        case entry_denied
-        case client_entered
-        case cart_completed
+        case entryPending = "entry_pending"
+        case entryDenied = "entry_denied"
+        case clientEntered = "client_entered"
+        case cartCompleted = "cart_completed"
         case failed
     }
     public struct Session: Codable, Identifiable {
