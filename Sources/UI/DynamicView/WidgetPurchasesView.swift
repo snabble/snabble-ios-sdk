@@ -36,6 +36,7 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
     }
     @Published private(set) var state: LoadingState<[PurchaseProviding]> = .idle
     @Published private(set) var numberOfUnloaded: Int = 0
+    //private(set) var receiptImage: SwiftUI.Image
     
     private var cancellables = Set<AnyCancellable>()
     
@@ -45,6 +46,7 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
 
     init(projectId: Identifier<Project>?) {
         self.projectId = projectId
+        //self.receiptImage = Image(systemName: "scroll")
 
         if projectId == nil {
             Snabble.shared.checkInManager.shopPublisher
@@ -53,7 +55,14 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
                 }
                 .store(in: &cancellables)
         }
-
+//        if Snabble.shared.projects.count > 1 {
+//            SnabbleCI.getAsset(.storeIcon, projectId: projectId) { image in
+//                guard let image else {
+//                    return
+//                }
+//                self.image = Image(uiImage: image)
+//            }
+//        }
     }
 
     func load() {

@@ -8,6 +8,7 @@ import UIKit
 import SnabbleCore
 
 #if SWIFTUI_RECEIPT
+// remove file
 #else
 class ReceiptContentView: UIView, UIContentView {
     var configuration: UIContentConfiguration {
