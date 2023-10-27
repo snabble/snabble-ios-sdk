@@ -33,7 +33,7 @@ let package = Package(
         .package(url: "https://github.com/kishikawakatsumi/KeychainAccess.git", from: "4.2.2"),
         .package(url: "https://github.com/groue/GRDB.swift.git", from: "6.20.2"),
         .package(url: "https://github.com/marmelroy/Zip.git", from: "2.1.2"),
-        .package(url: "https://github.com/datatrans/ios-sdk.git", from: "2.7.2"),
+        .package(url: "https://github.com/datatrans/ios-sdk.git", from: "3.3.0"),
         .package(url: "https://github.com/sberrevoets/SDCAlertView.git", from: "12.0.3"),
         .package(url: "https://github.com/devicekit/DeviceKit.git", from: "5.1.0"),
         .package(url: "https://github.com/snabble/Pulley.git", from: "2.9.2"),
