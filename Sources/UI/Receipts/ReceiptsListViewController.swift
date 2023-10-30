@@ -40,9 +40,7 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
         
         viewModel.$numberOfUnloaded
             .sink { [unowned self] value in
-                self.tabBarItem.badgeValue = value > 0 ? "\(value)" : nil
-                UIApplication.shared.applicationIconBadgeNumber = value
-                self.view.setNeedsDisplay()
+                self.update(unloaded: value)
             }
             .store(in: &cancellables)
     }
@@ -51,6 +49,22 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
         fatalError("init(coder:) has not been implemented")
     }
 
+    private var usedTabBarItem: UITabBarItem {
+        guard self.tabBarItem.title != nil else {
+            if let parentItem = self.parent?.tabBarItem, parentItem.title != nil {
+                return parentItem
+            }
+            return self.tabBarItem
+        }
+        return self.tabBarItem
+    }
+
+    private func update(unloaded: Int) {
+        usedTabBarItem.badgeValue = unloaded > 0 ? "\(unloaded)" : nil
+        UIApplication.shared.applicationIconBadgeNumber = unloaded
+        self.view.setNeedsDisplay()
+    }
+    
     private func actionFor(provider: PurchaseProviding) {
         if !self.handleAction(self, on: provider) {
             let detailController = ReceiptsDetailViewController(orderId: provider.id, projectId: provider.projectId)
