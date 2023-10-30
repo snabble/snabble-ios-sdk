@@ -49,8 +49,10 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
 
     private var usedTabBarItem: UITabBarItem {
         guard self.tabBarItem.title != nil else {
-            if let parentItem = self.parent?.tabBarItem, parentItem.title != nil {
-                return parentItem
+            while let parent = self.parent {
+                if parent.tabBarItem.title != nil {
+                    return parent.tabBarItem
+                }
             }
             return self.tabBarItem
         }
