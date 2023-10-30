@@ -20,13 +20,19 @@ public extension PurchaseProviding {
 
 public struct ReceiptsItemView: View {
     public let provider: PurchaseProviding
+    public let image: SwiftUI.Image
     
+    public init(provider: PurchaseProviding, image: SwiftUI.Image? = nil) {
+        self.provider = provider
+        self.image = image ?? Image(systemName: "scroll")
+    }
     public var body: some View {
         HStack {
-            Image(systemName: "scroll")
-            
+            self.image
+                .padding(.trailing, 6)
             VStack(alignment: .leading) {
                 Text(provider.name)
+                    .font(.headline)
                 Text(provider.dateString ?? "")
                         .font(.footnote)
             }
@@ -72,12 +78,13 @@ public struct ReceiptsListScreen: View {
             VStack {
                 List {
                     ForEach(output, id: \.id) { provider in
-                        ReceiptsItemView(provider: provider)
+                        ReceiptsItemView(provider: provider, image: viewModel.imageFor(projectId: provider.projectId))
                             .foregroundColor(provider.unloaded ? .primary : .secondary)
                             .onTapGesture {
                                 viewModel.actionPublisher.send(provider)
                             }
                     }
+                    .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
                 }
                 .listStyle(.plain)
                 .refreshAction {

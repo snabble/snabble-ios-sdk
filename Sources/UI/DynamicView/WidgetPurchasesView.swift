@@ -36,9 +36,12 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
     }
     @Published private(set) var state: LoadingState<[PurchaseProviding]> = .idle
     @Published private(set) var numberOfUnloaded: Int = 0
-    //private(set) var receiptImage: SwiftUI.Image
-    
+
     private var cancellables = Set<AnyCancellable>()
+    struct ImageCache {
+        
+    }
+    private var imageCache: [Identifier<Project>: SwiftUI.Image] = [:]
     
     /// Emits some triigers the action
     /// - `Output` is a `PurchaseProviding`
@@ -46,7 +49,6 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
 
     init(projectId: Identifier<Project>?) {
         self.projectId = projectId
-        //self.receiptImage = Image(systemName: "scroll")
 
         if projectId == nil {
             Snabble.shared.checkInManager.shopPublisher
@@ -55,14 +57,6 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
                 }
                 .store(in: &cancellables)
         }
-//        if Snabble.shared.projects.count > 1 {
-//            SnabbleCI.getAsset(.storeIcon, projectId: projectId) { image in
-//                guard let image else {
-//                    return
-//                }
-//                self.image = Image(uiImage: image)
-//            }
-//        }
     }
 
     func load() {
@@ -70,6 +64,7 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
               let project = Snabble.shared.project(for: projectId) else {
             return state = .empty
         }
+        
         OrderList.load(project) { [weak self] result in
             if let self = self {
                 var unloaded = 0
@@ -92,6 +87,31 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
                 self.numberOfUnloaded = unloaded
             }
         }
+    }
+}
+
+extension LastPurchasesViewModel {
+    func storeImage(projectId: Identifier<Project>, completion: @escaping (UIImage?) -> Void) {
+        SnabbleCI.getAsset(.storeIcon, projectId: projectId) { image in
+            completion(image)
+        }
+    }
+    public func imageFor(projectId: Identifier<Project>) -> SwiftUI.Image? {
+//        guard Snabble.shared.projects.count > 1 else {
+//            return nil
+//        }
+        let image = imageCache[projectId]
+        
+        if let image {
+            return image
+        }
+        storeImage(projectId: projectId) { image in
+            guard let image else {
+                return
+            }
+            self.imageCache[projectId] = Image(uiImage: image)
+        }
+        return imageCache[projectId]
     }
 }
 
