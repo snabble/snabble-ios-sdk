@@ -97,9 +97,9 @@ extension LastPurchasesViewModel {
         }
     }
     public func imageFor(projectId: Identifier<Project>) -> SwiftUI.Image? {
-//        guard Snabble.shared.projects.count > 1 else {
-//            return nil
-//        }
+        guard Snabble.shared.projects.count > 1 else {
+            return nil
+        }
         let image = imageCache[projectId]
         
         if let image {
