@@ -20,7 +20,9 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
     
     private var cancellables = Set<AnyCancellable>()
     public weak var delegate: ReceiptsListDelegate?
-    
+    public weak var analyticsDelegate: AnalyticsDelegate?
+    public weak var detailDelegate: ReceiptsDetailViewControllerDelegate?
+
     public var viewModel: LastPurchasesViewModel {
         rootView.viewModel
     }
@@ -52,7 +54,8 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
     private func actionFor(provider: PurchaseProviding) {
         if !self.handleAction(self, on: provider) {
             let detailController = ReceiptsDetailViewController(orderId: provider.id, projectId: provider.projectId)
-
+            detailController.delegate = detailDelegate
+            detailController.analyticsDelegate = analyticsDelegate
             self.navigationController?.pushViewController(detailController, animated: true)
         }
     }

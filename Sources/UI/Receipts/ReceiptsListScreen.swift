@@ -29,6 +29,7 @@ public struct ReceiptsItemView: View {
     public var body: some View {
         HStack {
             self.image
+                .foregroundColor(.accentColor)
                 .padding(.trailing, 6)
             VStack(alignment: .leading) {
                 Text(provider.name)
@@ -40,6 +41,8 @@ public struct ReceiptsItemView: View {
             Text(provider.amount)
                 .font(.footnote)
             Image(systemName: "chevron.right")
+                .font(.footnote)
+                .foregroundColor(.secondary)
         }
     }
 }
