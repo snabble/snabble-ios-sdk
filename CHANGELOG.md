@@ -10,6 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * add badge for unloaded receipts #APPS-1108
 * add State to Autonomo session #APPS-1079
 
+### Updated
+* datatrans/ios-sdk 3.3.0 (was 2.7.2)
+
 ## [0.41.0] - 2023-10-23
 
 ### Added

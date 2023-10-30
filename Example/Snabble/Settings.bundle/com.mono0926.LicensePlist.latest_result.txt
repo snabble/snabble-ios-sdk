@@ -6,7 +6,7 @@ name: DeviceKit, nameSpecified: DeviceKit, owner: devicekit, version: 5.1.0, sou
 
 name: GRDB.swift, nameSpecified: GRDB.swift, owner: groue, version: 6.20.2, source: https://github.com/groue/GRDB.swift
 
-name: ios-sdk, nameSpecified: Datatrans, owner: datatrans, version: 2.7.2, source: https://github.com/datatrans/ios-sdk
+name: ios-sdk, nameSpecified: Datatrans, owner: datatrans, version: 3.3.0, source: https://github.com/datatrans/ios-sdk
 
 name: KeychainAccess, nameSpecified: KeychainAccess, owner: kishikawakatsumi, version: 4.2.2, source: https://github.com/kishikawakatsumi/KeychainAccess
 
