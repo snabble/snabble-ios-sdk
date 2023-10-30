@@ -76,10 +76,7 @@ let package = Package(
             path: "Sources/UI",
             resources: [
                 .process("Resources")
-            ],
-            swiftSettings: [
-                        .define("SWIFTUI_RECEIPT")
-                    ]
+            ]
         ),
         .target(
             name: "SnabbleDatatrans",
