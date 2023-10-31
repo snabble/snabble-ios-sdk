@@ -80,4 +80,3 @@ extension ReceiptsListViewController: ReceiptsListDelegate {
         return delegate?.handleAction(viewController, on: receipt) ?? false
     }
 }
-
