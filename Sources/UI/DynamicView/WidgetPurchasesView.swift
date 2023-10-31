@@ -27,6 +27,8 @@ extension Array where Element == PurchaseProviding {
 }
 
 public class LastPurchasesViewModel: ObservableObject, LoadableObject {
+    public static let shared = LastPurchasesViewModel(projectId: nil)
+    
     typealias Output = [PurchaseProviding]
 
     @Published private(set) var projectId: Identifier<Project>? {
@@ -120,14 +122,12 @@ public struct WidgetLastPurchasesView: View {
     let configuration: DynamicViewConfiguration
     let action: (DynamicAction) -> Void
 
-    @ObservedObject private var viewModel: LastPurchasesViewModel
+    @ObservedObject private var viewModel = LastPurchasesViewModel.shared
 
     init(widget: WidgetLastPurchases, configuration: DynamicViewConfiguration, action: @escaping (DynamicAction) -> Void) {
         self.widget = widget
         self.configuration = configuration
         self.action = action
-
-        self.viewModel = LastPurchasesViewModel(projectId: widget.projectId)
     }
     
     public var body: some View {

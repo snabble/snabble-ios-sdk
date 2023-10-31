@@ -26,7 +26,7 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
     }
     
     public init() {
-        let rootView = ReceiptsListScreen(projectId: Snabble.shared.projects.first?.id)
+        let rootView = ReceiptsListScreen()
 
         super.init(rootView: rootView)
 

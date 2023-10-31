@@ -70,19 +70,16 @@ extension View {
 }
 
 public struct ReceiptsListScreen: View {
-    @ObservedObject var viewModel: LastPurchasesViewModel
+    @ObservedObject var viewModel = LastPurchasesViewModel.shared
 
-    public init(projectId: Identifier<Project>?) {
-        self.viewModel = LastPurchasesViewModel(projectId: projectId)
-    }
-    
     public var body: some View {
         AsyncContentView(source: viewModel) { output in
             VStack {
                 List {
                     ForEach(output, id: \.id) { provider in
                         ReceiptsItemView(provider: provider, image: viewModel.imageFor(projectId: provider.projectId))
-                            .foregroundColor(provider.unloaded ? .primary : .secondary)
+                            // provide a modifier for unloaded receipts here like:
+                            // .foregroundColor(provider.unloaded ? .primary : .secondary)
                             .onTapGesture {
                                 viewModel.actionPublisher.send(provider)
                             }
