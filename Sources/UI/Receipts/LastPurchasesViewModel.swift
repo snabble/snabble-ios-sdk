@@ -20,15 +20,25 @@ public protocol PurchaseProviding {
     var projectId: Identifier<Project> { get }
 }
 
-public extension UserDefaults {
-    @objc
-    var lastReceiptCount: Int {
+private extension UserDefaults {
+    var lastReceiptCount: [String: Int] {
         get {
-            return integer(forKey: "Snabble.DynamicView.lastReceiptCount")
+            return object(forKey: "Snabble.DynamicView.lastReceiptCount") as? [String: Int] ?? [:]
         }
         set {
+            removeObject(forKey: "Snabble.DynamicView.lastReceiptCount")
             set(newValue, forKey: "Snabble.DynamicView.lastReceiptCount")
         }
+    }
+    func lastReceiptCount(projectId: Identifier<Project>) -> Int {
+        return lastReceiptCount[projectId.rawValue] ?? 0
+    }
+
+    func setLastReceiptCount(_ count: Int, for projectId: Identifier<Project>) {
+        var newDefaults = lastReceiptCount
+        newDefaults[projectId.rawValue] = count
+
+        lastReceiptCount = newDefaults
     }
 }
 
@@ -72,7 +82,7 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
         
         OrderList.load(project) { [weak self] result in
             if let self = self {
-                let lastReceiptCount = UserDefaults.standard.lastReceiptCount
+                let lastReceiptCount = UserDefaults.standard.lastReceiptCount(projectId: projectId)
                 
                 do {
                     let orderList = try result.get()
@@ -84,7 +94,7 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
                         self.state = .loaded(providers)
                         if providers.count > lastReceiptCount {
                             self.numberOfUnloaded = providers.count - lastReceiptCount
-                            UserDefaults.standard.lastReceiptCount = providers.count
+                            UserDefaults.standard.setLastReceiptCount(providers.count, for: projectId)
                         }
                     }
                 } catch {
