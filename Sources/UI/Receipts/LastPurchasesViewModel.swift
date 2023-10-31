@@ -63,7 +63,7 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
     public let actionPublisher = PassthroughSubject<PurchaseProviding, Never>()
 
     init(projectId: Identifier<Project>?) {
-        self.projectId = projectId
+        self.projectId = projectId ?? Snabble.shared.projects.first?.id
 
         if projectId == nil {
             Snabble.shared.checkInManager.shopPublisher
