@@ -25,6 +25,17 @@ extension Array where Element == PurchaseProviding {
         return count > 1 ? "Snabble.DynamicView.lastPurchases" : "Snabble.DynamicView.lastPurchase"
     }
 }
+public extension UserDefaults {
+    @objc
+    var lastReceiptCount: Int {
+        get {
+            return integer(forKey: "Snabble.DynamicView.lastReceiptCount")
+        }
+        set {
+            set(newValue, forKey: "Snabble.DynamicView.lastReceiptCount")
+        }
+    }
+}
 
 public class LastPurchasesViewModel: ObservableObject, LoadableObject {
     public static let shared = LastPurchasesViewModel(projectId: nil)
@@ -40,9 +51,6 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
     @Published private(set) var numberOfUnloaded: Int = 0
 
     private var cancellables = Set<AnyCancellable>()
-    struct ImageCache {
-        
-    }
     private var imageCache: [Identifier<Project>: SwiftUI.Image] = [:]
     
     /// Emits some triigers the action
@@ -69,7 +77,7 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
         
         OrderList.load(project) { [weak self] result in
             if let self = self {
-                var unloaded = 0
+                let lastReceiptCount = UserDefaults.standard.lastReceiptCount
                 
                 do {
                     let orderList = try result.get()
@@ -79,14 +87,14 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
                         self.state = .empty
                     } else {
                         self.state = .loaded(providers)
-                        if let new = orderList.numberOfUnloadedReceipts(project) {
-                            unloaded = new
+                        if providers.count > lastReceiptCount {
+                            self.numberOfUnloaded = providers.count - lastReceiptCount
+                            UserDefaults.standard.lastReceiptCount = providers.count
                         }
                     }
                 } catch {
                     self.state = .empty
                 }
-                self.numberOfUnloaded = unloaded
             }
         }
     }

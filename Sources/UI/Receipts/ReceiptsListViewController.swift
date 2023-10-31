@@ -41,8 +41,18 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
                 self.update(unloaded: value)
             }
             .store(in: &cancellables)
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(appEnteredForeground(_:)),
+            name: UIApplication.willEnterForegroundNotification,
+            object: nil)
     }
-
+    
+    deinit {
+        NotificationCenter.default.removeObserver(self)
+    }
+    
     @MainActor required dynamic public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
@@ -57,6 +67,15 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
             return self.tabBarItem
         }
         return self.tabBarItem
+    }
+
+    override open func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        update(unloaded: 0)
+    }
+
+    @objc private func appEnteredForeground(_ notification: Notification) {
+        self.viewModel.load()
     }
 
     private func update(unloaded: Int) {
