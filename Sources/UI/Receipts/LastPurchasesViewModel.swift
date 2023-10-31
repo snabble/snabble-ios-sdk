@@ -21,15 +21,17 @@ public protocol PurchaseProviding {
 }
 
 private extension UserDefaults {
+    static let receiptCountKey = "Snabble.DynamicView.lastReceiptCount"
+    
     var lastReceiptCount: [String: Int] {
         get {
-            return object(forKey: "Snabble.DynamicView.lastReceiptCount") as? [String: Int] ?? [:]
+            return dictionary(forKey: Self.receiptCountKey) as? [String: Int] ?? [:]
         }
         set {
-            removeObject(forKey: "Snabble.DynamicView.lastReceiptCount")
-            set(newValue, forKey: "Snabble.DynamicView.lastReceiptCount")
+            set(newValue, forKey: Self.receiptCountKey)
         }
     }
+
     func lastReceiptCount(projectId: Identifier<Project>) -> Int {
         return lastReceiptCount[projectId.rawValue] ?? 0
     }
@@ -93,7 +95,9 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
                     } else {
                         self.state = .loaded(providers)
                         if providers.count > lastReceiptCount {
-                            self.numberOfUnloaded = providers.count - lastReceiptCount
+                            if lastReceiptCount > 0 {
+                                self.numberOfUnloaded = providers.count - lastReceiptCount
+                            }
                             UserDefaults.standard.setLastReceiptCount(providers.count, for: projectId)
                         }
                     }
