@@ -103,7 +103,7 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
         }
     }
     @Published private(set) var state: LoadingState<[PurchaseProviding]> = .idle
-    @Published private(set) var numberOfUnloaded: Int = 0
+    @Published public private(set) var numberOfUnloaded: Int = 0
 
     private var cancellables = Set<AnyCancellable>()
     private var imageCache: [Identifier<Project>: SwiftUI.Image] = [:]

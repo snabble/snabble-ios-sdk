@@ -68,6 +68,12 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
         }
         return self.tabBarItem
     }
+    
+    private func update(unloaded: Int) {
+        usedTabBarItem.badgeValue = unloaded > 0 ? "\(unloaded)" : nil
+        UIApplication.shared.applicationIconBadgeNumber = unloaded
+        self.view.setNeedsDisplay()
+    }
 
     override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -78,12 +84,6 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
         self.viewModel.load()
     }
 
-    private func update(unloaded: Int) {
-        usedTabBarItem.badgeValue = unloaded > 0 ? "\(unloaded)" : nil
-        UIApplication.shared.applicationIconBadgeNumber = unloaded
-        self.view.setNeedsDisplay()
-    }
-    
     private func actionFor(provider: PurchaseProviding) {
         if !self.handleAction(self, on: provider) {
             let detailController = ReceiptsDetailViewController(orderId: provider.id, projectId: provider.projectId)
