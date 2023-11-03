@@ -71,7 +71,7 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
 
     override open func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        update(unloaded: 0)
+        viewModel.reset()
     }
 
     @objc private func appEnteredForeground(_ notification: Notification) {
