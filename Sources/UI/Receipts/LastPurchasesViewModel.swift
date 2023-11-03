@@ -24,7 +24,7 @@ private extension UserDefaults {
     struct ReceiptCounter: Codable {
         var last: Int {
             willSet {
-                if last > 0, newValue > last {
+                if newValue > last {
                     new = newValue - last
                 }
             }
@@ -70,13 +70,17 @@ private extension UserDefaults {
     }
 
     func setLastReceiptCount(_ count: Int, for projectId: Identifier<Project>) {
-        var counter = receiptCounter(projectId: projectId) ?? ReceiptCounter()
-
-        guard count > counter.last else {
-            return
+        if var counter = receiptCounter(projectId: projectId) {
+            guard count > counter.last else {
+                return
+            }
+            counter.last = count
+            update(counter: counter, projectId: projectId)
+        } else {
+            // create an inital ReceiptCounter and only set a new value if this is the first receipt.
+            // Any previous made purchases (where count > 1), made before this update, will not interpreted a new value
+            update(counter: ReceiptCounter(last: count, new: count == 1 ? 1 : 0), projectId: projectId)
         }
-        counter.last = count
-        update(counter: counter, projectId: projectId)
     }
 
     func lastReceiptCount(projectId: Identifier<Project>) -> Int {
