@@ -71,7 +71,6 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
     
     private func update(unloaded: Int) {
         usedTabBarItem.badgeValue = unloaded > 0 ? "\(unloaded)" : nil
-        UIApplication.shared.applicationIconBadgeNumber = unloaded
         self.view.setNeedsDisplay()
     }
 
