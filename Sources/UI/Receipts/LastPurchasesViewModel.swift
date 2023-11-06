@@ -93,15 +93,15 @@ private extension UserDefaults {
 }
 
 public class LastPurchasesViewModel: ObservableObject, LoadableObject {
-    public static let shared = LastPurchasesViewModel(projectId: nil)
-    
     typealias Output = [PurchaseProviding]
 
-    @Published private(set) var projectId: Identifier<Project>? {
+    private(set) var projectId: Identifier<Project>? {
         didSet {
             load()
         }
     }
+    private let userDefaults: UserDefaults
+    
     @Published private(set) var state: LoadingState<[PurchaseProviding]> = .idle
     @Published public private(set) var numberOfUnloaded: Int = 0
 
@@ -112,12 +112,16 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
     /// - `Output` is a `PurchaseProviding`
     public let actionPublisher = PassthroughSubject<PurchaseProviding, Never>()
 
-    public init(projectId: Identifier<Project>?) {
-        self.projectId = projectId ?? Snabble.shared.projects.first?.id
-
+    public init(projectId: Identifier<Project>?, userDefaults: UserDefaults = .standard) {
+        self.projectId = projectId
+        self.userDefaults = userDefaults
+        
         if projectId == nil {
             Snabble.shared.checkInManager.shopPublisher
                 .sink { [weak self] shop in
+                    guard self?.projectId != shop?.projectId else {
+                        return
+                    }
                     self?.projectId = shop?.projectId
                 }
                 .store(in: &cancellables)
@@ -128,7 +132,7 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
         guard let projectId = projectId else {
             return
         }
-        UserDefaults.standard.resetLastUnreadCount(projectId: projectId)
+        userDefaults.resetLastUnreadCount(projectId: projectId)
         numberOfUnloaded = 0
     }
 
@@ -148,8 +152,8 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
                         self.state = .empty
                     } else {
                         self.state = .loaded(providers)
-                        UserDefaults.standard.setLastReceiptCount(providers.count, for: projectId)
-                        numberOfUnloaded = UserDefaults.standard.lastUnreadCount(projectId: projectId)
+                        userDefaults.setLastReceiptCount(providers.count, for: projectId)
+                        numberOfUnloaded = userDefaults.lastUnreadCount(projectId: projectId)
                     }
                 } catch {
                     self.state = .empty

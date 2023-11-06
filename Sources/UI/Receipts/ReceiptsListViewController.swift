@@ -57,20 +57,8 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private var usedTabBarItem: UITabBarItem {
-        guard self.tabBarItem.title != nil else {
-            while let parent = self.parent {
-                if parent.tabBarItem.title != nil {
-                    return parent.tabBarItem
-                }
-            }
-            return self.tabBarItem
-        }
-        return self.tabBarItem
-    }
-    
     private func update(unloaded: Int) {
-        usedTabBarItem.badgeValue = unloaded > 0 ? "\(unloaded)" : nil
+        tabBarItem.badgeValue = unloaded > 0 ? "\(unloaded)" : nil
         self.view.setNeedsDisplay()
     }
 

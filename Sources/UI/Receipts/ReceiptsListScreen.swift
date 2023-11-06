@@ -70,7 +70,7 @@ extension View {
 }
 
 public struct ReceiptsListScreen: View {
-    @ObservedObject var viewModel = LastPurchasesViewModel.shared
+    @ObservedObject var viewModel = LastPurchasesViewModel(projectId: nil)
 
     public var body: some View {
         AsyncContentView(source: viewModel) { output in

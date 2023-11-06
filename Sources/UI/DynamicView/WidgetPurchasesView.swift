@@ -20,7 +20,7 @@ public struct WidgetLastPurchasesView: View {
     let configuration: DynamicViewConfiguration
     let action: (DynamicAction) -> Void
 
-    @ObservedObject private var viewModel = LastPurchasesViewModel.shared
+    @ObservedObject private var viewModel = LastPurchasesViewModel(projectId: nil)
 
     init(widget: WidgetLastPurchases, configuration: DynamicViewConfiguration, action: @escaping (DynamicAction) -> Void) {
         self.widget = widget
