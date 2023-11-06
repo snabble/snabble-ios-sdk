@@ -44,9 +44,14 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
         
         NotificationCenter.default.addObserver(
             self,
-            selector: #selector(appEnteredForeground(_:)),
+            selector: #selector(update(_:)),
             name: UIApplication.willEnterForegroundNotification,
             object: nil)
+        
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(update(_:)),
+            name: .snabbleCartUpdated, object: nil)
     }
     
     deinit {
@@ -67,8 +72,13 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
         viewModel.reset()
     }
 
-    @objc private func appEnteredForeground(_ notification: Notification) {
-        self.viewModel.load()
+    @objc private func update(_ notification: Notification) {
+        if notification.name == .snabbleCartUpdated, let cart = notification.object as? ShoppingCart, cart.numberOfItems == 0 {
+            self.viewModel.load()
+        }
+        if notification.name == UIApplication.willEnterForegroundNotification {
+            self.viewModel.load()
+        }
     }
 
     private func actionFor(provider: PurchaseProviding) {

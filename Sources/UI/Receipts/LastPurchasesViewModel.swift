@@ -25,7 +25,7 @@ private extension UserDefaults {
         var last: Int {
             willSet {
                 if newValue > last {
-                    new = newValue - last
+                    new = new + newValue - last
                 }
             }
         }
@@ -75,6 +75,7 @@ private extension UserDefaults {
                 return
             }
             counter.last = count
+
             update(counter: counter, projectId: projectId)
         } else {
             // create an inital ReceiptCounter and only set a new value if this is the first receipt.
