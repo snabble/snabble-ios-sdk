@@ -20,12 +20,14 @@ public struct WidgetLastPurchasesView: View {
     let configuration: DynamicViewConfiguration
     let action: (DynamicAction) -> Void
 
-    @ObservedObject private var viewModel = LastPurchasesViewModel(projectId: nil)
+    @ObservedObject private var viewModel: LastPurchasesViewModel
 
     init(widget: WidgetLastPurchases, configuration: DynamicViewConfiguration, action: @escaping (DynamicAction) -> Void) {
         self.widget = widget
         self.configuration = configuration
         self.action = action
+        
+        viewModel = LastPurchasesViewModel(projectId: widget.projectId)
     }
     
     public var body: some View {

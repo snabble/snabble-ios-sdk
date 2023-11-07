@@ -21,86 +21,22 @@ public protocol PurchaseProviding {
 }
 
 private extension UserDefaults {
-    struct ReceiptCounter: Codable {
-        var last: Int {
-            willSet {
-                if newValue > last {
-                    new = new + newValue - last
-                }
-            }
-        }
-        var new: Int
-        
-        init(last: Int = 0, new: Int = 0) {
-            self.last = last
-            self.new = new
-        }
+    func receiptKey(for projectId: Identifier<Project>) -> String {
+        "LastReceiptCount.\(projectId.rawValue)"
     }
-    static let receiptCountKey = "Snabble.DynamicView.lastReceiptCount"
-    
-    var lastReceiptCounter: [String: Data] {
-        get {
-            return dictionary(forKey: Self.receiptCountKey) as? [String: Data] ?? [:]
-        }
-        set {
-            set(newValue, forKey: Self.receiptCountKey)
-        }
+    func receiptCount(for projectId: Identifier<Project>) -> Int {
+        integer(forKey: receiptKey(for: projectId))
     }
-
-    func receiptCounter(projectId: Identifier<Project>) -> ReceiptCounter? {
-        guard let data = lastReceiptCounter[projectId.rawValue],
-              let receiptCounter = try? JSONDecoder().decode(ReceiptCounter.self, from: data) else {
-            return nil
-        }
-        return receiptCounter
-    }
-
-    func update(counter: ReceiptCounter, projectId: Identifier<Project>) {
-        if let encoded = try? JSONEncoder().encode(counter) {
-            lastReceiptCounter[projectId.rawValue] = encoded
-        }
-    }
-
-    func resetLastUnreadCount(projectId: Identifier<Project>) {
-        guard var counter = receiptCounter(projectId: projectId) else {
-            return
-        }
-        counter.new = 0
-        update(counter: counter, projectId: projectId)
-    }
-
-    func setLastReceiptCount(_ count: Int, for projectId: Identifier<Project>) {
-        if var counter = receiptCounter(projectId: projectId) {
-            guard count > counter.last else {
-                return
-            }
-            counter.last = count
-
-            update(counter: counter, projectId: projectId)
-        } else {
-            // create an inital ReceiptCounter and only set a new value if this is the first receipt.
-            // Any previous made purchases (where count > 1), made before this update, will not interpreted a new value
-            update(counter: ReceiptCounter(last: count, new: count == 1 ? 1 : 0), projectId: projectId)
-        }
-    }
-
-    func lastReceiptCount(projectId: Identifier<Project>) -> Int {
-        return receiptCounter(projectId: projectId)?.last ?? 0
-    }
-
-    func lastUnreadCount(projectId: Identifier<Project>) -> Int {
-        return receiptCounter(projectId: projectId)?.new ?? 0
+    func setReceiptCount(_ count: Int, for projectId: Identifier<Project>) {
+        setValue(count, forKey: receiptKey(for: projectId))
+        synchronize()
     }
 }
 
 public class LastPurchasesViewModel: ObservableObject, LoadableObject {
     typealias Output = [PurchaseProviding]
 
-    private(set) var projectId: Identifier<Project>? {
-        didSet {
-            load()
-        }
-    }
+    private(set) var projectId: Identifier<Project>
     private let userDefaults: UserDefaults
     
     @Published private(set) var state: LoadingState<[PurchaseProviding]> = .idle
@@ -113,36 +49,24 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
     /// - `Output` is a `PurchaseProviding`
     public let actionPublisher = PassthroughSubject<PurchaseProviding, Never>()
 
-    public init(projectId: Identifier<Project>?, userDefaults: UserDefaults = .standard) {
+    public init(projectId: Identifier<Project>, userDefaults: UserDefaults = .standard) {
         self.projectId = projectId
         self.userDefaults = userDefaults
-        
-        if projectId == nil {
-            Snabble.shared.checkInManager.shopPublisher
-                .sink { [weak self] shop in
-                    guard self?.projectId != shop?.projectId else {
-                        return
-                    }
-                    self?.projectId = shop?.projectId
-                }
-                .store(in: &cancellables)
-        }
-     }
+    }
 
     public func reset() {
-        guard let projectId = projectId else {
-            return
-        }
-        userDefaults.resetLastUnreadCount(projectId: projectId)
-        numberOfUnloaded = 0
+        load(reset: true)
     }
 
     public func load() {
-        guard let projectId = projectId,
-              let project = Snabble.shared.project(for: projectId) else {
+        load(reset: false)
+    }
+
+    public func load(reset: Bool) {
+        guard let project = Snabble.shared.project(for: projectId) else {
             return state = .empty
         }
-        
+
         OrderList.load(project) { [weak self] result in
             if let self = self {
                 do {
@@ -153,8 +77,11 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
                         self.state = .empty
                     } else {
                         self.state = .loaded(providers)
-                        userDefaults.setLastReceiptCount(providers.count, for: projectId)
-                        numberOfUnloaded = userDefaults.lastUnreadCount(projectId: projectId)
+
+                        if reset {
+                            userDefaults.setReceiptCount(providers.count, for: projectId)
+                        }
+                        numberOfUnloaded = providers.count - userDefaults.receiptCount(for: projectId)
                     }
                 } catch {
                     self.state = .empty

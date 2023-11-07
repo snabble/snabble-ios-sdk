@@ -7,11 +7,12 @@
 //
 
 import UIKit
+import SnabbleCore
 import SnabbleUI
 
 final class ReceiptsViewController: ReceiptsListViewController {
-    override init() {
-        super.init()
+    override init(projectId: Identifier<Project>? = nil) {
+        super.init(projectId: projectId)
         
         self.title = NSLocalizedString("receipts", comment: "")
         self.tabBarItem.image = UIImage(systemName: "scroll")

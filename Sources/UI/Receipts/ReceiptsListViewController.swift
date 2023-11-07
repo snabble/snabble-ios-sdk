@@ -25,8 +25,8 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
         rootView.viewModel
     }
     
-    public init() {
-        let rootView = ReceiptsListScreen()
+    public init(projectId: Identifier<Project>? = nil) {
+        let rootView = ReceiptsListScreen(projectId: projectId)
 
         super.init(rootView: rootView)
 

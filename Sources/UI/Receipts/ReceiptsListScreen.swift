@@ -70,8 +70,15 @@ extension View {
 }
 
 public struct ReceiptsListScreen: View {
-    @ObservedObject var viewModel = LastPurchasesViewModel(projectId: nil)
+    @ObservedObject var viewModel: LastPurchasesViewModel
 
+    public init(projectId: Identifier<Project>? = nil) {
+        guard let projectId = projectId ?? Snabble.shared.projects.first?.id else {
+            fatalError()
+        }
+        self.viewModel = LastPurchasesViewModel(projectId: projectId)
+    }
+    
     public var body: some View {
         AsyncContentView(source: viewModel) { output in
             VStack {
