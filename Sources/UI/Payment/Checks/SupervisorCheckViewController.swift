@@ -35,10 +35,15 @@ struct SupervisorView: View {
                 SwiftUI.Image(uiImage: uiImage)
                     .padding([.top, .bottom], 20)
             }
+            Text(Asset.localizedString(forKey: "Snabble.Payment.Online.message"))
+            Spacer()
             if let codeImage = model.codeImage {
                 SwiftUI.Image(uiImage: codeImage)
                     .padding([.top], 20)
             }
+            Text(model.idString)
+                .font(.footnote)
+                .padding(.top, 10)
             Spacer()
             Button(action: {
                 model.checkModel.cancelPayment()
