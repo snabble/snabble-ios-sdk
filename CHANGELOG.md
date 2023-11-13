@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 * add State to Autonomo session #APPS-1079
 
+### Fixed
+* Shadows in checkout 
+
 ### Updated
 * datatrans/ios-sdk 3.3.0 (was 2.7.2)
 
