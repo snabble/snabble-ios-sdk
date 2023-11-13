@@ -32,7 +32,7 @@ struct SupervisorView: View {
     var content: some View {
         VStack(spacing: 8) {
             Spacer()
-           if let uiImage = model.headerImage {
+            if let uiImage = model.headerImage {
                 SwiftUI.Image(uiImage: uiImage)
                     .padding([.top, .bottom], 20)
             }
