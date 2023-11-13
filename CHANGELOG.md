@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * add State to Autonomo session #APPS-1079
 
 ### Fixed
+* Shadows in checkout 
 * add text info to SupervisorView #APPS-1181
 
 ### Updated
