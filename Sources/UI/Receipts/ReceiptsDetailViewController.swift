@@ -201,8 +201,6 @@ extension ReceiptsDetailViewController {
                                                 target: self,
                                                 action: #selector(rightBarButtonItemTouchedUpInside(_:)))
             navigationItem.rightBarButtonItem = barbuttonItem
-        } else {
-            navigationItem.rightBarButtonItem = nil
         }
     }
 }

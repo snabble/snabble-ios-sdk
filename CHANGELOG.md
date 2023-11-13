@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 * Shadows in checkout 
 * add text info to SupervisorView #APPS-1181
+* Kassenbonvorschau zeigt keinen "Fertig"-Button in der Navigation an #APPS-1159
 
 ### Updated
 * datatrans/ios-sdk 3.4.0 (was 2.7.2)
