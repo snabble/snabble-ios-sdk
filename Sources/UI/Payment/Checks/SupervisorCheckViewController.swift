@@ -31,7 +31,8 @@ struct SupervisorView: View {
     @ViewBuilder
     var content: some View {
         VStack(spacing: 8) {
-            if let uiImage = model.headerImage {
+            Spacer()
+           if let uiImage = model.headerImage {
                 SwiftUI.Image(uiImage: uiImage)
                     .padding([.top, .bottom], 20)
             }
@@ -44,7 +45,8 @@ struct SupervisorView: View {
             Text(model.idString)
                 .font(.footnote)
                 .padding(.top, 10)
-            Spacer()
+                .padding(.bottom, 20)
+
             Button(action: {
                 model.checkModel.cancelPayment()
                 presentationMode.wrappedValue.dismiss()
