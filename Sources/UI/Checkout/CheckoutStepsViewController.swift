@@ -122,7 +122,7 @@ struct CheckoutView: View {
             .background(Color.secondarySystemGroupedBackground)
             .clipShape(RoundedRectangle(cornerRadius: 8))
             .padding([.leading, .trailing], 20)
-            .shadow(color: Color("Shadow"), radius: 8, x: 0, y: 4)
+            .shadow(radius: 8, x: 0, y: 4)
         }
     }
     
@@ -139,7 +139,7 @@ struct CheckoutView: View {
                     if model.isSuccessful {
                         CheckoutRatingView(model: model.ratingModel)
                             .padding(20)
-                            .shadow(color: Color("Shadow"), radius: 8, x: 0, y: 4)
+                            .shadow(radius: 8, x: 0, y: 4)
                     }
                 }
 
