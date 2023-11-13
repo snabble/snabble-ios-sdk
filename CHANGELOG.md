@@ -16,7 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * add text info to SupervisorView #APPS-1181
 
 ### Updated
-* datatrans/ios-sdk 3.3.0 (was 2.7.2)
+* datatrans/ios-sdk 3.4.0 (was 2.7.2)
+* groue/GRDB.swift 6.21.0 (was 6.20.2)
+* realm/SwiftLint 0.54.0 (was 0.52.4)
+* mono0926/LicensePlist 3.25.1 (was 3.24.11)
 
 ## [0.41.0] - 2023-10-23
 
