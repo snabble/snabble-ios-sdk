@@ -82,25 +82,18 @@ extension OrderList {
             print(error)
         }
     }
-    public func numberOfUnloadedReceipts(_ project: Project) -> Int? {
-        guard !receipts.isEmpty else {
-            return nil
-        }
-        let loaded = self.receipts.filter({ $0.hasCachedReceipt(project) })
-        return Int(self.receipts.count - loaded.count)
-    }
 }
 
 extension Order {
-    public func cachedReceiptURL(_ project: Project) -> URL {
+    public func cachedReceiptURL() -> URL {
         // swiftlint:disable:next force_try
         let cacheDir = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         
         return cacheDir.appendingPathComponent("snabble-order-\(self.id).pdf")
     }
     
-    public func hasCachedReceipt(_ project: Project) -> Bool {
-        let targetPath = cachedReceiptURL(project)
+    public func hasCachedReceipt() -> Bool {
+        let targetPath = cachedReceiptURL()
 
         return FileManager.default.fileExists(atPath: targetPath.path)
     }
@@ -109,9 +102,9 @@ extension Order {
         // uncomment to force new downloads on every access
         // try? FileManager.default.removeItem(at: cachedReceiptURL(project))
 
-        let targetUrl = cachedReceiptURL(project)
+        let targetUrl = cachedReceiptURL()
         
-        if hasCachedReceipt(project) {
+        if hasCachedReceipt() {
             completion(.success(targetUrl))
         } else {
             self.download(project, targetUrl) { result in
