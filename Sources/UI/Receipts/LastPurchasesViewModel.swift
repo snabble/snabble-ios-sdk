@@ -15,7 +15,6 @@ public protocol PurchaseProviding {
     var amount: String { get }
     var time: String { get }
     var date: Date { get }
-    var unloaded: Bool { get }
     
     var projectId: Identifier<Project> { get }
 }
@@ -29,14 +28,13 @@ private extension UserDefaults {
     }
     func setReceiptCount(_ count: Int, for projectId: Identifier<Project>) {
         setValue(count, forKey: receiptKey(for: projectId))
-        synchronize()
     }
 }
 
 public class LastPurchasesViewModel: ObservableObject, LoadableObject {
     typealias Output = [PurchaseProviding]
 
-    private(set) var projectId: Identifier<Project>
+    private let projectId: Identifier<Project>
     private let userDefaults: UserDefaults
     
     @Published private(set) var state: LoadingState<[PurchaseProviding]> = .idle
@@ -117,12 +115,6 @@ extension LastPurchasesViewModel {
 }
 
 extension Order: PurchaseProviding {
-    public var unloaded: Bool {
-        guard let project = project else {
-            return false
-        }
-        return !hasCachedReceipt(project)
-    }
     
     public var name: String {
         shopName
