@@ -4,14 +4,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [unreleased]
+## [unknown]
+
+## [0.42.0] - 2023-11-13
 
 ### Added
 * add badge for unloaded receipts #APPS-1108
 * add State to Autonomo session #APPS-1079
 
+### Fixed
+* Shadows in checkout 
+* add text info to SupervisorView #APPS-1181
+* Kassenbonvorschau zeigt keinen "Fertig"-Button in der Navigation an #APPS-1159
+
 ### Updated
-* datatrans/ios-sdk 3.3.0 (was 2.7.2)
+* datatrans/ios-sdk 3.4.0 (was 2.7.2)
+* groue/GRDB.swift 6.21.0 (was 6.20.2)
+* realm/SwiftLint 0.54.0 (was 0.52.4)
+* mono0926/LicensePlist 3.25.1 (was 3.24.11)
 
 ## [0.41.0] - 2023-10-23
 

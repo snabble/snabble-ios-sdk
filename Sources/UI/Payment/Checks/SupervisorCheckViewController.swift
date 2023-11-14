@@ -30,24 +30,32 @@ struct SupervisorView: View {
 
     @ViewBuilder
     var content: some View {
-        VStack(spacing: 8) {
-            if let uiImage = model.headerImage {
-                SwiftUI.Image(uiImage: uiImage)
-                    .padding([.top, .bottom], 20)
+        Group {
+            Spacer()
+            VStack(spacing: 10) {
+                if let uiImage = model.headerImage {
+                    SwiftUI.Image(uiImage: uiImage)
+                        .padding([.bottom], 20)
+                }
+                Text(Asset.localizedString(forKey: "Snabble.Payment.Online.message"))
             }
-            if let codeImage = model.codeImage {
-                SwiftUI.Image(uiImage: codeImage)
-                    .padding([.top], 20)
+            Spacer()
+            VStack(spacing: 10) {
+                if let codeImage = model.codeImage {
+                    SwiftUI.Image(uiImage: codeImage)
+                }
+                Text(model.idString)
+                    .font(.footnote)
             }
             Spacer()
             Button(action: {
                 model.checkModel.cancelPayment()
                 presentationMode.wrappedValue.dismiss()
-           }) {
+            }) {
                 Text(keyed: Asset.localizedString(forKey: "Snabble.cancel"))
                     .fontWeight(.bold)
                     .foregroundColor(Color.accent())
-            }
+            }.frame(alignment: .bottom)
         }
     }
     var body: some View {
