@@ -15,7 +15,7 @@ public protocol ReceiptsListDelegate: AnyObject {
 
 /// A UIViewController wrapping SwiftUI's ReceiptsListViewController
 open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
-    
+
     private var cancellables = Set<AnyCancellable>()
     public weak var delegate: ReceiptsListDelegate?
     public weak var analyticsDelegate: AnalyticsDelegate?
@@ -24,7 +24,7 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
     public var viewModel: LastPurchasesViewModel {
         rootView.viewModel
     }
-    
+
     public init(projectId: Identifier<Project>? = nil) {
         let rootView = ReceiptsListScreen(projectId: projectId)
 
@@ -41,21 +41,26 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
                 self.update(unloaded: value)
             }
             .store(in: &cancellables)
-        
+
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(update(_:)),
             name: UIApplication.willEnterForegroundNotification,
             object: nil)
-        
+
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(update(_:)),
             name: .snabbleCartUpdated, object: nil)
     }
-    
+
     deinit {
         NotificationCenter.default.removeObserver(self)
+    }
+
+    open override func viewDidLoad() {
+        super.viewDidLoad()
+        viewModel.load()
     }
     
     @MainActor required dynamic public init?(coder aDecoder: NSCoder) {
@@ -76,7 +81,7 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
         if notification.name == .snabbleCartUpdated, let cart = notification.object as? ShoppingCart, cart.numberOfItems == 0 {
             self.viewModel.load()
         }
-        if notification.name == UIApplication.willEnterForegroundNotification {
+        if notification.name == UIApplication.willEnterForegroundNotification || notification.name == UIApplication.didBecomeActiveNotification {
             self.viewModel.load()
         }
     }

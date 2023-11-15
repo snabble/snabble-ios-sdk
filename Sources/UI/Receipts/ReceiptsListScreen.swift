@@ -78,15 +78,15 @@ public struct ReceiptsListScreen: View {
         }
         self.viewModel = LastPurchasesViewModel(projectId: projectId)
     }
-    
+
     public var body: some View {
         AsyncContentView(source: viewModel) { output in
             VStack {
                 List {
                     ForEach(output, id: \.id) { provider in
                         ReceiptsItemView(provider: provider, image: viewModel.imageFor(projectId: provider.projectId))
-                            // provide a modifier for unloaded receipts here like:
-                            // .foregroundColor(provider.unloaded ? .primary : .secondary)
+                        // provide a modifier for unloaded receipts here like:
+                        // .foregroundColor(provider.unloaded ? .primary : .secondary)
                             .onTapGesture {
                                 viewModel.actionPublisher.send(provider)
                             }
@@ -98,8 +98,6 @@ public struct ReceiptsListScreen: View {
                     viewModel.load()
                 }
             }
-        }.onAppear {
-            viewModel.load()
         }
         .navigationTitle(Asset.localizedString(forKey: "Snabble.Receipts.title"))
     }

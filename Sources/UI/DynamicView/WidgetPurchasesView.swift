@@ -19,15 +19,14 @@ public struct WidgetLastPurchasesView: View {
     let widget: WidgetLastPurchases
     let configuration: DynamicViewConfiguration
     let action: (DynamicAction) -> Void
+    @StateObject var viewModel = LastPurchasesViewModel()
 
-    @ObservedObject private var viewModel: LastPurchasesViewModel
-
+//    @State var orders: [PurchaseProviding] = []
+    
     init(widget: WidgetLastPurchases, configuration: DynamicViewConfiguration, action: @escaping (DynamicAction) -> Void) {
         self.widget = widget
         self.configuration = configuration
         self.action = action
-        
-        viewModel = LastPurchasesViewModel(projectId: widget.projectId)
     }
     
     public var body: some View {
@@ -39,7 +38,7 @@ public struct WidgetLastPurchasesView: View {
                     Button(action: {
                         action(.init(widget: widget, userInfo: ["action": "more"]))
                     }) {
-                            Text(keyed: "Snabble.DynamicView.LastPurchases.all")
+                        Text(keyed: "Snabble.DynamicView.LastPurchases.all")
                     }
                 }
                 HStack {
@@ -49,12 +48,13 @@ public struct WidgetLastPurchasesView: View {
                         ).onTapGesture {
                             action(.init(widget: widget, userInfo: ["action": "purchase", "id": provider.id]))
                         }
-                        .shadow(radius: configuration.shadowRadius)
-                    }
+                   }
                 }
+                .shadow(radius: configuration.shadowRadius)
             }
-        }.onAppear {
-            viewModel.load()
+        }
+        .onAppear {
+            viewModel.projectId = widget.projectId
         }
     }
 }

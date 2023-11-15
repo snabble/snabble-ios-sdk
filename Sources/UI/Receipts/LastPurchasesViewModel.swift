@@ -34,11 +34,17 @@ private extension UserDefaults {
 public class LastPurchasesViewModel: ObservableObject, LoadableObject {
     typealias Output = [PurchaseProviding]
 
-    private let projectId: Identifier<Project>
+    var projectId: Identifier<Project>? {
+        didSet {
+            if projectId != oldValue {
+                load()
+            }
+        }
+    }
     private let userDefaults: UserDefaults
     
     @Published private(set) var state: LoadingState<[PurchaseProviding]> = .idle
-    @Published public private(set) var numberOfUnloaded: Int = 0
+    @Published public var numberOfUnloaded: Int = 0
 
     private var cancellables = Set<AnyCancellable>()
     private var imageCache: [Identifier<Project>: SwiftUI.Image] = [:]
@@ -47,7 +53,7 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
     /// - `Output` is a `PurchaseProviding`
     public let actionPublisher = PassthroughSubject<PurchaseProviding, Never>()
 
-    public init(projectId: Identifier<Project>, userDefaults: UserDefaults = .standard) {
+    public init(projectId: Identifier<Project>? = nil, userDefaults: UserDefaults = .standard) {
         self.projectId = projectId
         self.userDefaults = userDefaults
     }
@@ -61,7 +67,7 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
     }
 
     public func load(reset: Bool) {
-        guard let project = Snabble.shared.project(for: projectId) else {
+        guard let projectId = projectId, let project = Snabble.shared.project(for: projectId) else {
             return state = .empty
         }
 
