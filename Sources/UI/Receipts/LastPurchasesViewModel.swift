@@ -23,8 +23,12 @@ private extension UserDefaults {
     func receiptKey(for projectId: Identifier<Project>) -> String {
         "LastReceiptCount.\(projectId.rawValue)"
     }
-    func receiptCount(for projectId: Identifier<Project>) -> Int {
-        integer(forKey: receiptKey(for: projectId))
+    func receiptCount(for projectId: Identifier<Project>) -> Int? {
+        let key = receiptKey(for: projectId)
+        guard object(forKey: key) != nil else {
+            return nil
+        }
+        return integer(forKey: receiptKey(for: projectId))
     }
     func setReceiptCount(_ count: Int, for projectId: Identifier<Project>) {
         setValue(count, forKey: receiptKey(for: projectId))
@@ -122,7 +126,12 @@ public class PurchasesViewModel: LastPurchasesViewModel {
                         if reset {
                             userDefaults.setReceiptCount(providers.count, for: projectId)
                         }
-                        numberOfUnloaded = providers.count - userDefaults.receiptCount(for: projectId)
+                        
+                        if let oldValue = userDefaults.receiptCount(for: projectId) {
+                            numberOfUnloaded = providers.count - oldValue
+                        } else {
+                            userDefaults.setReceiptCount(providers.count, for: projectId)
+                        }
                     }
                 } catch {
                     self.state = .empty
