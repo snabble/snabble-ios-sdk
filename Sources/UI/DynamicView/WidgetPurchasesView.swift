@@ -55,6 +55,7 @@ public struct WidgetLastPurchasesView: View {
         }
         .onAppear {
             viewModel.projectId = widget.projectId
+            viewModel.load()
         }
     }
 }
