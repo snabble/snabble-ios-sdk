@@ -33,7 +33,7 @@ private extension UserDefaults {
 
 public class LastPurchasesViewModel: ObservableObject, LoadableObject {
     typealias Output = [PurchaseProviding]
-
+    
     var projectId: Identifier<Project>? {
         didSet {
             if projectId != oldValue {
@@ -41,9 +41,40 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
             }
         }
     }
+    @Published var state: LoadingState<[PurchaseProviding]> = .idle
+
+    public init(projectId: Identifier<Project>? = nil) {
+        self.projectId = projectId
+    }
+
+    public func load() {
+        guard let projectId = projectId, let project = Snabble.shared.project(for: projectId) else {
+            return state = .empty
+        }
+
+        OrderList.load(project) { [weak self] result in
+            if let self = self {
+                do {
+                    let providers = try result.get().receipts
+                    
+                    if providers.isEmpty {
+                        self.state = .empty
+                    } else {
+                        self.state = .loaded(providers)
+                    }
+                } catch {
+                    self.state = .empty
+                }
+            }
+        }
+    }
+}
+
+public class PurchasesViewModel: LastPurchasesViewModel {
+    typealias Output = [PurchaseProviding]
+
     private let userDefaults: UserDefaults
     
-    @Published private(set) var state: LoadingState<[PurchaseProviding]> = .idle
     @Published public var numberOfUnloaded: Int = 0
 
     private var cancellables = Set<AnyCancellable>()
@@ -54,15 +85,22 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
     public let actionPublisher = PassthroughSubject<PurchaseProviding, Never>()
 
     public init(projectId: Identifier<Project>? = nil, userDefaults: UserDefaults = .standard) {
-        self.projectId = projectId
         self.userDefaults = userDefaults
-    }
+
+        super.init(projectId: projectId)
+        
+        Snabble.shared.checkInManager.shopPublisher
+            .sink { [weak self] shop in
+                self?.projectId = shop?.project?.id
+            }
+            .store(in: &cancellables)
+   }
 
     public func reset() {
         load(reset: true)
     }
 
-    public func load() {
+    public override func load() {
         load(reset: false)
     }
 
@@ -74,8 +112,7 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
         OrderList.load(project) { [weak self] result in
             if let self = self {
                 do {
-                    let orderList = try result.get()
-                    let providers = orderList.receipts
+                    let providers = try result.get().receipts
                     
                     if providers.isEmpty {
                         self.state = .empty
@@ -95,7 +132,7 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
     }
 }
 
-extension LastPurchasesViewModel {
+extension PurchasesViewModel {
     public func storeImage(projectId: Identifier<Project>, completion: @escaping (UIImage?) -> Void) {
         SnabbleCI.getAsset(.storeIcon, projectId: projectId) { image in
             completion(image)

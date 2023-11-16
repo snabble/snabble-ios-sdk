@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SnabbleCore
+import Combine
 
 public extension PurchaseProviding {
     var dateString: String? {
@@ -15,6 +16,24 @@ public extension PurchaseProviding {
         dateFormatter.timeStyle = .short
         dateFormatter.doesRelativeDateFormatting = true
         return dateFormatter.string(for: date)
+    }
+}
+
+private struct BadgeCount: ViewModifier {
+    let badgeCount: Int
+    
+    func body(content: Content) -> some View {
+        if #available(iOS 15.0, *) {
+            content
+                .badge(badgeCount)
+        } else {
+            content
+        }
+    }
+}
+extension View {
+    func badgeCount(_ count: Int) -> some View {
+        modifier(BadgeCount(badgeCount: count))
     }
 }
 
@@ -70,13 +89,13 @@ extension View {
 }
 
 public struct ReceiptsListScreen: View {
-    @ObservedObject var viewModel: LastPurchasesViewModel
-
+    @ObservedObject var viewModel: PurchasesViewModel
+    
     public init(projectId: Identifier<Project>? = nil) {
         guard let projectId = projectId ?? Snabble.shared.projects.first?.id else {
             fatalError()
         }
-        self.viewModel = LastPurchasesViewModel(projectId: projectId)
+        self.viewModel = PurchasesViewModel(projectId: projectId)
     }
 
     public var body: some View {
@@ -99,6 +118,10 @@ public struct ReceiptsListScreen: View {
                 }
             }
         }
+        .onAppear {
+            viewModel.reset()
+        }
+        .badgeCount(viewModel.numberOfUnloaded)
         .navigationTitle(Asset.localizedString(forKey: "Snabble.Receipts.title"))
     }
 }

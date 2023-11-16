@@ -21,15 +21,15 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
     public weak var analyticsDelegate: AnalyticsDelegate?
     public weak var detailDelegate: ReceiptsDetailViewControllerDelegate?
 
-    public var viewModel: LastPurchasesViewModel {
+    public var viewModel: PurchasesViewModel {
         rootView.viewModel
     }
 
     public init(projectId: Identifier<Project>? = nil) {
         let rootView = ReceiptsListScreen(projectId: projectId)
-
+        
         super.init(rootView: rootView)
-
+        
         viewModel.actionPublisher
             .sink { [unowned self] provider in
                 self.actionFor(provider: provider)
@@ -41,17 +41,16 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
                 self.update(unloaded: value)
             }
             .store(in: &cancellables)
-
-        NotificationCenter.default.addObserver(
-            self,
-            selector: #selector(update(_:)),
-            name: UIApplication.willEnterForegroundNotification,
-            object: nil)
-
+        
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(update(_:)),
             name: .snabbleCartUpdated, object: nil)
+        
+       NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(update(_:)),
+            name: UIApplication.willEnterForegroundNotification, object: nil)
     }
 
     deinit {
@@ -72,16 +71,11 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
         self.view.setNeedsDisplay()
     }
 
-    override open func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        viewModel.reset()
-    }
-
     @objc private func update(_ notification: Notification) {
         if notification.name == .snabbleCartUpdated, let cart = notification.object as? ShoppingCart, cart.numberOfItems == 0 {
             self.viewModel.load()
         }
-        if notification.name == UIApplication.willEnterForegroundNotification || notification.name == UIApplication.didBecomeActiveNotification {
+        if notification.name == UIApplication.willEnterForegroundNotification {
             self.viewModel.load()
         }
     }
