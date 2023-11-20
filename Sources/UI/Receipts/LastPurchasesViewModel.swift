@@ -38,7 +38,7 @@ private extension UserDefaults {
 public class LastPurchasesViewModel: ObservableObject, LoadableObject {
     typealias Output = [PurchaseProviding]
     
-    public private(set) var projectId: Identifier<Project>? {
+    public var projectId: Identifier<Project>? {
         didSet {
             if projectId != oldValue {
                 load()
