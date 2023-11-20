@@ -104,6 +104,8 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
             return state = .empty
         }
 
+        state = .idle
+
         OrderList.load(project) { [weak self] result in
             if let self = self {
                 do {
