@@ -20,8 +20,6 @@ public struct WidgetLastPurchasesView: View {
     let configuration: DynamicViewConfiguration
     let action: (DynamicAction) -> Void
     @StateObject var viewModel = LastPurchasesViewModel()
-
-//    @State var orders: [PurchaseProviding] = []
     
     init(widget: WidgetLastPurchases, configuration: DynamicViewConfiguration, action: @escaping (DynamicAction) -> Void) {
         self.widget = widget
