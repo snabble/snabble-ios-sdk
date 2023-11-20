@@ -25,8 +25,8 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
         rootView.viewModel
     }
 
-    public init(projectId: Identifier<Project>? = nil) {
-        let rootView = ReceiptsListScreen(projectId: projectId)
+    public init() {
+        let rootView = ReceiptsListScreen()
         
         super.init(rootView: rootView)
         
@@ -62,9 +62,7 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
         viewModel.load()
         
         Snabble.shared.checkInManager.shopPublisher
-            .compactMap { $0 }
-            .map { $0.projectId }
-            .assign(to: \.projectId, on: viewModel)
+            .assign(to: \.shop, on: viewModel)
             .store(in: &cancellables)
     }
     

@@ -71,7 +71,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let scannerViewController = AppScannerViewController(shop: shops.first!)
         let scannerNavigationViewController = UINavigationController(rootViewController: scannerViewController)
         
-        let receiptsViewController = ReceiptsViewController(projectId: Snabble.shared.checkInManager.shop?.projectId)
+        let receiptsViewController = ReceiptsViewController()
         let receiptsNavigationController = UINavigationController(rootViewController: receiptsViewController)
 
         let tabBarController = UITabBarController()

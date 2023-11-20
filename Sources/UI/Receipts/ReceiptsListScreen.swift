@@ -91,11 +91,8 @@ extension View {
 public struct ReceiptsListScreen: View {
     @ObservedObject var viewModel: PurchasesViewModel
     
-    public init(projectId: Identifier<Project>? = nil) {
-        guard let projectId = projectId ?? Snabble.shared.projects.first?.id else {
-            fatalError()
-        }
-        self.viewModel = PurchasesViewModel(projectId: projectId)
+    public init() {
+        self.viewModel = PurchasesViewModel()
     }
 
     public var body: some View {

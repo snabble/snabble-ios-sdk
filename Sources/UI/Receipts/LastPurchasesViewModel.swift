@@ -20,36 +20,25 @@ public protocol PurchaseProviding {
 }
 
 private extension UserDefaults {
-    func receiptKey(for projectId: Identifier<Project>) -> String {
-        "LastReceiptCount.\(projectId.rawValue)"
+    var receiptKey: String {
+        "io.snabble.sdk.lastReceiptCount"
     }
-    func receiptCount(for projectId: Identifier<Project>) -> Int? {
-        let key = receiptKey(for: projectId)
-        guard object(forKey: key) != nil else {
+    func receiptCount() -> Int? {
+        guard object(forKey: receiptKey) != nil else {
             return nil
         }
-        return integer(forKey: receiptKey(for: projectId))
+        return integer(forKey: receiptKey)
     }
-    func setReceiptCount(_ count: Int, for projectId: Identifier<Project>) {
-        setValue(count, forKey: receiptKey(for: projectId))
+    func setReceiptCount(_ count: Int) {
+        setValue(count, forKey: receiptKey)
     }
 }
 
 public class LastPurchasesViewModel: ObservableObject, LoadableObject {
     typealias Output = [PurchaseProviding]
     
-    public var projectId: Identifier<Project>? {
-        didSet {
-            if projectId != oldValue {
-                load()
-            }
-        }
-    }
+    var projectId: Identifier<Project>?
     @Published var state: LoadingState<[PurchaseProviding]> = .idle
-
-    public init(projectId: Identifier<Project>? = nil) {
-        self.projectId = projectId
-    }
 
     public func load() {
         guard let projectId = projectId, let project = Snabble.shared.project(for: projectId) else {
@@ -74,10 +63,15 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
     }
 }
 
-public class PurchasesViewModel: LastPurchasesViewModel {
+public class PurchasesViewModel: ObservableObject, LoadableObject {
+    typealias Output = [PurchaseProviding]
+    
     public let userDefaults: UserDefaults
     
     @Published public var numberOfUnloaded: Int = 0
+    @Published var state: LoadingState<[PurchaseProviding]> = .idle
+    
+    var shop: Shop?
 
     private var cancellables = Set<AnyCancellable>()
     private var imageCache: [Identifier<Project>: SwiftUI.Image] = [:]
@@ -86,22 +80,20 @@ public class PurchasesViewModel: LastPurchasesViewModel {
     /// - `Output` is a `PurchaseProviding`
     public let actionPublisher = PassthroughSubject<PurchaseProviding, Never>()
 
-    public init(projectId: Identifier<Project>? = nil, userDefaults: UserDefaults = .standard) {
+    public init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults
-
-        super.init(projectId: projectId)
    }
 
     public func reset() {
         load(reset: true)
     }
 
-    public override func load() {
+    public func load() {
         load(reset: false)
     }
 
     public func load(reset: Bool) {
-        guard let projectId = projectId, let project = Snabble.shared.project(for: projectId) else {
+        guard let project = shop?.project else {
             return state = .empty
         }
 
@@ -116,13 +108,13 @@ public class PurchasesViewModel: LastPurchasesViewModel {
                         self.state = .loaded(providers)
 
                         if reset {
-                            userDefaults.setReceiptCount(providers.count, for: projectId)
+                            userDefaults.setReceiptCount(providers.count)
                         }
                         
-                        if let oldValue = userDefaults.receiptCount(for: projectId) {
+                        if let oldValue = userDefaults.receiptCount() {
                             numberOfUnloaded = providers.count - oldValue
                         } else {
-                            userDefaults.setReceiptCount(providers.count, for: projectId)
+                            userDefaults.setReceiptCount(providers.count)
                         }
                     }
                 } catch {

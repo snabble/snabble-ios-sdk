@@ -40,8 +40,8 @@ extension DashboardViewController: DynamicViewControllerDelegate {
             tabBarController?.selectedIndex = 2
         case .lastPurchases:
             var rootViewController: UIViewController?
-            if let action = userInfo?["action"] as? String, action == "more", let projectID = (widget as? WidgetLastPurchases)?.projectId {
-                rootViewController = ReceiptsListViewController(projectId: projectID)
+            if let action = userInfo?["action"] as? String, action == "more" {
+                rootViewController = ReceiptsListViewController()
             } else if let action = userInfo?["action"] as? String, action == "purchase",
                       let orderID = userInfo?["id"] as? String, let projectID = (widget as? WidgetLastPurchases)?.projectId {
                 rootViewController = ReceiptsDetailViewController(orderId: orderID, projectId: projectID)
