@@ -6,10 +6,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [unknown]
 
+### Added
+* add badge for unloaded receipts #APPS-1108
+
 ## [0.42.0] - 2023-11-13
 
 ### Added
-* add badge for unloaded receipts #APPS-1108
 * add State to Autonomo session #APPS-1079
 
 ### Fixed
