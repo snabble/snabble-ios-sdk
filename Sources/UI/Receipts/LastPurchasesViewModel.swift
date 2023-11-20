@@ -124,6 +124,7 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
                             numberOfUnloaded = providers.count - oldValue
                         } else {
                             userDefaults.setReceiptCount(providers.count)
+                            numberOfUnloaded = providers.count
                         }
                     }
                 } catch {
