@@ -75,8 +75,6 @@ public class LastPurchasesViewModel: ObservableObject, LoadableObject {
 }
 
 public class PurchasesViewModel: LastPurchasesViewModel {
-    typealias Output = [PurchaseProviding]
-
     private let userDefaults: UserDefaults
     
     @Published public var numberOfUnloaded: Int = 0
