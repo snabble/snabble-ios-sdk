@@ -92,12 +92,6 @@ public class PurchasesViewModel: LastPurchasesViewModel {
         self.userDefaults = userDefaults
 
         super.init(projectId: projectId)
-        
-        Snabble.shared.checkInManager.shopPublisher
-            .sink { [weak self] shop in
-                self?.projectId = shop?.project?.id
-            }
-            .store(in: &cancellables)
    }
 
     public func reset() {

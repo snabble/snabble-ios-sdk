@@ -60,6 +60,12 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
     open override func viewDidLoad() {
         super.viewDidLoad()
         viewModel.load()
+        
+        Snabble.shared.checkInManager.shopPublisher
+            .compactMap { $0 }
+            .map { $0.projectId }
+            .assign(to: \.projectId, on: viewModel)
+            .store(in: &cancellables)
     }
     
     @MainActor required dynamic public init?(coder aDecoder: NSCoder) {
