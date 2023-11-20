@@ -5,6 +5,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## [unknown]
+### Added
+* Added additional Autonomo States APPS-1199
 
 ## [0.42.0] - 2023-11-13
 
