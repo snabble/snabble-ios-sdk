@@ -92,7 +92,7 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
    }
 
     public func reset() {
-        userDefaults.setReceiptCount(0)
+        userDefaults.setReceiptCount(numberOfUnloaded)
     }
 
     public func load() {
