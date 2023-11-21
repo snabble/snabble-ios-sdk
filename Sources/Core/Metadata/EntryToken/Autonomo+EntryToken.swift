@@ -23,7 +23,11 @@ public enum Autonomo {
     public struct Session: Codable, Identifiable {
         public let id: Identifier<Session>
         public let entryToken: EntryToken
+#if DEBUG
+        public var state: State
+#else
         public let state: State
+#endif
     }
 
     public struct EntryToken: Codable, SnabbleCore.EntryToken {

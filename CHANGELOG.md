@@ -8,6 +8,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 * Added additional Autonomo States APPS-1199
 
+### Fixed
+* Fixed Bug #APPS-1189
+
 ## [0.42.0] - 2023-11-13
 
 ### Added
