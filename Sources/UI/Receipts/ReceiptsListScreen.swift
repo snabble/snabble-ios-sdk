@@ -117,6 +117,7 @@ public struct ReceiptsListScreen: View {
         }
         .onAppear {
             viewModel.reset()
+            viewModel.load()
         }
         .badgeCount(viewModel.numberOfUnloaded)
         .navigationTitle(Asset.localizedString(forKey: "Snabble.Receipts.title"))
