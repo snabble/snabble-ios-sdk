@@ -112,6 +112,7 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
                     let providers = try result.get().receipts
                     
                     if providers.isEmpty {
+                        userDefaults.setReceiptCount(0)
                         self.state = .empty
                     } else {
                         self.state = .loaded(providers)
