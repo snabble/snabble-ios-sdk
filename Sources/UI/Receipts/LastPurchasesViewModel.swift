@@ -92,10 +92,14 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
    }
 
     public func reset() {
-        userDefaults.setReceiptCount(numberOfUnloaded)
+        load(reset: true)
+    }
+    
+    public func load() {
+        load(reset: false)
     }
 
-    public func load() {
+    private func load(reset: Bool) {
         guard let project = Snabble.shared.projects.first else {
             return state = .empty
         }
@@ -111,6 +115,10 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
                         self.state = .empty
                     } else {
                         self.state = .loaded(providers)
+                        
+                        if reset {
+                            userDefaults.setReceiptCount(providers.count)
+                        }
                         
                         if let oldValue = userDefaults.receiptCount() {
                             numberOfUnloaded = providers.count - oldValue
