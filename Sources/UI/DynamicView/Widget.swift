@@ -317,7 +317,7 @@ public struct WidgetConnectWifi: Widget {
 public struct WidgetLastPurchases: Widget {
     public let id: String
     public let type: WidgetType = .lastPurchases
-    public let projectId: Identifier<Project>?
+    public let projectId: Identifier<Project>
     public var padding: Padding?
 
     enum CodingKeys: String, CodingKey {

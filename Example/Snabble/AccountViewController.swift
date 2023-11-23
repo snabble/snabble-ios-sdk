@@ -17,8 +17,7 @@ final class AccountViewController: DynamicViewController {
         delegate = self
 
         title = NSLocalizedString("profile", comment: "")
-        tabBarItem.image = UIImage(named: "Navigation/TabBar/profile-off")
-        tabBarItem.selectedImage = UIImage(named: "Navigation/TabBar/profile-off")
+        tabBarItem.image = UIImage(systemName: "person")
     }
 
     required init?(coder: NSCoder) {
