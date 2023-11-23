@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unknown]
 ### Added
 * Added additional Autonomo States APPS-1199
+* add badge for unloaded receipts #APPS-1108
 
 ## [0.42.0] - 2023-11-13
 

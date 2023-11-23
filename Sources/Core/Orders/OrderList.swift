@@ -85,19 +85,29 @@ extension OrderList {
 }
 
 extension Order {
-    public func getReceipt(_ project: Project, completion: @escaping (Result<URL, Error>) -> Void) {
-        let fileManager = FileManager.default
+    public func cachedReceiptURL() -> URL {
         // swiftlint:disable:next force_try
-        let cacheDir = try! fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        let targetPath = cacheDir.appendingPathComponent("snabble-order-\(self.id).pdf")
+        let cacheDir = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        
+        return cacheDir.appendingPathComponent("snabble-order-\(self.id).pdf")
+    }
+    
+    public func hasCachedReceipt() -> Bool {
+        let targetPath = cachedReceiptURL()
 
+        return FileManager.default.fileExists(atPath: targetPath.path)
+    }
+    
+    public func getReceipt(_ project: Project, completion: @escaping (Result<URL, Error>) -> Void) {
         // uncomment to force new downloads on every access
-        // try? fileManager.removeItem(at: targetPath)
+        // try? FileManager.default.removeItem(at: cachedReceiptURL(project))
 
-        if fileManager.fileExists(atPath: targetPath.path) {
-            completion(.success(targetPath))
+        let targetUrl = cachedReceiptURL()
+        
+        if hasCachedReceipt() {
+            completion(.success(targetUrl))
         } else {
-            self.download(project, targetPath) { result in
+            self.download(project, targetUrl) { result in
                 DispatchQueue.main.async {
                     completion(result)
                 }
