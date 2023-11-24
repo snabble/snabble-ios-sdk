@@ -22,7 +22,7 @@ public enum Autonomo {
     }
     public struct Session: Codable, Identifiable {
         public let id: Identifier<Session>
-        public let entryToken: EntryToken
+        public let entryToken: EntryToken?
         public let state: State
     }
 

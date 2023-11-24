@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Added additional Autonomo States APPS-1199
 * add badge for unloaded receipts #APPS-1108
 
+### Fixed
+* `entry_token` is optional in AutonomoSession
+
 ## [0.42.0] - 2023-11-13
 
 ### Added
