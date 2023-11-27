@@ -39,10 +39,11 @@ extension UserDefaults {
     }
 
     public var placeholders: [PurchasePlaceholder] {
-        guard let array = object(forKey: placeholderKey) as? [PurchasePlaceholder] else {
-            return []
+        if let data = UserDefaults.standard.object(forKey: placeholderKey) as? Data,
+           let placeholders = try? JSONDecoder().decode([PurchasePlaceholder].self, from: data) {
+            return placeholders
         }
-        return array
+        return []
     }
 
     public var grabAndGoPlaceholders: [PurchasePlaceholder] {
@@ -60,13 +61,19 @@ extension UserDefaults {
         var newPlaceholders = placeholders
 
         newPlaceholders.remove(at: index)
-        setValue(newPlaceholders, forKey: placeholderKey)
+        
+        if let encoded = try? JSONEncoder().encode(newPlaceholders) {
+            UserDefaults.standard.set(encoded, forKey: placeholderKey)
+        }
     }
 
     public func registerPlaceholder(_ placeholder: PurchasePlaceholder) {
         var newPlaceholders = placeholders
         newPlaceholders.append(placeholder)
-        setValue(newPlaceholders, forKey: placeholderKey)
+        
+        if let encoded = try? JSONEncoder().encode(newPlaceholders) {
+            UserDefaults.standard.set(encoded, forKey: placeholderKey)
+        }
     }
 
     func cleanup(placeholders: [PurchasePlaceholder]?, for orders: [Order]) {
