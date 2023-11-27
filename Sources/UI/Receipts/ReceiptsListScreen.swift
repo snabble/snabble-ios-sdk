@@ -99,6 +99,10 @@ public struct ReceiptsListScreen: View {
         AsyncContentView(source: viewModel) { output in
             VStack {
                 List {
+                    ForEach(viewModel.userDefaults.placeholders, id: \.id) { placeholder in
+                        ReceiptsItemView(provider: placeholder, image: viewModel.imageFor(projectId: placeholder.projectId))
+                         .foregroundColor(.secondary)
+                    }
                     ForEach(output, id: \.id) { provider in
                         ReceiptsItemView(provider: provider, image: viewModel.imageFor(projectId: provider.projectId))
                         // provide a modifier for unloaded receipts here like:

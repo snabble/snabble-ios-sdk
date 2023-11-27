@@ -36,38 +36,39 @@ extension UserDefaults {
         "io.snabble.sdk.placeholder"
     }
 
-    var placeholders: [PurchasePlaceholder]? {
+    public var placeholders: [PurchasePlaceholder] {
         guard let array = object(forKey: placeholderKey) as? [PurchasePlaceholder] else {
-            return nil
+            return []
         }
         return array
     }
-    var grabAndGoPlaceholders: [PurchasePlaceholder]? {
-        return placeholders?.filter( { $0.type == .grabAndGo })
-    }
-    func placeholderCount() -> Int? {
-        return placeholders?.count
+
+    public var grabAndGoPlaceholders: [PurchasePlaceholder] {
+        return placeholders.filter({ $0.type == .grabAndGo })
     }
 
-    func removePlaceholder(_ placeholder: PurchasePlaceholder) {
-        guard var placeholders = placeholders else {
+    public func removePlaceholder(_ placeholder: PurchasePlaceholder) {
+        
+        guard !placeholders.isEmpty else {
             return
         }
         guard let index = placeholders.firstIndex(where: { $0.id == placeholder.id }) else {
             return
         }
-        placeholders.remove(at: index)
-        setValue(placeholders, forKey: placeholderKey)
+        var newPlaceholders = placeholders
+
+        newPlaceholders.remove(at: index)
+        setValue(newPlaceholders, forKey: placeholderKey)
     }
 
-    func registerPlaceholder(_ placeholder: PurchasePlaceholder) {
-        var placeholders = placeholders ?? []
-        placeholders.append(placeholder)
-        setValue(placeholders, forKey: placeholderKey)
+    public func registerPlaceholder(_ placeholder: PurchasePlaceholder) {
+        var newPlaceholders = placeholders
+        newPlaceholders.append(placeholder)
+        setValue(newPlaceholders, forKey: placeholderKey)
     }
 
     func cleanup(placeholders: [PurchasePlaceholder]?, for orders: [Order]) {
-        guard var placeholders = placeholders else {
+        guard let placeholders = placeholders else {
             return
         }
 
