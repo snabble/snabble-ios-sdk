@@ -184,7 +184,7 @@
 /* SECTION: SnabbleAndroid */
 "Snabble.Payment.aborted" = "Der Bezahlvorgang wurde abgebrochen";
 
-"Snabble.Payment.add" = "Bezahlverfahren hinzufügen";
+"Snabble.Payment.add" = "Zahlungsmethode hinzufügen";
 
 "Snabble.Payment.addPaymentOrigin" = "Zahlungsinformationen in die App übertragen?";
 
