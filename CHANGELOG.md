@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 * Fixed Bug #APPS-1189
+* `entry_token` is optional in AutonomoSession
 
 ## [0.42.0] - 2023-11-13
 
