@@ -11,19 +11,15 @@ import SnabbleCore
 public struct PurchasePlaceholder: Codable {
     public let date: Date
     
-    public enum ShopType: String, Codable {
-        case grabAndGo
-        case scanAndGo
-    }
     public var id: String
-    public var type: ShopType
+    public var type: String
     public var name: String
     public var amount: String
     public var projectId: SnabbleCore.Identifier<SnabbleCore.Project>
 
     public init(shop: Shop, name: String) {
         self.id = shop.id.rawValue
-        self.type = shop.isGrabAndGo ? .grabAndGo : .scanAndGo
+        self.type = shop.isGrabAndGo ? "grabAndGo" : "scanAndGo"
         self.name = name
         self.amount = "pending"
         self.date = Date()
@@ -44,7 +40,7 @@ extension UserDefaults {
     }
 
     public var grabAndGoPlaceholders: [PurchasePlaceholder] {
-        return placeholders.filter({ $0.type == .grabAndGo })
+        return placeholders.filter({ $0.type == "grabAndGo" })
     }
 
     public func removePlaceholder(_ placeholder: PurchasePlaceholder) {
