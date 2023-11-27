@@ -15,7 +15,7 @@ public struct PurchasePlaceholder: Codable {
     public var type: String
     public var name: String
     public var amount: String
-    public var projectId: SnabbleCore.Identifier<SnabbleCore.Project>
+    public var project: String
 
     public init(shop: Shop, name: String) {
         self.id = shop.id.rawValue
@@ -23,7 +23,13 @@ public struct PurchasePlaceholder: Codable {
         self.name = name
         self.amount = "pending"
         self.date = Date()
-        self.projectId = shop.projectId
+        self.project = shop.projectId.rawValue
+    }
+    public var shopId: String {
+        id
+    }
+    public var projectId: Identifier<Project> {
+        Identifier<Project>(rawValue: project)
     }
 }
 
@@ -48,7 +54,7 @@ extension UserDefaults {
         guard !placeholders.isEmpty else {
             return
         }
-        guard let index = placeholders.firstIndex(where: { $0.id == placeholder.id }) else {
+        guard let index = placeholders.firstIndex(where: { $0.shopId == placeholder.shopId }) else {
             return
         }
         var newPlaceholders = placeholders
@@ -69,7 +75,7 @@ extension UserDefaults {
         }
 
         for order in orders {
-            if let index = placeholders.firstIndex(where: { $0.id == order.shopId }) {
+            if let index = placeholders.firstIndex(where: { $0.shopId == order.shopId }) {
                 print("found grabAndGo placeholder: \(placeholders[index]) for order: \(order)")
             }
         }
@@ -81,6 +87,7 @@ extension UserDefaults {
 }
 
 extension PurchasePlaceholder: PurchaseProviding {
+    
     // MARK: - Date
     public var time: String {
         time(for: date)
