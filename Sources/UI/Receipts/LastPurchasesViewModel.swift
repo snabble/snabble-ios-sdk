@@ -120,7 +120,7 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
                         if reset {
                             userDefaults.setReceiptCount(providers.count)
                         }
-                        userDefaults.cleanupGrabAndGo(for: providers)
+                        userDefaults.cleanupPlaceholders(for: providers)
                         
                         if let oldValue = userDefaults.receiptCount() {
                             numberOfUnloaded = providers.count - oldValue

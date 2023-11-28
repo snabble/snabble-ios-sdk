@@ -12,32 +12,20 @@ public struct PurchasePlaceholder: Codable {
     public let date: Date
     
     public var id: String
-    public var type: String
     public var name: String
-    public var amount: String
     public var project: String
-    public var transaction: String
 
     public init(shop: Shop, name: String, transaction: String) {
-        self.id = shop.id.rawValue
-        self.type = shop.isGrabAndGo ? "grabAndGo" : "scanAndGo"
+        self.id = transaction
         self.name = name
-        self.amount = "pending"
         self.date = Date()
         self.project = shop.projectId.rawValue
-        self.transaction = transaction
-    }
-    public var shopId: String {
-        id
-    }
-    public var projectId: Identifier<Project> {
-        Identifier<Project>(rawValue: project)
     }
 }
 
 extension PurchasePlaceholder: Equatable {
     public static func == (lhs: PurchasePlaceholder, rhs: PurchasePlaceholder) -> Bool {
-        return lhs.shopId == rhs.shopId && lhs.transaction == rhs.transaction
+        return lhs.id == rhs.id
     }
 }
 
@@ -52,10 +40,6 @@ extension UserDefaults {
             return placeholders
         }
         return []
-    }
-
-    public var grabAndGoPlaceholders: [PurchasePlaceholder] {
-        return placeholders.filter({ $0.type == "grabAndGo" })
     }
 
     public func removePlaceholder(_ placeholder: PurchasePlaceholder) {
@@ -86,29 +70,41 @@ extension UserDefaults {
             set(encoded, forKey: placeholderKey)
         }
     }
-
+    static private let invalidationTimeIntervalWait: TimeInterval = 60 // * 60 * 24
+    
     func cleanup(placeholders: [PurchasePlaceholder]?, for orders: [Order]) {
         guard let placeholders = placeholders else {
             return
         }
-
-        for order in orders {
-            if let index = placeholders.firstIndex(where: { $0.shopId == order.shopId }) {
-                print("found grabAndGo placeholder: \(placeholders[index]) for order: \(order)")
-            }
+        let invalidate: TimeInterval = Date().timeIntervalSinceNow - Self.invalidationTimeIntervalWait
+        
+        for placeholder in (placeholders.filter { $0.date.timeIntervalSinceNow < invalidate }) {
+                print("found placeholder to remoce: \(placeholder)")
         }
+//        for order in orders {
+//            if let index = placeholders.firstIndex(where: { $0.shopId == order.shopId }) {
+//                print("found grabAndGo placeholder: \(placeholders[index]) for order: \(order)")
+//            }
+//        }
     }
     
     public func resetPlaceholders() {
         removeObject(forKey: placeholderKey)
     }
     
-    func cleanupGrabAndGo(for orders: [Order]) {
-        cleanup(placeholders: grabAndGoPlaceholders, for: orders)
+    func cleanupPlaceholders(for orders: [Order]) {
+        cleanup(placeholders: placeholders, for: orders)
     }
 }
 
 extension PurchasePlaceholder: PurchaseProviding {
+    public var amount: String {
+        ""
+    }
+    
+    public var projectId: Identifier<Project> {
+        Identifier<Project>(rawValue: project)
+    }
     
     // MARK: - Date
     public var time: String {
