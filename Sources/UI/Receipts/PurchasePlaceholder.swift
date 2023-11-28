@@ -70,16 +70,16 @@ extension UserDefaults {
             set(encoded, forKey: placeholderKey)
         }
     }
-    static private let invalidationTimeIntervalWait: TimeInterval = 60 // * 60 * 24
+    static private let invalidationTimeInterval: TimeInterval = 60 // * 60 * 24
     
     func cleanup(placeholders: [PurchasePlaceholder]?, for orders: [Order]) {
         guard let placeholders = placeholders else {
             return
         }
-        let invalidate: TimeInterval = Date().timeIntervalSinceNow - Self.invalidationTimeIntervalWait
+        let invalidate: TimeInterval = Date().timeIntervalSinceNow - Self.invalidationTimeInterval
         
         for placeholder in (placeholders.filter { $0.date.timeIntervalSinceNow < invalidate }) {
-                print("found placeholder to remoce: \(placeholder)")
+            print("found placeholder to remoce: \(placeholder) \(invalidate)")
         }
 //        for order in orders {
 //            if let index = placeholders.firstIndex(where: { $0.shopId == order.shopId }) {
