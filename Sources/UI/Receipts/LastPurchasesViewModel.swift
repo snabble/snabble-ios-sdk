@@ -90,7 +90,7 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
     public init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults
     }
-    
+
     public func reset() {
         load(reset: true)
     }
