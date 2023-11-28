@@ -120,7 +120,6 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
                         if reset {
                             userDefaults.setReceiptCount(providers.count)
                         }
-                        userDefaults.cleanupPlaceholders(for: providers)
                         
                         if let oldValue = userDefaults.receiptCount() {
                             numberOfUnloaded = providers.count - oldValue
@@ -128,6 +127,7 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
                             userDefaults.setReceiptCount(providers.count)
                             numberOfUnloaded = providers.count
                         }
+                        userDefaults.cleanupPlaceholders(for: providers)
                     }
                 } catch {
                     self.state = .empty

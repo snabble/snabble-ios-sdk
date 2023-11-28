@@ -28,6 +28,34 @@ extension PurchasePlaceholder: Equatable {
         return lhs.id == rhs.id
     }
 }
+extension UserDefaults {
+    var grabAndGoCountKey: String {
+        "io.snabble.sdk.placeholderCount"
+    }
+    func grapAndGoCount() -> Int {
+        guard object(forKey: grabAndGoCountKey) != nil else {
+            return 0
+        }
+        return integer(forKey: grabAndGoCountKey)
+    }
+    func setGrapAndGoCount(_ count: Int) {
+        setValue(count, forKey: grabAndGoCountKey)
+    }
+}
+
+extension Order {
+    var isGrabAndGo: Bool {
+        guard let project = Snabble.shared.project(for: projectId) else {
+            return false
+        }
+        let shopID = Identifier<Shop>(rawValue: self.shopId)
+        
+        let filtered = project.shops.filter { (shop: Shop) in
+            shop.isGrabAndGo && shop.id == shopID && shop.projectId == projectId
+        }
+        return !filtered.isEmpty
+    }
+}
 
 extension UserDefaults {
     var placeholderKey: String {
@@ -70,7 +98,7 @@ extension UserDefaults {
             set(encoded, forKey: placeholderKey)
         }
     }
-    static private let invalidationTimeInterval: TimeInterval = 60 // * 60 * 24
+    static private let invalidationTimeInterval: TimeInterval = 60 * 60 * 24
     
     func cleanup(placeholders: [PurchasePlaceholder]?, for orders: [Order]) {
         guard let placeholders = placeholders else {
@@ -79,13 +107,20 @@ extension UserDefaults {
         let invalidate: TimeInterval = Date().timeIntervalSinceNow - Self.invalidationTimeInterval
         
         for placeholder in (placeholders.filter { $0.date.timeIntervalSinceNow < invalidate }) {
-            print("found placeholder to remoce: \(placeholder) \(invalidate)")
+            print("found placeholder to remove: \(placeholder) \(placeholder.date.timeIntervalSinceNow)")
+            removePlaceholder(placeholder)
         }
-//        for order in orders {
-//            if let index = placeholders.firstIndex(where: { $0.shopId == order.shopId }) {
-//                print("found grabAndGo placeholder: \(placeholders[index]) for order: \(order)")
-//            }
-//        }
+        let grabAndGoOrders = (orders.filter { $0.isGrabAndGo })
+        let newCount = grabAndGoOrders.count
+
+        while self.placeholders.count > newCount - grapAndGoCount() {
+            // new grabAndGo receipts are equal or more than number of placeholder
+            if let first = self.placeholders.first {
+                print("remove first placeholder: \(first)")
+                removePlaceholder(first)
+                setGrapAndGoCount(grapAndGoCount() + 1)
+            }
+        }
     }
     
     public func resetPlaceholders() {
