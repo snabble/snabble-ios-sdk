@@ -113,7 +113,7 @@ extension UserDefaults {
         let grabAndGoOrders = (orders.filter { $0.isGrabAndGo })
         let newCount = grabAndGoOrders.count
 
-        while self.placeholders.count > newCount - grapAndGoCount() {
+        while newCount - grapAndGoCount() > self.placeholders.count {
             // new grabAndGo receipts are equal or more than number of placeholder
             if let first = self.placeholders.first {
                 print("remove first placeholder: \(first)")
