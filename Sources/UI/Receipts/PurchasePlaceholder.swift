@@ -16,20 +16,28 @@ public struct PurchasePlaceholder: Codable {
     public var name: String
     public var amount: String
     public var project: String
+    public var transaction: String
 
-    public init(shop: Shop, name: String) {
+    public init(shop: Shop, name: String, transaction: String) {
         self.id = shop.id.rawValue
         self.type = shop.isGrabAndGo ? "grabAndGo" : "scanAndGo"
         self.name = name
         self.amount = "pending"
         self.date = Date()
         self.project = shop.projectId.rawValue
+        self.transaction = transaction
     }
     public var shopId: String {
         id
     }
     public var projectId: Identifier<Project> {
         Identifier<Project>(rawValue: project)
+    }
+}
+
+extension PurchasePlaceholder: Equatable {
+    public static func == (lhs: PurchasePlaceholder, rhs: PurchasePlaceholder) -> Bool {
+        return lhs.shopId == rhs.shopId && lhs.transaction == rhs.transaction
     }
 }
 
@@ -55,7 +63,7 @@ extension UserDefaults {
         guard !placeholders.isEmpty else {
             return
         }
-        guard let index = placeholders.firstIndex(where: { $0.shopId == placeholder.shopId }) else {
+        guard let index = placeholders.firstIndex(where: { $0 == placeholder }) else {
             return
         }
         var newPlaceholders = placeholders
@@ -63,16 +71,19 @@ extension UserDefaults {
         newPlaceholders.remove(at: index)
         
         if let encoded = try? JSONEncoder().encode(newPlaceholders) {
-            UserDefaults.standard.set(encoded, forKey: placeholderKey)
+            set(encoded, forKey: placeholderKey)
         }
     }
 
     public func registerPlaceholder(_ placeholder: PurchasePlaceholder) {
+        guard placeholders.firstIndex(where: { $0 == placeholder }) == nil else {
+            return
+        }
         var newPlaceholders = placeholders
         newPlaceholders.append(placeholder)
         
         if let encoded = try? JSONEncoder().encode(newPlaceholders) {
-            UserDefaults.standard.set(encoded, forKey: placeholderKey)
+            set(encoded, forKey: placeholderKey)
         }
     }
 
@@ -87,7 +98,11 @@ extension UserDefaults {
             }
         }
     }
-
+    
+    public func resetPlaceholders() {
+        removeObject(forKey: placeholderKey)
+    }
+    
     func cleanupGrabAndGo(for orders: [Order]) {
         cleanup(placeholders: grabAndGoPlaceholders, for: orders)
     }
