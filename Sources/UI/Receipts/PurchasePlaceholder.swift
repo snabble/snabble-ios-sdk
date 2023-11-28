@@ -15,8 +15,8 @@ public struct PurchasePlaceholder: Codable {
     public var name: String
     public var project: String
 
-    public init(shop: Shop, name: String, transaction: String) {
-        self.id = transaction
+    public init(shop: Shop, name: String) {
+        self.id = shop.id.rawValue
         self.name = name
         self.date = Date()
         self.project = shop.projectId.rawValue
@@ -25,7 +25,7 @@ public struct PurchasePlaceholder: Codable {
 
 extension PurchasePlaceholder: Equatable {
     public static func == (lhs: PurchasePlaceholder, rhs: PurchasePlaceholder) -> Bool {
-        return lhs.id == rhs.id
+        return lhs.id == rhs.id && lhs.project == rhs.project
     }
 }
 extension UserDefaults {
@@ -107,16 +107,14 @@ extension UserDefaults {
         let invalidate: TimeInterval = Date().timeIntervalSinceNow - Self.invalidationTimeInterval
         
         for placeholder in (placeholders.filter { $0.date.timeIntervalSinceNow < invalidate }) {
-            print("found placeholder to remove: \(placeholder) \(placeholder.date.timeIntervalSinceNow)")
             removePlaceholder(placeholder)
         }
         let grabAndGoOrders = (orders.filter { $0.isGrabAndGo })
         let newCount = grabAndGoOrders.count
 
         while newCount - grapAndGoCount() > self.placeholders.count {
-            // new grabAndGo receipts are equal or more than number of placeholder
+            // new grabAndGo receipts are greater than number of placeholders
             if let first = self.placeholders.first {
-                print("remove first placeholder: \(first)")
                 removePlaceholder(first)
                 setGrapAndGoCount(grapAndGoCount() + 1)
             }
@@ -133,6 +131,7 @@ extension UserDefaults {
 }
 
 extension PurchasePlaceholder: PurchaseProviding {
+    
     public var amount: String {
         ""
     }
