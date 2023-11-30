@@ -51,7 +51,7 @@ public struct ReceiptsItemView: View {
                 .foregroundColor(.accentColor)
                 .padding(.trailing, 6)
             VStack(alignment: .leading) {
-                Text(provider.name)
+                Text(Asset.localizedString(forKey: provider.name) )
                     .font(.headline)
                 Text(provider.dateString ?? "")
                         .font(.footnote)
