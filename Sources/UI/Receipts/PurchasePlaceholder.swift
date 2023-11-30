@@ -32,13 +32,13 @@ extension UserDefaults {
     var grabAndGoCountKey: String {
         "io.snabble.sdk.placeholderCount"
     }
-    func grapAndGoCount() -> Int {
+    func grabAndGoCount() -> Int {
         guard object(forKey: grabAndGoCountKey) != nil else {
             return 0
         }
         return integer(forKey: grabAndGoCountKey)
     }
-    func setGrapAndGoCount(_ count: Int) {
+    func setGrabAndGoCount(_ count: Int) {
         setValue(count, forKey: grabAndGoCountKey)
     }
 }
@@ -112,11 +112,11 @@ extension UserDefaults {
         let grabAndGoOrders = (orders.filter { $0.isGrabAndGo })
         let newCount = grabAndGoOrders.count
 
-        while newCount - grapAndGoCount() > self.placeholders.count {
+        while newCount - grabAndGoCount() > self.placeholders.count {
             // new grabAndGo receipts are greater than number of placeholders
             if let first = self.placeholders.first {
                 removePlaceholder(first)
-                setGrapAndGoCount(grapAndGoCount() + 1)
+                setGrabAndGoCount(grabAndGoCount() + 1)
             }
         }
     }
@@ -132,8 +132,8 @@ extension UserDefaults {
 
 extension PurchasePlaceholder: PurchaseProviding {
     
-    public var amount: String {
-        ""
+    public var amount: String? {
+        return nil
     }
     
     public var projectId: Identifier<Project> {

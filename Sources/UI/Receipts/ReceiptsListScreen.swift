@@ -57,8 +57,8 @@ public struct ReceiptsItemView: View {
                         .font(.footnote)
             }
             Spacer()
-            if !provider.amount.isEmpty {
-                Text(provider.amount)
+            if let amount = provider.amount {
+                Text(amount)
                     .font(.footnote)
                 Image(systemName: "chevron.right")
                     .font(.footnote)
