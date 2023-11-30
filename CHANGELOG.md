@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## unreleased
+
+### Added
+* Added placeholder for processing Grab&Go orders #APPS-1180
+
 ## [0.43.0] - 2023-11-28
 
 ### Added
@@ -11,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * add badge for unloaded receipts #APPS-1108
 
 ### Fixed
+* Fixed Bug #APPS-1189
 * `entry_token` is optional in AutonomoSession
 * Adapt wording of payment methods in german #APPS-1122
 
