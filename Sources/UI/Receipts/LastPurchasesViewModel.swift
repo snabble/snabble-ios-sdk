@@ -12,7 +12,7 @@ import SnabbleCore
 public protocol PurchaseProviding {
     var id: String { get }
     var name: String { get }
-    var amount: String? { get }
+    var amount: String { get }
     var time: String { get }
     var date: Date { get }
     
@@ -89,7 +89,7 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
 
     public init(userDefaults: UserDefaults = .standard) {
         self.userDefaults = userDefaults
-    }
+   }
 
     public func reset() {
         load(reset: true)
@@ -173,8 +173,8 @@ extension Order: PurchaseProviding {
 
     // MARK: - Price
 
-    public var amount: String? {
-        formattedPrice(price)
+    public var amount: String {
+        formattedPrice(price) ?? "N/A"
     }
     
     private func formattedPrice(_ price: Int) -> String? {
