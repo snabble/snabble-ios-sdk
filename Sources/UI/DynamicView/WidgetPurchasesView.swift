@@ -74,7 +74,7 @@ private struct WidgetOrderView: View {
                         .foregroundColor(.secondaryLabel)
                 }
             }
-            Text(Asset.localizedString(forKey: provider.name) )
+            Text(provider.name)
                 .font(.subheadline)
 
             Text(provider.time)

@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 * Add new autonomo states `entry_not_possible`, `entry_token_invalid` and `client_entering` 
 
+### Reverted
+* Added placeholder for processing Grab&Go orders #APPS-1180
+
 ## [0.43.1] - 2023-11-30
 
 ### Added
@@ -21,7 +24,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * add badge for unloaded receipts #APPS-1108
 
 ### Fixed
-* Fixed Bug #APPS-1189
 * `entry_token` is optional in AutonomoSession
 * Adapt wording of payment methods in german #APPS-1122
 
