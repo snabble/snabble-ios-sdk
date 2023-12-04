@@ -57,11 +57,13 @@ public struct ReceiptsItemView: View {
                         .font(.footnote)
             }
             Spacer()
-            Text(provider.amount)
-                .font(.footnote)
-            Image(systemName: "chevron.right")
-                .font(.footnote)
-                .foregroundColor(.secondary)
+            if let amount = provider.amount {
+                Text(amount)
+                    .font(.footnote)
+                Image(systemName: "chevron.right")
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
+            }
         }
     }
 }
