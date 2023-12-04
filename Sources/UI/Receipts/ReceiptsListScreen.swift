@@ -115,7 +115,7 @@ public struct ReceiptsListScreen: View {
             VStack {
                 List {
                     ForEach(viewModel.userDefaults.placeholders, id: \.id) { placeholder in
-                        ReceiptsItemView(provider: placeholder, image: viewModel.imageFor(projectId: placeholder.projectId))
+                        ReceiptsItemView(provider: placeholder, image: viewModel.imageFor(projectId: placeholder.projectId), showReadState: false)
                          .foregroundColor(.secondary)
                     }
                     ForEach(output, id: \.id) { provider in
