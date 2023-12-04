@@ -131,6 +131,9 @@ extension UserDefaults {
 }
 
 extension PurchasePlaceholder: PurchaseProviding {
+    public var loaded: Bool {
+        return false
+    }
     
     public var amount: String? {
         return nil
