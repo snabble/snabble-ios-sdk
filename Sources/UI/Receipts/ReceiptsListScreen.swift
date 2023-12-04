@@ -51,19 +51,17 @@ public struct ReceiptsItemView: View {
                 .foregroundColor(.accentColor)
                 .padding(.trailing, 6)
             VStack(alignment: .leading) {
-                Text(Asset.localizedString(forKey: provider.name) )
+                Text(provider.name)
                     .font(.headline)
                 Text(provider.dateString ?? "")
                         .font(.footnote)
             }
             Spacer()
-            if let amount = provider.amount {
-                Text(amount)
-                    .font(.footnote)
-                Image(systemName: "chevron.right")
-                    .font(.footnote)
-                    .foregroundColor(.secondary)
-            }
+            Text(provider.amount)
+                .font(.footnote)
+            Image(systemName: "chevron.right")
+                .font(.footnote)
+                .foregroundColor(.secondary)
         }
     }
 }
@@ -101,10 +99,6 @@ public struct ReceiptsListScreen: View {
         AsyncContentView(source: viewModel) { output in
             VStack {
                 List {
-                    ForEach(viewModel.userDefaults.placeholders, id: \.id) { placeholder in
-                        ReceiptsItemView(provider: placeholder, image: viewModel.imageFor(projectId: placeholder.projectId))
-                         .foregroundColor(.secondary)
-                    }
                     ForEach(output, id: \.id) { provider in
                         ReceiptsItemView(provider: provider, image: viewModel.imageFor(projectId: provider.projectId))
                         // provide a modifier for unloaded receipts here like:
