@@ -12,7 +12,7 @@ import SnabbleCore
 public protocol PurchaseProviding {
     var id: String { get }
     var name: String { get }
-    var amount: String { get }
+    var amount: String? { get }
     var time: String { get }
     var date: Date { get }
     
@@ -206,8 +206,8 @@ extension Order: PurchaseProviding {
 
     // MARK: - Price
 
-    public var amount: String {
-        formattedPrice(price) ?? "N/A"
+    public var amount: String? {
+        formattedPrice(price)
     }
     
     private func formattedPrice(_ price: Int) -> String? {
