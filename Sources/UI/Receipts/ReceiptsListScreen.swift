@@ -102,7 +102,7 @@ public struct ReceiptsListScreen: View {
         AsyncContentView(source: viewModel) { output in
             VStack {
                 List {
-                    if viewModel.awaitingReceipt {
+                    if viewModel.awaitingReceipts {
                         Text(Asset.localizedString(forKey: "Home.Grab.Purchase.placeholder"))
                             .multilineTextAlignment(.center)
                             .foregroundColor(.secondary)

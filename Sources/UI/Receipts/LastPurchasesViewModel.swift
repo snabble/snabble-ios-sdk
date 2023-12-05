@@ -19,7 +19,7 @@ public protocol PurchaseProviding {
     var projectId: Identifier<Project> { get }
 }
 
-extension Order {
+private extension Order {
     var isGrabAndGo: Bool {
         guard let project = Snabble.shared.project(for: projectId) else {
             return false
@@ -38,29 +38,30 @@ extension UserDefaults {
         "io.snabble.sdk.grabandgo.latestTimeInterval"
     }
     
-    func grabAndGoLatestTimeInterval() -> Date? {
+    func grabAndGoLatestTimeInterval() -> TimeInterval? {
         guard object(forKey: key) != nil else {
             return nil
         }
-        let timeInterval = double(forKey: key)
-        return Date(timeIntervalSince1970: timeInterval)
+        return double(forKey: key)
     }
     
-    public func setGrabAndGoLatestTimeInterval(_ date: Date) {
-        setValue(date.timeIntervalSince1970, forKey: key)
+    public func setGrabAndGoLatestTimeInterval(_ timeInterval: TimeInterval) {
+        setValue(timeInterval, forKey: key)
     }
 }
 
 private extension UserDefaults {
-    var receiptKey: String {
+    private var receiptKey: String {
         "io.snabble.sdk.lastReceiptCount"
     }
+    
     func receiptCount() -> Int? {
         guard object(forKey: receiptKey) != nil else {
             return nil
         }
         return integer(forKey: receiptKey)
     }
+    
     func setReceiptCount(_ count: Int) {
         setValue(count, forKey: receiptKey)
     }
@@ -111,7 +112,7 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
     
     @Published public var numberOfUnloaded: Int = 0
     @Published var state: LoadingState<[PurchaseProviding]> = .idle
-    @Published var awaitingReceipt: Bool = true
+    @Published var awaitingReceipts: Bool = false
 
     private var cancellables = Set<AnyCancellable>()
     private var imageCache: [Identifier<Project>: SwiftUI.Image] = [:]
@@ -142,30 +143,48 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
         OrderList.load(project) { [weak self] result in
             if let self = self {
                 do {
-                    let providers = try result.get().receipts
+                    let orders = try result.get().receipts
                     
-                    if providers.isEmpty {
+                    if orders.isEmpty {
                         userDefaults.setReceiptCount(0)
                         self.state = .empty
                     } else {
-                        self.state = .loaded(providers)
+                        self.state = .loaded(orders)
                         
                         if reset {
-                            userDefaults.setReceiptCount(providers.count)
+                            userDefaults.setReceiptCount(orders.count)
                         }
                         
                         if let oldValue = userDefaults.receiptCount() {
-                            numberOfUnloaded = providers.count - oldValue
+                            numberOfUnloaded = orders.count - oldValue
                         } else {
-                            userDefaults.setReceiptCount(providers.count)
-                            numberOfUnloaded = providers.count
+                            userDefaults.setReceiptCount(orders.count)
+                            numberOfUnloaded = orders.count
                         }
+                        awaitingReceipts(for: orders)
                     }
                 } catch {
                     self.state = .empty
                 }
             }
         }
+    }
+    
+    func awaitingReceipts(for orders: [Order]) {
+        guard let latestTimeStamp = userDefaults.grabAndGoLatestTimeInterval() else {
+            awaitingReceipts = false
+            return
+        }
+        let latestGrabAndGoReceipt = orders
+            .filter {
+                $0.isGrabAndGo
+            }
+            .map {
+                $0.date.timeIntervalSince1970
+            }
+            .sorted()
+            .last
+        awaitingReceipts = !(latestGrabAndGoReceipt ?? 0 > latestTimeStamp)
     }
 }
 
