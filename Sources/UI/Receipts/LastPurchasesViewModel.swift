@@ -175,6 +175,12 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
             awaitingReceipts = false
             return
         }
+        
+        guard latestTimeStamp + 86_400 >= Date().timeIntervalSince1970 else {
+            awaitingReceipts = false
+            return
+        }
+        
         let latestGrabAndGoReceipt = orders
             .filter {
                 $0.isGrabAndGo
