@@ -9,6 +9,7 @@ import SwiftUI
 import SnabbleCore
 import Combine
 
+
 public extension PurchaseProviding {
     var dateString: String? {
         let dateFormatter = DateFormatter()
@@ -99,10 +100,13 @@ public struct ReceiptsListScreen: View {
         AsyncContentView(source: viewModel) { output in
             VStack {
                 List {
+                    if viewModel.awaitingReceipt {
+                        Text(Asset.localizedString(forKey: "Home.Grab.Purchase.placeholder"))
+                            .multilineTextAlignment(.center)
+                            .foregroundColor(.secondary)
+                    }
                     ForEach(output, id: \.id) { provider in
                         ReceiptsItemView(provider: provider, image: viewModel.imageFor(projectId: provider.projectId))
-                        // provide a modifier for unloaded receipts here like:
-                        // .foregroundColor(provider.unloaded ? .primary : .secondary)
                             .onTapGesture {
                                 viewModel.actionPublisher.send(provider)
                             }

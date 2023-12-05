@@ -19,6 +19,38 @@ public protocol PurchaseProviding {
     var projectId: Identifier<Project> { get }
 }
 
+extension Order {
+    var isGrabAndGo: Bool {
+        guard let project = Snabble.shared.project(for: projectId) else {
+            return false
+        }
+        let shopID = Identifier<Shop>(rawValue: shopId)
+
+        let filtered = project.shops.filter { (shop: Shop) in
+            shop.isGrabAndGo && shop.id == shopID && shop.projectId == projectId
+        }
+        return !filtered.isEmpty
+    }
+}
+
+extension UserDefaults {
+    private var key: String {
+        "io.snabble.sdk.grabandgo.latestTimeInterval"
+    }
+    
+    func grabAndGoLatestTimeInterval() -> Date? {
+        guard object(forKey: key) != nil else {
+            return nil
+        }
+        let timeInterval = double(forKey: key)
+        return Date(timeIntervalSince1970: timeInterval)
+    }
+    
+    public func setGrabAndGoLatestTimeInterval(_ date: Date) {
+        setValue(date.timeIntervalSince1970, forKey: key)
+    }
+}
+
 private extension UserDefaults {
     var receiptKey: String {
         "io.snabble.sdk.lastReceiptCount"
@@ -79,6 +111,7 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
     
     @Published public var numberOfUnloaded: Int = 0
     @Published var state: LoadingState<[PurchaseProviding]> = .idle
+    @Published var awaitingReceipt: Bool = true
 
     private var cancellables = Set<AnyCancellable>()
     private var imageCache: [Identifier<Project>: SwiftUI.Image] = [:]
