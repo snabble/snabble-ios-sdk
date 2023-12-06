@@ -35,18 +35,27 @@ private extension Order {
 
 extension UserDefaults {
     private var key: String {
-        "io.snabble.sdk.grabandgo.latestTimeInterval"
+        "io.snabble.sdk.grabandgo.timeIntervals"
     }
     
-    func grabAndGoLatestTimeInterval() -> TimeInterval? {
-        guard object(forKey: key) != nil else {
-            return nil
-        }
-        return double(forKey: key)
+    func grabAndGoTimeIntervals() -> [TimeInterval] {
+        object(forKey: key) as? [TimeInterval] ?? []
     }
     
-    public func setGrabAndGoLatestTimeInterval(_ timeInterval: TimeInterval) {
-        setValue(timeInterval, forKey: key)
+    public func addGrabAndGoTimeInterval(_ timeInterval: TimeInterval) {
+        var intervals = grabAndGoTimeIntervals()
+        intervals.append(timeInterval)
+        setValue(intervals, forKey: key)
+    }
+    
+    public func removeOldestGrabAndGoInterval() {
+        var intervals = grabAndGoTimeIntervals()
+        intervals.removeFirst()
+        setValue(intervals, forKey: key)
+    }
+    
+    public func clearGrabAndGoIntervals() {
+        setValue(nil, forKey: key)
     }
 }
 
@@ -112,7 +121,13 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
     
     @Published public var numberOfUnloaded: Int = 0
     @Published var state: LoadingState<[PurchaseProviding]> = .idle
-    @Published var awaitingReceipts: Bool = false
+    @Published var awaitingReceipts: Bool = false {
+        didSet {
+            if !awaitingReceipts {
+                userDefaults.clearGrabAndGoIntervals()
+            }
+        }
+    }
 
     private var cancellables = Set<AnyCancellable>()
     private var imageCache: [Identifier<Project>: SwiftUI.Image] = [:]
@@ -171,26 +186,32 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
     }
     
     func awaitingReceipts(for orders: [Order]) {
-        guard let latestTimeStamp = userDefaults.grabAndGoLatestTimeInterval() else {
+        let intervals = userDefaults.grabAndGoTimeIntervals()
+        
+        guard !intervals.isEmpty else {
+            return awaitingReceipts = false
+        }
+        
+        guard intervals.last! + 86_400 >= Date().timeIntervalSince1970 else {
+            userDefaults.clearGrabAndGoIntervals()
             awaitingReceipts = false
             return
         }
         
-        guard latestTimeStamp + 86_400 >= Date().timeIntervalSince1970 else {
-            awaitingReceipts = false
-            return
-        }
-        
-        let latestGrabAndGoReceipt = orders
+        let latestGrabAndGoTimeintervals = orders
             .filter {
                 $0.isGrabAndGo
             }
             .map {
                 $0.date.timeIntervalSince1970
             }
+            .filter {
+                intervals.first! < $0
+            }
             .sorted()
-            .last
-        awaitingReceipts = !(latestGrabAndGoReceipt ?? 0 > latestTimeStamp)
+        
+        
+        awaitingReceipts = latestGrabAndGoTimeintervals.count < intervals.count
     }
 }
 
