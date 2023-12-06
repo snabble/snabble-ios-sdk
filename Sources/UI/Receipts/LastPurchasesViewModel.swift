@@ -164,7 +164,7 @@ extension PurchasesViewModel {
 
 extension Order: PurchaseProviding {
     public var loaded: Bool {
-        return self.hasCachedReceipt()
+        return self.hasReceipt()
     }
 
     public var name: String {
