@@ -67,7 +67,7 @@ extension OrderList {
     static func clearCache() {
         let fileManager = FileManager.default
         // swiftlint:disable:next force_try
-        let cacheDir = try! fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let cacheDir = try! fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
 
         do {
             let files = try fileManager.contentsOfDirectory(atPath: cacheDir.path)
@@ -87,7 +87,7 @@ extension OrderList {
 extension Order {
     public func cachedReceiptURL() -> URL {
         // swiftlint:disable:next force_try
-        let cacheDir = try! FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
+        let cacheDir = try! FileManager.default.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
         
         return cacheDir.appendingPathComponent("snabble-order-\(self.id).pdf")
     }
