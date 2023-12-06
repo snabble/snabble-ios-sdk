@@ -68,13 +68,11 @@ private struct WidgetOrderView: View {
                     .resizable()
                     .frame(width: 14, height: 14)
                 Spacer()
-                if let amount = provider.amount {
-                    Text(amount)
-                        .font(.footnote)
-                        .foregroundColor(.secondaryLabel)
-                }
+                Text(provider.amount)
+                    .font(.footnote)
+                    .foregroundColor(.secondaryLabel)
             }
-            Text(Asset.localizedString(forKey: provider.name) )
+            Text(provider.name)
                 .font(.subheadline)
 
             Text(provider.time)

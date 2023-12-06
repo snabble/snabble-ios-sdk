@@ -4,11 +4,14 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [unreleased]
+## [0.43.2] - 2023-12-04
 
 ### Added
 * Add new autonomo states `entry_not_possible`, `entry_token_invalid` and `client_entering` 
 * Add unread badge to receipts line items #APPS-1023
+
+### Reverted
+* Added placeholder for processing Grab&Go orders #APPS-1180
 
 ## [0.43.1] - 2023-11-30
 
@@ -22,7 +25,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * add badge for unloaded receipts #APPS-1108
 
 ### Fixed
-* Fixed Bug #APPS-1189
 * `entry_token` is optional in AutonomoSession
 * Adapt wording of payment methods in german #APPS-1122
 
