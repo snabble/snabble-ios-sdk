@@ -8,6 +8,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 * Add unread badge to receipts line items #APPS-1023
+## [unreleased]
+
+### Added
+* Added placeholder for processing Grab&Go orders #APPS-1180
+
+### Updated
+* groue/GRDB.swift 6.23.0 (was 6.21.0)
 
 ## [0.43.2] - 2023-12-04
 
