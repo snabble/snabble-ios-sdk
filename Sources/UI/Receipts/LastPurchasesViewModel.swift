@@ -210,7 +210,6 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
             }
             .sorted()
         
-        
         awaitingReceipts = latestGrabAndGoTimeintervals.count < intervals.count
     }
 }

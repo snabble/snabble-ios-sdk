@@ -490,30 +490,23 @@ public enum PaymentMethodDetails {
         storage.remove(detail)
     }
 
-    //
-    /// initialize the storage for payment methods
-    /// - Parameter firstStart: when `true` (on the first start of the app), remove all stored payment methods
-    /// - Returns: true when any obsolete payment methods had to be removed
-    ///
+    /// This method silently removes all payment methods
+    public static func removeAll() {
+        storage.removeAll()
+    }
+    
     /// This method silently removes any payment methods that have expired, most notably credit cards past
     /// their expiration date.
-    public static func startup(_ firstStart: Bool) -> Bool {
-        if firstStart {
-            storage.removeAll()
-        }
-
-        removeExpired()
-
-        return removeObsoleted()
-    }
-
-    private static func removeExpired() {
+    public static func removeExpired() {
         var details = self.read()
         details.removeAll(where: \.isExpired)
         self.save(details)
     }
 
-    private static func removeObsoleted() -> Bool {
+    /// This method silently unsupported payment methods.
+    ///
+    /// - Returns: true when any obsolete payment methods had to be removed
+    public static func removeObsoleted() -> Bool {
         var details = self.read()
         let initialCount = details.count
         details.removeAll { detail -> Bool in
