@@ -15,6 +15,7 @@ public protocol PurchaseProviding {
     var amount: String? { get }
     var time: String { get }
     var date: Date { get }
+    var loaded: Bool { get }
     
     var projectId: Identifier<Project> { get }
 }
@@ -240,7 +241,10 @@ extension PurchasesViewModel {
 }
 
 extension Order: PurchaseProviding {
-    
+    public var loaded: Bool {
+        return self.hasReceipt()
+    }
+
     public var name: String {
         shopName
     }

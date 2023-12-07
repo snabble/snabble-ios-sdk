@@ -40,16 +40,29 @@ extension View {
 public struct ReceiptsItemView: View {
     public let provider: PurchaseProviding
     public let image: SwiftUI.Image
+    public let showReadState: Bool
     
-    public init(provider: PurchaseProviding, image: SwiftUI.Image? = nil) {
+    public init(provider: PurchaseProviding, image: SwiftUI.Image? = nil, showReadState: Bool = true) {
         self.provider = provider
         self.image = image ?? Image(systemName: "scroll")
+        self.showReadState = showReadState
     }
+
+    @ViewBuilder
+    var stateView: some View {
+        Circle()
+            .fill((showReadState && !provider.loaded) ? .red : .clear)
+            .frame(width: 10, height: 10)
+    }
+
     public var body: some View {
         HStack {
-            self.image
-                .foregroundColor(.accentColor)
-                .padding(.trailing, 6)
+            HStack {
+                self.stateView
+                self.image
+                    .foregroundColor(.accentColor)
+            }
+            .frame(width: 60)
             VStack(alignment: .leading) {
                 Text(provider.name)
                     .font(.headline)
@@ -112,7 +125,7 @@ public struct ReceiptsListScreen: View {
                                 viewModel.actionPublisher.send(provider)
                             }
                     }
-                    .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
+                    .listRowInsets(EdgeInsets(top: 10, leading: 4, bottom: 10, trailing: 16))
                 }
                 .listStyle(.plain)
                 .refreshAction {

@@ -7,6 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 
 ### Added
+* Add unread badge to receipts line items #APPS-1023
 * Added placeholder for processing Grab&Go orders #APPS-1180
 
 ### Fixed
