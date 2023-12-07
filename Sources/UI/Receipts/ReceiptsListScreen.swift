@@ -9,7 +9,6 @@ import SwiftUI
 import SnabbleCore
 import Combine
 
-
 public extension PurchaseProviding {
     var dateString: String? {
         let dateFormatter = DateFormatter()
@@ -126,7 +125,7 @@ public struct ReceiptsListScreen: View {
                                 viewModel.actionPublisher.send(provider)
                             }
                     }
-                    .listRowInsets(EdgeInsets(top: 10, leading: 16, bottom: 10, trailing: 16))
+                    .listRowInsets(EdgeInsets(top: 10, leading: 4, bottom: 10, trailing: 16))
                 }
                 .listStyle(.plain)
                 .refreshAction {
