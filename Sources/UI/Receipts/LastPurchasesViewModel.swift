@@ -12,23 +12,65 @@ import SnabbleCore
 public protocol PurchaseProviding {
     var id: String { get }
     var name: String { get }
-    var amount: String { get }
+    var amount: String? { get }
     var time: String { get }
     var date: Date { get }
     
     var projectId: Identifier<Project> { get }
 }
 
+private extension Order {
+    var isGrabAndGo: Bool {
+        guard let project = Snabble.shared.project(for: projectId) else {
+            return false
+        }
+        let shopID = Identifier<Shop>(rawValue: shopId)
+
+        let filtered = project.shops.filter { (shop: Shop) in
+            shop.isGrabAndGo && shop.id == shopID && shop.projectId == projectId
+        }
+        return !filtered.isEmpty
+    }
+}
+
+extension UserDefaults {
+    private var key: String {
+        "io.snabble.sdk.grabandgo.timeIntervals"
+    }
+    
+    func grabAndGoTimeIntervals() -> [TimeInterval] {
+        object(forKey: key) as? [TimeInterval] ?? []
+    }
+    
+    public func addGrabAndGoTimeInterval(_ timeInterval: TimeInterval) {
+        var intervals = grabAndGoTimeIntervals()
+        intervals.append(timeInterval)
+        setValue(intervals, forKey: key)
+    }
+    
+    public func removeOldestGrabAndGoInterval() {
+        var intervals = grabAndGoTimeIntervals()
+        intervals.removeFirst()
+        setValue(intervals, forKey: key)
+    }
+    
+    public func clearGrabAndGoIntervals() {
+        setValue(nil, forKey: key)
+    }
+}
+
 private extension UserDefaults {
-    var receiptKey: String {
+    private var receiptKey: String {
         "io.snabble.sdk.lastReceiptCount"
     }
+    
     func receiptCount() -> Int? {
         guard object(forKey: receiptKey) != nil else {
             return nil
         }
         return integer(forKey: receiptKey)
     }
+    
     func setReceiptCount(_ count: Int) {
         setValue(count, forKey: receiptKey)
     }
@@ -79,6 +121,13 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
     
     @Published public var numberOfUnloaded: Int = 0
     @Published var state: LoadingState<[PurchaseProviding]> = .idle
+    @Published var awaitingReceipts: Bool = false {
+        didSet {
+            if !awaitingReceipts {
+                userDefaults.clearGrabAndGoIntervals()
+            }
+        }
+    }
 
     private var cancellables = Set<AnyCancellable>()
     private var imageCache: [Identifier<Project>: SwiftUI.Image] = [:]
@@ -109,30 +158,60 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
         OrderList.load(project) { [weak self] result in
             if let self = self {
                 do {
-                    let providers = try result.get().receipts
+                    let orders = try result.get().receipts
                     
-                    if providers.isEmpty {
+                    if orders.isEmpty {
                         userDefaults.setReceiptCount(0)
                         self.state = .empty
                     } else {
-                        self.state = .loaded(providers)
+                        self.state = .loaded(orders)
                         
                         if reset {
-                            userDefaults.setReceiptCount(providers.count)
+                            userDefaults.setReceiptCount(orders.count)
                         }
                         
                         if let oldValue = userDefaults.receiptCount() {
-                            numberOfUnloaded = providers.count - oldValue
+                            numberOfUnloaded = orders.count - oldValue
                         } else {
-                            userDefaults.setReceiptCount(providers.count)
-                            numberOfUnloaded = providers.count
+                            userDefaults.setReceiptCount(orders.count)
+                            numberOfUnloaded = orders.count
                         }
+                        awaitingReceipts(for: orders)
                     }
                 } catch {
                     self.state = .empty
                 }
             }
         }
+    }
+    
+    func awaitingReceipts(for orders: [Order]) {
+        let intervals = userDefaults.grabAndGoTimeIntervals()
+        
+        guard !intervals.isEmpty else {
+            return awaitingReceipts = false
+        }
+        
+        guard intervals.last! + 86_400 >= Date().timeIntervalSince1970 else {
+            userDefaults.clearGrabAndGoIntervals()
+            awaitingReceipts = false
+            return
+        }
+        
+        let latestGrabAndGoTimeintervals = orders
+            .filter {
+                $0.isGrabAndGo
+            }
+            .map {
+                $0.date.timeIntervalSince1970
+            }
+            .filter {
+                intervals.first! < $0
+            }
+            .sorted()
+        
+        
+        awaitingReceipts = latestGrabAndGoTimeintervals.count < intervals.count
     }
 }
 
@@ -173,8 +252,8 @@ extension Order: PurchaseProviding {
 
     // MARK: - Price
 
-    public var amount: String {
-        formattedPrice(price) ?? "N/A"
+    public var amount: String? {
+        formattedPrice(price)
     }
     
     private func formattedPrice(_ price: Int) -> String? {
