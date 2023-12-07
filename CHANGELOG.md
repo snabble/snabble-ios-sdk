@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 * Added placeholder for processing Grab&Go orders #APPS-1180
 
+### Fixed
+* rename and add public payment admin functions #APPS-1251
+
 ### Updated
 * groue/GRDB.swift 6.23.0 (was 6.21.0)
 

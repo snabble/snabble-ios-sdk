@@ -9,7 +9,6 @@ import SwiftUI
 import SnabbleCore
 import Combine
 
-
 public extension PurchaseProviding {
     var dateString: String? {
         let dateFormatter = DateFormatter()
