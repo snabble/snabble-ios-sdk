@@ -116,8 +116,12 @@ public struct ReceiptsListScreen: View {
                 List {
                     if viewModel.awaitingReceipts {
                         Text(Asset.localizedString(forKey: "Home.Grab.Purchase.placeholder"))
-                            .multilineTextAlignment(.center)
                             .foregroundColor(.secondary)
+                            .font(.caption)
+                            .fontWeight(.semibold)
+                            .multilineTextAlignment(.center)
+                            .frame(maxWidth: .infinity, alignment: .center)
+                            .padding([.vertical], 4)
                     }
                     ForEach(output, id: \.id) { provider in
                         ReceiptsItemView(provider: provider, image: viewModel.imageFor(projectId: provider.projectId))
