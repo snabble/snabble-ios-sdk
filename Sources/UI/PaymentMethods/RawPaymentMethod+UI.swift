@@ -52,9 +52,8 @@ extension RawPaymentMethod {
         switch self {
         case .deDirectDebit:
             return sepaEditViewController(projectId, analyticsDelegate)
-
         case .paydirektOneKlick:
-            return PaydirektEditViewController(nil, for: projectId, with: analyticsDelegate)
+            return GiropayEditViewController(nil, for: projectId, with: analyticsDelegate)
         case .creditCardMastercard, .creditCardVisa, .creditCardAmericanExpress:
             return creditCardEditViewController(projectId, analyticsDelegate)
         case .externalBilling:

@@ -1,5 +1,5 @@
 //
-//  PaydirektEditViewController.swift
+//  GiropayEditViewController.swift
 //
 //  Copyright © 2020 snabble. All rights reserved.
 //
@@ -8,7 +8,7 @@ import UIKit
 import WebKit
 import SnabbleCore
 
-private struct PaydirektAuthorizationResult: Decodable {
+private struct GiropayAuthorizationResult: Decodable {
     let id: String
     let links: AuthLinks
 
@@ -28,14 +28,14 @@ private enum RedirectStatus: String {
     case cancelled
     case failure
 
-    static let host = "snabble-paydirekt"
+    static let host = "snabble-giropay"
 
     var url: String {
         return "\(RedirectStatus.host)://\(self.rawValue)"
     }
 }
 
-public final class PaydirektEditViewController: UIViewController {
+public final class GiropayEditViewController: UIViewController {
     private weak var webViewWrapper: UIView?
     private weak var displayView: UIView?
     private weak var errorView: UIView?
@@ -222,7 +222,7 @@ public final class PaydirektEditViewController: UIViewController {
                 return
             }
 
-            project.perform(request) { (result: Result<PaydirektAuthorizationResult, SnabbleError>) in
+            project.perform(request) { (result: Result<GiropayAuthorizationResult, SnabbleError>) in
                 switch result {
                 case .success(let authResult):
                     guard let webUrl = URL(string: authResult.links.web.href) else {
@@ -293,7 +293,7 @@ public final class PaydirektEditViewController: UIViewController {
     }
 }
 
-extension PaydirektEditViewController: WKNavigationDelegate {
+extension GiropayEditViewController: WKNavigationDelegate {
     public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         print("navigation action: \(navigationAction)")
 
