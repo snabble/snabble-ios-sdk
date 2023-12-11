@@ -17,7 +17,7 @@ public struct PaydirektData: Codable, EncryptedPaymentData, Equatable {
 
     public let isExpired = false
 
-    public let originType = AcceptedOriginType.paydirektCustomerAuthorization
+    public let originType = AcceptedOriginType.giropayCustomerAuthorization
 
     let deviceId: String
     let deviceName: String
