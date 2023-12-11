@@ -126,6 +126,20 @@
 
 "Snabble.ExternalBilling.payNow" = "Pay now using purchase on invoice";
 
+"Snabble.Giropay.AuthorizationFailed.message" = "Please try again later";
+
+"Snabble.Giropay.AuthorizationFailed.title" = "Authorization failed";
+
+"Snabble.Giropay.deleteAuthorization" = "Delete method";
+
+"Snabble.Giropay.gotoWebsite" = "Go to giropay.de";
+
+"Snabble.Giropay.payNow" = "Pay now using giropay";
+
+"Snabble.Giropay.savedAuthorization" = "You've successfully authorized Snabble for giropay. To remove this authorization, you need to log in to your giropay account. If you do not want to use this payment method anymore, you can remove it here.";
+
+"Snabble.Giropay.title" = "giropay";
+
 "Snabble.goToSettings" = "Go to settings";
 
 "Snabble.Hints.closedBags" = "Well done! Please make things easy for the cashier and don't store your products in closed bags. Thank you!";
@@ -168,20 +182,6 @@
 "Snabble.Onboarding.Link.show" = "Show";
 
 "Snabble.Onboarding.next" = "Continue";
-
-"Snabble.Paydirekt.AuthorizationFailed.message" = "Please try again later";
-
-"Snabble.Paydirekt.AuthorizationFailed.title" = "Authorization failed";
-
-"Snabble.Paydirekt.deleteAuthorization" = "Delete method";
-
-"Snabble.Paydirekt.gotoWebsite" = "Go to paydirekt.de";
-
-"Snabble.Paydirekt.payNow" = "Pay now using paydirekt";
-
-"Snabble.Paydirekt.savedAuthorization" = "You've successfully authorized Snabble for paydirekt. To remove this authorization, you need to log in to your paydirekt account. If you do not want to use this payment method anymore, you can remove it here.";
-
-"Snabble.Paydirekt.title" = "paydirekt";
 
 /* SECTION: SnabbleAndroid */
 "Snabble.Payment.aborted" = "Payment process was cancelled";

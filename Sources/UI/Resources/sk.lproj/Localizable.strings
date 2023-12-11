@@ -126,6 +126,20 @@
 
 "Snabble.ExternalBilling.payNow" = "Pay now using purchase on invoice";
 
+"Snabble.Giropay.AuthorizationFailed.message" = "Skús neskôr znovu, prosím";
+
+"Snabble.Giropay.AuthorizationFailed.title" = "Autorizácia sa nepodarila";
+
+"Snabble.Giropay.deleteAuthorization" = "Vymazať spôsob platby";
+
+"Snabble.Giropay.gotoWebsite" = "Prejsť na giropay.de";
+
+"Snabble.Giropay.payNow" = "Teraz zaplatiť prostredníctvom giropay";
+
+"Snabble.Giropay.savedAuthorization" = "Autorizácia aplikácie Snabble pre giropay bola úspešná. Ak chceš autorizáciu zrušiť, musíš sa prihlásiť do svojho konta giropay na webovej stránke. Pokiaľ nechceš, aby giropay bol v budúcnosti zobrazovaný ako spôsob platby, tu ho môžeš jednoducho odstrániť.";
+
+"Snabble.Giropay.title" = "giropay";
+
 "Snabble.goToSettings" = "Prejsť na nastavenia";
 
 "Snabble.Hints.closedBags" = "Len tak ďalej! Prosím, uľahči prácu pokladníkom a nevkladaj svoje produkty priamo do uzavretých tašiek. Ďakujem!";
@@ -168,20 +182,6 @@
 "Snabble.Onboarding.Link.show" = "Prezrieť";
 
 "Snabble.Onboarding.next" = "Ďalej";
-
-"Snabble.Paydirekt.AuthorizationFailed.message" = "Skús neskôr znovu, prosím";
-
-"Snabble.Paydirekt.AuthorizationFailed.title" = "Autorizácia sa nepodarila";
-
-"Snabble.Paydirekt.deleteAuthorization" = "Vymazať spôsob platby";
-
-"Snabble.Paydirekt.gotoWebsite" = "Prejsť na paydirekt.de";
-
-"Snabble.Paydirekt.payNow" = "Teraz zaplatiť prostredníctvom paydirekt";
-
-"Snabble.Paydirekt.savedAuthorization" = "Autorizácia aplikácie Snabble pre paydirekt bola úspešná. Ak chceš autorizáciu zrušiť, musíš sa prihlásiť do svojho konta paydirekt na webovej stránke. Pokiaľ nechceš, aby paydirekt bol v budúcnosti zobrazovaný ako spôsob platby, tu ho môžeš jednoducho odstrániť.";
-
-"Snabble.Paydirekt.title" = "paydirekt";
 
 /* SECTION: SnabbleAndroid */
 "Snabble.Payment.aborted" = "Platobný proces bol prerušený";

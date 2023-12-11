@@ -88,7 +88,7 @@ public final class PaydirektEditViewController: UIViewController {
         displayLabel.textColor = .label
         displayLabel.textAlignment = .natural
         displayLabel.numberOfLines = 0
-        displayLabel.text = Asset.localizedString(forKey: "Snabble.Paydirekt.savedAuthorization")
+        displayLabel.text = Asset.localizedString(forKey: "Snabble.Giropay.savedAuthorization")
 
         let openButton = UIButton(type: .system)
         openButton.translatesAutoresizingMaskIntoConstraints = false
@@ -96,7 +96,7 @@ public final class PaydirektEditViewController: UIViewController {
         openButton.titleLabel?.font = .preferredFont(forTextStyle: .subheadline)
         openButton.titleLabel?.adjustsFontForContentSizeCategory = true
         openButton.setTitleColor(.link, for: .normal)
-        openButton.setTitle(Asset.localizedString(forKey: "Snabble.Paydirekt.gotoWebsite"), for: .normal)
+        openButton.setTitle(Asset.localizedString(forKey: "Snabble.Giropay.gotoWebsite"), for: .normal)
         openButton.addTarget(self, action: #selector(openButtonTapped(_:)), for: .touchUpInside)
 
         let deleteButton = UIButton(type: .system)
@@ -105,7 +105,7 @@ public final class PaydirektEditViewController: UIViewController {
         deleteButton.titleLabel?.adjustsFontForContentSizeCategory = true
         deleteButton.makeSnabbleButton()
         deleteButton.isUserInteractionEnabled = true
-        deleteButton.setTitle(Asset.localizedString(forKey: "Snabble.Paydirekt.deleteAuthorization"), for: .normal)
+        deleteButton.setTitle(Asset.localizedString(forKey: "Snabble.Giropay.deleteAuthorization"), for: .normal)
         deleteButton.addTarget(self, action: #selector(deleteTapped(_:)), for: .touchUpInside)
 
         let errorView = UIView()
@@ -118,7 +118,7 @@ public final class PaydirektEditViewController: UIViewController {
         errorLabel.textColor = .label
         errorLabel.textAlignment = .center
         errorLabel.numberOfLines = 0
-        errorLabel.text = Asset.localizedString(forKey: "Snabble.Paydirekt.AuthorizationFailed.title")
+        errorLabel.text = Asset.localizedString(forKey: "Snabble.Giropay.AuthorizationFailed.title")
 
         let errorButton = UIButton(type: .system)
         errorButton.translatesAutoresizingMaskIntoConstraints = false
@@ -190,7 +190,7 @@ public final class PaydirektEditViewController: UIViewController {
 
     override public func viewDidLoad() {
         super.viewDidLoad()
-        self.title = Asset.localizedString(forKey: "Snabble.Paydirekt.title")
+        self.title = Asset.localizedString(forKey: "Snabble.Giropay.title")
         errorView?.isHidden = true
     }
 
@@ -321,8 +321,8 @@ extension PaydirektEditViewController: WKNavigationDelegate {
                 self.goBack()
             case RedirectStatus.failure.url:
                 self.clientAuthorization = nil
-                let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.Paydirekt.AuthorizationFailed.title"),
-                                              message: Asset.localizedString(forKey: "Snabble.Paydirekt.AuthorizationFailed.message"),
+                let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.Giropay.AuthorizationFailed.title"),
+                                              message: Asset.localizedString(forKey: "Snabble.Giropay.AuthorizationFailed.message"),
                                               preferredStyle: .alert)
 
                 self.present(alert, animated: true)
