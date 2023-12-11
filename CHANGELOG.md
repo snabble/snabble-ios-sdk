@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 * rename and add public payment admin functions #APPS-1251
+* update camera permission strings #APPS-1258
 
 ### Updated
 * groue/GRDB.swift 6.23.0 (was 6.21.0)
