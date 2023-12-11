@@ -46,7 +46,7 @@ public final class GiropayEditViewController: UIViewController {
     private var clientAuthorization: String?
     private var projectId: Identifier<Project>?
 
-    private let authData = PaydirektAuthorization(
+    private let authData = GiropayAuthorization(
         id: UIDevice.current.identifierForVendor?.uuidString ?? "",
         name: UIDevice.current.name,
         ipAddress: "127.0.0.1",
@@ -310,7 +310,7 @@ extension GiropayEditViewController: WKNavigationDelegate {
                 guard
                     let cert = Snabble.shared.certificates.first,
                     let auth = self.clientAuthorization,
-                    let data = PaydirektData(cert.data, auth, self.authData)
+                    let data = GiropayData(cert.data, auth, self.authData)
                 else {
                     return
                 }

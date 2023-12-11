@@ -27,8 +27,8 @@ extension RawPaymentMethod {
             return "American Express"
         case .gatekeeperTerminal:
             return Asset.localizedString(forKey: "Snabble.Payment.payAtSCO")
-        case .paydirektOneKlick:
-            return "paydirekt"
+        case .giropayOneKlick:
+            return "giropay"
         case .qrCodePOS, .qrCodeOffline:
             return Asset.localizedString(forKey: "Snabble.Payment.payAtCashDesk")
         case .externalBilling:
@@ -52,7 +52,7 @@ extension RawPaymentMethod {
         switch self {
         case .deDirectDebit:
             return sepaEditViewController(projectId, analyticsDelegate)
-        case .paydirektOneKlick:
+        case .giropayOneKlick:
             return GiropayEditViewController(nil, for: projectId, with: analyticsDelegate)
         case .creditCardMastercard, .creditCardVisa, .creditCardAmericanExpress:
             return creditCardEditViewController(projectId, analyticsDelegate)
@@ -164,7 +164,7 @@ extension RawPaymentMethod {
                 .creditCardMastercard,
                 .creditCardAmericanExpress,
                 .externalBilling,
-                .paydirektOneKlick,
+                .giropayOneKlick,
                 .twint,
                 .postFinanceCard,
                 .gatekeeperTerminal:

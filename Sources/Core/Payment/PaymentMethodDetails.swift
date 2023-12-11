@@ -32,7 +32,7 @@ public enum PaymentMethodUserData: Codable, Equatable {
     case sepa(SepaData)
     case teleCashCreditCard(TeleCashCreditCardData)
     case tegutEmployeeCard(TegutEmployeeData)
-    case paydirektAuthorization(PaydirektData)
+    case giropayAuthorization(GiropayData)
     case datatransAlias(DatatransData)
     case datatransCardAlias(DatatransCreditCardData)
     case payoneCreditCard(PayoneCreditCardData)
@@ -44,7 +44,7 @@ public enum PaymentMethodUserData: Codable, Equatable {
         case sepa
         case teleCashCreditCard
         case tegutEmployeeCard
-        case paydirektAuthorization
+        case giropayAuthorization = "paydirektAuthorization"
         case datatransAlias, datatransCardAlias
         case payoneCreditCard
         case payoneSepa
@@ -60,7 +60,7 @@ public enum PaymentMethodUserData: Codable, Equatable {
         case .sepa(let data): return data
         case .teleCashCreditCard(let data): return data
         case .tegutEmployeeCard(let data): return data
-        case .paydirektAuthorization(let data): return data
+        case .giropayAuthorization(let data): return data
         case .datatransAlias(let data): return data
         case .datatransCardAlias(let data): return data
         case .payoneCreditCard(let data): return data
@@ -72,7 +72,7 @@ public enum PaymentMethodUserData: Codable, Equatable {
 
     public var additionalData: [String: String] {
         switch self {
-        case .paydirektAuthorization(let data): return data.additionalData
+        case .giropayAuthorization(let data): return data.additionalData
         case .teleCashCreditCard(let data): return data.additionalData
         default: return [:]
         }
@@ -88,8 +88,8 @@ public enum PaymentMethodUserData: Codable, Equatable {
             self = .teleCashCreditCard(creditcard)
         } else if let tegutData = try container.decodeIfPresent(TegutEmployeeData.self, forKey: .tegutEmployeeCard) {
             self = .tegutEmployeeCard(tegutData)
-        } else if let paydirektData = try container.decodeIfPresent(PaydirektData.self, forKey: .paydirektAuthorization) {
-            self = .paydirektAuthorization(paydirektData)
+        } else if let giropayData = try container.decodeIfPresent(GiropayData.self, forKey: .giropayAuthorization) {
+            self = .giropayAuthorization(giropayData)
         } else if let datatransData = try container.decodeIfPresent(DatatransData.self, forKey: .datatransAlias) {
             self = .datatransAlias(datatransData)
         } else if let datatransCardData = try container.decodeIfPresent(DatatransCreditCardData.self, forKey: .datatransCardAlias) {
@@ -113,7 +113,7 @@ public enum PaymentMethodUserData: Codable, Equatable {
         case .sepa(let data): try container.encode(data, forKey: .sepa)
         case .teleCashCreditCard(let data): try container.encode(data, forKey: .teleCashCreditCard)
         case .tegutEmployeeCard(let data): try container.encode(data, forKey: .tegutEmployeeCard)
-        case .paydirektAuthorization(let data): try container.encode(data, forKey: .paydirektAuthorization)
+        case .giropayAuthorization(let data): try container.encode(data, forKey: .giropayAuthorization)
         case .datatransAlias(let data): try container.encode(data, forKey: .datatransAlias)
         case .datatransCardAlias(let data): try container.encode(data, forKey: .datatransCardAlias)
         case .payoneCreditCard(let data): try container.encode(data, forKey: .payoneCreditCard)
@@ -158,9 +158,9 @@ public extension PaymentMethod {
             if let data = detail?.data {
                 return .externalBilling(data)
             }
-        case .paydirektOneKlick:
+        case .giropayOneKlick:
             if let data = detail?.data {
-                return .paydirektOneKlick(data)
+                return .giropayOneKlick(data)
             }
         case .twint:
             if let data = detail?.data {
@@ -200,9 +200,9 @@ public struct PaymentMethodDetail: Equatable {
         self.methodData = PaymentMethodUserData.leinweberCustomerNumber(leinweberData)
     }
 
-    public init(_ paydirektData: PaydirektData) {
+    public init(_ paydirektData: GiropayData) {
         self.id = UUID()
-        self.methodData = PaymentMethodUserData.paydirektAuthorization(paydirektData)
+        self.methodData = PaymentMethodUserData.giropayAuthorization(paydirektData)
     }
 
     public init(_ datatransData: DatatransData) {
@@ -260,8 +260,8 @@ public struct PaymentMethodDetail: Equatable {
                 .leinweberCustomerNumber,
                 .invoiceByLogin:
             return .externalBilling
-        case .paydirektAuthorization:
-            return .paydirektOneKlick
+        case .giropayAuthorization:
+            return .giropayOneKlick
         case .datatransAlias(let datatransData):
             switch datatransData.method {
             case .twint: return .twint
@@ -296,7 +296,7 @@ public struct PaymentMethodDetail: Equatable {
             return payoneSepaData.projectId
         case .invoiceByLogin(let invoiceData):
             return invoiceData.projectId
-        case .sepa, .tegutEmployeeCard, .paydirektAuthorization, .leinweberCustomerNumber:
+        case .sepa, .tegutEmployeeCard, .giropayAuthorization, .leinweberCustomerNumber:
             return nil
         }
     }
@@ -329,8 +329,8 @@ extension RawPaymentMethod {
             return "payment-amex"
         case .gatekeeperTerminal:
             return "payment-sco"
-        case .paydirektOneKlick:
-            return "payment-paydirekt"
+        case .giropayOneKlick:
+            return "payment-giropay"
         case .applePay:
             return "payment-apple-pay"
         case .twint:

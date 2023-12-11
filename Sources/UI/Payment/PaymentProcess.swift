@@ -70,10 +70,10 @@ public final class PaymentProcess {
                 if !billing.isEmpty {
                     result.append(contentsOf: billing.reversed())
                 }
-            case .paydirektOneKlick:
-                let paydirekt = userData.filter { if case .paydirektOneKlick = $0 { return true } else { return false } }
-                if !paydirekt.isEmpty {
-                    result.append(contentsOf: paydirekt.reversed())
+            case .giropayOneKlick:
+                let giropay = userData.filter { if case .giropayOneKlick = $0 { return true } else { return false } }
+                if !giropay.isEmpty {
+                    result.append(contentsOf: giropay.reversed())
                 }
             case .twint:
                 let twint = userData.filter { if case .twint = $0 { return true } else { return false } }
@@ -128,11 +128,11 @@ public final class PaymentProcess {
                 if tegut != nil {
                     results.append(PaymentMethod.externalBilling(detail.data))
                 }
-            case .paydirektAuthorization:
-                let usePaydirekt = methods.first { $0.method == .paydirektOneKlick } != nil
-                if usePaydirekt {
-                    let paydirekt = PaymentMethod.paydirektOneKlick(detail.data)
-                    results.append(paydirekt)
+            case .giropayAuthorization:
+                let useGiropay = methods.first { $0.method == .giropayOneKlick } != nil
+                if useGiropay {
+                    let useGiropay = PaymentMethod.giropayOneKlick(detail.data)
+                    results.append(useGiropay)
                 }
             case .datatransAlias(let datatransData):
                 let data = detail.data

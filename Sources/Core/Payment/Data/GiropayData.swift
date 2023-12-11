@@ -1,12 +1,12 @@
 //
-//  PaydirektData.swift
+//  GiropayData.swift
 //
 //  Copyright © 2021 snabble. All rights reserved.
 //
 
 import Foundation
 
-public struct PaydirektData: Codable, EncryptedPaymentData, Equatable {
+public struct GiropayData: Codable, EncryptedPaymentData, Equatable {
     // encrypted JSON string
     public let encryptedPaymentData: String
     // serial # of the certificate used to encrypt
@@ -29,13 +29,13 @@ public struct PaydirektData: Codable, EncryptedPaymentData, Equatable {
         case deviceFingerprint, deviceIpAddress
     }
 
-    private struct PaydirektOrigin: PaymentRequestOrigin {
+    private struct GiropayOrigin: PaymentRequestOrigin {
         let clientID: String
         let customerAuthorizationURI: String
     }
 
-    public init?(_ gatewayCert: Data?, _ authorizationURI: String, _ auth: PaydirektAuthorization) {
-        let requestOrigin = PaydirektOrigin(clientID: Snabble.clientId, customerAuthorizationURI: authorizationURI)
+    public init?(_ gatewayCert: Data?, _ authorizationURI: String, _ auth: GiropayAuthorization) {
+        let requestOrigin = GiropayOrigin(clientID: Snabble.clientId, customerAuthorizationURI: authorizationURI)
 
         guard
             let encrypter = PaymentDataEncrypter(gatewayCert),

@@ -322,7 +322,7 @@ final class PaymentMethodSelector {
                 return [action]
             }
             
-        case .creditCardAmericanExpress, .creditCardVisa, .creditCardMastercard, .deDirectDebit, .paydirektOneKlick, .twint, .postFinanceCard:
+        case .creditCardAmericanExpress, .creditCardVisa, .creditCardMastercard, .deDirectDebit, .giropayOneKlick, .twint, .postFinanceCard:
             if isPaymentMethodDetailAvailable {
                 if hasCartMethods {
                     if isCartMethod {

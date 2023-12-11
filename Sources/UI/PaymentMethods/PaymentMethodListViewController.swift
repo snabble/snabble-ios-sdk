@@ -154,7 +154,7 @@ extension PaymentMethodListViewController {
                 editVC = SepaDataEditViewController(viewModel: SepaDataModel(detail: detail, projectId: projectId))
             case .teleCashCreditCard:
                 editVC = TeleCashCreditCardEditViewController(detail, self.analyticsDelegate)
-            case .paydirektAuthorization:
+            case .giropayAuthorization:
                 editVC = GiropayEditViewController(detail, for: projectId, with: self.analyticsDelegate)
             case .payoneCreditCard:
                 editVC = PayoneCreditCardEditViewController(detail, self.analyticsDelegate)
