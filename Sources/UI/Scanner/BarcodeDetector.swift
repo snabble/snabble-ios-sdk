@@ -135,7 +135,7 @@ open class BarcodeDetector: NSObject {
             let msg = Asset.localizedString(forKey: "Snabble.Scanner.Camera.allowAccess")
             let alert = UIAlertController(title: title, message: msg, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.cancel"), style: .cancel, handler: nil))
-            alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.settings"), style: .default) { _ in
+            alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.goToSettings"), style: .default) { _ in
                 UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
             })
             DispatchQueue.main.async {
