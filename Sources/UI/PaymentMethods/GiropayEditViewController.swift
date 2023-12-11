@@ -208,7 +208,7 @@ public final class GiropayEditViewController: UIViewController {
 
     private func startAuthorization() {
         guard
-            let authUrl = Snabble.shared.paydirektAuthorizationHref,
+            let authUrl = Snabble.shared.giropayAuthorizationHref,
             let projectId = projectId,
             let project = Snabble.shared.project(for: projectId)
         else {
