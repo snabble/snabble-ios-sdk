@@ -7,6 +7,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 
 ### Added
+
+### Fixed
+
+### Removed
+
+### Updated
+
+## [0.44.0] - 2023-12-13
+
+### Added
 * Add unread badge to receipts line items #APPS-1023
 * Added placeholder for processing Grab&Go orders #APPS-1180
 * Neue Zahlungsmethode Giropay – Wording-Anpassung und Logo #APPS-1248 
