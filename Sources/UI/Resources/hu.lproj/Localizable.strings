@@ -126,6 +126,20 @@
 
 "Snabble.ExternalBilling.payNow" = "Pay now using purchase on invoice";
 
+"Snabble.Giropay.AuthorizationFailed.message" = "Kérlek, próbáld meg később még egyszer";
+
+"Snabble.Giropay.AuthorizationFailed.title" = "Nem sikerült az azonosítás";
+
+"Snabble.Giropay.deleteAuthorization" = "Fizetési mód törlése";
+
+"Snabble.Giropay.gotoWebsite" = "A giropay.de oldalra";
+
+"Snabble.Giropay.payNow" = "Fizetés giropay tel";
+
+"Snabble.Giropay.savedAuthorization" = "A Snabble alkalmazást sikeresen bejelentetted a giropayre. Visszavonásához a giropay fiókadataiddal be kell jelentkezned a honlapon. Ha nem szeretnéd, hogy a giropay a fizetési lehetőségeid között legyen, akkor itt egyszerűen eltávolíthatod.";
+
+"Snabble.Giropay.title" = "giropay";
+
 "Snabble.goToSettings" = "A beállításokhoz";
 
 "Snabble.Hints.closedBags" = "Csak így tovább! Kérjük, könnyítsd meg a pénztáros munkáját, és ne csomagold közvetlenül lezárt tasakba a termékedet. Köszönjük!";
@@ -168,20 +182,6 @@
 "Snabble.Onboarding.Link.show" = "Megtekintés";
 
 "Snabble.Onboarding.next" = "Tovább";
-
-"Snabble.Paydirekt.AuthorizationFailed.message" = "Kérlek, próbáld meg később még egyszer";
-
-"Snabble.Paydirekt.AuthorizationFailed.title" = "Nem sikerült az azonosítás";
-
-"Snabble.Paydirekt.deleteAuthorization" = "Fizetési mód törlése";
-
-"Snabble.Paydirekt.gotoWebsite" = "A paydirekt.de oldalra";
-
-"Snabble.Paydirekt.payNow" = "Fizetés paydirekttel";
-
-"Snabble.Paydirekt.savedAuthorization" = "A Snabble alkalmazást sikeresen bejelentetted a paydirektre. Visszavonásához a paydirekt fiókadataiddal be kell jelentkezned a honlapon. Ha nem szeretnéd, hogy a paydirekt a fizetési lehetőségeid között legyen, akkor itt egyszerűen eltávolíthatod.";
-
-"Snabble.Paydirekt.title" = "paydirekt";
 
 /* SECTION: SnabbleAndroid */
 "Snabble.Payment.aborted" = "Megszakadt a fizetési folyamat";

@@ -12,7 +12,7 @@ extension PaymentMethod {
     public var dataRequired: Bool {
         switch self {
         case .deDirectDebit, .visa, .mastercard, .americanExpress,
-             .externalBilling, .paydirektOneKlick, .twint, .postFinanceCard:
+             .externalBilling, .giropayOneKlick, .twint, .postFinanceCard:
             return true
         case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS, .applePay:
             return false

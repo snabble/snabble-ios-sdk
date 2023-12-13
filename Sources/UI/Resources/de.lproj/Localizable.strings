@@ -126,6 +126,20 @@
 
 "Snabble.ExternalBilling.payNow" = "Jetzt mit Kauf auf Rechnung bezahlen";
 
+"Snabble.Giropay.AuthorizationFailed.message" = "Bitte versuche es später nochmal";
+
+"Snabble.Giropay.AuthorizationFailed.title" = "Autorisierung fehlgeschlagen";
+
+"Snabble.Giropay.deleteAuthorization" = "Zahlungsmethode löschen";
+
+"Snabble.Giropay.gotoWebsite" = "Zu giropay.de";
+
+"Snabble.Giropay.payNow" = "Jetzt mit giropay bezahlen";
+
+"Snabble.Giropay.savedAuthorization" = "Du hast die Snabble-App erfolgreich für giropay autorisiert. Um dies rückgängig zu machen, musst du dich bei deinem giropay-Konto auf der Webseite anmelden. Möchtest du giropay nicht mehr als Zahlungsmethode angezeigt bekommen, kannst du sie hier einfach entfernen.";
+
+"Snabble.Giropay.title" = "giropay";
+
 "Snabble.goToSettings" = "Zu den Einstellungen";
 
 "Snabble.Hints.closedBags" = "Weiter so! Bitte mache es dem Kassenpersonal leicht und packe deine Artikel nicht direkt in geschlossene Taschen. Danke!";
@@ -168,20 +182,6 @@
 "Snabble.Onboarding.Link.show" = "Ansehen";
 
 "Snabble.Onboarding.next" = "Weiter";
-
-"Snabble.Paydirekt.AuthorizationFailed.message" = "Bitte versuche es später nochmal";
-
-"Snabble.Paydirekt.AuthorizationFailed.title" = "Autorisierung fehlgeschlagen";
-
-"Snabble.Paydirekt.deleteAuthorization" = "Zahlungsmethode löschen";
-
-"Snabble.Paydirekt.gotoWebsite" = "Zu paydirekt.de";
-
-"Snabble.Paydirekt.payNow" = "Jetzt mit paydirekt bezahlen";
-
-"Snabble.Paydirekt.savedAuthorization" = "Du hast die Snabble-App erfolgreich für paydirekt autorisiert. Um dies rückgängig zu machen, musst du dich bei deinem paydirekt-Konto auf der Webseite anmelden. Möchtest du paydirekt nicht mehr als Zahlungsmethode angezeigt bekommen, kannst du sie hier einfach entfernen.";
-
-"Snabble.Paydirekt.title" = "paydirekt";
 
 /* SECTION: SnabbleAndroid */
 "Snabble.Payment.aborted" = "Der Bezahlvorgang wurde abgebrochen";

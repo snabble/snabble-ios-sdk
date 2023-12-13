@@ -54,8 +54,8 @@ public final class PaymentMethodStartCheck {
         case .visa, .mastercard, .americanExpress:
             self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.CreditCard.payNow"), completion)
 
-        case .paydirektOneKlick:
-            self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.Paydirekt.payNow"), completion)
+        case .giropayOneKlick:
+            self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.Giropay.payNow"), completion)
 
         case .twint:
             self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.Twint.payNow"), completion)

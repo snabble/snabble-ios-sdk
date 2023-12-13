@@ -41,7 +41,7 @@ public enum AcceptedOriginType: String, Codable {
     case iban
     case ipgHostedDataID
     case tegutEmployeeID
-    case paydirektCustomerAuthorization
+    case giropayCustomerAuthorization = "paydirektCustomerAuthorization"
     case datatransAlias
     case datatransCreditCardAlias
     case payonePseudoCardPAN

@@ -172,9 +172,11 @@ public class Snabble {
             NotificationCenter.default.post(name: .metadataLoaded, object: nil)
         }
     }
-    public var paydirektAuthorizationHref: String? {
-        return metadata.links.paydirektCustomerAuthorization?.href
+    
+    public var giropayAuthorizationHref: String? {
+        return metadata.links.giropayCustomerAuthorization?.href
     }
+    
     public static let methodRegistry = MethodRegistry()
 
     private var databases: [Identifier<Project>: ProductDatabase]

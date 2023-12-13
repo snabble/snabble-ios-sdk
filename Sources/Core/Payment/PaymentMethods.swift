@@ -25,7 +25,7 @@ public enum RawPaymentMethod: String, Decodable {
     case externalBilling        // external billing, e.g. via an employee id
     case gatekeeperTerminal
     case customerCardPOS        // payment via customer card invoice
-    case paydirektOneKlick
+    case giropayOneKlick = "paydirektOneKlick"
     case applePay               // via Telecash/First Data
     case postFinanceCard        // via Datatrans
     case twint                  // via Datatrans
@@ -36,7 +36,7 @@ public enum RawPaymentMethod: String, Decodable {
 
         // online methods, alphabetically
         .creditCardAmericanExpress, .applePay,
-        .creditCardMastercard, .paydirektOneKlick,
+        .creditCardMastercard, .giropayOneKlick,
         .postFinanceCard, .deDirectDebit,
         .twint, .creditCardVisa,
 
@@ -48,14 +48,14 @@ public enum RawPaymentMethod: String, Decodable {
     // roughly sorted by popularity
     // Apple Pay is not included here, needs separate treatment
     public static let preferredOnlineMethods: [RawPaymentMethod] = [
-        .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .paydirektOneKlick
+        .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .giropayOneKlick
     ]
 
     /// true if this method reqires additional data, like an IBAN or a credit card number
     public var dataRequired: Bool {
         switch self {
         case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress,
-             .externalBilling, .customerCardPOS, .paydirektOneKlick, .twint, .postFinanceCard:
+             .externalBilling, .customerCardPOS, .giropayOneKlick, .twint, .postFinanceCard:
             return true
         case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .applePay:
             return false
@@ -65,7 +65,7 @@ public enum RawPaymentMethod: String, Decodable {
     /// true if this method is shown/edited on the PaymentMethod[Add|List]ViewControllers
     public var editable: Bool {
         switch self {
-        case .deDirectDebit, .paydirektOneKlick,
+        case .deDirectDebit, .giropayOneKlick,
              .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress,
              .twint, .postFinanceCard:
             return true
@@ -77,7 +77,7 @@ public enum RawPaymentMethod: String, Decodable {
     /// true if this method is visible on the PaymentMethod[Add|List]ViewControllers
     public var visible: Bool {
         switch self {
-        case .deDirectDebit, .paydirektOneKlick,
+        case .deDirectDebit, .giropayOneKlick,
              .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress,
              .twint, .postFinanceCard:
             return true
@@ -93,7 +93,7 @@ public enum RawPaymentMethod: String, Decodable {
     /// true if editing/entering this method requires a device passcode or biometry
     public var codeRequired: Bool {
         switch self {
-        case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .paydirektOneKlick,
+        case .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .giropayOneKlick,
              .twint, .postFinanceCard:
             return true
         case .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS, .applePay:
@@ -108,7 +108,7 @@ public enum RawPaymentMethod: String, Decodable {
             return true
         case .qrCodePOS, .deDirectDebit,
              .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress,
-             .externalBilling, .gatekeeperTerminal, .customerCardPOS, .paydirektOneKlick,
+             .externalBilling, .gatekeeperTerminal, .customerCardPOS, .giropayOneKlick,
              .applePay, .twint, .postFinanceCard:
             return false
         }
@@ -121,7 +121,7 @@ public enum RawPaymentMethod: String, Decodable {
             return true
         case .qrCodeOffline, .qrCodePOS, .deDirectDebit,
              .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress,
-             .externalBilling, .gatekeeperTerminal, .customerCardPOS, .paydirektOneKlick,
+             .externalBilling, .gatekeeperTerminal, .customerCardPOS, .giropayOneKlick,
              .applePay:
             return false
         }
@@ -169,7 +169,7 @@ public enum PaymentMethod {
     case externalBilling(PaymentMethodData?)
     case gatekeeperTerminal
     case customerCardPOS
-    case paydirektOneKlick(PaymentMethodData?)
+    case giropayOneKlick(PaymentMethodData?)
     case applePay
     case twint(PaymentMethodData?)
     case postFinanceCard(PaymentMethodData?)
@@ -185,7 +185,7 @@ public enum PaymentMethod {
         case .externalBilling: return .externalBilling
         case .gatekeeperTerminal: return .gatekeeperTerminal
         case .customerCardPOS: return .customerCardPOS
-        case .paydirektOneKlick: return .paydirektOneKlick
+        case .giropayOneKlick: return .giropayOneKlick
         case .applePay: return .applePay
         case .twint: return .twint
         case .postFinanceCard: return .postFinanceCard
@@ -198,7 +198,7 @@ public enum PaymentMethod {
             return data
         case .externalBilling(let data):
             return data
-        case .paydirektOneKlick(let data):
+        case .giropayOneKlick(let data):
             return data
         case .twint(let data):
             return data
@@ -211,7 +211,7 @@ public enum PaymentMethod {
 
     public var additionalData: [String: String] {
         switch self {
-        case .visa(let data), .mastercard(let data), .americanExpress(let data), .paydirektOneKlick(let data):
+        case .visa(let data), .mastercard(let data), .americanExpress(let data), .giropayOneKlick(let data):
             return data?.additionalData ?? [:]
         case .deDirectDebit, .qrCodePOS, .qrCodeOffline, .externalBilling, .gatekeeperTerminal, .customerCardPOS,
              .applePay, .twint, .postFinanceCard:

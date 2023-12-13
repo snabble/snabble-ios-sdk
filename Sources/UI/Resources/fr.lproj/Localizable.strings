@@ -126,6 +126,20 @@
 
 "Snabble.ExternalBilling.payNow" = "Pay now using purchase on invoice";
 
+"Snabble.Giropay.AuthorizationFailed.message" = "Veuillez réessayer plus tard";
+
+"Snabble.Giropay.AuthorizationFailed.title" = "Échec de l'autorisation";
+
+"Snabble.Giropay.deleteAuthorization" = "Supprimer le mode de paiement";
+
+"Snabble.Giropay.gotoWebsite" = "Aller à giropay.de";
+
+"Snabble.Giropay.payNow" = "Payer maintenant avec giropay";
+
+"Snabble.Giropay.savedAuthorization" = "Vous avez autorisé avec succès l'application Snabble pour giropay. Pour annuler cela, vous devez vous connecter à votre compte giropay sur le site. Si vous ne souhaitez plus que giropay soit affiché comme méthode de paiement, vous pouvez simplement le supprimer ici.";
+
+"Snabble.Giropay.title" = "giropay";
+
 "Snabble.goToSettings" = "Aller aux réglages";
 
 "Snabble.Hints.closedBags" = "Parfait, continuez ! S'il vous plaît, facilitez la tâche du personnel de caisse et ne déposez pas vos articles directement dans des sacs fermés. Merci !";
@@ -168,20 +182,6 @@
 "Snabble.Onboarding.Link.show" = "Consulter";
 
 "Snabble.Onboarding.next" = "Continuer";
-
-"Snabble.Paydirekt.AuthorizationFailed.message" = "Veuillez réessayer plus tard";
-
-"Snabble.Paydirekt.AuthorizationFailed.title" = "Échec de l'autorisation";
-
-"Snabble.Paydirekt.deleteAuthorization" = "Supprimer le mode de paiement";
-
-"Snabble.Paydirekt.gotoWebsite" = "Aller à paydirekt.de";
-
-"Snabble.Paydirekt.payNow" = "Payer maintenant avec paydirekt";
-
-"Snabble.Paydirekt.savedAuthorization" = "Vous avez autorisé avec succès l'application Snabble pour paydirekt. Pour annuler cela, vous devez vous connecter à votre compte paydirekt sur le site. Si vous ne souhaitez plus que paydirekt soit affiché comme méthode de paiement, vous pouvez simplement le supprimer ici.";
-
-"Snabble.Paydirekt.title" = "paydirekt";
 
 /* SECTION: SnabbleAndroid */
 "Snabble.Payment.aborted" = "Le processus de paiement a été interrompu";
