@@ -9,7 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Fixed
-* Maps jumps to wrong position #APPS-962
+* Map pin points to the wrongs location #APPS-990
 
 ### Removed
 
