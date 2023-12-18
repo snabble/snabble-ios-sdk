@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 ### Fixed
+* Map pin points to the wrongs location #APPS-990
 
 ### Removed
 * Removed leinweber customercard as payment method #APPS-883

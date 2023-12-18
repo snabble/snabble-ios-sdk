@@ -72,7 +72,7 @@ public struct ShopAnnotationView: View {
                             .background(Color.accent())
                             .foregroundColor(.onAccent())
                             .cornerRadius(4)
-                   }
+                    }
                     .navigateToShopAlert(isPresented: $showingAlert, shop: shopLocation.shop)
 
                     VStack(alignment: .leading, spacing: 0) {
@@ -94,11 +94,10 @@ public struct ShopAnnotationView: View {
             mapMarker
         }
         .onTapGesture {
-          withAnimation(.easeInOut) {
-            showTitle.toggle()
-          }
+            withAnimation(.easeInOut) {
+                showTitle.toggle()
+            }
         }
-
     }
 }
 
@@ -140,7 +139,7 @@ public struct ShopMapView: View {
             showsUserLocation: true,
                 userTrackingMode: .constant(.none),
                 annotationItems: [self.shopLocation]) { place in
-                MapAnnotation(coordinate: place.shop.location.coordinate) {
+                MapAnnotation(coordinate: place.shop.location.coordinate, anchorPoint: CGPoint(x: 0.5, y: 1)) {
                     ShopAnnotationView(shopLocation: place)
                         .shadow(color: .gray, radius: 3, x: 2, y: 2)
                 }
@@ -151,7 +150,7 @@ public struct ShopMapView: View {
             showsUserLocation: true,
             userTrackingMode: .constant(.follow),
                 annotationItems: [self.shopLocation]) { place in
-                MapAnnotation(coordinate: place.shop.location.coordinate) {
+                MapAnnotation(coordinate: place.shop.location.coordinate, anchorPoint: CGPoint(x: 0.5, y: 1)) {
                     ShopAnnotationView(shopLocation: place)
                         .shadow(color: .gray, radius: 3, x: 2, y: 2)
                 }
