@@ -80,7 +80,7 @@ final class PaymentMethodListCell: UITableViewCell {
             }
             icon = detail.icon
             switch detail.originType {
-            case .tegutEmployeeID, .leinweberCustomerID:
+            case .tegutEmployeeID:
                 accessoryType = .none
                 selectionStyle = .none
             default:

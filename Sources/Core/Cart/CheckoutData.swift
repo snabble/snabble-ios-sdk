@@ -46,7 +46,6 @@ public enum AcceptedOriginType: String, Codable {
     case datatransCreditCardAlias
     case payonePseudoCardPAN
     case payoneSepaData
-    case leinweberCustomerID
     case contactPersonCredentials
 }
 

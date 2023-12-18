@@ -92,7 +92,7 @@ public extension Project {
                 return payoneData.projectId == id
             case .payoneSepa(let payoneSepaData):
                 return payoneSepaData.projectId == id
-            case .tegutEmployeeCard, .sepa, .giropayAuthorization, .leinweberCustomerNumber, .invoiceByLogin:
+            case .tegutEmployeeCard, .sepa, .giropayAuthorization, .invoiceByLogin:
                 return Snabble.shared.project(for: id)?.paymentMethods.contains(where: { $0 == detail.rawMethod }) ?? false
             }
         }
