@@ -35,9 +35,9 @@ extension DashboardViewController: DynamicViewControllerDelegate {
         print(widget, userInfo?.description ?? "no userInfo")
         switch widget.type {
         case .startShopping:
-            tabBarController?.selectedIndex = 1
-        case .allStores:
             tabBarController?.selectedIndex = 2
+        case .allStores:
+            tabBarController?.selectedIndex = 1
         case .lastPurchases:
             var rootViewController: UIViewController?
             if let action = userInfo?["action"] as? String, action == "more" {
