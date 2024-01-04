@@ -163,7 +163,13 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
                     
                     if orders.isEmpty {
                         userDefaults.setReceiptCount(0)
-                        self.state = .empty
+
+                        awaitingReceipts(for: orders)
+                        if awaitingReceipts {
+                            self.state = .loaded([])
+                        } else {
+                            self.state = .empty
+                        }
                     } else {
                         self.state = .loaded(orders)
                         
@@ -196,6 +202,10 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
         guard intervals.last! + 86_400 >= Date().timeIntervalSince1970 else {
             userDefaults.clearGrabAndGoIntervals()
             awaitingReceipts = false
+            return
+        }
+        if orders.isEmpty {
+            awaitingReceipts = true
             return
         }
         
