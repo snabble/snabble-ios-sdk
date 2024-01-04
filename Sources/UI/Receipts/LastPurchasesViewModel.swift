@@ -163,8 +163,13 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
                     
                     if orders.isEmpty {
                         userDefaults.setReceiptCount(0)
-                        self.state = .empty
+
                         awaitingReceipts(for: orders)
+                        if awaitingReceipts {
+                            self.state = .loaded([])
+                        } else {
+                            self.state = .empty
+                        }
                     } else {
                         self.state = .loaded(orders)
                         
