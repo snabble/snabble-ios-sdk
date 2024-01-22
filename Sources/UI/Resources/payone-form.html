@@ -27,10 +27,14 @@
             window.webkit.messageHandlers.{{handler}}.postMessage({ error: msg });
         }
         
-        function processResponse(obj, lastName) {
+        function processResponse(obj, lastname, email, street, zip, city, country) {
             window.webkit.messageHandlers.{{handler}}.postMessage({
                 response: obj,
-                lastName: lastName
+                lastname: lastname,
+                email: email,
+                street: street,
+                zip: zip,
+                city: city
             });
         }
     </script>
@@ -197,8 +201,13 @@
         PayoneAutoCcDetection.prototype._creditCardCheckCallback = function (response) {
             switch (response.status) {
                 case 'VALID':
-                    var lastName = document.getElementById('lastName').value;
-                    processResponse(response, lastName);
+                    processResponse(response,
+                                    document.getElementById('lastname').value,
+                                    document.getElementById('email').value,
+                                    document.getElementById('street').value,
+                                    document.getElementById('zip').value,
+                                    document.getElementById('city').value,
+                                    document.getElementById('country').value);
                     break;
                 case 'INVALID':
                 case 'ERROR':
@@ -214,8 +223,13 @@
          * Performs the credit card check.
          */
         PayoneAutoCcDetection.prototype.performCreditCardCheck = function () {
-            var name = document.getElementById('lastName').value
-            if (this._hostedIframe.isComplete() && name != "") {
+            var name = document.getElementById('lastname').value
+            var email = document.getElementById('email').value
+            var street = document.getElementById('street').value
+            var zip = document.getElementById('zip').value
+            var city = document.getElementById('city').value
+            var country = document.getElementById('country').value
+            if (this._hostedIframe.isComplete() && name != "" $$ email != "" && street != "" && zip != "" && city != "" && country != "") {
                 this._hostedIframe.creditCardCheck(this._creditCardCheckCallbackName);
             }
             else {
@@ -240,9 +254,9 @@
                 <!-- The form HTML with IFrame fields. -->
                 <form id="cc-form" class="my-3" action="#" method="post">
                     <div class="form-group">
-                        <label for="lastname">{{lastName}}</label>
+                        <label for="lastname">{{lastname}}</label>
                         <div class="payone-input-mock">
-                            <input type="text" name="lastname" id="lastName"/>
+                            <input type="text" name="lastname" id="lastname"/>
                         </div>
                     </div>
                     <div class="form-group">
