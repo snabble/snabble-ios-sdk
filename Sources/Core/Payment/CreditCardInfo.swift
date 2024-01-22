@@ -19,8 +19,9 @@ public struct CreditCardInfo: Codable {
         let city: String
         let country: String
     }
-    public init(with body: [String: Any]) {
-        self.pseudoCardPAN = body["pseudocardpan"] as? String ?? ""
+    public init(withPAN pan: String, body: [String: Any]) {
+        self.pseudoCardPAN = pan
+        
         self.lastname = body["lastname"] as? String ?? ""
         self.email = body["email"] as? String ?? ""
         
