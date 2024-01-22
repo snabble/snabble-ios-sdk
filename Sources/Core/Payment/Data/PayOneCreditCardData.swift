@@ -34,7 +34,7 @@ public struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, Br
     }
 
     public init?(gatewayCert: Data?, response: PayoneResponse, preAuthResult: PayonePreAuthResult, projectId: Identifier<Project>) {
-        let requestOrigin = PayoneOrigin(pseudoCardPAN: response.pseudoCardPAN, name: response.info.lastname, userID: preAuthResult.userID)
+        let requestOrigin = PayoneOrigin(pseudoCardPAN: response.info.pseudoCardPAN, name: response.info.lastname, userID: preAuthResult.userID)
 
         guard
             let encrypter = PaymentDataEncrypter(gatewayCert),
@@ -76,17 +76,15 @@ public struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, Br
 }
 
 public struct PayoneResponse {
-    public let pseudoCardPAN: String
+    public let info: CreditCardInfo
     let maskedCardPAN: String
     let brand: CreditCardBrand
     let cardExpireDate: String // MM/YY
-    public let info: CreditCardInfo
 
     public init?(response: [String: Any], info: CreditCardInfo) {
         guard
             let status = response["status"] as? String,
             status == "VALID",
-            let pseudoCardPAN = response["pseudocardpan"] as? String,
             let maskedCardPAN = response["truncatedcardpan"] as? String,
             let cardtype = response["cardtype"] as? String,
             let brand = CreditCardBrand.forType(cardtype),
@@ -95,7 +93,6 @@ public struct PayoneResponse {
             return nil
         }
 
-        self.pseudoCardPAN = pseudoCardPAN
         self.maskedCardPAN = maskedCardPAN
         self.brand = brand
         self.info = info

@@ -340,10 +340,11 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     }
 
     // handle the response data we get from the payone web form. if the response is OK, start the pre-auth process
-    private func processResponse(_ response: [String: Any], info: CreditCardInfo) {
+    private func processResponse(_ response: [String: Any], info: CreditCardInfo?) {
         guard
             let projectId = self.projectId,
             let project = Snabble.shared.project(for: projectId),
+            let info = info,
             let response = PayoneResponse(response: response, info: info)
         else {
             return
@@ -601,7 +602,7 @@ extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
         } else if let error = body["error"] as? String {
             return showErrorAlert(message: error, goBack: false)
         } else if let response = body["response"] as? [String: Any] {
-            self.processResponse(response, info: CreditCardInfo(withPAN: response["pseudocardpan"] as? String ?? "", body: body))
+            self.processResponse(response, info: CreditCardInfo(withPAN: response["pseudocardpan"] as? String, body: body))
         }
     }
 }

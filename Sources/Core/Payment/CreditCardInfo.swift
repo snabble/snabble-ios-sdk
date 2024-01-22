@@ -19,7 +19,10 @@ public struct CreditCardInfo: Codable {
         let city: String
         let country: String
     }
-    public init(withPAN pan: String, body: [String: Any]) {
+    public init?(withPAN pan: String?, body: [String: Any]) {
+        guard let pan = pan else {
+            return nil
+        }
         self.pseudoCardPAN = pan
         
         self.lastname = body["lastname"] as? String ?? ""
