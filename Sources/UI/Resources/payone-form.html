@@ -224,13 +224,14 @@
          * Performs the credit card check.
          */
         PayoneAutoCcDetection.prototype.performCreditCardCheck = function () {
-            var name = document.getElementById('lastname').value
-            var email = document.getElementById('email').value
-            var street = document.getElementById('street').value
-            var zip = document.getElementById('zip').value
-            var city = document.getElementById('city').value
-            var country = document.getElementById('country').value
-            if (this._hostedIframe.isComplete() && name != "" $$ email != "" && street != "" && zip != "" && city != "" && country != "") {
+            var name = document.getElementById('lastname').value;
+            var email = document.getElementById('email').value;
+            var street = document.getElementById('street').value;
+            var zip = document.getElementById('zip').value;
+            var city = document.getElementById('city').value;
+            var country = document.getElementById('country').value;
+            
+            if (this._hostedIframe.isComplete() && name != "" && email != "" && street != "" && zip != "" && city != "" && country != "") {
                 this._hostedIframe.creditCardCheck(this._creditCardCheckCallbackName);
             }
             else {
