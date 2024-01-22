@@ -31,11 +31,11 @@ public struct PayoneTokenization: Decodable {
 // data we send to begin the pre-auth
 public struct PayonePreAuthData: Encodable {
     public let pseudoCardPAN: String
-    public let lastname: String
+    public let info: CreditCardInfo
     
-    public init(pseudoCardPAN: String, lastname: String) {
+    public init(pseudoCardPAN: String, info: CreditCardInfo) {
         self.pseudoCardPAN = pseudoCardPAN
-        self.lastname = lastname
+        self.info = info
     }
 }
 

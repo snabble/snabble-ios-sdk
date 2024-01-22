@@ -340,12 +340,11 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     }
 
     // handle the response data we get from the payone web form. if the response is OK, start the pre-auth process
-    private func processResponse(_ response: [String: Any], _ lastname: String?) {
+    private func processResponse(_ response: [String: Any], info: CreditCardInfo) {
         guard
             let projectId = self.projectId,
             let project = Snabble.shared.project(for: projectId),
-            let lastname = lastname,
-            let response = PayoneResponse(response: response, lastname: lastname)
+            let response = PayoneResponse(response: response, info: info)
         else {
             return
         }
@@ -488,7 +487,7 @@ extension PayoneCreditCardEditViewController {
                 return completion(Result.failure(SnabbleError.noRequest))
             }
 
-            let preAuthData = PayonePreAuthData(pseudoCardPAN: response.pseudoCardPAN, lastname: response.lastname)
+            let preAuthData = response.info // PayonePreAuthData(pseudoCardPAN: response.pseudoCardPAN, lastname: response.lastname)
             // swiftlint:disable:next force_try
             request.httpBody = try! JSONEncoder().encode(preAuthData)
 
@@ -543,7 +542,7 @@ extension PayoneCreditCardEditViewController {
             .replacingOccurrences(of: "{{supportedCardType}}", with: self.brand?.paymentMethod ?? "")
             .replacingOccurrences(of: "{{fieldColors}}", with: fieldColors)
             // TODO: l10n
-            .replacingOccurrences(of: "{{lastName}}", with: Asset.localizedString(forKey: "Snabble.Payone.lastname"))
+            .replacingOccurrences(of: "{{lastname}}", with: Asset.localizedString(forKey: "Snabble.Payone.lastname"))
             .replacingOccurrences(of: "{{cardNumberLabel}}", with: Asset.localizedString(forKey: "Snabble.Payone.cardNumber"))
             .replacingOccurrences(of: "{{cvcLabel}}", with: Asset.localizedString(forKey: "Snabble.Payone.cvc"))
             .replacingOccurrences(of: "{{expireMonthLabel}}", with: Asset.localizedString(forKey: "Snabble.Payone.expireMonth"))
@@ -602,8 +601,7 @@ extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
         } else if let error = body["error"] as? String {
             return showErrorAlert(message: error, goBack: false)
         } else if let response = body["response"] as? [String: Any] {
-            let lastName = body["lastName"] as? String
-            self.processResponse(response, lastName)
+            self.processResponse(response, info: CreditCardInfo(with: body))
         }
     }
 }
