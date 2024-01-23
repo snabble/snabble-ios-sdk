@@ -554,6 +554,7 @@ extension PayoneCreditCardEditViewController {
             .replacingOccurrences(of: "{{zip}}", with: Asset.localizedString(forKey: "Snabble.Payone.zip"))
             .replacingOccurrences(of: "{{city}}", with: Asset.localizedString(forKey: "Snabble.Payone.city"))
             .replacingOccurrences(of: "{{country}}", with: Asset.localizedString(forKey: "Snabble.Payone.country"))
+            .replacingOccurrences(of: "{{chooseCountry}}", with: Asset.localizedString(forKey: "Snabble.Payone.chooseCountry"))
             .replacingOccurrences(of: "{{state}}", with: Asset.localizedString(forKey: "Snabble.Payone.state"))
             .replacingOccurrences(of: "{{chooseState}}", with: Asset.localizedString(forKey: "Snabble.Payone.chooseState"))
 
