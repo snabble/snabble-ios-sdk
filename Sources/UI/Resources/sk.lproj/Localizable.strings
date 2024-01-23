@@ -413,7 +413,22 @@
 
 "Snabble.Payone.cardNumber" = "Číslo karty";
 
+/* Disabled country choose hint for the Payone Credit Card Input View */
+"Snabble.Payone.chooseCountry" = "Please select the country";
+
+/* Disabled state choose hint for the Payone Credit Card Input View */
+"Snabble.Payone.chooseState" = "Please select the state";
+
+/* City for the Payone Credit Card Input View */
+"Snabble.Payone.city" = "City";
+
+/* Country for the Payone Credit Card Input View */
+"Snabble.Payone.country" = "Country";
+
 "Snabble.Payone.cvc" = "Kontrolné číslo (CVC)";
+
+/* Email for the Payone Credit Card Input View */
+"Snabble.Payone.email" = "E-Mail";
 
 "Snabble.Payone.expireMonth" = "Koniec platnosti – mesiac (MM)";
 
@@ -422,6 +437,15 @@
 "Snabble.Payone.incompleteForm" = "Vyplň formulár úplne, prosím.";
 
 "Snabble.Payone.lastname" = "Priezvisko";
+
+/* State for the Payone Credit Card Input View */
+"Snabble.Payone.state" = "State";
+
+/* Street and Housenumber for the Payone Credit Card Input View */
+"Snabble.Payone.street" = "Street";
+
+/* Zip for the Payone Credit Card Input View */
+"Snabble.Payone.zip" = "Zip";
 
 "Snabble.pleaseWait" = "Čakaj, prosím...";
 

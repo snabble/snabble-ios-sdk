@@ -18,6 +18,7 @@ public struct CreditCardInfo: Codable {
         let zip: String
         let city: String
         let country: String
+        let state: String
     }
     public init?(withPAN pan: String?, body: [String: Any]) {
         guard let pan = pan else {
@@ -31,6 +32,7 @@ public struct CreditCardInfo: Codable {
         self.address = Address(street: body["street"] as? String ?? "",
                                zip: body["zip"] as? String ?? "",
                                city: body["city"] as? String ?? "",
-                               country: body["country"] as? String ?? "")
+                               country: body["country"] as? String ?? "",
+                               state: body["state"] as? String ?? "")
     }
 }

@@ -27,7 +27,7 @@
             window.webkit.messageHandlers.{{handler}}.postMessage({ error: msg });
         }
         
-        function processResponse(obj, lastname, email, street, zip, city, country) {
+        function processResponse(obj, lastname, email, street, zip, city, country, state) {
             window.webkit.messageHandlers.{{handler}}.postMessage({
                 response: obj,
                 lastname: lastname,
@@ -35,7 +35,8 @@
                 street: street,
                 zip: zip,
                 city: city,
-                country: country
+                country: country,
+                state: state
             });
         }
     </script>
@@ -224,7 +225,8 @@
                                     document.getElementById('street').value,
                                     document.getElementById('zip').value,
                                     document.getElementById('city').value,
-                                    document.getElementById('countrySelect').value);
+                                    document.getElementById('countrySelect').value,
+                                    document.getElementById('stateSelect').value);
                     break;
                 case 'INVALID':
                 case 'ERROR':
@@ -240,13 +242,12 @@
          * Performs the credit card check.
          */
         PayoneAutoCcDetection.prototype.performCreditCardCheck = function () {
-            var name = document.getElementById('lastname').value;
-            var email = document.getElementById('email').value;
-            var street = document.getElementById('street').value;
-            var zip = document.getElementById('zip').value;
-            var city = document.getElementById('city').value;
-            var country = document.getElementById('countrySelect').value;
-            // var state = document.getElementById('stateSelect').value;
+            let name = document.getElementById('lastname').value;
+            let email = document.getElementById('email').value;
+            let street = document.getElementById('street').value;
+            let zip = document.getElementById('zip').value;
+            let city = document.getElementById('city').value;
+            let country = document.getElementById('countrySelect').value;
 
             if (this._hostedIframe.isComplete() && name != "" && email != "" && street != "" && zip != "" && city != "" && country != "") {
                 this._hostedIframe.creditCardCheck(this._creditCardCheckCallbackName);

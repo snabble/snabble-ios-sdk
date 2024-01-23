@@ -550,6 +550,13 @@ extension PayoneCreditCardEditViewController {
             .replacingOccurrences(of: "{{expireYearLabel}}", with: Asset.localizedString(forKey: "Snabble.Payone.expireYear"))
             .replacingOccurrences(of: "{{saveButtonLabel}}", with: Asset.localizedString(forKey: "Snabble.save"))
             .replacingOccurrences(of: "{{incompleteForm}}", with: Asset.localizedString(forKey: "Snabble.Payone.incompleteForm"))
+            .replacingOccurrences(of: "{{email}}", with: Asset.localizedString(forKey: "Snabble.Payone.email"))
+            .replacingOccurrences(of: "{{street}}", with: Asset.localizedString(forKey: "Snabble.Payone.street"))
+            .replacingOccurrences(of: "{{zip}}", with: Asset.localizedString(forKey: "Snabble.Payone.zip"))
+            .replacingOccurrences(of: "{{city}}", with: Asset.localizedString(forKey: "Snabble.Payone.city"))
+            .replacingOccurrences(of: "{{country}}", with: Asset.localizedString(forKey: "Snabble.Payone.country"))
+            .replacingOccurrences(of: "{{state}}", with: Asset.localizedString(forKey: "Snabble.Payone.state"))
+        
 
         // passing a dummy base URL is necessary for the Payone JS to work  ¯\_(ツ)_/¯
         self.webView?.loadHTMLString(page, baseURL: URL(string: "http://127.0.0.1/")!)
