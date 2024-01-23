@@ -224,7 +224,7 @@
                                     document.getElementById('street').value,
                                     document.getElementById('zip').value,
                                     document.getElementById('city').value,
-                                    document.getElementById('country').value);
+                                    document.getElementById('countrySelect').value);
                     break;
                 case 'INVALID':
                 case 'ERROR':
@@ -246,9 +246,9 @@
             var zip = document.getElementById('zip').value;
             var city = document.getElementById('city').value;
             var country = document.getElementById('countrySelect').value;
-            var state = document.getElementById('stateSelect').value;
+            // var state = document.getElementById('stateSelect').value;
 
-            if (this._hostedIframe.isComplete() && name != "" && email != "" && street != "" && zip != "" && city != "") {
+            if (this._hostedIframe.isComplete() && name != "" && email != "" && street != "" && zip != "" && city != "" && country != "") {
                 this._hostedIframe.creditCardCheck(this._creditCardCheckCallbackName);
             }
             else {
