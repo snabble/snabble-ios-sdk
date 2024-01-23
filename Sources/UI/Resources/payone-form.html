@@ -272,30 +272,10 @@
                 <!-- The form HTML with IFrame fields. -->
                 <form id="cc-form" class="my-3" action="#" method="post">
 
-                    <div class="form-group halves">
-                        <div class="half">
-                            <label for="payone-cc-pan">{{cardNumberLabel}}</label>
-                            <div class="payone-input-mock payone-input-mock--pan">
-                                <!-- Mount element for PAN IFrame. -->
-                                <span id="payone-cc-pan"></span>
-                            </div>
-                        </div>
-                        
-                        <div class="half">
-                            <label for="payone-cc-cvc">{{cvcLabel}}</label for="payone-cc-cvc">
-                                <div class="payone-input-mock payone-input-mock--cvc">
-                                    <!-- Mount element for CVC IFrame. -->
-                                    <span id="payone-cc-cvc"></span>
-                                </div>
-                        </div>
-                    </div>
-                    
-                    <!--
                     <div class="form-group">
                         <label for="payone-cc-pan">{{cardNumberLabel}}</label>
                         <div class="payone-input-mock payone-input-mock--pan">
                             <!-- Mount element for PAN IFrame. -->
-                    <!--
                             <span id="payone-cc-pan"></span>
                         </div>
                     </div>
@@ -304,11 +284,10 @@
                         <label for="payone-cc-cvc">{{cvcLabel}}</label for="payone-cc-cvc">
                         <div class="payone-input-mock payone-input-mock--cvc">
                             <!-- Mount element for CVC IFrame. -->
-                    <!--
                             <span id="payone-cc-cvc"></span>
                         </div>
                     </div>
-                    -->
+
                     <div class="form-group halves">
                         <div class="half">
                             <label for="payone-cc-expire-month">{{expireMonthLabel}}</label>
@@ -334,25 +313,12 @@
                         </div>
                     </div>
                     <div class="form-group">
-                        <label for="email">{{email}}</label>
-                        <div class="payone-input-mock">
-                            <input type="email" name="email" id="email"/>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
                         <label for="street">{{street}}</label>
                         <div class="payone-input-mock">
                             <input type="text" name="street" id="street"/>
                         </div>
                     </div>
                     <div class="form-group halves">
-                        <div class="half">
-                            <label for="country">{{country}}</label>
-                            <div class="payone-input-mock">
-                                <input type="text" name="country" id="country"/>
-                            </div>
-                        </div>
                         <div class="half">
                             <label for="zip">{{zip}}</label>
                             <div class="payone-input-mock">
@@ -364,6 +330,12 @@
                             <div class="payone-input-mock">
                                 <input type="text" name="city" id="city"/>
                             </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">{{email}}</label>
+                        <div class="payone-input-mock">
+                            <input type="email" name="email" id="email"/>
                         </div>
                     </div>
 
