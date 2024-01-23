@@ -340,7 +340,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     }
 
     // handle the response data we get from the payone web form. if the response is OK, start the pre-auth process
-    private func processResponse(_ response: [String: Any], info: CreditCardInfo?) {
+    private func processResponse(_ response: [String: Any], info: PayonePreAuthData?) {
         guard
             let projectId = self.projectId,
             let project = Snabble.shared.project(for: projectId),
@@ -488,9 +488,8 @@ extension PayoneCreditCardEditViewController {
                 return completion(Result.failure(SnabbleError.noRequest))
             }
 
-            let preAuthData = response.info // PayonePreAuthData(pseudoCardPAN: response.pseudoCardPAN, lastname: response.lastname)
             // swiftlint:disable:next force_try
-            request.httpBody = try! JSONEncoder().encode(preAuthData)
+            request.httpBody = try! JSONEncoder().encode(response.info)
 
             project.perform(request) { (_ result: Result<PayonePreAuthResult, SnabbleError>) in
                 completion(result)
@@ -557,7 +556,6 @@ extension PayoneCreditCardEditViewController {
             .replacingOccurrences(of: "{{country}}", with: Asset.localizedString(forKey: "Snabble.Payone.country"))
             .replacingOccurrences(of: "{{state}}", with: Asset.localizedString(forKey: "Snabble.Payone.state"))
         
-
         // passing a dummy base URL is necessary for the Payone JS to work  ¯\_(ツ)_/¯
         self.webView?.loadHTMLString(page, baseURL: URL(string: "http://127.0.0.1/")!)
     }
@@ -609,7 +607,7 @@ extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
         } else if let error = body["error"] as? String {
             return showErrorAlert(message: error, goBack: false)
         } else if let response = body["response"] as? [String: Any] {
-            self.processResponse(response, info: CreditCardInfo(withPAN: response["pseudocardpan"] as? String, body: body))
+            self.processResponse(response, info: PayonePreAuthData(withPAN: response["pseudocardpan"] as? String, body: body))
         }
     }
 }

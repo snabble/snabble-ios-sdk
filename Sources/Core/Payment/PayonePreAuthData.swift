@@ -1,5 +1,5 @@
 //
-//  CreditCardInfo.swift
+//  PayonePreAuthData.swift
 //
 //
 //  Created by Uwe Tilemann on 22.01.24.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct CreditCardInfo: Codable {
+public struct PayonePreAuthData: Encodable {
     let pseudoCardPAN: String
     let lastname: String
     let email: String

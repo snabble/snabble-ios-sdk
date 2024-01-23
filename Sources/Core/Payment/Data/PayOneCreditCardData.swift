@@ -76,12 +76,12 @@ public struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, Br
 }
 
 public struct PayoneResponse {
-    public let info: CreditCardInfo
+    public let info: PayonePreAuthData
     let maskedCardPAN: String
     let brand: CreditCardBrand
     let cardExpireDate: String // MM/YY
 
-    public init?(response: [String: Any], info: CreditCardInfo) {
+    public init?(response: [String: Any], info: PayonePreAuthData) {
         guard
             let status = response["status"] as? String,
             status == "VALID",
