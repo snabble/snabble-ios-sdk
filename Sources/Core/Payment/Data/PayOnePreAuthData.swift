@@ -1,5 +1,5 @@
 //
-//  PayonePreAuthData.swift
+//  PayOnePreAuthData.swift
 //
 //
 //  Created by Uwe Tilemann on 22.01.24.
