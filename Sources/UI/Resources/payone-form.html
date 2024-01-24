@@ -254,8 +254,8 @@
             const street = document.getElementById('street').value;
             const zip = document.getElementById('zip').value;
             const city = document.getElementById('city').value;
-            const country = document.getElementById('countrySelect').value;
-            const stateNeeded = stateSelect.getAttribute('disabled')
+            const countrySelect = document.getElementById('countrySelect');
+            const stateSelect = document.getElementById('stateSelect');
 
             if (this._hostedIframe.isComplete() && 
                 name != "" &&
@@ -264,7 +264,7 @@
                 zip != "" &&
                 city != "" &&
                 countrySelect.selectedIndex > 0 &&
-                (stateNeeded ? stateSelect.selectedIndex > 0 : true)) {
+                (!stateSelect.disabled ? stateSelect.selectedIndex > 0 : true)) {
                 this._hostedIframe.creditCardCheck(this._creditCardCheckCallbackName);
             }
             else {
