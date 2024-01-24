@@ -7,6 +7,14 @@
 
 import Foundation
 
+// public protocol PayoneCreditCardAddress {
+//    var street: String { set get }
+//    var zip: String { set get }
+//    var city: String { set get }
+//    var country: String { set get }
+//    var state: String { set get }
+// }
+
 public struct PayonePreAuthData: Encodable {
     let pseudoCardPAN: String
     let lastname: String
@@ -20,6 +28,9 @@ public struct PayonePreAuthData: Encodable {
         let country: String
         let state: String
     }
+}
+
+extension PayonePreAuthData {
     public init?(withPAN pan: String?, body: [String: Any]) {
         guard let pan = pan else {
             return nil

@@ -28,13 +28,35 @@ public struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, Br
     }
 
     private struct PayoneOrigin: PaymentRequestOrigin {
-        let pseudoCardPAN: String
-        let name: String
         let userID: String
+        let pseudoCardPAN: String
+        let lastname: String
+        let email: String
+        let address: Address
+        
+        struct Address: Encodable {
+            let street: String
+            let zip: String
+            let city: String
+            let country: String
+            let state: String
+        }
+        init(userID: String, info: PayonePreAuthData) {
+            self.userID = userID
+            self.pseudoCardPAN = info.pseudoCardPAN
+            self.lastname = info.lastname
+            self.email = info.email
+            self.address = PayoneOrigin.Address(street: info.address.street,
+                                                zip: info.address.zip,
+                                                city: info.address.city,
+                                                country: info.address.country,
+                                                state: info.address.state)
+        }
     }
 
     public init?(gatewayCert: Data?, response: PayoneResponse, preAuthResult: PayonePreAuthResult, projectId: Identifier<Project>) {
-        let requestOrigin = PayoneOrigin(pseudoCardPAN: response.info.pseudoCardPAN, name: response.info.lastname, userID: preAuthResult.userID)
+        let requestOrigin = PayoneOrigin(userID: preAuthResult.userID, info: response.info)
+        // PayoneOrigin(pseudoCardPAN: response.info.pseudoCardPAN, name: response.info.lastname, userID: preAuthResult.userID)
 
         guard
             let encrypter = PaymentDataEncrypter(gatewayCert),
