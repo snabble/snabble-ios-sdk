@@ -4,18 +4,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [unreleased]
+## [0.44.2] - 2024-01-24
 
 ### Added
 * Add address information for PayOne PreAuth #APPS-1296
 
-### Fixed
-
-### Removed
+### Updated
+* groue/GRDB.swift 6.24.2 (was 6.23.0)
+* devicekit/DeviceKit 5.2.1 (was 5.1.0)
 
 ## [0.44.1] - 2024-01-04
-
-### Added
 
 ### Fixed
 * Map pin points to the wrongs location #APPS-990
@@ -23,8 +21,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 * Removed leinweber customercard as payment method #APPS-883
-
-### Updated
 
 ## [0.44.0] - 2023-12-13
 
