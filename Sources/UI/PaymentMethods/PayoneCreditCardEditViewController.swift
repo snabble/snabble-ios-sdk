@@ -523,7 +523,14 @@ extension PayoneCreditCardEditViewController {
         case "de", "en", "fr", "it", "es", "pt", "nl": () // payone supported language
         default: languageCode = "en"
         }
-
+        
+        var region: String
+        if #available(iOS 16, *) {
+            region = Locale.current.region?.identifier ?? "DE"
+        } else {
+            // Fallback on earlier versions
+            region = Locale.current.regionCode ?? "DE"
+        }
         let testing = payoneTokenization.isTesting ?? false
 
         let fieldColors = self.traitCollection.userInterfaceStyle == .light ?
@@ -557,6 +564,7 @@ extension PayoneCreditCardEditViewController {
             .replacingOccurrences(of: "{{chooseCountry}}", with: Asset.localizedString(forKey: "Snabble.Payone.chooseCountry"))
             .replacingOccurrences(of: "{{state}}", with: Asset.localizedString(forKey: "Snabble.Payone.state"))
             .replacingOccurrences(of: "{{chooseState}}", with: Asset.localizedString(forKey: "Snabble.Payone.chooseState"))
+            .replacingOccurrences(of: "{{localeCountryCode}}", with: region)
 
         // passing a dummy base URL is necessary for the Payone JS to work  ¯\_(ツ)_/¯
         self.webView?.loadHTMLString(page, baseURL: URL(string: "http://127.0.0.1/")!)

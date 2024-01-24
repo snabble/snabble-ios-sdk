@@ -125,6 +125,13 @@
         display: flex;
         gap: 1rem;
     }
+        .fifths {
+            display: grid;
+            grid-template-columns: 5fr 1fr;
+            align-items: end;
+            gap: 1rem;
+        }
+
     .half {
         flex-grow: 1
     }
@@ -242,14 +249,22 @@
          * Performs the credit card check.
          */
         PayoneAutoCcDetection.prototype.performCreditCardCheck = function () {
-            let name = document.getElementById('lastname').value;
-            let email = document.getElementById('email').value;
-            let street = document.getElementById('street').value;
-            let zip = document.getElementById('zip').value;
-            let city = document.getElementById('city').value;
-            let country = document.getElementById('countrySelect').value;
+            const name = document.getElementById('lastname').value;
+            const email = document.getElementById('email').value;
+            const street = document.getElementById('street').value;
+            const zip = document.getElementById('zip').value;
+            const city = document.getElementById('city').value;
+            const country = document.getElementById('countrySelect').value;
+            const stateNeeded = stateSelect.getAttribute('disabled')
 
-            if (this._hostedIframe.isComplete() && name != "" && email != "" && street != "" && zip != "" && city != "" && country != "") {
+            if (this._hostedIframe.isComplete() && 
+                name != "" &&
+                email != "" &&
+                street != "" &&
+                zip != "" &&
+                city != "" &&
+                countrySelect.selectedIndex > 0 &&
+                (stateNeeded ? stateSelect.selectedIndex > 0 : true)) {
                 this._hostedIframe.creditCardCheck(this._creditCardCheckCallbackName);
             }
             else {
@@ -273,23 +288,23 @@
 
                 <!-- The form HTML with IFrame fields. -->
                 <form id="cc-form" class="my-3" action="#" method="post">
-
-                    <div class="form-group">
-                        <label for="payone-cc-pan">{{cardNumberLabel}}</label>
-                        <div class="payone-input-mock payone-input-mock--pan">
-                            <!-- Mount element for PAN IFrame. -->
-                            <span id="payone-cc-pan"></span>
-                        </div>
-                    </div>
-
-                    <div class="form-group">
-                        <label for="payone-cc-cvc">{{cvcLabel}}</label for="payone-cc-cvc">
-                        <div class="payone-input-mock payone-input-mock--cvc">
-                            <!-- Mount element for CVC IFrame. -->
-                            <span id="payone-cc-cvc"></span>
-                        </div>
-                    </div>
-
+                   <div class="form-group fifths">
+                       <div class="form-group">
+                           <label for="payone-cc-pan">{{cardNumberLabel}}</label>
+                           <div class="payone-input-mock payone-input-mock--pan">
+                               <!-- Mount element for PAN IFrame. -->
+                               <span id="payone-cc-pan"></span>
+                           </div>
+                       </div>
+                       
+                       <div class="form-group">
+                           <label for="payone-cc-cvc">{{cvcLabel}}</label for="payone-cc-cvc">
+                               <div class="payone-input-mock payone-input-mock--cvc">
+                                   <!-- Mount element for CVC IFrame. -->
+                                   <span id="payone-cc-cvc"></span>
+                               </div>
+                       </div>
+                   </div>
                     <div class="form-group halves">
                         <div class="half">
                             <label for="payone-cc-expire-month">{{expireMonthLabel}}</label>
@@ -334,12 +349,6 @@
                             </div>
                         </div>
                     </div>
-                    <div class="form-group">
-                        <label for="email">{{email}}</label>
-                        <div class="payone-input-mock">
-                            <input type="email" name="email" id="email"/>
-                        </div>
-                    </div>
 
                     <div class="form-group">
                         <label for="country">{{country}}</label>
@@ -354,6 +363,13 @@
                         <label for="state">{{state}}</label>
                         <div class="payone-input-mock">
                             <select id="stateSelect" name="state" class="form-control" disabled></select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email">{{email}}</label>
+                        <div class="payone-input-mock">
+                            <input type="email" name="email" id="email"/>
                         </div>
                     </div>
 
@@ -1087,7 +1103,7 @@
 
                 const option = document.createElement('option')
                 option.textContent = '{{chooseState}}'
-                option.setAttribute('disabled', '')
+                option.disabled = true
                 stateSelect.appendChild(option)
 
                 subdivisions[countryCode].forEach(state => {
@@ -1108,10 +1124,12 @@
                     option.textContent = country.label;
                     select.appendChild(option);
                 })
-
+                
                 select.addEventListener('change', function() { handleCountrySelect(this.value); });
 
-                select.selectedIndex = countries.findIndex(country => country.code == 'DE') + 1
+                const localeCountryCode = '{{localeCountryCode}}';
+                select.selectedIndex = countries.findIndex(country => country.code == localeCountryCode) + 1
+                handleCountrySelect(localeCountryCode);
             }
             countryOptions();
         })();

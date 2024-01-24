@@ -30,7 +30,7 @@ public struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, Br
     private struct PayoneOrigin: PaymentRequestOrigin {
         let userID: String
         let pseudoCardPAN: String
-        let lastname: String
+        let name: String
         let email: String
         let address: Address
         
@@ -44,13 +44,13 @@ public struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, Br
         init(userID: String, info: PayonePreAuthData) {
             self.userID = userID
             self.pseudoCardPAN = info.pseudoCardPAN
-            self.lastname = info.lastname
+            self.name = info.lastname
             self.email = info.email
-            self.address = PayoneOrigin.Address(street: info.address.street,
-                                                zip: info.address.zip,
-                                                city: info.address.city,
-                                                country: info.address.country,
-                                                state: info.address.state)
+            self.address = Address(street: info.address.street,
+                                   zip: info.address.zip,
+                                   city: info.address.city,
+                                   country: info.address.country,
+                                   state: info.address.state)
         }
     }
 
