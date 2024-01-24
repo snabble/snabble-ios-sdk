@@ -31,11 +31,12 @@ extension PayonePreAuthData {
         
         self.lastname = body["lastname"] as? String ?? ""
         self.email = body["email"] as? String ?? ""
+        let state = body["state"] as? String ?? ""
         
         self.address = Address(street: body["street"] as? String ?? "",
                                zip: body["zip"] as? String ?? "",
                                city: body["city"] as? String ?? "",
                                country: body["country"] as? String ?? "",
-                               state: body["state"] as? String)
+                               state: !state.isEmpty ? state : nil)
     }
 }

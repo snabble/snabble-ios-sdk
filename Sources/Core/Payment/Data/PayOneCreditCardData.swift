@@ -41,6 +41,7 @@ public struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, Br
             let country: String
             let state: String?
         }
+        
         init(userID: String, info: PayonePreAuthData) {
             self.userID = userID
             self.pseudoCardPAN = info.pseudoCardPAN
