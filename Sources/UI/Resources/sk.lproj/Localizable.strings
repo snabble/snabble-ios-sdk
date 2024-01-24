@@ -413,17 +413,14 @@
 
 "Snabble.Payone.cardNumber" = "Číslo karty";
 
-/* Disabled country choose hint for the Payone Credit Card Input View */
-"Snabble.Payone.chooseCountry" = "Please select the country";
-
-/* Disabled state choose hint for the Payone Credit Card Input View */
-"Snabble.Payone.chooseState" = "Please select the state";
-
 /* City for the Payone Credit Card Input View */
 "Snabble.Payone.city" = "City";
 
 /* Country for the Payone Credit Card Input View */
 "Snabble.Payone.country" = "Country";
+
+/* Disabled country choose hint for the Payone Credit Card Input View */
+"Snabble.Payone.countryHint" = "Please select the country";
 
 "Snabble.Payone.cvc" = "Kontrolné číslo (CVC)";
 
@@ -440,6 +437,9 @@
 
 /* State for the Payone Credit Card Input View */
 "Snabble.Payone.state" = "State";
+
+/* Disabled state choose hint for the Payone Credit Card Input View */
+"Snabble.Payone.stateHint" = "Please select the state";
 
 /* Street and Housenumber for the Payone Credit Card Input View */
 "Snabble.Payone.street" = "Street";

@@ -354,7 +354,7 @@
                         <label for="country">{{country}}</label>
                         <div class="payone-input-mock">
                             <select id="countrySelect" name="country" class="form-control">
-                                <option disabled>{{chooseCountry}}</option>
+                                <option disabled>{{countryHint}}</option>
                             </select>
                         </div>
                     </div>
@@ -1102,7 +1102,7 @@
                 if (!subdivisions[countryCode]) return
 
                 const option = document.createElement('option')
-                option.textContent = '{{chooseState}}'
+                option.textContent = '{{stateHint}}'
                 option.disabled = true
                 stateSelect.appendChild(option)
 

@@ -7,26 +7,18 @@
 
 import Foundation
 
-// public protocol PayoneCreditCardAddress {
-//    var street: String { set get }
-//    var zip: String { set get }
-//    var city: String { set get }
-//    var country: String { set get }
-//    var state: String { set get }
-// }
-
 public struct PayonePreAuthData: Encodable {
     let pseudoCardPAN: String
     let lastname: String
     let email: String
     let address: Address
     
-    struct Address: Codable {
+    struct Address: Encodable {
         let street: String
         let zip: String
         let city: String
         let country: String
-        let state: String
+        let state: String?
     }
 }
 
@@ -44,6 +36,6 @@ extension PayonePreAuthData {
                                zip: body["zip"] as? String ?? "",
                                city: body["city"] as? String ?? "",
                                country: body["country"] as? String ?? "",
-                               state: body["state"] as? String ?? "")
+                               state: body["state"] as? String)
     }
 }

@@ -39,7 +39,7 @@ public struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, Br
             let zip: String
             let city: String
             let country: String
-            let state: String
+            let state: String?
         }
         init(userID: String, info: PayonePreAuthData) {
             self.userID = userID
@@ -56,7 +56,6 @@ public struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, Br
 
     public init?(gatewayCert: Data?, response: PayoneResponse, preAuthResult: PayonePreAuthResult, projectId: Identifier<Project>) {
         let requestOrigin = PayoneOrigin(userID: preAuthResult.userID, info: response.info)
-        // PayoneOrigin(pseudoCardPAN: response.info.pseudoCardPAN, name: response.info.lastname, userID: preAuthResult.userID)
 
         guard
             let encrypter = PaymentDataEncrypter(gatewayCert),
