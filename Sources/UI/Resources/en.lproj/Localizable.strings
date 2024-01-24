@@ -422,7 +422,7 @@
 /* Disabled country choose hint for the Payone Credit Card Input View */
 "Snabble.Payone.countryHint" = "Please select the country";
 
-"Snabble.Payone.cvc" = "Card Security Code (CVV)";
+"Snabble.Payone.cvc" = "CVC";
 
 /* Email for the Payone Credit Card Input View */
 "Snabble.Payone.email" = "E-Mail";
