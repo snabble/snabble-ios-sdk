@@ -413,7 +413,19 @@
 
 "Snabble.Payone.cardNumber" = "Card Number";
 
-"Snabble.Payone.cvc" = "Card Security Code (CVV)";
+/* City for the Payone Credit Card Input View */
+"Snabble.Payone.city" = "City";
+
+/* Country for the Payone Credit Card Input View */
+"Snabble.Payone.country" = "Country";
+
+/* Disabled country choose hint for the Payone Credit Card Input View */
+"Snabble.Payone.countryHint" = "Please select the country";
+
+"Snabble.Payone.cvc" = "CVC";
+
+/* Email for the Payone Credit Card Input View */
+"Snabble.Payone.email" = "E-Mail";
 
 "Snabble.Payone.expireMonth" = "Expiry Month (MM)";
 
@@ -422,6 +434,18 @@
 "Snabble.Payone.incompleteForm" = "Please enter all required data.";
 
 "Snabble.Payone.lastname" = "Last Name";
+
+/* State for the Payone Credit Card Input View */
+"Snabble.Payone.state" = "State";
+
+/* Disabled state choose hint for the Payone Credit Card Input View */
+"Snabble.Payone.stateHint" = "Please select the state";
+
+/* Street and Housenumber for the Payone Credit Card Input View */
+"Snabble.Payone.street" = "Street";
+
+/* Zip for the Payone Credit Card Input View */
+"Snabble.Payone.zip" = "Zip";
 
 "Snabble.pleaseWait" = "Attendi…";
 

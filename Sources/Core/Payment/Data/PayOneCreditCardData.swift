@@ -28,13 +28,35 @@ public struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, Br
     }
 
     private struct PayoneOrigin: PaymentRequestOrigin {
+        let userID: String
         let pseudoCardPAN: String
         let name: String
-        let userID: String
+        let email: String
+        let address: Address
+        
+        struct Address: Encodable {
+            let street: String
+            let zip: String
+            let city: String
+            let country: String
+            let state: String?
+        }
+        
+        init(userID: String, info: PayonePreAuthData) {
+            self.userID = userID
+            self.pseudoCardPAN = info.pseudoCardPAN
+            self.name = info.lastname
+            self.email = info.email
+            self.address = Address(street: info.address.street,
+                                   zip: info.address.zip,
+                                   city: info.address.city,
+                                   country: info.address.country,
+                                   state: info.address.state)
+        }
     }
 
     public init?(gatewayCert: Data?, response: PayoneResponse, preAuthResult: PayonePreAuthResult, projectId: Identifier<Project>) {
-        let requestOrigin = PayoneOrigin(pseudoCardPAN: response.pseudoCardPAN, name: response.lastname, userID: preAuthResult.userID)
+        let requestOrigin = PayoneOrigin(userID: preAuthResult.userID, info: response.info)
 
         guard
             let encrypter = PaymentDataEncrypter(gatewayCert),
@@ -76,17 +98,15 @@ public struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, Br
 }
 
 public struct PayoneResponse {
-    public let pseudoCardPAN: String
+    public let info: PayonePreAuthData
     let maskedCardPAN: String
     let brand: CreditCardBrand
     let cardExpireDate: String // MM/YY
-    public let lastname: String
 
-    public init?(response: [String: Any], lastname: String) {
+    public init?(response: [String: Any], info: PayonePreAuthData) {
         guard
             let status = response["status"] as? String,
             status == "VALID",
-            let pseudoCardPAN = response["pseudocardpan"] as? String,
             let maskedCardPAN = response["truncatedcardpan"] as? String,
             let cardtype = response["cardtype"] as? String,
             let brand = CreditCardBrand.forType(cardtype),
@@ -95,10 +115,9 @@ public struct PayoneResponse {
             return nil
         }
 
-        self.pseudoCardPAN = pseudoCardPAN
         self.maskedCardPAN = maskedCardPAN
         self.brand = brand
-        self.lastname = lastname
+        self.info = info
 
         // raw cardexpiredate is YYMM, convert to MM/YY
         self.cardExpireDate = cardexpiredate.suffix(2) + "/" + cardexpiredate.prefix(2)

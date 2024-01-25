@@ -340,12 +340,12 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     }
 
     // handle the response data we get from the payone web form. if the response is OK, start the pre-auth process
-    private func processResponse(_ response: [String: Any], _ lastname: String?) {
+    private func processResponse(_ response: [String: Any], info: PayonePreAuthData?) {
         guard
             let projectId = self.projectId,
             let project = Snabble.shared.project(for: projectId),
-            let lastname = lastname,
-            let response = PayoneResponse(response: response, lastname: lastname)
+            let info = info,
+            let response = PayoneResponse(response: response, info: info)
         else {
             return
         }
@@ -488,9 +488,8 @@ extension PayoneCreditCardEditViewController {
                 return completion(Result.failure(SnabbleError.noRequest))
             }
 
-            let preAuthData = PayonePreAuthData(pseudoCardPAN: response.pseudoCardPAN, lastname: response.lastname)
             // swiftlint:disable:next force_try
-            request.httpBody = try! JSONEncoder().encode(preAuthData)
+            request.httpBody = try! JSONEncoder().encode(response.info)
 
             project.perform(request) { (_ result: Result<PayonePreAuthResult, SnabbleError>) in
                 completion(result)
@@ -524,7 +523,14 @@ extension PayoneCreditCardEditViewController {
         case "de", "en", "fr", "it", "es", "pt", "nl": () // payone supported language
         default: languageCode = "en"
         }
-
+        
+        var region: String
+        if #available(iOS 16, *) {
+            region = Locale.current.region?.identifier ?? "DE"
+        } else {
+            // Fallback on earlier versions
+            region = Locale.current.regionCode ?? "DE"
+        }
         let testing = payoneTokenization.isTesting ?? false
 
         let fieldColors = self.traitCollection.userInterfaceStyle == .light ?
@@ -543,13 +549,22 @@ extension PayoneCreditCardEditViewController {
             .replacingOccurrences(of: "{{supportedCardType}}", with: self.brand?.paymentMethod ?? "")
             .replacingOccurrences(of: "{{fieldColors}}", with: fieldColors)
             // TODO: l10n
-            .replacingOccurrences(of: "{{lastName}}", with: Asset.localizedString(forKey: "Snabble.Payone.lastname"))
+            .replacingOccurrences(of: "{{lastname}}", with: Asset.localizedString(forKey: "Snabble.Payone.lastname"))
             .replacingOccurrences(of: "{{cardNumberLabel}}", with: Asset.localizedString(forKey: "Snabble.Payone.cardNumber"))
             .replacingOccurrences(of: "{{cvcLabel}}", with: Asset.localizedString(forKey: "Snabble.Payone.cvc"))
             .replacingOccurrences(of: "{{expireMonthLabel}}", with: Asset.localizedString(forKey: "Snabble.Payone.expireMonth"))
             .replacingOccurrences(of: "{{expireYearLabel}}", with: Asset.localizedString(forKey: "Snabble.Payone.expireYear"))
             .replacingOccurrences(of: "{{saveButtonLabel}}", with: Asset.localizedString(forKey: "Snabble.save"))
             .replacingOccurrences(of: "{{incompleteForm}}", with: Asset.localizedString(forKey: "Snabble.Payone.incompleteForm"))
+            .replacingOccurrences(of: "{{email}}", with: Asset.localizedString(forKey: "Snabble.Payone.email"))
+            .replacingOccurrences(of: "{{street}}", with: Asset.localizedString(forKey: "Snabble.Payone.street"))
+            .replacingOccurrences(of: "{{zip}}", with: Asset.localizedString(forKey: "Snabble.Payone.zip"))
+            .replacingOccurrences(of: "{{city}}", with: Asset.localizedString(forKey: "Snabble.Payone.city"))
+            .replacingOccurrences(of: "{{country}}", with: Asset.localizedString(forKey: "Snabble.Payone.country"))
+            .replacingOccurrences(of: "{{countryHint}}", with: Asset.localizedString(forKey: "Snabble.Payone.countryHint"))
+            .replacingOccurrences(of: "{{state}}", with: Asset.localizedString(forKey: "Snabble.Payone.state"))
+            .replacingOccurrences(of: "{{stateHint}}", with: Asset.localizedString(forKey: "Snabble.Payone.stateHint"))
+            .replacingOccurrences(of: "{{localeCountryCode}}", with: region)
 
         // passing a dummy base URL is necessary for the Payone JS to work  ¯\_(ツ)_/¯
         self.webView?.loadHTMLString(page, baseURL: URL(string: "http://127.0.0.1/")!)
@@ -602,8 +617,7 @@ extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
         } else if let error = body["error"] as? String {
             return showErrorAlert(message: error, goBack: false)
         } else if let response = body["response"] as? [String: Any] {
-            let lastName = body["lastName"] as? String
-            self.processResponse(response, lastName)
+            self.processResponse(response, info: PayonePreAuthData(withPAN: response["pseudocardpan"] as? String, body: body))
         }
     }
 }

@@ -28,17 +28,6 @@ public struct PayoneTokenization: Decodable {
     }
 }
 
-// data we send to begin the pre-auth
-public struct PayonePreAuthData: Encodable {
-    public let pseudoCardPAN: String
-    public let lastname: String
-    
-    public init(pseudoCardPAN: String, lastname: String) {
-        self.pseudoCardPAN = pseudoCardPAN
-        self.lastname = lastname
-    }
-}
-
 // response from POSTing the auth data
 public struct PayonePreAuthResult: Decodable {
     public let status: PayonePreAuthStatus
