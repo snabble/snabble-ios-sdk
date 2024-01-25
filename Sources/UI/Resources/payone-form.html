@@ -54,7 +54,10 @@
         body, input { background-color: #000; color: #fff; }
         select, option { background-color: #000; color: #fff; }
     }
-    form {
+        @media (prefers-color-scheme: light) {
+            select { background-color: #fff; color: #000; }
+        }
+   form {
         width: auto;
         max-width: 1140px;
         margin: auto;
