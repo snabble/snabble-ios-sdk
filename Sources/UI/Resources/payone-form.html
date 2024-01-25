@@ -51,8 +51,8 @@
         text-align: left;
     }
     @media (prefers-color-scheme: dark) {
-        body, select, input { background-color: #000; color: #fff; }
-        
+        body, input { background-color: #000; color: #fff; }
+        select, option { background-color: #000; color: #fff; }
     }
     form {
         width: auto;
@@ -98,6 +98,9 @@
             outline: none;
             background-color: transparent;
         }
+        select option {
+              -webkit-appearance: none;
+}
         .form-group:has(select:disabled) {
             display: none;
         }
