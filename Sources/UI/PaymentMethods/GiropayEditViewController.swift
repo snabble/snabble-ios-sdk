@@ -246,7 +246,7 @@ public final class GiropayEditViewController: UIViewController {
     }
 
     @objc private func openButtonTapped(_ sender: Any) {
-        UIApplication.shared.open(URL(string: "https://www.paydirekt.de")!)
+        UIApplication.shared.open(URL(string: "https://www.giropay.de")!)
     }
 
     @objc private func deleteTapped(_ sender: Any) {
@@ -257,7 +257,7 @@ public final class GiropayEditViewController: UIViewController {
         let alert = UIAlertController(title: nil, message: Asset.localizedString(forKey: "Snabble.Payment.Delete.message"), preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.yes"), style: .destructive) { _ in
             PaymentMethodDetails.remove(detail)
-            self.analyticsDelegate?.track(.paymentMethodDeleted("paydirekt"))
+            self.analyticsDelegate?.track(.paymentMethodDeleted("giropay"))
             self.goBack()
         })
         alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.no"), style: .cancel, handler: nil))
