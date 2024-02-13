@@ -13,4 +13,8 @@ extension Shop {
         }
         return flag
     }
+    
+    public func excludePaymentMethod(_ method: RawPaymentMethod) -> Bool {
+        return isGrabAndGo && method == .giropayOneKlick
+    }
 }
