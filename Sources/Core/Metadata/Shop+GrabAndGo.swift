@@ -17,4 +17,11 @@ extension Shop {
     public func excludePaymentMethod(_ method: RawPaymentMethod) -> Bool {
         return isGrabAndGo && method == .giropayOneKlick
     }
+    
+    public func paymentsMethod() -> [RawPaymentMethod] {
+        return Snabble.shared.projects
+            .filter { $0.id == projectId }
+            .flatMap { $0.paymentMethods }
+            .filter { $0.visible && excludePaymentMethod($0) == false }
+    }
 }
