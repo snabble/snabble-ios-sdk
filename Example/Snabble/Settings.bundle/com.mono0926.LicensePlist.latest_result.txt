@@ -14,9 +14,9 @@ name: Pulley, nameSpecified: Pulley, owner: snabble, version: 2.9.2, source: htt
 
 name: SDCAlertView, nameSpecified: SDCAlertView, owner: sberrevoets, version: 12.0.3, source: https://github.com/sberrevoets/SDCAlertView
 
-name: swift-crypto, nameSpecified: swift-crypto, owner: apple, version: 1.1.7, source: https://github.com/apple/swift-crypto
+name: swift-crypto, nameSpecified: swift-crypto, owner: apple, version: 3.2.0, source: https://github.com/apple/swift-crypto
 
-name: SwiftOTP, nameSpecified: SwiftOTP, owner: lachlanbell, version: 3.0.1, source: https://github.com/lachlanbell/SwiftOTP
+name: SwiftOTP, nameSpecified: SwiftOTP, owner: lachlanbell, version: 3.0.2, source: https://github.com/lachlanbell/SwiftOTP
 
 name: TrustKit, nameSpecified: TrustKit, owner: datatheorem, version: 3.0.3, source: https://github.com/datatheorem/TrustKit
 
