@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/devicekit/DeviceKit.git",
       "state" : {
-        "revision" : "e1c258c6070ddd6465265fe4692f29717404aede",
-        "version" : "5.2.1"
+        "revision" : "fe41d18eccd92a115cffaa35dfff03018c67e635",
+        "version" : "5.2.2"
       }
     },
     {
@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/datatrans/ios-sdk.git",
       "state" : {
-        "revision" : "acca3b11217a24998ac55f23ca7eff3363b12646",
-        "version" : "3.4.0"
+        "revision" : "e7f2ef1f2abfcbb2f290e28b09db8e1d18951d1b",
+        "version" : "3.5.0"
       }
     },
     {

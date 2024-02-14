@@ -12,6 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Updated
 * apple/swift-crypto 3.2.0 (was 1.1.7)
 * lachlanbell/SwiftOTP 3.0.2 (was 3.0.1)
+* devicekit/DeviceKit 5.2.2 (was 5.2.1)
+* datatrans/ios-sdk 3.5.0 (was 3.4.0)
 
 ## [0.44.2] - 2024-01-24
 
