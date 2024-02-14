@@ -13,26 +13,21 @@ extension Shop {
         }
         return flag
     }
-    
+
     public func excludePaymentMethod(_ method: RawPaymentMethod) -> Bool {
         return isGrabAndGo && method == .giropayOneKlick
     }
-    
+
     public var paymentsMethods: [RawPaymentMethod] {
         return Snabble.shared.projects
             .filter { $0.id == projectId }
             .flatMap { $0.paymentMethods }
             .filter { $0.visible && excludePaymentMethod($0) == false }
     }
+
     public var hasAcceptedPaymentMethod: Bool {
         let details = PaymentMethodDetails.read().compactMap({ $0.rawMethod })
-        var accepted = false
         
-        for rawMethod in details {
-            if paymentsMethods.contains(where: { $0 == rawMethod }) {
-                return true
-            }
-        }
-        return false
+        return !paymentsMethods.filter({ details.contains($0) }).isEmpty
     }
 }
