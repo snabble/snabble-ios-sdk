@@ -85,7 +85,7 @@ extension UIViewController {
        let methods = Snabble.shared.projects
            .filter { $0.id == projectId }
            .flatMap { $0.paymentMethods }
-           .filter { $0.visible && shop?.excludePaymentMethod($0) == false  }
+           .filter { $0.visible && (shop == nil || shop?.excludePaymentMethod($0) == false)  }
 
        if methods.count == 1 {
            showEditController(for: methods[0], in: projectId, analyticsDelegate: analyticsDelegate)
