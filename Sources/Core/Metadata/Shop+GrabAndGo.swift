@@ -18,14 +18,11 @@ extension Shop {
         return acceptedPaymentMethods.first(where: { $0 == method }) != nil
     }
 
-    public var acceptedPaymentMethods: [RawPaymentMethod] {
+    private var acceptedPaymentMethods: [RawPaymentMethod] {
         if isGrabAndGo {
             return [.creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .externalBilling]
         } else {
-            return Snabble.shared.projects
-                .filter { $0.id == projectId }
-                .flatMap { $0.paymentMethods }
-                .filter { $0.visible }
+            return RawPaymentMethod.allCases
         }
     }
     
