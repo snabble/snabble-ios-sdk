@@ -47,7 +47,7 @@ public struct GiropayData: Codable, EncryptedPaymentData, Equatable {
         self.encryptedPaymentData = cipherText
         self.serial = serial
 
-        self.displayName = "paydirekt"
+        self.displayName = "giropay"
 
         self.deviceId = auth.id
         self.deviceName = auth.name

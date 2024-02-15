@@ -13,4 +13,24 @@ extension Shop {
         }
         return flag
     }
+
+    public func isAcceptedPaymentMethod(_ method: RawPaymentMethod) -> Bool {
+        guard isGrabAndGo else {
+            return true
+        }
+        return acceptedPaymentMethods.first(where: { $0 == method }) != nil
+    }
+
+    private var acceptedPaymentMethods: [RawPaymentMethod] {
+        if isGrabAndGo {
+            return [.creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .externalBilling]
+        } else {
+            return RawPaymentMethod.allCases
+        }
+    }
+    
+    public var hasAcceptedPaymentMethod: Bool {
+        let details = PaymentMethodDetails.read().compactMap({ $0.rawMethod })
+        return !acceptedPaymentMethods.filter({ details.contains($0) }).isEmpty
+    }
 }
