@@ -15,6 +15,9 @@ extension Shop {
     }
 
     public func isAcceptedPaymentMethod(_ method: RawPaymentMethod) -> Bool {
+        guard isGrabAndGo else {
+            return true
+        }
         return acceptedPaymentMethods.first(where: { $0 == method }) != nil
     }
 
@@ -28,7 +31,6 @@ extension Shop {
     
     public var hasAcceptedPaymentMethod: Bool {
         let details = PaymentMethodDetails.read().compactMap({ $0.rawMethod })
-        
         return !acceptedPaymentMethods.filter({ details.contains($0) }).isEmpty
     }
 }
