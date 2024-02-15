@@ -14,7 +14,7 @@ extension Shop {
         return flag
     }
 
-    public func includePaymentMethod(_ method: RawPaymentMethod) -> Bool {
+    public func isAcceptedPaymentMethod(_ method: RawPaymentMethod) -> Bool {
         return acceptedPaymentMethods.first(where: { $0 == method }) != nil
     }
 
