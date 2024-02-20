@@ -9,6 +9,7 @@ import DeviceKit
 import SnabbleCore
 
 final class EmbeddedCodesCheckoutViewController: UIViewController {
+    private weak var scrollView: UIScrollView?
     private weak var stackViewLayout: UILayoutGuide?
     private weak var topWrapper: UIView?
     private weak var topIcon: UIImageView?
@@ -82,6 +83,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         scrollView.backgroundColor = .systemBackground
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = false
+        self.scrollView = scrollView
 
         let contentLayoutGuide = scrollView.contentLayoutGuide
         let frameLayoutGuide = scrollView.frameLayoutGuide
@@ -325,9 +327,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             // all other devices: scale project graphic if needed
             multiplier = 0.6
         }
-        if let stackViewLayout = stackViewLayout {
-            maxScrollViewWidth = stackViewLayout.layoutFrame.width * multiplier
-        }
+        maxScrollViewWidth = self.view.frame.width * multiplier
     }
 
     private func configureCodeScrollView() {
@@ -338,13 +338,13 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
                 codeImages.append(image)
             }
         }
-        maxPageSize = maxCodeSize(for: codeImages, fitting: maxScrollViewWidth)
+        maxPageSize = maxCodeSize(for: codeImages)
 
         scrollView.widthAnchor.constraint(equalToConstant: maxPageSize).isActive = true
         scrollView.heightAnchor.constraint(equalToConstant: maxPageSize).isActive = true
         scrollView.contentSize = CGSize(width: maxPageSize * CGFloat(codes.count), height: scrollView.frame.height)
 
-        for x in 0..<codes.count {
+        for x in 0..<codeImages.count {
             let page = UIImageView()
             page.translatesAutoresizingMaskIntoConstraints = false
             page.contentMode = .scaleAspectFit
@@ -419,7 +419,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 }
 
 extension EmbeddedCodesCheckoutViewController {
-    private func maxCodeSize(for images: [UIImage], fitting width: CGFloat) -> CGFloat {
+    private func maxCodeSize(for images: [UIImage]) -> CGFloat {
         var maxWidth: CGFloat = 0
         for image in codeImages {
             maxWidth = max(maxWidth, image.size.width)
@@ -435,7 +435,7 @@ extension EmbeddedCodesCheckoutViewController {
                 }
             }
         }
-        return nil
+        return QRCode.generate(for: code, scale: 1)
     }
 }
 
