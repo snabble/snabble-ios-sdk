@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Fixed
 * Giropay integration #APPS-1327
+* QRCode Generation for Offline Payment
 
 ### Updated
 * apple/swift-crypto 3.2.0 (was 1.1.7)
