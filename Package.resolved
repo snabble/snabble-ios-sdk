@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/devicekit/DeviceKit.git",
       "state" : {
-        "revision" : "66837ecf1516e41fd4251bbb684dc4b1997f08ab",
-        "version" : "5.1.0"
+        "revision" : "fe41d18eccd92a115cffaa35dfff03018c67e635",
+        "version" : "5.2.2"
       }
     },
     {
@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/groue/GRDB.swift.git",
       "state" : {
-        "revision" : "eacbdf23af4228dea3bd0e5feb17c0f953829c15",
-        "version" : "6.23.0"
+        "revision" : "e069e2732e3ee2b67bf89c1bda1937da0eaee7ef",
+        "version" : "6.24.2"
       }
     },
     {
@@ -68,8 +68,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/lachlanbell/SwiftOTP",
       "state" : {
-        "revision" : "e43757cd3851b77ca7da195b3355c4a6f2991a0e",
-        "version" : "3.0.1"
+        "revision" : "9660551ea3df153c3cbacfa34ac3abbec73a8b84",
+        "version" : "3.0.2"
       }
     },
     {
