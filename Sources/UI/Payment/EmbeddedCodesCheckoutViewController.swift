@@ -83,6 +83,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         scrollView.backgroundColor = .systemBackground
         scrollView.showsVerticalScrollIndicator = false
         scrollView.alwaysBounceVertical = false
+        contentView.addSubview(scrollView)
         self.scrollView = scrollView
 
         let contentLayoutGuide = scrollView.contentLayoutGuide
@@ -90,6 +91,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         let wrapperView = UIView()
         wrapperView.translatesAutoresizingMaskIntoConstraints = false
+        scrollView.addSubview(wrapperView)
 
         let paidButton = UIButton(type: .system)
         paidButton.translatesAutoresizingMaskIntoConstraints = false
@@ -103,6 +105,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         paidButton.addTarget(self, action: #selector(paidButtonTapped(_:)), for: .touchUpInside)
 
         let stackViewLayout = UILayoutGuide()
+        wrapperView.addLayoutGuide(stackViewLayout)
 
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -147,9 +150,6 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         pageControl.pageIndicatorTintColor = .systemGray6
         pageControl.currentPageIndicatorTintColor = .black
         pageControl.addTarget(self, action: #selector(pageControlTapped(_:)), for: UIControl.Event.valueChanged)
-
-        contentView.addSubview(scrollView)
-        scrollView.addSubview(wrapperView)
 
         wrapperView.addLayoutGuide(stackViewLayout)
         wrapperView.addSubview(stackView)
@@ -342,7 +342,7 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         scrollView.widthAnchor.constraint(equalToConstant: maxPageSize).isActive = true
         scrollView.heightAnchor.constraint(equalToConstant: maxPageSize).isActive = true
-        scrollView.contentSize = CGSize(width: maxPageSize * CGFloat(codes.count), height: scrollView.frame.height)
+        scrollView.contentSize = CGSize(width: maxPageSize * CGFloat(codeImages.count), height: scrollView.frame.height)
 
         for x in 0..<codeImages.count {
             let page = UIImageView()
