@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.46]
 
+### Fixed
+* Receipt view on checkout has no navigation bar #APPS-1380
+
 ## [0.45] - 2024-02-21
 
 ### Fixed
