@@ -237,7 +237,7 @@ final class CheckoutStepsViewController: UIHostingController<CheckoutView> {
             }
             if let receiptLink = userInfo["receiptLink"] as? SnabbleCore.Link, let url = URL(string: receiptLink.href) {
                 let detailViewController = ReceiptsDetailViewController(orderId: url.lastPathComponent, projectId: viewModel.shop.projectId)
-                present(detailViewController, animated: true)
+                navigationController?.pushViewController(detailViewController, animated: true)
                 return
             }
         }
