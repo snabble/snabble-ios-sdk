@@ -526,12 +526,13 @@ extension Snabble {
             request.addValue("application/json", forHTTPHeaderField: "Content-Type")
         }
 
-        let acceptLanguage = Bundle.main.preferredLocalizations.enumerated()
+        let acceptLanguage: String = Bundle.main.preferredLocalizations.enumerated()
             .map { index, language in
                 let quality = max(9 - index, 1)
                 return "\(language);q=0.\(quality)"
             }
             .joined(separator: ",")
+        
         request.addValue(acceptLanguage, forHTTPHeaderField: "Accept-Language")
 
         return request
