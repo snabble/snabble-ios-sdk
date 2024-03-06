@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.47]
 
+### Fixed
+* Xcode 15.3 Build Errors
+
+### Updated
+* groue/GRDB.swift 6.25.0 (was 6.24.2)
+* datatrans/ios-sdk 3.5.0 (was 3.4.0)
+
 ## [0.46] - 2024-02-26
 
 ### Fixed
