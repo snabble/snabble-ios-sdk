@@ -1,875 +1,414 @@
 "Home.Grab.Purchase.placeholder" = "We are currently processing many purchases.\nYou will soon find your new receipt here.";
-
 "Receipts.title" = "Receipts";
-
-"Snabble.addDiscount" = "Enter discount";
-
-"Snabble.AgeVerification.explanation" = "To purchase certain products like alcoholic beverages, verifying your age is required. Enter the 7-digit Number from the back side of your ID card.";
-
 "Snabble.AgeVerification.Failed.message" = "Some products in your cart have an age restriction, unfortunately you can't purchase them.";
-
 "Snabble.AgeVerification.Failed.title" = "Age restriction";
-
 "Snabble.AgeVerification.Pending.message" = "Some products in your cart have an age restriction. Please verify your age before continuing.";
-
 "Snabble.AgeVerification.Pending.title" = "Age verification required";
-
+"Snabble.AgeVerification.explanation" = "To purchase certain products like alcoholic beverages, verifying your age is required. Enter the 7-digit Number from the back side of your ID card.";
 "Snabble.AgeVerification.placeholder" = "7 Digits";
-
 "Snabble.AgeVerification.title" = "Age verification";
-
-"Snabble.askForPermission" = "Ask for permission";
-
 "Snabble.Biometry.Alert.laterButton" = "Not now";
-
 "Snabble.Biometry.Alert.message" = "Do you want to protect online payments with %@?";
-
 "Snabble.Biometry.Alert.title" = "Activate %@?";
-
-"Snabble.Biometry.enterCode" = "Enter code";
-
 "Snabble.Biometry.FaceId" = "Face ID";
-
+"Snabble.Biometry.enterCode" = "Enter code";
 "Snabble.Biometry.locked" = "%@ is locked. Please enter your code in the lock screen to re-activate it.";
-
 "Snabble.Biometry.touchId" = "Touch ID";
-
-"Snabble.cancel" = "Cancel";
-
 "Snabble.CC.3dsecureHint.retailer" = "Enter your data here. We will then forward you to your bank to confirm your details. We reserve 1 € (for %@) and book the money back immediately.";
-
 "Snabble.CC.3dsecureHint.retailerWithPrice" = "Enter your data here. We will then forward you to your bank to confirm your details. We reserve %1$@ (for %2$@) and book the money back immediately.";
-
 "Snabble.CC.cardNumber" = "Card number";
-
 "Snabble.CC.editingHint" = "Your credit card data is only stored in encrypted form and therefore cannot be edited.";
-
 "Snabble.CC.noEntryPossible" = "Unfortunately you can't add credit cards at this time.";
-
 "Snabble.CC.validUntil" = "Valid until";
-
-"Snabble.Checkout.done" = "Finished!";
-
-"Snabble.Checkout.error" = "An error has occurred";
-
 "Snabble.Checkout.ID" = "Checkout-ID";
-
+"Snabble.Checkout.done" = "Finished!";
+"Snabble.Checkout.error" = "An error has occurred";
 "Snabble.Checkout.payAtCashRegister" = "Pay at cash register";
-
 "Snabble.Checkout.title" = "Pay";
-
 "Snabble.Checkout.verifying" = "Verifying";
-
 "Snabble.Coupon.activate" = "Activate";
-
 "Snabble.Coupon.activated" = "Activated";
-
 "Snabble.Coupon.countdown" = "Coupon expires in %@ minutes";
-
 "Snabble.Coupon.deactivate" = "Deactivate";
-
 "Snabble.Coupon.expired" = "This coupon is expired.";
-
 "Snabble.Coupon.explanation" = "Your coupon is now activated for you. Please scan the product in the shop and put it in your shopping cart to benefit from it.";
-
 "Snabble.Coupon.notUsable" = "The conditions of the coupon are not yet met.";
-
 "Snabble.Coupon.validIndefinitely" = "valid indefinitely";
-
 "Snabble.Coupons.expired" = "Already expired";
-
 "Snabble.Coupons.expiresAtDate" = "valid until %@";
-
 "Snabble.Coupons.none" = "No Coupons available";
-
 "Snabble.Coupons.title" = "Coupons";
-
 "Snabble.CreditCard.payNow" = "Pay now using Credit card";
-
-"Snabble.delete" = "Delete";
-
-"Snabble.done" = "Done";
-
 "Snabble.DynamicView.AllStores.button" = "See all stores";
-
-"Snabble.DynamicView.connectWifi" = "Use the free “%@” wifi";
-
 "Snabble.DynamicView.ConnectWifi.noSSID" = "Unfortunately there is no WLAN available";
-
-"Snabble.DynamicView.customerCard" = "Take advantage of your store cards automatically.";
-
-"Snabble.DynamicView.lastPurchase" = "Your last purchase";
-
-"Snabble.DynamicView.lastPurchases" = "Your last purchases";
-
 "Snabble.DynamicView.LastPurchases.all" = "Show All";
-
 "Snabble.DynamicView.LocationPermission.Button.notDetermined" = "Grant permission";
-
 "Snabble.DynamicView.LocationPermission.MissingPermission.message" = "This is necessary to show stores in your vicinity and allow you to shop there.";
-
 "Snabble.DynamicView.LocationPermission.MissingPermission.title" = "Snabble needs your location";
-
-"Snabble.DynamicView.LocationPermission.notNow" = "Ask me later";
-
-"Snabble.DynamicView.LocationPermission.openSettings" = "Open Settings";
-
 "Snabble.DynamicView.LocationPermission.ReducedAccuracy.message" = "Please go to Settings > Privacy, then select “Location Services” and activate “Precise Location”";
-
 "Snabble.DynamicView.LocationPermission.ReducedAccuracy.title" = "Snabble requires your precise location to identify in which store you are currently shopping";
-
+"Snabble.DynamicView.LocationPermission.notNow" = "Ask me later";
+"Snabble.DynamicView.LocationPermission.openSettings" = "Open Settings";
 "Snabble.DynamicView.Shop.show" = "Show stores";
-
 "Snabble.DynamicView.StartShopping.button" = "Start shopping";
-
-"Snabble.edit" = "Edit";
-
+"Snabble.DynamicView.connectWifi" = "Use the free “%@” wifi";
+"Snabble.DynamicView.customerCard" = "Take advantage of your store cards automatically.";
+"Snabble.DynamicView.lastPurchase" = "Your last purchase";
+"Snabble.DynamicView.lastPurchases" = "Your last purchases";
 "Snabble.ExternalBilling.payNow" = "Pay now using purchase on invoice";
-
 "Snabble.Giropay.AuthorizationFailed.message" = "Please try again later";
-
 "Snabble.Giropay.AuthorizationFailed.title" = "Authorization failed";
-
 "Snabble.Giropay.deleteAuthorization" = "Delete method";
-
 "Snabble.Giropay.gotoWebsite" = "Go to giropay.de";
-
 "Snabble.Giropay.payNow" = "Pay now using giropay";
-
 "Snabble.Giropay.savedAuthorization" = "You've successfully authorized Snabble for giropay. To remove this authorization, you need to log in to your giropay account. If you do not want to use this payment method anymore, you can remove it here.";
-
 "Snabble.Giropay.title" = "giropay";
-
-"Snabble.goToSettings" = "Go to settings";
-
 "Snabble.Hints.closedBags" = "Well done! Please make things easy for the cashier and don't store your products in closed bags. Thank you!";
-
 "Snabble.Hints.continueScanning" = "Continue scanning";
-
 "Snabble.Hints.title" = "Info from %@";
-
 "Snabble.InvalidDepositVoucher.errorMsg" = "Deposit return vouchers can be redeemed only once.";
-
 "Snabble.Keyguard.message" = "That's how we make sure that only you have access to this payment method";
-
 "Snabble.Keyguard.requireScreenLock" = "You need to secure your smartphone with a screen lock to add this payment method.";
-
-/* SECTION: Android KeyStore */
-"Snabble.Keyguard.title" = "Please unlock your device";
-
 "Snabble.LimitsAlert.checkoutNotAvailable" = "With a total of more than %@, checkout using the app is unfortunately no longer possible.";
-
 "Snabble.LimitsAlert.notAllMethodsAvailable" = "With a total of more than %@, not all payment methods are available.";
-
 "Snabble.LimitsAlert.title" = "Note";
-
-"Snabble.loadingProductInformation" = "Loading product data…";
-
-"Snabble.networkError" = "Connection error";
-
-"Snabble.no" = "No";
-
-"Snabble.noDiscount" = "no discount";
-
 "Snabble.NotForSale.ErrorMsg.scan" = "This product cannot be paid for using the app, please pay for it at the cashier.";
-
-"Snabble.ok" = "OK";
-
 "Snabble.Onboarding.Deeplink.accessibility" = "open %@";
-
-"Snabble.Onboarding.done" = "Done";
-
 "Snabble.Onboarding.Link.show" = "Show";
-
+"Snabble.Onboarding.done" = "Done";
 "Snabble.Onboarding.next" = "Continue";
-
-/* SECTION: SnabbleAndroid */
-"Snabble.Payment.aborted" = "Payment process was cancelled";
-
-"Snabble.Payment.add" = "Add payment method";
-
-"Snabble.Payment.addPaymentOrigin" = "Transfer payment credentials to the app?";
-
-"Snabble.Payment.backToCart" = "Back to cart";
-
-"Snabble.Payment.backToHome" = "Back to start page";
-
 "Snabble.Payment.CancelError.message" = "Payment cannot be cancelled at this time.";
-
 "Snabble.Payment.CancelError.title" = "Error cancelling payment";
-
-"Snabble.Payment.confirm" = "Confirm purchase";
-
-"Snabble.Payment.creditCard" = "Credit card";
-
 "Snabble.Payment.CreditCard.error" = "There was an error processing your credit card";
-
 "Snabble.Payment.CreditCard.expireDate" = "Expires: %@";
-
 "Snabble.Payment.Delete.message" = "Are you sure you want to remove this payment method?";
-
 "Snabble.Payment.EmptyState.add" = "Add payment method";
-
 "Snabble.Payment.EmptyState.message" = "You don't have any payment methods added yet.";
-
-"Snabble.Payment.errorStarting" = "Error creating the payment process";
-
-"Snabble.Payment.ExternalBilling.add" = "Add";
-
 "Snabble.Payment.ExternalBilling.AlertDialog.add" = "Add";
-
 "Snabble.Payment.ExternalBilling.AlertDialog.hint" = "Subject";
-
 "Snabble.Payment.ExternalBilling.AlertDialog.message" = "Enter your subject here";
-
 "Snabble.Payment.ExternalBilling.AlertDialog.skip" = "Skip";
-
 "Snabble.Payment.ExternalBilling.Error.badRequest" = "Oops, something went wrong! Please try again!";
-
 "Snabble.Payment.ExternalBilling.Error.wrongCredentials" = "The given information is wrong. Please check them and try again!";
-
+"Snabble.Payment.ExternalBilling.add" = "Add";
 "Snabble.Payment.ExternalBilling.hint" = "Please note the term of payment on your invoice!";
-
 "Snabble.Payment.ExternalBilling.message" = "Enter your details. Please note the term of payment on your invoice, which will be sent to your stored address after your purchase.";
-
 "Snabble.Payment.ExternalBilling.password" = "Password";
-
 "Snabble.Payment.ExternalBilling.title" = "Purchase on invoice";
-
 "Snabble.Payment.ExternalBilling.username" = "Username";
-
-"Snabble.Payment.noMethodAvailable" = "Unfortunately, this purchase can't be made using the app.";
-
-"Snabble.Payment.offlineHint" = "You are currently offline and some payment methods may not be available";
-
 "Snabble.Payment.Online.message" = "Your purchase must be confirmed by an employee.";
-
-"Snabble.Payment.payAtCashDesk" = "Pay at the cash desk";
-
-"Snabble.Payment.payAtSCO" = "Card at EC terminal";
-
-"Snabble.Payment.payUsingCustomerCard" = "with Customer Card";
-
-"Snabble.Payment.payViaInvoice" = "via Invoice";
-
 "Snabble.Payment.PostFinanceCard.error" = "There was an error processing your postfinance card";
-
-"Snabble.Payment.presentCode" = "Show this code at a Snabble monitor or to a cashier to confirm your purchase.";
-
-"Snabble.Payment.rejected" = "Purchase denied";
-
-"Snabble.Payment.rejectedHint" = "Your purchase was denied. Please check your cart and start the checkout again.";
-
-"Snabble.Payment.SEPA.city" = "City";
-
-"Snabble.Payment.SEPA.countryCode" = "Country";
-
-"Snabble.Payment.SEPA.hint" = "Note: In order to protect you and our merchants against misuse, the merchant will have your bank card shown on your first payment by SEPA direct debit.";
-
 "Snabble.Payment.SEPA.Hint.account" = "Account number";
-
 "Snabble.Payment.SEPA.Hint.accountType" = "Account type";
-
 "Snabble.Payment.SEPA.Hint.bank" = "Bank number";
-
 "Snabble.Payment.SEPA.Hint.branchCode" = "Branch code";
-
 "Snabble.Payment.SEPA.Hint.checksum" = "Checksum";
-
 "Snabble.Payment.SEPA.Hint.controlCode" = "Control code";
-
 "Snabble.Payment.SEPA.Hint.miscCode" = "Other function";
-
 "Snabble.Payment.SEPA.Hint.regionCode" = "Region code";
-
+"Snabble.Payment.SEPA.city" = "City";
+"Snabble.Payment.SEPA.countryCode" = "Country";
+"Snabble.Payment.SEPA.hint" = "Note: In order to protect you and our merchants against misuse, the merchant will have your bank card shown on your first payment by SEPA direct debit.";
 "Snabble.Payment.SEPA.iban" = "IBAN";
-
 "Snabble.Payment.SEPA.invalidIBAN" = "Please enter a valid IBAN.";
-
 "Snabble.Payment.SEPA.invalidIBANCountry" = "The entered IBAN country code is incorrect.";
-
 "Snabble.Payment.SEPA.invalidName" = "Please enter a valid lastname.";
-
 "Snabble.Payment.SEPA.mandate" = "Mandate Reference No.";
-
 "Snabble.Payment.SEPA.missingCity" = "Please enter a city.";
-
 "Snabble.Payment.SEPA.missingCountry" = "Country code cannot be empty.";
-
 "Snabble.Payment.SEPA.missingIBAN" = "Please enter a IBAN.";
-
 "Snabble.Payment.SEPA.missingName" = "Please enter your surname.";
-
 "Snabble.Payment.SEPA.name" = "Lastname";
-
 "Snabble.Payment.SEPA.payer" = "Payer";
-
 "Snabble.Payment.SEPA.title" = "SEPA direct debit";
-
 "Snabble.Payment.SEPA.validIBAN" = "Valid IBAN";
-
-"Snabble.Payment.success" = "Thank you for shopping";
-
-"Snabble.Payment.transferCart" = "Transfer shopping cart";
-
 "Snabble.Payment.Twint.error" = "There was an error processing your TWINT account";
-
+"Snabble.Payment.aborted" = "Payment process was cancelled";
+"Snabble.Payment.add" = "Add payment method";
+"Snabble.Payment.addPaymentOrigin" = "Transfer payment credentials to the app?";
+"Snabble.Payment.backToCart" = "Back to cart";
+"Snabble.Payment.backToHome" = "Back to start page";
+"Snabble.Payment.confirm" = "Confirm purchase";
+"Snabble.Payment.creditCard" = "Credit card";
+"Snabble.Payment.errorStarting" = "Error creating the payment process";
+"Snabble.Payment.noMethodAvailable" = "Unfortunately, this purchase can't be made using the app.";
+"Snabble.Payment.offlineHint" = "You are currently offline and some payment methods may not be available";
+"Snabble.Payment.payAtCashDesk" = "Pay at the cash desk";
+"Snabble.Payment.payAtSCO" = "Card at EC terminal";
+"Snabble.Payment.payUsingCustomerCard" = "with Customer Card";
+"Snabble.Payment.payViaInvoice" = "via Invoice";
+"Snabble.Payment.presentCode" = "Show this code at a Snabble monitor or to a cashier to confirm your purchase.";
+"Snabble.Payment.rejected" = "Purchase denied";
+"Snabble.Payment.rejectedHint" = "Your purchase was denied. Please check your cart and start the checkout again.";
+"Snabble.Payment.success" = "Thank you for shopping";
+"Snabble.Payment.transferCart" = "Transfer shopping cart";
 "Snabble.Payment.usableAt" = "Usable at: %@";
-
 "Snabble.Payment.waiting" = "Waiting for confirmation";
-
 "Snabble.PaymentCard.editingHint" = "Your card data is only stored in encrypted form and therefore cannot be edited.";
-
 "Snabble.PaymentContinuation.message" = "Continuing the payment";
-
 "Snabble.PaymentError.msg" = "Your payment couldn't be processed. Please pay at a regular cash desk.\n\nSorry about the inconvenience!";
-
 "Snabble.PaymentError.title" = "An error has occurred";
-
 "Snabble.PaymentError.tryAgain" = "Try again";
-
-"Snabble.PaymentMethods.add" = "Add payment method";
-
-"Snabble.PaymentMethods.choose" = "Which payment method to add?";
-
-"Snabble.PaymentMethods.forAllRetailers" = "For all retailers";
-
-"Snabble.PaymentMethods.forSingleRetailer" = "For specific retailer";
-
 "Snabble.PaymentMethods.NoCodeAlert.biometry" = "Your iPhone isn't protected by a code or Touch ID/Face ID. For your own safety, please assign a code before storing your payment information.";
-
 "Snabble.PaymentMethods.NoCodeAlert.noBiometry" = "Your iPhone isn't protected by a code. For your own safety, please assign a code before storing your payment information.";
-
+"Snabble.PaymentMethods.add" = "Add payment method";
+"Snabble.PaymentMethods.choose" = "Which payment method to add?";
+"Snabble.PaymentMethods.forAllRetailers" = "For all retailers";
+"Snabble.PaymentMethods.forSingleRetailer" = "For specific retailer";
 "Snabble.PaymentMethods.noDeviceCode" = "No Code Protection";
-
-/* ********* iOS Payment Methods ********* */
 "Snabble.PaymentMethods.title" = "Payment Methods";
-
 "Snabble.PaymentSelection.addNow" = "Add now";
-
 "Snabble.PaymentSelection.howToPay" = "How would you like to pay %@?";
-
 "Snabble.PaymentSelection.payNow" = "Pay %@ now";
-
 "Snabble.PaymentSelection.title" = "Payment";
-
 "Snabble.PaymentStatus.AddDebitCard.button" = "Yes, save girocard in app";
-
 "Snabble.PaymentStatus.AddDebitCard.message" = "Would you like to store your girocard data securely in the app so that you can pay for your next purchase by direct debit? You can leave your card in your wallet in the future.";
-
-"Snabble.PaymentStatus.back" = "Back";
-
-"Snabble.PaymentStatus.close" = "Close";
-
 "Snabble.PaymentStatus.DebitCardAdded.message" = "We have successfully verified your card. You can now pay by SEPA direct debit. You can leave your girocard in your wallet in the future.";
-
 "Snabble.PaymentStatus.ExitCode.openExitGateTimed" = "The code is only valid for a short time.";
-
 "Snabble.PaymentStatus.ExitCode.title" = "Exit-Code";
-
 "Snabble.PaymentStatus.Fulfillment.title" = "Fulfillment";
-
 "Snabble.PaymentStatus.Payment.error" = "Your payment could not be processed. Try again or choose another payment method.";
-
 "Snabble.PaymentStatus.Payment.title" = "Payment";
-
 "Snabble.PaymentStatus.Payment.tryAgain" = "Try again";
-
-/* Button to submit the feedback on the checkout screen after a successful checkout. */
 "Snabble.PaymentStatus.Rating.send" = "Submit Feedback";
-
 "Snabble.PaymentStatus.Rating.title" = "What was not good?";
-
 "Snabble.PaymentStatus.Rating.title2" = "What can we do even better?";
-
-/* Placeholder text in the input text field on the checkout screen after a successful checkout. */
 "Snabble.PaymentStatus.Ratings.feedbackPlaceholder" = "Feel free to give us more feedback (optional)";
-
 "Snabble.PaymentStatus.Ratings.thanks" = "Thank you!";
-
 "Snabble.PaymentStatus.Ratings.thanksForFeedback" = "Thanks for your feedback!";
-
 "Snabble.PaymentStatus.Ratings.title" = "Did you like the purchase?";
-
 "Snabble.PaymentStatus.Receipt.title" = "Receipt";
-
-"Snabble.PaymentStatus.step1" = "Locating you in the checkout area";
-
-"Snabble.PaymentStatus.step2" = "Processing your purchase";
-
-"Snabble.PaymentStatus.step3" = "Processing your payment";
-
 "Snabble.PaymentStatus.Title.error" = "Unfortunately an error has occurred";
-
 "Snabble.PaymentStatus.Title.inProgress" = "Your purchase is completing";
-
 "Snabble.PaymentStatus.Title.success" = "Thank you for your purchase!";
-
 "Snabble.PaymentStatus.Tobacco.error" = "A problem has occurred with the distribution of cigarettes. Please inform a staff member.";
-
 "Snabble.PaymentStatus.Tobacco.message" = "Please remove your cigarettes.";
-
 "Snabble.PaymentStatus.Tobacco.title" = "Cigarette distribution";
-
+"Snabble.PaymentStatus.back" = "Back";
+"Snabble.PaymentStatus.close" = "Close";
+"Snabble.PaymentStatus.step1" = "Locating you in the checkout area";
+"Snabble.PaymentStatus.step2" = "Processing your purchase";
+"Snabble.PaymentStatus.step3" = "Processing your payment";
 "Snabble.Payone.cardNumber" = "Card Number";
-
-/* City for the Payone Credit Card Input View */
 "Snabble.Payone.city" = "City";
-
-/* Country for the Payone Credit Card Input View */
 "Snabble.Payone.country" = "Country";
-
-/* Disabled country choose hint for the Payone Credit Card Input View */
 "Snabble.Payone.countryHint" = "Please select the country";
-
 "Snabble.Payone.cvc" = "CVC";
-
-/* Email for the Payone Credit Card Input View */
 "Snabble.Payone.email" = "E-Mail";
-
 "Snabble.Payone.expireMonth" = "Expiry Month (MM)";
-
 "Snabble.Payone.expireYear" = "Expiry Year (YYYY)";
-
 "Snabble.Payone.incompleteForm" = "Please enter all required data.";
-
 "Snabble.Payone.lastname" = "Last Name";
-
-/* State for the Payone Credit Card Input View */
 "Snabble.Payone.state" = "State";
-
-/* Disabled state choose hint for the Payone Credit Card Input View */
 "Snabble.Payone.stateHint" = "Please select the state";
-
-/* Street and Housenumber for the Payone Credit Card Input View */
 "Snabble.Payone.street" = "Street";
-
-/* Zip for the Payone Credit Card Input View */
 "Snabble.Payone.zip" = "Zip";
-
-"Snabble.pleaseWait" = "Please wait…";
-
 "Snabble.PostFinanceCard.payNow" = "Pay now using PostFinance Card";
-
-"Snabble.QRCode.codeXofY" = "Code %1$d of %2$d";
-
-"Snabble.QRCode.didPay" = "I paid at the cash register";
-
 "Snabble.QRCode.DidPayDialog.cancel" = "Back to QR-Code";
-
 "Snabble.QRCode.DidPayDialog.message" = "Did you pay at checkout so we can discard the cart?";
-
 "Snabble.QRCode.DidPayDialog.ok" = "Yes, discard shopping cart";
-
 "Snabble.QRCode.Entry.title" = "Code: %d";
-
+"Snabble.QRCode.codeXofY" = "Code %1$d of %2$d";
+"Snabble.QRCode.didPay" = "I paid at the cash register";
 "Snabble.QRCode.message" = "Please show QR code at the cash desk";
-
 "Snabble.QRCode.nextCode" = "Show code %1$d of %2$d";
-
 "Snabble.QRCode.priceMayDiffer" = "The exact price will be calculated by the register and may differ from the one shown here.";
-
 "Snabble.QRCode.showTheseCodes" = "Please show these %d codes at the register, one after the other";
-
 "Snabble.QRCode.showThisCode" = "Please show this code at the register";
-
 "Snabble.QRCode.title" = "Pay at cash desk";
-
 "Snabble.QRCode.total" = "Total: ";
-
 "Snabble.Receipt.errorDownload" = "Receipt could not be downloaded";
-
 "Snabble.Receipt.pdfReaderUnavailable" = "No suitable PDF reader application found";
-
 "Snabble.Receipts.loading" = "(loading)";
-
 "Snabble.Receipts.noReceipts" = "No Receipts found";
-
 "Snabble.Receipts.oClock" = "o'clock";
-
 "Snabble.Receipts.title" = "Receipts";
-
-"Snabble.remove" = "Remove";
-
-"Snabble.SaleStop.errorMsg" = "These products cannot be paid for using the app, please pay for them at the cashier:";
-
-"Snabble.SaleStop.ErrorMsg.one" = "This product cannot be paid for using the app, please pay for it at the cashier:";
-
-"Snabble.SaleStop.ErrorMsg.scan" = "This product cannot be paid for using the app, please pay for it at the cashier.";
-
-"Snabble.SaleStop.ErrorMsg.title" = "Sorry";
-
-"Snabble.save" = "Save";
-
-"Snabble.Scanner.Accessibility.actionHideHint" = "Hide hint permanently";
-
-"Snabble.Scanner.Accessibility.actionUnderstood" = "Understood";
-
-"Snabble.Scanner.Accessibility.enterQuantity" = "Please enter the quantity in %@";
-
-"Snabble.Scanner.Accessibility.eventBackInScanner" = "You are back in scanner";
-
-"Snabble.Scanner.Accessibility.eventBarcodeDetected" = "Barcode detected";
-
-"Snabble.Scanner.Accessibility.eventCartOpened" = "Cart extended";
-
-"Snabble.Scanner.Accessibility.eventMaxQuantityReached" = "You reached the maximum count of items for the cart";
-
-/* Example: 3 times Banana for 3$ */
-"Snabble.Scanner.Accessibility.eventQuantityUpdate" = "%1$@ times %2$@ for %3$@";
-
-"Snabble.Scanner.Accessibility.eventScannerOpened" = "You opened the scanner.";
-
-"Snabble.Scanner.Accessibility.hintCartContent" = "There are %1$@ items for %2$@ in your cart.";
-
-"Snabble.Scanner.Accessibility.hintCartIsEmpty" = "Your cart is empty.";
-
-"Snabble.Scanner.Accessibility.hintPermission" = "In order to scan we need a permission from you.";
-
-"Snabble.Scanner.addCodeAsIs" = "Add %@ as-is";
-
-"Snabble.Scanner.addToCart" = "Add to cart";
-
-"Snabble.Scanner.batterySaverHint" = "Scanner stopped. Tap anywhere on the screen to continue.";
-
-"Snabble.Scanner.BundleDialog.headline" = "Choose package";
-
-"Snabble.Scanner.Camera.accessDenied" = "Camera access denied";
-
-"Snabble.Scanner.Camera.allowAccess" = "Sorry, we'll need to access your camera to scan barcodes. Please allow this in the settings and return here.";
-
-"Snabble.Scanner.couponAdded" = "Added coupon “%@”";
-
-"Snabble.Scanner.duplicateDepositScanned" = "Each deposit slip can only be scanned once.";
-
-"Snabble.Scanner.enterBarcode" = "Enter code";
-
-"Snabble.Scanner.enterCodeButton" = "Enter\nbarcode";
-
-/* Text der Snackbar die Angezeigt wird, wenn der Benutzer noch nie ein Produkt gescannt hat */
-"Snabble.Scanner.firstScan" = "Scan your first product. Place the barcode in front of your camera.";
-
-"Snabble.Scanner.goToCart" = "Cart: %@";
-
-"Snabble.Scanner.GoToCart.empty" = "Cart";
-
-"Snabble.Scanner.introText" = "Scan product barcodes to add them to your shopping cart.";
-
-"Snabble.Scanner.manualCouponAdded" = "You've entered a discounted price for your last item. Please note that an employee will check your purchase.";
-
-"Snabble.Scanner.multiPack" = "Don't forget!";
-
-"Snabble.Scanner.networkError" = "Could not retrieve product data. Please check your internet connection.";
-
-"Snabble.Scanner.noMatchesFound" = "Product not found";
-
-/* Text to be displayed in scanner if the app is not checked into a shop. */
-"Snabble.Scanner.notCheckedIn" = "Visit a store to use the scanner.";
-
-"Snabble.Scanner.plusDeposit" = "+ %@ deposit";
-
-"Snabble.Scanner.scannedAgeRestrictedProduct" = "Your age will be checked once at the time of payment.";
-
-"Snabble.Scanner.scannedShelfCode" = "Please weigh the product, then scan the barcode from the sticker";
-
-"Snabble.Scanner.scanningTitle" = "Scan Barcode";
-
-"Snabble.Scanner.serverError" = "Could not retrieve product data.";
-
-"Snabble.Scanner.start" = "Start scanner";
-
-"Snabble.Scanner.title" = "Scanner";
-
-"Snabble.Scanner.torchButton" = "Torch";
-
-"Snabble.Scanner.unknownBarcode" = "No price information available for this product.";
-
-"Snabble.Scanner.updateCart" = "Update cart";
-
-"Snabble.SEPA.editingHint" = "Your SEPA data is only stored in encrypted form and therefore cannot be edited.";
-
-"Snabble.SEPA.encryptionError" = "Error encrypting data";
-
-"Snabble.SEPA.helper" = "Please enter the data for SEPA direct debit.";
-
-"Snabble.SEPA.iAgree" = "I agree";
-
 "Snabble.SEPA.IbanTransferAlert.message" = "Would you like to save this account information (IBAN: %@) for future purchases?";
-
 "Snabble.SEPA.IbanTransferAlert.title" = "Save payment data";
-
+"Snabble.SEPA.editingHint" = "Your SEPA data is only stored in encrypted form and therefore cannot be edited.";
+"Snabble.SEPA.encryptionError" = "Error encrypting data";
+"Snabble.SEPA.helper" = "Please enter the data for SEPA direct debit.";
+"Snabble.SEPA.iAgree" = "I agree";
 "Snabble.SEPA.iDoNotAgree" = "I do not agree";
-
 "Snabble.SEPA.mandate" = "SEPA direct debit mandate";
-
 "Snabble.SEPA.payNow" = "Pay now using SEPA";
-
 "Snabble.SEPA.scoTransferHint" = "Please enter the name from the card to save it for future payments.";
-
-/* <street and house number> in <ZIP code> <city name> */
+"Snabble.SaleStop.ErrorMsg.one" = "This product cannot be paid for using the app, please pay for it at the cashier:";
+"Snabble.SaleStop.ErrorMsg.scan" = "This product cannot be paid for using the app, please pay for it at the cashier.";
+"Snabble.SaleStop.ErrorMsg.title" = "Sorry";
+"Snabble.SaleStop.errorMsg" = "These products cannot be paid for using the app, please pay for them at the cashier:";
+"Snabble.Scanner.Accessibility.actionHideHint" = "Hide hint permanently";
+"Snabble.Scanner.Accessibility.actionUnderstood" = "Understood";
+"Snabble.Scanner.Accessibility.enterQuantity" = "Please enter the quantity in %@";
+"Snabble.Scanner.Accessibility.eventBackInScanner" = "You are back in scanner";
+"Snabble.Scanner.Accessibility.eventBarcodeDetected" = "Barcode detected";
+"Snabble.Scanner.Accessibility.eventCartOpened" = "Cart extended";
+"Snabble.Scanner.Accessibility.eventMaxQuantityReached" = "You reached the maximum count of items for the cart";
+"Snabble.Scanner.Accessibility.eventQuantityUpdate" = "%1$@ times %2$@ for %3$@";
+"Snabble.Scanner.Accessibility.eventScannerOpened" = "You opened the scanner.";
+"Snabble.Scanner.Accessibility.hintCartContent" = "There are %1$@ items for %2$@ in your cart.";
+"Snabble.Scanner.Accessibility.hintCartIsEmpty" = "Your cart is empty.";
+"Snabble.Scanner.Accessibility.hintPermission" = "In order to scan we need a permission from you.";
+"Snabble.Scanner.BundleDialog.headline" = "Choose package";
+"Snabble.Scanner.Camera.accessDenied" = "Camera access denied";
+"Snabble.Scanner.Camera.allowAccess" = "Sorry, we'll need to access your camera to scan barcodes. Please allow this in the settings and return here.";
+"Snabble.Scanner.GoToCart.empty" = "Cart";
+"Snabble.Scanner.addCodeAsIs" = "Add %@ as-is";
+"Snabble.Scanner.addToCart" = "Add to cart";
+"Snabble.Scanner.batterySaverHint" = "Scanner stopped. Tap anywhere on the screen to continue.";
+"Snabble.Scanner.couponAdded" = "Added coupon “%@”";
+"Snabble.Scanner.duplicateDepositScanned" = "Each deposit slip can only be scanned once.";
+"Snabble.Scanner.enterBarcode" = "Enter code";
+"Snabble.Scanner.enterCodeButton" = "Enter\nbarcode";
+"Snabble.Scanner.firstScan" = "Scan your first product. Place the barcode in front of your camera.";
+"Snabble.Scanner.goToCart" = "Cart: %@";
+"Snabble.Scanner.introText" = "Scan product barcodes to add them to your shopping cart.";
+"Snabble.Scanner.manualCouponAdded" = "You've entered a discounted price for your last item. Please note that an employee will check your purchase.";
+"Snabble.Scanner.multiPack" = "Don't forget!";
+"Snabble.Scanner.networkError" = "Could not retrieve product data. Please check your internet connection.";
+"Snabble.Scanner.noMatchesFound" = "Product not found";
+"Snabble.Scanner.notCheckedIn" = "Visit a store to use the scanner.";
+"Snabble.Scanner.plusDeposit" = "+ %@ deposit";
+"Snabble.Scanner.scannedAgeRestrictedProduct" = "Your age will be checked once at the time of payment.";
+"Snabble.Scanner.scannedShelfCode" = "Please weigh the product, then scan the barcode from the sticker";
+"Snabble.Scanner.scanningTitle" = "Scan Barcode";
+"Snabble.Scanner.serverError" = "Could not retrieve product data.";
+"Snabble.Scanner.start" = "Start scanner";
+"Snabble.Scanner.title" = "Scanner";
+"Snabble.Scanner.torchButton" = "Torch";
+"Snabble.Scanner.unknownBarcode" = "No price information available for this product.";
+"Snabble.Scanner.updateCart" = "Update cart";
 "Snabble.Shop.Address.accessibility" = "%1$@ in %2$@ %3$@";
-
-"Snabble.Shop.Detail.openingHours" = "Opening hours";
-
 "Snabble.Shop.Detail.Phonenumber.accessibility" = "Phonenumber %@";
-
+"Snabble.Shop.Detail.openingHours" = "Opening hours";
 "Snabble.Shop.Detail.shopNow" = "Start shopping";
-
 "Snabble.Shop.Detail.startNavigation" = "Do you like to start navigation?";
-
 "Snabble.Shop.Detail.title" = "Details";
-
-"Snabble.Shop.Details.contractingParty" = "Contracting Party";
-
-"Snabble.Shop.Details.friday" = "Friday";
-
 "Snabble.Shop.Details.MapDisabled.actionTitle" = "Activate";
-
 "Snabble.Shop.Details.MapDisabled.title" = "You have disabled the use of %@.";
-
-"Snabble.Shop.Details.monday" = "Monday";
-
-"Snabble.Shop.Details.saturday" = "Saturday";
-
 "Snabble.Shop.Details.StartCall.accessibility" = "Call";
-
+"Snabble.Shop.Details.contractingParty" = "Contracting Party";
+"Snabble.Shop.Details.friday" = "Friday";
+"Snabble.Shop.Details.monday" = "Monday";
+"Snabble.Shop.Details.saturday" = "Saturday";
 "Snabble.Shop.Details.sunday" = "Sunday";
-
 "Snabble.Shop.Details.thursday" = "Thursday";
-
 "Snabble.Shop.Details.tuesday" = "Tuesday";
-
 "Snabble.Shop.Details.wednesday" = "Wednesday";
-
 "Snabble.Shop.Distance.accessibility" = "In %@";
-
 "Snabble.Shop.Finder.title" = "Shop";
-
 "Snabble.Shop.Finder.youarehere" = "You are here";
-
 "Snabble.Shop.List.Colapse.accessibility" = "collapse";
-
 "Snabble.Shop.List.EventShopColapsed.accessibility" = "%@ collapsed";
-
 "Snabble.Shop.List.EventShopExpanded.accessibility" = "%@ expanded";
-
 "Snabble.Shop.List.Expand.accessibility" = "expand";
-
 "Snabble.Shop.List.ShowDetails.accessibility" = "Show shop details";
-
 "Snabble.Shopping.title" = "Shopping";
-
-"Snabble.Shoppingcart.Accessibility.actionAdd" = "Add";
-
-"Snabble.Shoppingcart.Accessibility.actionDelete" = "Delete";
-
-"Snabble.Shoppingcart.Accessibility.actionUse" = "Use";
-
-"Snabble.Shoppingcart.Accessibility.cardEndsWith" = "Ends with %@";
-
-"Snabble.Shoppingcart.Accessibility.closeDialog" = "Close dialog";
-
-"Snabble.Shoppingcart.Accessibility.contextInCart" = "In cart";
-
-"Snabble.Shoppingcart.Accessibility.decreaseQuantity" = "Decrease quantity";
-
-"Snabble.Shoppingcart.Accessibility.descriptionForPrice" = "for %@";
-
-"Snabble.Shoppingcart.Accessibility.descriptionQuantity" = "%@ times";
-
-"Snabble.Shoppingcart.Accessibility.descriptionWithDiscount" = "with discount";
-
-"Snabble.Shoppingcart.Accessibility.descriptionWithoutDiscount" = "without discount";
-
-"Snabble.Shoppingcart.Accessibility.increaseQuantity" = "Increase quantity";
-
-"Snabble.Shoppingcart.Accessibility.paymentMethod" = "Payment method: %@";
-
-"Snabble.Shoppingcart.Accessibility.quantity" = "Quantity";
-
-"Snabble.Shoppingcart.Accessibility.selected" = "Selected";
-
-"Snabble.Shoppingcart.articleRemoved" = "Product removed";
-
-"Snabble.Shoppingcart.buyProducts" = "Buy %1$d products for %2$@";
-
-"Snabble.Shoppingcart.BuyProducts.now" = "Pay now";
-
-"Snabble.Shoppingcart.BuyProducts.one" = "Buy %1$d product for %2$@";
-
-"Snabble.Shoppingcart.BuyProducts.selectPaymentMethod" = "Select payment method";
-
-"Snabble.Shoppingcart.coupon" = "Coupon";
-
-"Snabble.Shoppingcart.coupons" = "Coupons";
-
-"Snabble.Shoppingcart.deposit" = "Deposit";
-
-"Snabble.Shoppingcart.discounts" = "Discounts";
-
-"Snabble.Shoppingcart.EmptyState.buttonTitle" = "Scan now";
-
-"Snabble.Shoppingcart.EmptyState.description" = "Visit a store that supports Snabble and scan the barcodes of products you wish to purchase.";
-
-"Snabble.Shoppingcart.EmptyState.restartButtonTitle" = "Start new shopping trip";
-
-"Snabble.Shoppingcart.EmptyState.restoreButtonTitle" = "Restore previous cart";
-
-"Snabble.Shoppingcart.EmptyState.title" = "Your shopping cart is empty";
-
-"Snabble.Shoppingcart.giveaway" = "Free gift";
-
-"Snabble.Shoppingcart.howToPay" = "How would you like to pay?";
-
-"Snabble.Shoppingcart.includesDeposit" = "incl. deposit";
-
-"Snabble.Shoppingcart.noPaymentData" = "Add now";
-
-"Snabble.Shoppingcart.notForThisPurchase" = "Not available for this purchase";
-
-"Snabble.Shoppingcart.notForVendor" = "Not supported by this retailer";
-
-"Snabble.Shoppingcart.removeItem" = "Really remove %@?";
-
-"Snabble.Shoppingcart.removeItems" = "Really remove all products from your shopping cart?";
-
-"Snabble.Shoppingcart.saved" = "saved";
-
 "Snabble.ShoppingCart.title" = "Shopping Cart";
-
-/* Hinweiß der angezeigt wird wenn ein Artikel der Einkaufsliste hinzugefügt wurde */
-"Snabble.ShoppingList.added" = "%@ saved";
-
-/* Beschreibung für den Scan-Knopf */
 "Snabble.ShoppingList.AddItem.viaScan" = "Scan products";
-
-/* Beschreibung für den Microfon-Knopf */
 "Snabble.ShoppingList.AddItem.viaVoice" = "Tell products";
-
-"Snabble.ShoppingList.addToList" = "Add to List";
-
-"Snabble.ShoppingList.changeEntry" = "Change entry";
-
-"Snabble.ShoppingList.changeQuantity" = "Change quantity";
-
-/* Titel des Drilldown Popups wenn ein Marke mehrere Projekte hat */
 "Snabble.ShoppingList.CreateList.drilldownTitle" = "Create new shopping list for %@";
-
-/* Der Titel des Dialogs zur Erzeugung einer neuen Einkaufsliste */
 "Snabble.ShoppingList.CreateList.title" = "Create shopping list";
-
-/* Name des zu editierenden Eintrags */
 "Snabble.ShoppingList.EditItem.name" = "Name";
-
-/* Beim Editieren von Einträgen der Einkaufsliste darf der Name nicht leer sein */
 "Snabble.ShoppingList.EditItem.nameRequired" = "Name must not be empty";
-
-/* Der Title beim Editieren von Einträgen der Einkaufsliste */
 "Snabble.ShoppingList.EditItem.title" = "Edit entry";
-
-/* Der Löschen-Knopf beim Editieren von Einkaufslisten */
 "Snabble.ShoppingList.EditList.delete" = "Delete";
-
-/* Der Speichern-Knopf beim Editieren von Einkaufslisten */
 "Snabble.ShoppingList.EditList.save" = "Save";
-
-/* Der Titel des Popups zum bearbeiten von Einkaufslisten */
 "Snabble.ShoppingList.EditList.title" = "Edit shopping list";
-
-"Snabble.ShoppingList.isDeleted" = "The shopping list was deleted";
-
-/* Der Text wird angezeigt wenn man ein Element der Einkaufsliste wegwischt */
-"Snabble.ShoppingList.itemDeleted" = "%@ deleted";
-
-/* Der Call-To-Action wenn man das löschen eines Elements der Einkaufsliste rückgänig machen möchte */
 "Snabble.ShoppingList.ItemDeleted.undo" = "Undo";
-
-/* Der Inhalt der Snackbar wenn eine Einkaufsliste gelöscht wurde */
 "Snabble.ShoppingList.ListDeleted.title" = "Shopping list deleted";
-
-/* Der Call-To-Action wenn eine Einkaufsliste wiederhergestellt werden soll */
 "Snabble.ShoppingList.ListDeleted.undo" = "Undo";
-
-/* Der Call-To-Action beim Empty-State Text wenn der Einkaufszettel noch leer ist  */
 "Snabble.ShoppingList.ListEmpty.add" = "Add product";
-
-/* Empty-State Text wenn der Einkaufszettel noch leer ist */
 "Snabble.ShoppingList.ListEmpty.title" = "Your shopping list is empty.";
-
-/* Der Call-To-Action beim Empty-State Text wenn noch kein Einkaufszettel angelegt wurde */
 "Snabble.ShoppingList.NoLists.add" = "Create shopping list";
-
-/* Der Empty-State wenn noch kein Einkaufszettel angelegt wurde */
 "Snabble.ShoppingList.NoLists.title" = "You have no shopping lists yet.";
-
-"Snabble.ShoppingList.notAvailable" = "The shopping list is not available";
-
-/* Hinweiß der angezeigt wird wenn ein Artikel nicht gefunden wurde */
-"Snabble.ShoppingList.notFound" = "Unknown product";
-
-/* Titel der Toolbar für den Sortiermodus */
 "Snabble.ShoppingList.OrderItems.title" = "Order items";
-
-/* Der Hint der angezeigt wird wenn man einen Artikel per Suche hinzufügen möchte */
-"Snabble.ShoppingList.searchHint" = "Search or enter directly";
-
 "Snabble.ShoppingList.Section.categories" = "Categories";
-
 "Snabble.ShoppingList.Section.products" = "Products";
-
-/* Der Titel der übersichtsseite der Einkaufslisten */
-"Snabble.ShoppingList.title" = "Shopping List";
-
-"Snabble.ShoppingList.updateQuantity" = "Update quantity";
-
-/* Man soll verschiedene Artikel mit einem "und" in die Einkaufsliste legen können. Hier geht es nur um das Wort "und" */
 "Snabble.ShoppingList.Voice.connectingWord" = "and";
-
-/* Hinweis der Eingeblendet wird wenn der Benutzer das erste mal vermutlich falsch mehrere Artikel zum Einkaufszettel ergänezen wollte */
 "Snabble.ShoppingList.Voice.details" = "Did you want to add several things to your shopping list? Then combine the individual entries with “and”, like this: Tissues and pasta and yeast";
-
 "Snabble.ShoppingList.Voice.discardCommand" = "Discard";
-
 "Snabble.ShoppingList.Voice.doneCommand" = "Done";
-
 "Snabble.ShoppingList.Voice.example" = "For example, say:\n\n“Bread and Milk and Eggs”\n\n“Done” to end the recording, \n“Discard” to discard the recording";
-
-/* Der Hinweis der bei der Spracherkennung angezeigt werden soll was der Benutzer jetzt sagen soll */
 "Snabble.ShoppingList.Voice.hint" = "What do you need?";
-
-/* Hinweis der Eingeblendet wird wenn der Benutzer das erste mal vermutlich falsch mehrere Artikel zum Einkaufszettel ergänezen wollte */
 "Snabble.ShoppingList.Voice.title" = "Hint";
-
-/* Der Titel der übersichtsseite der Einkaufslisten */
+"Snabble.ShoppingList.addToList" = "Add to List";
+"Snabble.ShoppingList.added" = "%@ saved";
+"Snabble.ShoppingList.changeEntry" = "Change entry";
+"Snabble.ShoppingList.changeQuantity" = "Change quantity";
+"Snabble.ShoppingList.isDeleted" = "The shopping list was deleted";
+"Snabble.ShoppingList.itemDeleted" = "%@ deleted";
+"Snabble.ShoppingList.notAvailable" = "The shopping list is not available";
+"Snabble.ShoppingList.notFound" = "Unknown product";
+"Snabble.ShoppingList.searchHint" = "Search or enter directly";
+"Snabble.ShoppingList.title" = "Shopping List";
+"Snabble.ShoppingList.updateQuantity" = "Update quantity";
 "Snabble.ShoppingLists.title" = "Shopping lists";
-
+"Snabble.Shoppingcart.Accessibility.actionAdd" = "Add";
+"Snabble.Shoppingcart.Accessibility.actionDelete" = "Delete";
+"Snabble.Shoppingcart.Accessibility.actionUse" = "Use";
+"Snabble.Shoppingcart.Accessibility.cardEndsWith" = "Ends with %@";
+"Snabble.Shoppingcart.Accessibility.closeDialog" = "Close dialog";
+"Snabble.Shoppingcart.Accessibility.contextInCart" = "In cart";
+"Snabble.Shoppingcart.Accessibility.decreaseQuantity" = "Decrease quantity";
+"Snabble.Shoppingcart.Accessibility.descriptionForPrice" = "for %@";
+"Snabble.Shoppingcart.Accessibility.descriptionQuantity" = "%@ times";
+"Snabble.Shoppingcart.Accessibility.descriptionWithDiscount" = "with discount";
+"Snabble.Shoppingcart.Accessibility.descriptionWithoutDiscount" = "without discount";
+"Snabble.Shoppingcart.Accessibility.increaseQuantity" = "Increase quantity";
+"Snabble.Shoppingcart.Accessibility.paymentMethod" = "Payment method: %@";
+"Snabble.Shoppingcart.Accessibility.quantity" = "Quantity";
+"Snabble.Shoppingcart.Accessibility.selected" = "Selected";
+"Snabble.Shoppingcart.BuyProducts.now" = "Pay now";
+"Snabble.Shoppingcart.BuyProducts.one" = "Buy %1$d product for %2$@";
+"Snabble.Shoppingcart.BuyProducts.selectPaymentMethod" = "Select payment method";
+"Snabble.Shoppingcart.EmptyState.buttonTitle" = "Scan now";
+"Snabble.Shoppingcart.EmptyState.description" = "Visit a store that supports Snabble and scan the barcodes of products you wish to purchase.";
+"Snabble.Shoppingcart.EmptyState.restartButtonTitle" = "Start new shopping trip";
+"Snabble.Shoppingcart.EmptyState.restoreButtonTitle" = "Restore previous cart";
+"Snabble.Shoppingcart.EmptyState.title" = "Your shopping cart is empty";
+"Snabble.Shoppingcart.articleRemoved" = "Product removed";
+"Snabble.Shoppingcart.buyProducts" = "Buy %1$d products for %2$@";
+"Snabble.Shoppingcart.coupon" = "Coupon";
+"Snabble.Shoppingcart.coupons" = "Coupons";
+"Snabble.Shoppingcart.deposit" = "Deposit";
+"Snabble.Shoppingcart.discounts" = "Discounts";
+"Snabble.Shoppingcart.giveaway" = "Free gift";
+"Snabble.Shoppingcart.howToPay" = "How would you like to pay?";
+"Snabble.Shoppingcart.includesDeposit" = "incl. deposit";
+"Snabble.Shoppingcart.noPaymentData" = "Add now";
+"Snabble.Shoppingcart.notForThisPurchase" = "Not available for this purchase";
+"Snabble.Shoppingcart.notForVendor" = "Not supported by this retailer";
+"Snabble.Shoppingcart.removeItem" = "Really remove %@?";
+"Snabble.Shoppingcart.removeItems" = "Really remove all products from your shopping cart?";
+"Snabble.Shoppingcart.saved" = "saved";
 "Snabble.SpeechAndMicRequired.message" = "This is necessary for dictating your shopping list.";
-
 "Snabble.SpeechAndMicRequired.title" = "Snabble needs access to the microphone and speech recognition";
-
-"Snabble.Taxation.Consume.inhouse" = "Eat here";
-
-"Snabble.Taxation.Consume.takeaway" = "Take with me";
-
-"Snabble.Taxation.consumeWhere" = "Will you be eating here or is this to go?";
-
-"Snabble.Taxation.pleaseChoose" = "Please choose";
-
-"Snabble.Textfield.HidePassword.Accessibility" = "Hide password";
-
-"Snabble.Textfield.ShowPassword.Accessibility" = "Show password";
-
 "Snabble.TWINT.payNow" = "Pay now using TWINT";
-
-"Snabble.undo" = "Undo";
-
+"Snabble.Taxation.Consume.inhouse" = "Eat here";
+"Snabble.Taxation.Consume.takeaway" = "Take with me";
+"Snabble.Taxation.consumeWhere" = "Will you be eating here or is this to go?";
+"Snabble.Taxation.pleaseChoose" = "Please choose";
+"Snabble.Textfield.HidePassword.Accessibility" = "Hide password";
+"Snabble.Textfield.ShowPassword.Accessibility" = "Show password";
 "Snabble.Violations.couponAlreadyVoided" = "A coupon is already redeemed and will be removed from cart";
-
 "Snabble.Violations.couponCurrentlyNotValid" = "A coupon is currently not valid and will be removed from cart";
-
 "Snabble.Violations.couponInvalid" = "A coupon is invalid and will be removed from cart";
-
 "Snabble.Violations.title" = "Invalid shopping cart";
-
+"Snabble.addDiscount" = "Enter discount";
+"Snabble.askForPermission" = "Ask for permission";
+"Snabble.cancel" = "Cancel";
+"Snabble.delete" = "Delete";
+"Snabble.done" = "Done";
+"Snabble.edit" = "Edit";
+"Snabble.goToSettings" = "Go to settings";
+"Snabble.loadingProductInformation" = "Loading product data…";
+"Snabble.networkError" = "Connection error";
+"Snabble.no" = "No";
+"Snabble.noDiscount" = "no discount";
+"Snabble.ok" = "OK";
+"Snabble.pleaseWait" = "Please wait…";
+"Snabble.remove" = "Remove";
+"Snabble.save" = "Save";
+"Snabble.undo" = "Undo";
 "Snabble.yes" = "Yes";
-

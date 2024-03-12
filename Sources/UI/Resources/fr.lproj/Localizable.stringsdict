@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
     <key>Snabble.Coupons.expiresInDays</key>
@@ -10,15 +11,11 @@
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>many</key>
-        <string>encore %d jours</string>
+        <string>li</string>
         <key>one</key>
-        <string>encore %d jour</string>
+        <string>encore %li jour</string>
         <key>other</key>
-        <string>encore %d jours</string>
-        <key>zero</key>
-        <string>Expiré</string>
+        <string>encore %li jours</string>
       </dict>
     </dict>
     <key>Snabble.Coupons.expiresInHours</key>
@@ -30,15 +27,11 @@
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>many</key>
-        <string>encore %d heures</string>
+        <string>li</string>
         <key>one</key>
-        <string>encore %d heure</string>
+        <string>encore %li heure</string>
         <key>other</key>
-        <string>encore %d heures</string>
-        <key>zero</key>
-        <string>Expiré</string>
+        <string>encore %li heures</string>
       </dict>
     </dict>
     <key>Snabble.Coupons.expiresInMinutes</key>
@@ -50,15 +43,11 @@
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>many</key>
-        <string>encore %d minutes</string>
+        <string>li</string>
         <key>one</key>
-        <string>encore %d minute</string>
+        <string>encore %li minute</string>
         <key>other</key>
-        <string>encore %d minutes</string>
-        <key>zero</key>
-        <string>Expiré</string>
+        <string>encore %li minutes</string>
       </dict>
     </dict>
     <key>Snabble.Coupons.expiresInWeeks</key>
@@ -70,15 +59,11 @@
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>many</key>
-        <string>encore %d semaines</string>
+        <string>li</string>
         <key>one</key>
-        <string>encore %d semaine</string>
+        <string>encore %li semaine</string>
         <key>other</key>
-        <string>encore %d semaines</string>
-        <key>zero</key>
-        <string>Expiré</string>
+        <string>encore %li semaines</string>
       </dict>
     </dict>
     <key>Snabble.Shop.Finder.storeCount</key>
@@ -90,15 +75,11 @@
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>many</key>
-        <string/>
+        <string>li</string>
         <key>one</key>
-        <string>Filiale %d</string>
+        <string>Filiale %li</string>
         <key>other</key>
-        <string>Filiales %d</string>
-        <key>zero</key>
-        <string>Aucune filiale</string>
+        <string>Filiales %li</string>
       </dict>
     </dict>
     <key>Snabble.Shoppingcart.numberOfItems</key>
@@ -110,15 +91,11 @@
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>many</key>
-        <string>Article %d</string>
+        <string>li</string>
         <key>one</key>
-        <string>Article %d</string>
+        <string>Article %li</string>
         <key>other</key>
-        <string>Article %d</string>
-        <key>zero</key>
-        <string>Article %d</string>
+        <string>Article %li</string>
       </dict>
     </dict>
   </dict>

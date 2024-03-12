@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
     <key>Snabble.Coupons.expiresInDays</key>
@@ -10,17 +11,15 @@
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>few</key>
-        <string>ešte %d dni</string>
-        <key>many</key>
-        <string>ešte %d dní</string>
+        <string>li</string>
         <key>one</key>
-        <string>ešte %d deň</string>
+        <string>ešte %li deň</string>
+        <key>few</key>
+        <string>ešte %li dni</string>
+        <key>many</key>
+        <string>ešte %li dní</string>
         <key>other</key>
-        <string>ešte %d dní</string>
-        <key>zero</key>
-        <string>Platnosť už skončila</string>
+        <string>ešte %li dní</string>
       </dict>
     </dict>
     <key>Snabble.Coupons.expiresInHours</key>
@@ -32,17 +31,15 @@
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>few</key>
-        <string>ešte %d hodiny</string>
-        <key>many</key>
-        <string>ešte %d hodín</string>
+        <string>li</string>
         <key>one</key>
-        <string>ešte %d hodina</string>
+        <string>ešte %li hodina</string>
+        <key>few</key>
+        <string>ešte %li hodiny</string>
+        <key>many</key>
+        <string>ešte %li hodín</string>
         <key>other</key>
-        <string>ešte %d hodín</string>
-        <key>zero</key>
-        <string>Platnosť už skončila</string>
+        <string>ešte %li hodín</string>
       </dict>
     </dict>
     <key>Snabble.Coupons.expiresInMinutes</key>
@@ -54,17 +51,15 @@
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>few</key>
-        <string>ešte %d minúty</string>
-        <key>many</key>
-        <string>ešte %d minút</string>
+        <string>li</string>
         <key>one</key>
-        <string>ešte %d minúta</string>
+        <string>ešte %li minúta</string>
+        <key>few</key>
+        <string>ešte %li minúty</string>
+        <key>many</key>
+        <string>ešte %li minút</string>
         <key>other</key>
-        <string>ešte %d minút</string>
-        <key>zero</key>
-        <string>Platnosť už skončila</string>
+        <string>ešte %li minút</string>
       </dict>
     </dict>
     <key>Snabble.Coupons.expiresInWeeks</key>
@@ -76,17 +71,15 @@
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>few</key>
-        <string>ešte %d týždňov</string>
-        <key>many</key>
-        <string>ešte %d týždňov</string>
+        <string>li</string>
         <key>one</key>
-        <string>ešte %d týždeň</string>
+        <string>ešte %li týždeň</string>
+        <key>few</key>
+        <string>ešte %li týždňov</string>
+        <key>many</key>
+        <string>ešte %li týždňov</string>
         <key>other</key>
-        <string>ešte %d týždňov</string>
-        <key>zero</key>
-        <string>Platnosť už skončila</string>
+        <string>ešte %li týždňov</string>
       </dict>
     </dict>
     <key>Snabble.Shop.Finder.storeCount</key>
@@ -98,17 +91,15 @@
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>few</key>
-        <string>%d obchody</string>
-        <key>many</key>
-        <string>%d obchodov</string>
+        <string>li</string>
         <key>one</key>
-        <string>%d obchod</string>
+        <string>%li obchod</string>
+        <key>few</key>
+        <string>%li obchody</string>
+        <key>many</key>
+        <string>%li obchodov</string>
         <key>other</key>
-        <string>%d  obchody/obchodov</string>
-        <key>zero</key>
-        <string>Žiadne obchody</string>
+        <string>%li  obchody/obchodov</string>
       </dict>
     </dict>
     <key>Snabble.Shoppingcart.numberOfItems</key>
@@ -120,17 +111,15 @@
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>few</key>
-        <string>%d položky</string>
-        <key>many</key>
-        <string>%d položiek</string>
+        <string>li</string>
         <key>one</key>
-        <string>%d položka</string>
+        <string>%li položka</string>
+        <key>few</key>
+        <string>%li položky</string>
+        <key>many</key>
+        <string>%li položiek</string>
         <key>other</key>
-        <string>%d položiek</string>
-        <key>zero</key>
-        <string>%d položiek</string>
+        <string>%li položiek</string>
       </dict>
     </dict>
   </dict>
