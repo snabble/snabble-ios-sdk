@@ -23,7 +23,8 @@ lokalise2 \
     --include-comments=false \
     --include-description=false \
     --export-empty-as=base  \
-    --placeholder-format=ios
+    --placeholder-format=ios \
+    --add-newline-eof
 
 lokalise2 \
     --token $LOKALISE2_TOKEN \
@@ -36,4 +37,5 @@ lokalise2 \
     --include-comments=false \
     --include-description=false \
     --export-empty-as=base  \
-    --placeholder-format=ios
+    --placeholder-format=ios \
+    --add-newline-eof
