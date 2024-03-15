@@ -10,23 +10,22 @@ PROJECT_ID=3931709465f04f20a1bc18.55914019
 RES_PATH=Sources/UI/Resources
 DIRECTORY_PREFIX="%LANG_ISO%.lproj"
 
-lokalise2 \
-    --token $LOKALISE2_TOKEN \
-    --project-id $PROJECT_ID \
-    file download \
-    --format strings \
-    --directory-prefix $DIRECTORY_PREFIX \
-    --original-filenames=true \
-    --unzip-to $RES_PATH \
-    --include-comments=false \
-    --include-description=false \
-    --export-empty-as=base  \
-    --placeholder-format=ios
-
 # lokalise2 \
 #     --token $LOKALISE2_TOKEN \
 #     --project-id $PROJECT_ID \
 #     file download \
-#     --format xml \
-#     --unzip-to . \
-#     --placeholder-format=printf
+#     --format strings \
+#     --directory-prefix $DIRECTORY_PREFIX \
+#     --original-filenames=true \
+#     --unzip-to $RES_PATH \
+#     --include-comments=false \
+#     --include-description=false \
+#     --export-empty-as=base  \
+#     --placeholder-format=ios
+
+lokalise2 \
+    --token $LOKALISE2_TOKEN \
+    --project-id $PROJECT_ID \
+    file download \
+    --format xml \
+    --unzip-to .

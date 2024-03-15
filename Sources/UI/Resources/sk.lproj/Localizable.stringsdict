@@ -5,8 +5,8 @@
     <key>Snabble.Coupons.expiresInDays</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
-      <string>%#@localized_format_key@</string>
-      <key>localized_format_key</key>
+      <string>%#@format@</string>
+      <key>format</key>
       <dict>
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
@@ -25,8 +25,8 @@
     <key>Snabble.Coupons.expiresInHours</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
-      <string>%#@localized_format_key@</string>
-      <key>localized_format_key</key>
+      <string>%#@format@</string>
+      <key>format</key>
       <dict>
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
@@ -45,8 +45,8 @@
     <key>Snabble.Coupons.expiresInMinutes</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
-      <string>%#@localized_format_key@</string>
-      <key>localized_format_key</key>
+      <string>%#@format@</string>
+      <key>format</key>
       <dict>
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
@@ -65,8 +65,8 @@
     <key>Snabble.Coupons.expiresInWeeks</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
-      <string>%#@localized_format_key@</string>
-      <key>localized_format_key</key>
+      <string>%#@format@</string>
+      <key>format</key>
       <dict>
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
@@ -85,8 +85,8 @@
     <key>Snabble.Shop.Finder.storeCount</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
-      <string>%#@localized_format_key@</string>
-      <key>localized_format_key</key>
+      <string>%#@format@</string>
+      <key>format</key>
       <dict>
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
@@ -105,8 +105,8 @@
     <key>Snabble.Shoppingcart.numberOfItems</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
-      <string>%#@localized_format_key@</string>
-      <key>localized_format_key</key>
+      <string>%#@format@</string>
+      <key>format</key>
       <dict>
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
