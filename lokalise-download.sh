@@ -1,4 +1,3 @@
-alias lokalise-download="lokalise2 file --config lokalise.yml download --format strings --directory-prefix "%LANG_ISO%.lproj" --original-filenames=true --unzip-to ./Sources/UI/Resources --include-comments=false  --include-description=false --export-empty-as=base  --placeholder-format=ios"
 #!/usr/bin/env zsh
 # 
 # Lokalise CLI v2 can be found here: https://github.com/lokalise/lokalise-cli-2-go
