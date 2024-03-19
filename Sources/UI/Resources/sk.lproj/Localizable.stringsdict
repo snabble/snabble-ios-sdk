@@ -12,6 +12,8 @@
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
         <string>li</string>
+        <key>zero</key>
+        <string>Platnosť už skončila</string>
         <key>one</key>
         <string>ešte %li deň</string>
         <key>few</key>
@@ -32,6 +34,8 @@
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
         <string>li</string>
+        <key>zero</key>
+        <string>Platnosť už skončila</string>
         <key>one</key>
         <string>ešte %li hodina</string>
         <key>few</key>
@@ -52,6 +56,8 @@
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
         <string>li</string>
+        <key>zero</key>
+        <string>Platnosť už skončila</string>
         <key>one</key>
         <string>ešte %li minúta</string>
         <key>few</key>
@@ -72,6 +78,8 @@
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
         <string>li</string>
+        <key>zero</key>
+        <string>Platnosť už skončila</string>
         <key>one</key>
         <string>ešte %li týždeň</string>
         <key>few</key>
@@ -92,6 +100,8 @@
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
         <string>li</string>
+        <key>zero</key>
+        <string>Žiadne obchody</string>
         <key>one</key>
         <string>%li obchod</string>
         <key>few</key>
@@ -112,6 +122,8 @@
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
         <string>li</string>
+        <key>zero</key>
+        <string>%li položiek</string>
         <key>one</key>
         <string>%li položka</string>
         <key>few</key>

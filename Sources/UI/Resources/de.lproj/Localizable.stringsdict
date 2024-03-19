@@ -12,6 +12,8 @@
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
         <string>li</string>
+        <key>zero</key>
+        <string>Bereits abgelaufen</string>
         <key>one</key>
         <string>noch %li Tag</string>
         <key>other</key>
@@ -28,6 +30,8 @@
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
         <string>li</string>
+        <key>zero</key>
+        <string>Bereits abgelaufen</string>
         <key>one</key>
         <string>noch %li Stunde</string>
         <key>other</key>
@@ -44,6 +48,8 @@
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
         <string>li</string>
+        <key>zero</key>
+        <string>Bereits abgelaufen</string>
         <key>one</key>
         <string>noch %li Minute</string>
         <key>other</key>
@@ -60,6 +66,8 @@
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
         <string>li</string>
+        <key>zero</key>
+        <string>Bereits abgelaufen</string>
         <key>one</key>
         <string>noch %li Woche</string>
         <key>other</key>
@@ -76,6 +84,8 @@
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
         <string>li</string>
+        <key>zero</key>
+        <string>Keine Filialen</string>
         <key>one</key>
         <string>%li Filiale</string>
         <key>other</key>
@@ -92,6 +102,8 @@
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
         <string>li</string>
+        <key>zero</key>
+        <string>%li Artikel</string>
         <key>one</key>
         <string>%li Artikel</string>
         <key>other</key>

@@ -12,6 +12,8 @@
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
         <string>li</string>
+        <key>zero</key>
+        <string>Már lejárt</string>
         <key>one</key>
         <string>még %li napig</string>
         <key>other</key>
@@ -28,6 +30,8 @@
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
         <string>li</string>
+        <key>zero</key>
+        <string>Már lejárt</string>
         <key>one</key>
         <string>még %li óráig</string>
         <key>other</key>
@@ -44,6 +48,8 @@
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
         <string>li</string>
+        <key>zero</key>
+        <string>Már lejárt</string>
         <key>one</key>
         <string>még %li percig</string>
         <key>other</key>
@@ -60,6 +66,8 @@
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
         <string>li</string>
+        <key>zero</key>
+        <string>Már lejárt</string>
         <key>one</key>
         <string>még %li hétig</string>
         <key>other</key>
@@ -76,6 +84,8 @@
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
         <string>li</string>
+        <key>zero</key>
+        <string>Nincsenek üzletek</string>
         <key>one</key>
         <string>%li üzlet</string>
         <key>other</key>
@@ -92,6 +102,8 @@
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
         <string>li</string>
+        <key>zero</key>
+        <string>%li termék</string>
         <key>one</key>
         <string>%li termék</string>
         <key>other</key>
