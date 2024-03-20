@@ -1,112 +1,113 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
     <key>Snabble.Coupons.expiresInDays</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
-      <string>%#@localized_format_key@</string>
-      <key>localized_format_key</key>
+      <string>%#@format@</string>
+      <key>format</key>
       <dict>
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>one</key>
-        <string>%d day remaining</string>
-        <key>other</key>
-        <string>%d days remaining</string>
+        <string>li</string>
         <key>zero</key>
         <string>Already expired</string>
+        <key>one</key>
+        <string>%li day remaining</string>
+        <key>other</key>
+        <string>%li days remaining</string>
       </dict>
     </dict>
     <key>Snabble.Coupons.expiresInHours</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
-      <string>%#@localized_format_key@</string>
-      <key>localized_format_key</key>
+      <string>%#@format@</string>
+      <key>format</key>
       <dict>
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>one</key>
-        <string>%d hour remaining</string>
-        <key>other</key>
-        <string>%d hours remaining</string>
+        <string>li</string>
         <key>zero</key>
         <string>Already expired</string>
+        <key>one</key>
+        <string>%li hour remaining</string>
+        <key>other</key>
+        <string>%li hours remaining</string>
       </dict>
     </dict>
     <key>Snabble.Coupons.expiresInMinutes</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
-      <string>%#@localized_format_key@</string>
-      <key>localized_format_key</key>
+      <string>%#@format@</string>
+      <key>format</key>
       <dict>
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>one</key>
-        <string>%d minute remaining</string>
-        <key>other</key>
-        <string>%d minutes remaining</string>
+        <string>li</string>
         <key>zero</key>
         <string>Already expired</string>
+        <key>one</key>
+        <string>%li minute remaining</string>
+        <key>other</key>
+        <string>%li minutes remaining</string>
       </dict>
     </dict>
     <key>Snabble.Coupons.expiresInWeeks</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
-      <string>%#@localized_format_key@</string>
-      <key>localized_format_key</key>
+      <string>%#@format@</string>
+      <key>format</key>
       <dict>
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>one</key>
-        <string>%d week remaining</string>
-        <key>other</key>
-        <string>%d weeks remaining</string>
+        <string>li</string>
         <key>zero</key>
         <string>Already expired</string>
+        <key>one</key>
+        <string>%li week remaining</string>
+        <key>other</key>
+        <string>%li weeks remaining</string>
       </dict>
     </dict>
     <key>Snabble.Shop.Finder.storeCount</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
-      <string>%#@localized_format_key@</string>
-      <key>localized_format_key</key>
+      <string>%#@format@</string>
+      <key>format</key>
       <dict>
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>one</key>
-        <string>%d store</string>
-        <key>other</key>
-        <string>%d stores</string>
+        <string>li</string>
         <key>zero</key>
         <string>No stores</string>
+        <key>one</key>
+        <string>%li store</string>
+        <key>other</key>
+        <string>%li stores</string>
       </dict>
     </dict>
     <key>Snabble.Shoppingcart.numberOfItems</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
-      <string>%#@localized_format_key@</string>
-      <key>localized_format_key</key>
+      <string>%#@format@</string>
+      <key>format</key>
       <dict>
         <key>NSStringFormatSpecTypeKey</key>
         <string>NSStringPluralRuleType</string>
         <key>NSStringFormatValueTypeKey</key>
-        <string>d</string>
-        <key>one</key>
-        <string>%d product</string>
-        <key>other</key>
-        <string>%d products</string>
+        <string>li</string>
         <key>zero</key>
-        <string>%d products</string>
+        <string>%li products</string>
+        <key>one</key>
+        <string>%li product</string>
+        <key>other</key>
+        <string>%li products</string>
       </dict>
     </dict>
   </dict>

@@ -1,9 +1,1 @@
-/* 
-  InfoPlist.strings
-  SnabbleSampleApp
-
-  Created by Uwe Tilemann on 18.08.22.
-  Copyright © 2022 snabble. All rights reserved.
-*/
-
 "NSLocationWhenInUseUsageDescription" = "Nur so können wir die Filialen in deiner Nähe anzeigen und dir das Einkaufen ermöglichen.";
