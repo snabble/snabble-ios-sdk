@@ -7,7 +7,7 @@
     <script type="text/javascript">
         // intercept console.log
         window.console.log = function(msg) {
-            window.webkit.messageHandlers.{{handler}}.postMessage({ log: msg });
+            window.webkit.messageHandlers.{{callbackHandler}}.postMessage({ log: msg });
         };
 
         // intercept errors
@@ -24,11 +24,11 @@
         };
 
         function showError(msg) {
-            window.webkit.messageHandlers.{{handler}}.postMessage({ error: msg });
+            window.webkit.messageHandlers.{{callbackHandler}}.postMessage({ error: msg });
         }
         
         function processResponse(obj, lastname, email, street, zip, city, country, state) {
-            window.webkit.messageHandlers.{{handler}}.postMessage({
+            window.webkit.messageHandlers.{{callbackHandler}}.postMessage({
                 response: obj,
                 lastname: lastname,
                 email: email,
@@ -38,6 +38,20 @@
                 country: country,
                 state: state
             });
+        }
+        
+        function requestPrefillFormData() {
+            window.webkit.messageHandlers.{{prefillHandler}}.postMessage(['email', 'lastname', 'street', 'zip', 'city', 'country', 'state'])
+        }
+        
+        function prefillForm(data) {
+            document.getElementById('email').value = data.email;
+            document.getElementById('lastname').value = data.lastname;
+            document.getElementById('street').value = data.street;
+            document.getElementById('zip').value = data.zip;
+            document.getElementById('city').value = data.city;
+            document.getElementById('country').value = data.country;
+            document.getElementById('state').value = data.state;
         }
     </script>
     <style type="text/css">
@@ -1138,6 +1152,12 @@
                 handleCountrySelect(localeCountryCode);
             }
             countryOptions();
+        })();
+    </script>
+    
+    <script>
+        (function () {
+            requestPrefillFormData();
         })();
     </script>
 </body>
