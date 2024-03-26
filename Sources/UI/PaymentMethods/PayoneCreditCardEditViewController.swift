@@ -24,6 +24,18 @@ import SnabbleCore
 // credit card types. A test with a single type is sufficient
 //
 
+public protocol PrefillData {
+    var lastname: String? { get }
+    var street: String? { get }
+    var zip: String? { get }
+    var city: String? { get }
+    var email: String? { get }
+    var country: String? { get }
+    var state: String? { get }
+}
+
+extension SnabbleCore.User: PrefillData {}
+
 public final class PayoneCreditCardEditViewController: UIViewController {
     private let webViewContainer = UIView()
     private weak var activityIndicator: UIActivityIndicatorView?
@@ -41,6 +53,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     private static let callbackHandler = "callbackHandler"
     private static let prefillHandler = "prefillHandler"
 
+    private let prefillData: PrefillData?
     private var detail: PaymentMethodDetail?
     private var brand: CreditCardBrand?
     private var ccNumber: String?
@@ -54,15 +67,15 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     private var payonePreAuthResult: PayonePreAuthResult?
     private var payoneResponse: PayoneResponse?
 
-    public init(brand: CreditCardBrand?, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) {
+    public init(brand: CreditCardBrand?, prefillData: PrefillData? = Snabble.shared.user, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) {
         self.brand = brand
         self.analyticsDelegate = analyticsDelegate
         self.projectId = projectId
-
+        self.prefillData = prefillData
         super.init(nibName: nil, bundle: nil)
     }
 
-    init(_ detail: PaymentMethodDetail, _ analyticsDelegate: AnalyticsDelegate?) {
+    init(_ detail: PaymentMethodDetail, prefillData: PrefillData? = Snabble.shared.user, _ analyticsDelegate: AnalyticsDelegate?) {
         if case .payoneCreditCard(let data) = detail.methodData {
             self.brand = data.brand
             self.ccNumber = data.displayName
@@ -71,7 +84,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         }
         self.analyticsDelegate = analyticsDelegate
         self.projectId = nil
-
+        self.prefillData = prefillData
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -619,28 +632,45 @@ extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
             }
         } else if message.name == Self.prefillHandler,
                   let body = message.body as? [String] {
-            let data = body.reduce(into: [String: String]()) { partialResult, id in
-                switch id {
-                case "country":
-                    partialResult[id] = "US"
-                case "state":
-                    partialResult[id] = "AL"
-                default:
-                    partialResult[id] = id
-                }
-            }
-            let jsonData = try? JSONSerialization.data(
-                withJSONObject: data,
-                options: [])
-            let jsonString = String(
-                data: jsonData!,
-                encoding: .ascii)
-            print(jsonString)
-            message.webView?.evaluateJavaScript("prefillForm(\(jsonString!))")
+            let jsonString = prefillString(forIdentifiers: body, from: prefillData)
+            message.webView?.evaluateJavaScript("prefillForm(\(jsonString))")
         }
         else {
             return self.showErrorAlert(message: Asset.localizedString(forKey: "Snabble.Payment.CreditCard.error"), goBack: true)
         }
     }
 
+    private func prefillString(forIdentifiers ids: [String], from prefillData: PrefillData?) -> String {
+        let data = ids.reduce(into: [String: String]()) {
+            switch $1 {
+            case "country":
+                $0[$1] = prefillData?.country
+            case "state":
+                $0[$1] = prefillData?.state
+            case "email":
+                $0[$1] = prefillData?.email
+            case "lastname":
+                $0[$1] = prefillData?.lastname
+            case "street":
+                $0[$1] = prefillData?.street
+            case "zip":
+                $0[$1] = prefillData?.zip
+            case "city":
+                $0[$1] = prefillData?.city
+            default:
+                break
+            }
+        }
+        guard let jsonData = try? JSONSerialization.data(
+            withJSONObject: data,
+            options: []) else {
+            return "{}"
+        }
+        guard let jsonString = String(
+            data: jsonData,
+            encoding: .ascii) else {
+            return "{}"
+        }
+        return jsonString
+    }
 }
