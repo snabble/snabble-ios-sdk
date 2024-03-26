@@ -6,6 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.48]
 
+### Changes
+* Persönliche Daten beim Anlegen einer Bezahlmethode einbinden #APPS-1356
+
 ## [0.47] - 2024-03-06
 
 ### Fixed
