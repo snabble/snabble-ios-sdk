@@ -611,16 +611,23 @@ extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
         if message.name == Self.callbackHandler,
            let body = message.body as? [String: Any] {
             if let log = body["log"] as? String {
-                return NSLog("console.log: \(log)")
+                print("console.log: \(log)")
             } else if let error = body["error"] as? String {
-                return showErrorAlert(message: error, goBack: false)
+                showErrorAlert(message: error, goBack: false)
             } else if let response = body["response"] as? [String: Any] {
-                self.processResponse(response, info: PayonePreAuthData(withPAN: response["pseudocardpan"] as? String, body: body))
+                processResponse(response, info: PayonePreAuthData(withPAN: response["pseudocardpan"] as? String, body: body))
             }
         } else if message.name == Self.prefillHandler,
                   let body = message.body as? [String] {
             let data = body.reduce(into: [String: String]()) { partialResult, id in
-                partialResult[id] = id
+                switch id {
+                case "country":
+                    partialResult[id] = "US"
+                case "state":
+                    partialResult[id] = "AL"
+                default:
+                    partialResult[id] = id
+                }
             }
             let jsonData = try? JSONSerialization.data(
                 withJSONObject: data,
@@ -628,6 +635,7 @@ extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
             let jsonString = String(
                 data: jsonData!,
                 encoding: .ascii)
+            print(jsonString)
             message.webView?.evaluateJavaScript("prefillForm(\(jsonString!))")
         }
         else {
