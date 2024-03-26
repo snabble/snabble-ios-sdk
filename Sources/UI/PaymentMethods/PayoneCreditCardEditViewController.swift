@@ -24,6 +24,18 @@ import SnabbleCore
 // credit card types. A test with a single type is sufficient
 //
 
+public protocol PrefillData {
+    var lastname: String? { get }
+    var street: String? { get }
+    var zip: String? { get }
+    var city: String? { get }
+    var email: String? { get }
+    var country: String? { get }
+    var state: String? { get }
+}
+
+extension SnabbleCore.User: PrefillData {}
+
 public final class PayoneCreditCardEditViewController: UIViewController {
     private let webViewContainer = UIView()
     private weak var activityIndicator: UIActivityIndicatorView?
@@ -38,8 +50,10 @@ public final class PayoneCreditCardEditViewController: UIViewController {
 
     private let explanation = UILabel()
 
-    private static let handlerName = "callbackHandler"
+    private static let callbackHandler = "callbackHandler"
+    private static let prefillHandler = "prefillHandler"
 
+    private let prefillData: PrefillData?
     private var detail: PaymentMethodDetail?
     private var brand: CreditCardBrand?
     private var ccNumber: String?
@@ -53,15 +67,15 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     private var payonePreAuthResult: PayonePreAuthResult?
     private var payoneResponse: PayoneResponse?
 
-    public init(brand: CreditCardBrand?, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) {
+    public init(brand: CreditCardBrand?, prefillData: PrefillData? = Snabble.shared.user, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) {
         self.brand = brand
         self.analyticsDelegate = analyticsDelegate
         self.projectId = projectId
-
+        self.prefillData = prefillData
         super.init(nibName: nil, bundle: nil)
     }
 
-    init(_ detail: PaymentMethodDetail, _ analyticsDelegate: AnalyticsDelegate?) {
+    init(_ detail: PaymentMethodDetail, prefillData: PrefillData? = Snabble.shared.user, _ analyticsDelegate: AnalyticsDelegate?) {
         if case .payoneCreditCard(let data) = detail.methodData {
             self.brand = data.brand
             self.ccNumber = data.displayName
@@ -70,7 +84,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         }
         self.analyticsDelegate = analyticsDelegate
         self.projectId = nil
-
+        self.prefillData = prefillData
         super.init(nibName: nil, bundle: nil)
     }
 
@@ -150,7 +164,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         if self.isMovingFromParent {
             // we're being popped - stop timer and break the retain cycle
             self.pollTimer?.invalidate()
-            self.webView?.configuration.userContentController.removeScriptMessageHandler(forName: Self.handlerName)
+            self.webView?.configuration.userContentController.removeScriptMessageHandler(forName: Self.callbackHandler)
         }
     }
 
@@ -302,7 +316,8 @@ public final class PayoneCreditCardEditViewController: UIViewController {
 
     private func setupWebView(in containerView: UIView) {
         let contentController = WKUserContentController()
-        contentController.add(self, name: Self.handlerName)
+        contentController.add(self, name: Self.callbackHandler)
+        contentController.add(self, name: Self.prefillHandler)
 
         let config = WKWebViewConfiguration()
         config.userContentController = contentController
@@ -544,7 +559,8 @@ extension PayoneCreditCardEditViewController {
             .replacingOccurrences(of: "{{accountID}}", with: payoneTokenization.accountID)
             .replacingOccurrences(of: "{{mode}}", with: testing ? "test" : "live")
             .replacingOccurrences(of: "{{header}}", with: threeDSecureHint(for: projectId, tokenization: payoneTokenization))
-            .replacingOccurrences(of: "{{handler}}", with: Self.handlerName)
+            .replacingOccurrences(of: "{{callbackHandler}}", with: Self.callbackHandler)
+            .replacingOccurrences(of: "{{prefillHandler}}", with: Self.prefillHandler)
             .replacingOccurrences(of: "{{language}}", with: languageCode)
             .replacingOccurrences(of: "{{supportedCardType}}", with: self.brand?.paymentMethod ?? "")
             .replacingOccurrences(of: "{{fieldColors}}", with: fieldColors)
@@ -605,19 +621,56 @@ extension PayoneCreditCardEditViewController: WKNavigationDelegate {
 // MARK: - web view message handler
 extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
-        guard
-            message.name == Self.handlerName,
-            let body = message.body as? [String: Any]
+        if message.name == Self.callbackHandler,
+           let body = message.body as? [String: Any] {
+            if let log = body["log"] as? String {
+                print("console.log: \(log)")
+            } else if let error = body["error"] as? String {
+                showErrorAlert(message: error, goBack: false)
+            } else if let response = body["response"] as? [String: Any] {
+                processResponse(response, info: PayonePreAuthData(withPAN: response["pseudocardpan"] as? String, body: body))
+            }
+        } else if message.name == Self.prefillHandler,
+                  let body = message.body as? [String] {
+            let jsonString = prefillString(forIdentifiers: body, from: prefillData)
+            message.webView?.evaluateJavaScript("prefillForm(\(jsonString))")
+        }
         else {
             return self.showErrorAlert(message: Asset.localizedString(forKey: "Snabble.Payment.CreditCard.error"), goBack: true)
         }
+    }
 
-        if let log = body["log"] as? String {
-            return NSLog("console.log: \(log)")
-        } else if let error = body["error"] as? String {
-            return showErrorAlert(message: error, goBack: false)
-        } else if let response = body["response"] as? [String: Any] {
-            self.processResponse(response, info: PayonePreAuthData(withPAN: response["pseudocardpan"] as? String, body: body))
+    private func prefillString(forIdentifiers ids: [String], from prefillData: PrefillData?) -> String {
+        let data = ids.reduce(into: [String: String]()) {
+            switch $1 {
+            case "country":
+                $0[$1] = prefillData?.country
+            case "state":
+                $0[$1] = prefillData?.state
+            case "email":
+                $0[$1] = prefillData?.email
+            case "lastname":
+                $0[$1] = prefillData?.lastname
+            case "street":
+                $0[$1] = prefillData?.street
+            case "zip":
+                $0[$1] = prefillData?.zip
+            case "city":
+                $0[$1] = prefillData?.city
+            default:
+                break
+            }
         }
+        guard let jsonData = try? JSONSerialization.data(
+            withJSONObject: data,
+            options: []) else {
+            return "{}"
+        }
+        guard let jsonString = String(
+            data: jsonData,
+            encoding: .ascii) else {
+            return "{}"
+        }
+        return jsonString
     }
 }
