@@ -7,10 +7,27 @@
 
 import Foundation
 import SwiftUI
+import SnabbleCore
 
 public struct PaymentSubjectView: View {
     @ObservedObject var viewModel: PaymentSubjectViewModel
     @State private var subject: String = ""
+    
+    private func subjectLimit() -> Int? {
+        guard let projectId = Snabble.shared.checkInManager.shop?.projectId else {
+            return nil
+        }
+        let customProperty = Snabble.shared.config.customProperties.first { customProperty, value in
+            switch customProperty {
+            case .externalBillingSubjectLimit(let _projectId):
+                if projectId.rawValue == _projectId {
+                    return true
+                }
+            }
+            return false
+        }
+        return customProperty?.value as? Int
+    }
     
     public var body: some View {
         ZStack(alignment: .topTrailing) {
@@ -27,6 +44,7 @@ public struct PaymentSubjectView: View {
                 TextField(Asset.localizedString(forKey: "Snabble.Payment.ExternalBilling.AlertDialog.hint"), text: $subject)
                     .textFieldStyle(.roundedBorder)
                     .keyboardType(.default)
+                    .limitInputLength(value: $subject, length: subjectLimit())
                     .labelsHidden()
                 
                 Spacer()
