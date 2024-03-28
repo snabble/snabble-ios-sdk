@@ -10,6 +10,10 @@ import CoreLocation
 
 public var globalButterOverflow: String?
 
+public enum CustomProperty: Hashable {
+    case externalBillingSubjectLimit(projectId: String)
+}
+
 /// General config data for using the snabble.
 /// Applications must call `Snabble.setup(config: completion:)` with an instance of this struct before they make their first API call.
 public struct Config {
@@ -52,6 +56,9 @@ public struct Config {
     // debug mode only:
     // SQL statements that are executed just before the product database is opened
     public var initialSQL: [String]?
+    
+    /// Custom Properties
+    public var customProperties: [CustomProperty: Any] = [:]
 
     /// Initialize the configuration for Snabble
     /// - Parameters:
