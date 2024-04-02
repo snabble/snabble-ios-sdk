@@ -10,9 +10,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 * Persönliche Daten beim Anlegen einer Bezahlmethode einbinden #APPS-1356
 * Rechnungskauf Zusatzfeld pro Projekt begrenzen #APPS-1491
 
-### Fixed
-* Encoding for prefill data to inject into PayOne credit card form
-
 ### Updated
 * groue/GRDB.swift 6.26.0 (was 6.25.0)
 * datatrans/ios-sdk 3.6.0 (was 3.5.0)
