@@ -634,8 +634,7 @@ extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
                   let body = message.body as? [String] {
             let jsonString = prefillString(forIdentifiers: body, from: prefillData)
             message.webView?.evaluateJavaScript("prefillForm(\(jsonString))")
-        }
-        else {
+        } else {
             return self.showErrorAlert(message: Asset.localizedString(forKey: "Snabble.Payment.CreditCard.error"), goBack: true)
         }
     }
@@ -668,7 +667,7 @@ extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
         }
         guard let jsonString = String(
             data: jsonData,
-            encoding: .ascii) else {
+            encoding: .utf8) else {
             return "{}"
         }
         return jsonString
