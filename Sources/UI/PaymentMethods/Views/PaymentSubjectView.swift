@@ -17,10 +17,10 @@ public struct PaymentSubjectView: View {
         guard let projectId = Snabble.shared.checkInManager.shop?.projectId else {
             return nil
         }
-        let customProperty = Snabble.shared.config.customProperties.first { customProperty, value in
+        let customProperty = Snabble.shared.config.customProperties.first { customProperty, _ in
             switch customProperty {
-            case .externalBillingSubjectLimit(let _projectId):
-                if projectId.rawValue == _projectId {
+            case .externalBillingSubjectLimit(let thisProjectId):
+                if projectId.rawValue == thisProjectId {
                     return true
                 }
             }
