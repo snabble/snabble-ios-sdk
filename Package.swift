@@ -32,7 +32,7 @@ let package = Package(
         .package(url: "https://github.com/datatheorem/TrustKit.git", from: "3.0.3"),
         .package(url: "https://github.com/kishikawakatsumi/KeychainAccess.git", from: "4.2.2"),
         .package(url: "https://github.com/groue/GRDB.swift.git", from: "6.25.0"),
-        .package(url: "https://github.com/marmelroy/Zip.git", from: "2.1.2"),
+        .package(url: "https://github.com/weichsel/ZIPFoundation.git", .upToNextMajor(from: "0.9.0")),
         .package(url: "https://github.com/datatrans/ios-sdk.git", from: "3.5.0"),
         .package(url: "https://github.com/sberrevoets/SDCAlertView.git", from: "12.0.3"),
         .package(url: "https://github.com/devicekit/DeviceKit.git", from: "5.2.2"),
@@ -47,7 +47,7 @@ let package = Package(
                 "KeychainAccess",
                 "SwiftOTP",
                 .product(name: "GRDB", package: "GRDB.swift"),
-                "Zip",
+                "ZIPFoundation",
             ],
             path: "Sources/Core",
             resources: [

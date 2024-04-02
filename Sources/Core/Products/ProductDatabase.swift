@@ -6,7 +6,7 @@
 
 import Foundation
 import GRDB
-import Zip
+import ZIPFoundation
 
 #if canImport(UIKit)
 import UIKit
@@ -368,11 +368,19 @@ final class ProductDatabase: ProductStoring {
         guard let seedPath = self.config.seedDatabase else {
             return
         }
+        
+        let fileManager = FileManager.default
+        let seedUrl = URL(fileURLWithPath: seedPath)
 
         Log.info("unzipping seed database")
         do {
-            let seedUrl = URL(fileURLWithPath: seedPath)
-            try Zip.unzipFile(seedUrl, destination: self.dbDirectory, overwrite: true, password: nil)
+            try fileManager.removeItem(at: self.dbDirectory)
+            if #available(iOS 16.0, *) {
+                try fileManager.createDirectory(atPath: self.dbDirectory.path(percentEncoded: true), withIntermediateDirectories: true, attributes: nil)
+            } else {
+                try fileManager.createDirectory(atPath: self.dbDirectory.path, withIntermediateDirectories: true, attributes: nil)
+            }
+            try fileManager.unzipItem(at: seedUrl, to: self.dbDirectory)
         } catch let error {
             self.logError("error while unzipping seed: \(error)")
         }
