@@ -142,12 +142,6 @@ final class ProductDatabase: ProductStoring {
 
         self.db = self.openDb()
 
-        if let seedRevision = self.config.seedRevision, seedRevision > self.revision {
-            self.db = nil
-            self.unzipSeed()
-            self.db = self.openDb()
-        }
-
         let doUpdate: Bool
         switch update {
         case .always:
@@ -342,11 +336,6 @@ final class ProductDatabase: ProductStoring {
 
             let dbFile = self.dbPathname()
 
-            // copy our seed database to the app support directory if the file doesn't exist
-            if !fileManager.fileExists(atPath: dbFile) {
-                self.unzipSeed()
-            }
-
             if !fileManager.fileExists(atPath: dbFile) {
                 Log.info("no sqlite file found at \(dbFile)")
                 return nil
@@ -361,39 +350,6 @@ final class ProductDatabase: ProductStoring {
         } catch let error {
             self.logError("openDb: db setup error \(error)")
             return nil
-        }
-    }
-
-    private func unzipSeed() {
-        guard let seedPath = self.config.seedDatabase else {
-            return
-        }
-        
-        let fileManager = FileManager.default
-        let seedUrl = URL(fileURLWithPath: seedPath)
-
-        Log.info("unzipping seed database")
-        do {
-            try fileManager.removeItem(at: self.dbDirectory)
-            if #available(iOS 16.0, *) {
-                try fileManager.createDirectory(atPath: self.dbDirectory.path(percentEncoded: true), withIntermediateDirectories: true, attributes: nil)
-            } else {
-                try fileManager.createDirectory(atPath: self.dbDirectory.path, withIntermediateDirectories: true, attributes: nil)
-            }
-            try fileManager.unzipItem(at: seedUrl, to: self.dbDirectory)
-        } catch let error {
-            self.logError("error while unzipping seed: \(error)")
-        }
-
-        if self.useFTS {
-            self.createFulltextIndex(self.dbPathname())
-        }
-
-        do {
-            let dbQueue = try DatabaseQueue(path: self.dbPathname())
-            self.setLastUpdate(dbQueue)
-        } catch {
-            self.logError("error updating metadata: \(error)")
         }
     }
 

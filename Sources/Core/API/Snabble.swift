@@ -35,13 +35,6 @@ public struct Config {
     /// NOTE: this setting is intended for debugging purposes only and is ignored in Release builds
     public var useCertificatePinning = true
 
-    /// if the app comes with a zipped seed database, set this to the path in the Bundle
-    public var seedDatabase: String?
-    /// if the app comes with a zipped seed database, set this to the db revision of the seed
-    public var seedRevision: Int64?
-    /// if the app comes with a seed metadata JSON, set this to the path in the Bundle
-    public var seedMetadata: String?
-
     /// max age for the local product database. if the last update of the db is older than this,
     /// the asychronous lookup methods will not use the local database anymore.
     public var maxProductDatabaseAge: TimeInterval = 3600
@@ -87,12 +80,6 @@ public class Snabble {
         self.config = config
         self.tokenRegistry = tokenRegistry
         self.databases = [:]
-
-        if let metadataPath = config.seedMetadata {
-            if let metadata = Metadata.readResource(metadataPath) {
-                self.metadata = metadata
-            }
-        }
     }
     /**
      * Environment in which the SDK should work
