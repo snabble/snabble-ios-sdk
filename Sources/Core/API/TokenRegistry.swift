@@ -137,7 +137,7 @@ public final class TokenRegistry {
     }
 
     // invalidate all tokens - called when the appUser changes
-    func invalidateAllTokens() {
+    public func invalidate() {
         self.refreshTimer?.invalidate()
 
         let activeIds: [Identifier<Project>] = lock.writing {

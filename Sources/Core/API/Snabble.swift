@@ -507,7 +507,7 @@ extension Snabble {
             keychain[appUserKey] = newValue?.stringRepresentation
             UserDefaults.standard.set(newValue?.value, forKey: "Snabble.api.appUserId")
 
-            tokenRegistry.invalidateAllTokens()
+            tokenRegistry.invalidate()
             OrderList.clearCache()
         }
     }
