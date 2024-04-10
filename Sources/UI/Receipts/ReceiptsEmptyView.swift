@@ -1,15 +1,17 @@
 //
 //  ReceiptsEmptyView.swift
-//  teo
+//
 //
 //  Created by Uwe Tilemann on 10.04.24.
 //
 
 import SwiftUI
-import SnabbleUI
 
-struct ReceiptsEmptyView: View {
-    var body: some View {
+public struct ReceiptsEmptyView: View {
+
+    public init() { }
+
+    public var body: some View {
         let emptyString = Asset.localizedString(forKey: "Snabble.Receipts.noReceipts")
 
         if emptyString != "Snabble.Receipts.noReceipts" {
