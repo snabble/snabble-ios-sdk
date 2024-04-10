@@ -118,6 +118,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let tabBarItemAppearance = UITabBarItem.appearance()
         tabBarItemAppearance.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.darkGray], for: .normal)
         tabBarItemAppearance.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.accent()], for: .selected)
+        
+        ViewProviderStore.register(view: ReceiptsEmptyView.init, for: .receiptsEmpty)
     }
 }
 
