@@ -13,7 +13,7 @@ public final class PaymentMethodListViewController: UITableViewController {
     private(set) var projectId: Identifier<Project>?
     private var data: [PaymentGroup] = []
 
-    public weak var placeholderViewController: UIViewController?
+    public var placeholderViewController: UIViewController?
 
     public init(for projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) {
         self.projectId = projectId
