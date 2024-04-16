@@ -38,11 +38,7 @@ public class PaymentPlaceholderViewController: UIHostingController<PaymentPlaceh
     public init() {
         super.init(rootView: PaymentPlaceholderView())
     }
-    
-    deinit {
-        print("deinit: PaymentPlacehodlerViewController")
-    }
-    
+        
     @MainActor required dynamic public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
