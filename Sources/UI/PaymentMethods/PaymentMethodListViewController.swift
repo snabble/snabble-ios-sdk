@@ -13,8 +13,6 @@ public final class PaymentMethodListViewController: UITableViewController {
     private(set) var projectId: Identifier<Project>?
     private var data: [PaymentGroup] = []
 
-    public var placeholderViewController: UIViewController?
-
     public init(for projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) {
         self.projectId = projectId
         self.analyticsDelegate = analyticsDelegate
@@ -29,15 +27,6 @@ public final class PaymentMethodListViewController: UITableViewController {
         super.viewDidLoad()
         
         self.title = Asset.localizedString(forKey: "Snabble.PaymentMethods.title")
-        
-        if let placeholder = placeholderViewController {
-            self.addChild(placeholder)
-            placeholder.view.translatesAutoresizingMaskIntoConstraints = false
-            placeholder.view.isHidden = true
-            placeholder.didMove(toParent: self)
-            
-            tableView.backgroundView = placeholder.view
-        }
         
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addMethod))
         self.navigationItem.rightBarButtonItem = addButton
@@ -62,7 +51,7 @@ public final class PaymentMethodListViewController: UITableViewController {
         super.viewDidAppear(animated)
         self.analyticsDelegate?.track(.viewPaymentMethodList)
         
-        placeholderViewController?.view.isHidden = !data.isEmpty
+        tableView.backgroundView?.isHidden = !data.isEmpty
 
         if data.isEmpty {
             addMethod()
