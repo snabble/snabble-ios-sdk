@@ -37,12 +37,12 @@ public final class PaymentMethodListViewController: UITableViewController {
 
             tableView.backgroundView = placeholder.view
 
-            NSLayoutConstraint.activate([
-                placeholder.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
-                placeholder.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
-                placeholder.view.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
-                placeholder.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
-            ])
+//            NSLayoutConstraint.activate([
+//                placeholder.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
+//                placeholder.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
+//                placeholder.view.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
+//                placeholder.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
+//            ])
             placeholder.didMove(toParent: self)
         }
         
