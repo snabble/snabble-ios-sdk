@@ -33,9 +33,10 @@ public final class PaymentMethodListViewController: UITableViewController {
         if let placeholder = placeholderViewController {
             self.addChild(placeholder)
             placeholder.view.translatesAutoresizingMaskIntoConstraints = false
-            self.view.addSubview(placeholder.view)
             placeholder.view.isHidden = true
-            
+
+            tableView.backgroundView = placeholder.view
+
             NSLayoutConstraint.activate([
                 placeholder.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
                 placeholder.view.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: 0),
