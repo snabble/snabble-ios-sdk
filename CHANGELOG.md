@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [unreleased]
 
 ### Changes
-* Injectable placeholder view for emtpy receipts/payments #APPS-1526
+* Injectable placeholder view for emtpy receipts #APPS-1526
 
 ### Updates
 * weichsel/ZIPFoundation 0.9.19 (was 0.9.18)
