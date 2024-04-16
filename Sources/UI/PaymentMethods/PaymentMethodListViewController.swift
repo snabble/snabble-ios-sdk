@@ -31,11 +31,10 @@ public final class PaymentMethodListViewController: UITableViewController {
         self.title = Asset.localizedString(forKey: "Snabble.PaymentMethods.title")
         
         if let placeholder = placeholderViewController {
-            self.addChild(placeholder)
-            placeholder.view.translatesAutoresizingMaskIntoConstraints = false
-            placeholder.view.isHidden = true
+//            self.addChild(placeholder)
+//            placeholder.view.translatesAutoresizingMaskIntoConstraints = false
+//            placeholder.view.isHidden = true
 
-            tableView.backgroundView = placeholder.view
 
 //            NSLayoutConstraint.activate([
 //                placeholder.view.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 0),
@@ -43,7 +42,9 @@ public final class PaymentMethodListViewController: UITableViewController {
 //                placeholder.view.topAnchor.constraint(equalTo: view.topAnchor, constant: 0),
 //                placeholder.view.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: 0)
 //            ])
-            placeholder.didMove(toParent: self)
+//            placeholder.didMove(toParent: self)
+            
+            tableView.backgroundView = placeholder.view
         }
         
         let addButton = UIBarButtonItem(barButtonSystemItem: .add, target: self, action: #selector(addMethod))
