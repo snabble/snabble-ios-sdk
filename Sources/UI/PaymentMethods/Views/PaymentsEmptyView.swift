@@ -33,3 +33,18 @@ public struct PaymentsEmptyView: View {
         }
     }
 }
+
+public class PaymentEmptyViewController: UIHostingController<PaymentsEmptyView> {
+    public init() {
+        super.init(rootView: PaymentsEmptyView())
+    }
+        
+    @MainActor required dynamic public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    public override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        view.invalidateIntrinsicContentSize()
+    }
+}
