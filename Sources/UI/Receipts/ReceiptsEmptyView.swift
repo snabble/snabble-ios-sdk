@@ -33,3 +33,18 @@ public struct ReceiptsEmptyView: View {
         }
     }
 }
+
+public class ReceiptsEmptyViewController: UIHostingController<ReceiptsEmptyView> {
+    public init() {
+        super.init(rootView: ReceiptsEmptyView())
+    }
+        
+    @MainActor required dynamic public init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    public override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        view.invalidateIntrinsicContentSize()
+    }
+}
