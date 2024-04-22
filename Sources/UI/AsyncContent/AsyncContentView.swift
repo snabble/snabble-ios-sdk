@@ -26,12 +26,13 @@ struct AsyncContentView<Source: LoadableObject, Content: View, PlaceholderConten
     @ObservedObject var source: Source
     var content: (Source.Output) -> Content
     var placeholder: (() -> PlaceholderContent)?
-    
+
     init(source: Source, content: @escaping (Source.Output) -> Content) where PlaceholderContent == EmptyView {
         self.source = source
         self.content = content
         self.placeholder = nil
     }
+
     init(source: Source, content: @escaping (Source.Output) -> Content, placeholder: @escaping () -> PlaceholderContent) {
         self.source = source
         self.content = content
