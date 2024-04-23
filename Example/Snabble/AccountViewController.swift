@@ -48,10 +48,14 @@ extension AccountViewController: DynamicViewControllerDelegate {
             let viewController = ReceiptsListViewController()
             navigationController?.pushViewController(viewController, animated: true)
 
-        case "Profile.paymentMethods", "Profile.customerCard":
+        case "Profile.paymentMethods":
+            let viewController = PaymentEmptyViewController()
+            navigationController?.pushViewController(viewController, animated: true)
+
+        case "Profile.customerCard":
             let viewController = UIHostingController(rootView: PlaceholderView(title: Asset.localizedString(forKey: widget.id)))
             navigationController?.pushViewController(viewController, animated: true)
-            
+
         case "Profile.resetAppID":
             DeveloperMode.resetAppId(viewController: viewController)
             

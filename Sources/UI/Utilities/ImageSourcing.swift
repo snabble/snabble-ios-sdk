@@ -41,7 +41,7 @@ extension ImageSourcing {
             return img
         }
         
-        guard UIImage(named: source) != nil else {
+        guard UIImage(named: source, in: Bundle.module, with: nil) != nil else {
             return nil
         }
 

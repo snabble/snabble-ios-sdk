@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/devicekit/DeviceKit.git",
       "state" : {
-        "revision" : "fe41d18eccd92a115cffaa35dfff03018c67e635",
-        "version" : "5.2.2"
+        "revision" : "97acf830fd0e0b719126e9450a51c95a91f66858",
+        "version" : "5.2.3"
       }
     },
     {
@@ -14,8 +14,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/groue/GRDB.swift.git",
       "state" : {
-        "revision" : "77b85bed259b7f107710a0b78c439b1c5839dc45",
-        "version" : "6.26.0"
+        "revision" : "639fa9168d36931b36a79e60dc06b7d23852f1f4",
+        "version" : "6.27.0"
       }
     },
     {
@@ -23,8 +23,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/datatrans/ios-sdk.git",
       "state" : {
-        "revision" : "e73d01cb2d06ac9935d2fc9b5088e8671260b570",
-        "version" : "3.6.0"
+        "revision" : "8e55292a7d2800348b600a2265d10e690ed2daab",
+        "version" : "3.6.1"
       }
     },
     {

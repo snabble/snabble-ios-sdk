@@ -4,6 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [unreleased]
+
+### Changes
+* Injectable placeholder view for emtpy receipts #APPS-1526
+
+### Updated
+* weichsel/ZIPFoundation 0.9.19 (was 0.9.18)
+* devicekit/DeviceKit 5.2.3 (was 5.2.2)
+* groue/GRDB.swift 6.27.0 (was 6.26.0)
+* datatrans/ios-sdk 3.6.1 (was 3.6.0)
+
 ## [0.48] - 2024-04-04
 
 ### Changes

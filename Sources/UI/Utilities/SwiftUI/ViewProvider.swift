@@ -12,6 +12,8 @@ public struct ViewProvider {
     public enum Name: String {
         case ratingAccessory
         case successCheckout
+        case receiptsEmpty
+        case paymentsEmpty
     }
     private let key: ViewProvider.Name
 

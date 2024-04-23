@@ -105,13 +105,15 @@ extension View {
 
 public struct ReceiptsListScreen: View {
     @ObservedObject var viewModel: PurchasesViewModel
-    
+    @ViewProvider(.receiptsEmpty) var emptyView
+
     public init() {
         self.viewModel = PurchasesViewModel()
     }
 
     public var body: some View {
-        AsyncContentView(source: viewModel) { output in
+
+        AsyncContentView(source: viewModel, content: { output in
             VStack {
                 List {
                     if viewModel.awaitingReceipts {
@@ -136,7 +138,9 @@ public struct ReceiptsListScreen: View {
                     viewModel.load()
                 }
             }
-        }
+        }, empty: {
+            emptyView
+        })
         .onAppear {
             viewModel.reset()
         }

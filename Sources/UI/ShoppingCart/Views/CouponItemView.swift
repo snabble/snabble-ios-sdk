@@ -34,7 +34,7 @@ struct CouponItemView: View {
                 HStack(alignment: .top) {
                     Spacer()
                     Text(itemModel.cartCoupon.coupon.name)
-                    Asset.image(named: "discount-badge")
+                    Image(systemName: "discount-badge")
                 }
 
                 if itemModel.isRedeemed == false {
