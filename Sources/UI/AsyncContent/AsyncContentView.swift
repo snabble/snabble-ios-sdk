@@ -22,21 +22,21 @@ enum LoadingState<Value> {
     case empty
 }
 
-struct AsyncContentView<Source: LoadableObject, Content: View, PlaceholderContent: View>: View {
+struct AsyncContentView<Source: LoadableObject, Content: View, Empty: View>: View {
     @ObservedObject var source: Source
     var content: (Source.Output) -> Content
-    var placeholder: (() -> PlaceholderContent)?
+    var empty: (() -> Empty)?
 
-    init(source: Source, content: @escaping (Source.Output) -> Content) where PlaceholderContent == EmptyView {
+    init(source: Source, content: @escaping (Source.Output) -> Content) where Empty == EmptyView {
         self.source = source
         self.content = content
-        self.placeholder = nil
+        self.empty = nil
     }
 
-    init(source: Source, content: @escaping (Source.Output) -> Content, placeholder: @escaping () -> PlaceholderContent) {
+    init(source: Source, content: @escaping (Source.Output) -> Content, empty: @escaping () -> Empty) {
         self.source = source
         self.content = content
-        self.placeholder = placeholder
+        self.empty = empty
     }
 
     var body: some View {
@@ -48,8 +48,8 @@ struct AsyncContentView<Source: LoadableObject, Content: View, PlaceholderConten
         case .failed:
             ErrorView()
         case .empty:
-            if let placeholder {
-                placeholder()
+            if let empty {
+                empty()
             } else {
                 EmptyView()
             }

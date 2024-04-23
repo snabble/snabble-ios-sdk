@@ -138,7 +138,7 @@ public struct ReceiptsListScreen: View {
                     viewModel.load()
                 }
             }
-        }, placeholder: {
+        }, empty: {
             emptyView
         })
         .onAppear {
