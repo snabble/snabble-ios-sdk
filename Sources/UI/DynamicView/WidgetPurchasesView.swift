@@ -34,26 +34,30 @@ public struct WidgetLastPurchasesView: View {
             await load(projectId: projectId)
         }
         success: { output in
-            VStack(alignment: .leading) {
-                HStack {
-                    Text(keyed: output.title)
-                    Spacer()
-                    Button(action: {
-                        action(.init(widget: widget, userInfo: ["action": "more"]))
-                    }) {
-                        Text(keyed: "Snabble.DynamicView.LastPurchases.all")
-                    }
-                }
-                HStack {
-                    ForEach(output.prefix(2), id: \.id) { provider in
-                        WidgetOrderView(
-                            provider: provider
-                        ).onTapGesture {
-                            action(.init(widget: widget, userInfo: ["action": "purchase", "id": provider.id]))
+            if output.isEmpty {
+                EmptyView()
+            } else {
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text(keyed: output.title)
+                        Spacer()
+                        Button(action: {
+                            action(.init(widget: widget, userInfo: ["action": "more"]))
+                        }) {
+                            Text(keyed: "Snabble.DynamicView.LastPurchases.all")
                         }
-                   }
+                    }
+                    HStack {
+                        ForEach(output.prefix(2), id: \.id) { provider in
+                            WidgetOrderView(
+                                provider: provider
+                            ).onTapGesture {
+                                action(.init(widget: widget, userInfo: ["action": "purchase", "id": provider.id]))
+                            }
+                       }
+                    }
+                    .shadow(radius: configuration.shadowRadius)
                 }
-                .shadow(radius: configuration.shadowRadius)
             }
         }
     }
@@ -64,7 +68,7 @@ public struct WidgetLastPurchasesView: View {
         }
         
         return await withCheckedContinuation { continuation in
-            OrderList.load(project) {  result in
+            OrderList.load(project) { result in
                 do {
                     let providers = try result.get().receipts
                     continuation.resume(returning: providers)
