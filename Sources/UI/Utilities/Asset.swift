@@ -30,12 +30,9 @@ public enum Asset {
         if let image: SwiftUI.Image = provider?.image(named: name, domain: domain) {
             return image
         }
+        
         if UIImage(named: name, in: Bundle.module, with: nil) != nil {
             return SwiftUI.Image(name, bundle: Bundle.module)
-        }
-
-        if UIImage(systemName: name) != nil {
-            return SwiftUI.Image(systemName: name)
         }
 
         return nil

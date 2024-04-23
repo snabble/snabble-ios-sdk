@@ -13,7 +13,7 @@ public struct PhoneNumberView: View {
 
     public var body: some View {
         HStack {
-            Asset.image(named: "phone")
+            Image(systemName: "phone")
                 .foregroundColor(.gray)
             Button(action: {
                 openURL(URL(string: "tel:\(phone)")!)

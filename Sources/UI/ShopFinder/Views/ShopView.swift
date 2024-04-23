@@ -26,14 +26,14 @@ public struct ShopView: View {
         } else {
             HStack {
                 Spacer()
-                Asset.image(named: "location")
+                Image(systemName: "location")
                     .font(.subheadline)
                     .foregroundColor(.systemGray)
                 DistanceView(distance: viewModel.distance(from: shop))
                 Button(action: {
                     showingAlert.toggle()
                 }) {
-                    Asset.image(named: "arrow.triangle.turn.up.right.circle.fill")
+                    Image(systemName: "arrow.triangle.turn.up.right.circle.fill")
                         .font(.title2)
                         .foregroundColor(Color.accent())
                 }

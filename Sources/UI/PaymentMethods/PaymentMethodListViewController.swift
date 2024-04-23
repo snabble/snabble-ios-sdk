@@ -51,6 +51,8 @@ public final class PaymentMethodListViewController: UITableViewController {
         super.viewDidAppear(animated)
         self.analyticsDelegate?.track(.viewPaymentMethodList)
         
+        tableView.backgroundView?.isHidden = !data.isEmpty
+
         if data.isEmpty {
             addMethod()
         }
