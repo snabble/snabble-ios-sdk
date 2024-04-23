@@ -8,6 +8,7 @@
 import UIKit
 import SnabbleUI
 import SnabbleCore
+import SwiftUI
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -119,7 +120,11 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         tabBarItemAppearance.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.darkGray], for: .normal)
         tabBarItemAppearance.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.accent()], for: .selected)
         
-        ViewProviderStore.register(view: ReceiptsEmptyView.init, for: .receiptsEmpty)
+        ViewProviderStore.register(view: {
+            SnabbleEmptyView(
+                message: Asset.localizedString(forKey: "Snabble.Receipts.noReceipts"),
+                image: Image(systemName: "scroll"))
+        }, for: .receiptsEmpty)
     }
 }
 

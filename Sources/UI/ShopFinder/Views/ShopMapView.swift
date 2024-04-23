@@ -51,7 +51,7 @@ public struct ShopAnnotationView: View {
         if let image: SwiftUI.Image = Asset.image(named: "Snabble.Shop.Detail.mapPin" ) {
             image
         } else {
-            Asset.image(named: "mappin.and.ellipse")
+            Image(systemName: "mappin.and.ellipse")
                 .foregroundColor(.accent())
                 .font(.title)
         }
@@ -64,7 +64,7 @@ public struct ShopAnnotationView: View {
                     Button(action: {
                         showingAlert.toggle()
                     }) {
-                        SwiftUI.Image.image(named: "car.fill")
+                        Image(systemName: "car.fill")
                             .resizable()
                             .scaledToFit()
                             .frame(width: 24, height: 24)
@@ -85,7 +85,7 @@ public struct ShopAnnotationView: View {
                 .background(Color.systemBackground)
                 .cornerRadius(8)
                 
-                Asset.image(named: "arrowtriangle.down.fill")
+                Image(systemName: "arrowtriangle.down.fill")
                     .foregroundColor(.systemBackground)
             }
             .compositingGroup()
@@ -167,7 +167,7 @@ public struct ShopMapView: View {
                     mode = .shop
                 }
             }) {
-                Asset.image(named: mode == .shop ? "house.fill" : "house")
+                Image(systemName: mode == .shop ? "house.fill" : "house")
             }
 
             Button(action: {
@@ -175,7 +175,7 @@ public struct ShopMapView: View {
                     mode = .user
                 }
             }) {
-                Asset.image(named: mode == .user ? "location.fill" : "location")
+                Image(systemName: mode == .user ? "location.fill" : "location")
             }
             .opacity(userLocation?.region == nil ? 0.5 : 1.0)
             .disabled(userLocation?.region == nil)
@@ -184,7 +184,7 @@ public struct ShopMapView: View {
                 Button(action: {
                     showingAlert.toggle()
                 }) {
-                    Asset.image(named: "arrow.triangle.turn.up.right.circle.fill")
+                    Image(systemName: "arrow.triangle.turn.up.right.circle.fill")
                 }
                 .navigateToShopAlert(isPresented: $showingAlert, shop: shop)
             }

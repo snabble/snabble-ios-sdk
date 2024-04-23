@@ -37,7 +37,7 @@ struct DiscountItemView: View {
                         .cartPrice()
                     Spacer()
                     Text(description ?? "")
-                    Asset.image(named: "discount-badge")
+                    Image(systemName: "discount-badge")
                 }
                 .cartInfo()
            }

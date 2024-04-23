@@ -28,7 +28,7 @@ extension ShoppingCartItemDiscount {
 
     @ViewBuilder
     public var image: SwiftUI.Image? {
-        Asset.image(named: "discount-badge")
+        Image(systemName: "discount-badge")
     }
 }
 
