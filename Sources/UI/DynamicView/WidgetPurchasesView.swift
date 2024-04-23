@@ -19,16 +19,21 @@ public struct WidgetLastPurchasesView: View {
     let widget: WidgetLastPurchases
     let configuration: DynamicViewConfiguration
     let action: (DynamicAction) -> Void
-    @StateObject var viewModel = LastPurchasesViewModel()
+    
+    @State var projectId: Identifier<Project>
     
     init(widget: WidgetLastPurchases, configuration: DynamicViewConfiguration, action: @escaping (DynamicAction) -> Void) {
         self.widget = widget
         self.configuration = configuration
         self.action = action
+        self.projectId = widget.projectId
     }
     
     public var body: some View {
-        AsyncContentView(source: viewModel) { output in
+        AsyncScreen(id: projectId) { projectId in
+            await load(projectId: projectId)
+        }
+        success: { output in
             VStack(alignment: .leading) {
                 HStack {
                     Text(keyed: output.title)
@@ -51,10 +56,24 @@ public struct WidgetLastPurchasesView: View {
                 .shadow(radius: configuration.shadowRadius)
             }
         }
-        .onAppear {
-            viewModel.projectId = widget.projectId
-            viewModel.load()
+    }
+    
+    private func load(projectId: Identifier<Project>) async -> [PurchaseProviding] {
+        guard let project = Snabble.shared.project(for: projectId) else {
+            return []
         }
+        
+        return await withCheckedContinuation { continuation in
+            OrderList.load(project) {  result in
+                do {
+                    let providers = try result.get().receipts
+                    continuation.resume(returning: providers)
+                } catch {
+                    continuation.resume(returning: [])
+                }
+            }
+        }
+        
     }
 }
 
