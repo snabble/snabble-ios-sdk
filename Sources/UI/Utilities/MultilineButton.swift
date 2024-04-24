@@ -21,12 +21,12 @@ final class MultilineButton: UIButton {
     }
 
     override var intrinsicContentSize: CGSize {
-        guard let size = titleLabel?.intrinsicContentSize else {
+        guard let size = titleLabel?.intrinsicContentSize, let insets = configuration?.contentInsets else {
             return super.intrinsicContentSize
         }
-
-        return CGSize(width: size.width + contentEdgeInsets.left + contentEdgeInsets.right,
-                      height: size.height + contentEdgeInsets.top + contentEdgeInsets.bottom)
+        
+        return CGSize(width: size.width + insets.leading + insets.trailing,
+                      height: size.height + insets.top + insets.bottom)
     }
 
     override func layoutSubviews() {
