@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changes
 * Injectable placeholder view for emtpy receipts #APPS-1526
 * Set Deployment Target to iOS 15
+* Payment list shows an empty view
 
 ### Updated
 * weichsel/ZIPFoundation 0.9.19 (was 0.9.18)
