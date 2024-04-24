@@ -18,6 +18,7 @@ public enum Autonomo {
         case clientEntering = "client_entering"
         case clientEntered = "client_entered"
         case clientLeft = "client_left"
+        case clientExited = "client_exited"
         case cartCompleted = "cart_completed"
         case cartPaid = "cart_paid"
         case paymentFailed = "payment_failed"
