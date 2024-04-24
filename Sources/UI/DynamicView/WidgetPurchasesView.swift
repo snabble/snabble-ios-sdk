@@ -19,42 +19,65 @@ public struct WidgetLastPurchasesView: View {
     let widget: WidgetLastPurchases
     let configuration: DynamicViewConfiguration
     let action: (DynamicAction) -> Void
-    @StateObject var viewModel = LastPurchasesViewModel()
+    
+    @State var projectId: Identifier<Project>
     
     init(widget: WidgetLastPurchases, configuration: DynamicViewConfiguration, action: @escaping (DynamicAction) -> Void) {
         self.widget = widget
         self.configuration = configuration
         self.action = action
+        self.projectId = widget.projectId
     }
     
     public var body: some View {
-        AsyncContentView(source: viewModel) { output in
-            VStack(alignment: .leading) {
-                HStack {
-                    Text(keyed: output.title)
-                    Spacer()
-                    Button(action: {
-                        action(.init(widget: widget, userInfo: ["action": "more"]))
-                    }) {
-                        Text(keyed: "Snabble.DynamicView.LastPurchases.all")
-                    }
-                }
-                HStack {
-                    ForEach(output.prefix(2), id: \.id) { provider in
-                        WidgetOrderView(
-                            provider: provider
-                        ).onTapGesture {
-                            action(.init(widget: widget, userInfo: ["action": "purchase", "id": provider.id]))
+        AsyncScreen(id: projectId) { projectId in
+            await load(projectId: projectId)
+        }
+        success: { output in
+            if output.isEmpty {
+                EmptyView()
+            } else {
+                VStack(alignment: .leading) {
+                    HStack {
+                        Text(keyed: output.title)
+                        Spacer()
+                        Button(action: {
+                            action(.init(widget: widget, userInfo: ["action": "more"]))
+                        }) {
+                            Text(keyed: "Snabble.DynamicView.LastPurchases.all")
                         }
-                   }
+                    }
+                    HStack {
+                        ForEach(output.prefix(2), id: \.id) { provider in
+                            WidgetOrderView(
+                                provider: provider
+                            ).onTapGesture {
+                                action(.init(widget: widget, userInfo: ["action": "purchase", "id": provider.id]))
+                            }
+                       }
+                    }
+                    .shadow(radius: configuration.shadowRadius)
                 }
-                .shadow(radius: configuration.shadowRadius)
             }
         }
-        .onAppear {
-            viewModel.projectId = widget.projectId
-            viewModel.load()
+    }
+    
+    private func load(projectId: Identifier<Project>) async -> [PurchaseProviding] {
+        guard let project = Snabble.shared.project(for: projectId) else {
+            return []
         }
+        
+        return await withCheckedContinuation { continuation in
+            OrderList.load(project) { result in
+                do {
+                    let providers = try result.get().receipts
+                    continuation.resume(returning: providers)
+                } catch {
+                    continuation.resume(returning: [])
+                }
+            }
+        }
+        
     }
 }
 

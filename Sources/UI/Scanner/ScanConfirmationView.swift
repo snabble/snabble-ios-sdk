@@ -141,7 +141,7 @@ final class ScanConfirmationView: UIView {
         minusButton.addTarget(self, action: #selector(minusButtonTapped(_:)), for: .touchUpInside)
 
         let plusButton = squareButton
-        plusButton.setImage(UIImage(systemName:  "plus"), for: .normal)
+        plusButton.setImage(UIImage(systemName: "plus"), for: .normal)
         plusButton.addTarget(self, action: #selector(plusButtonTapped(_:)), for: .touchUpInside)
 
         let quantityField = UITextField()

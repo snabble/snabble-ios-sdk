@@ -11,7 +11,16 @@ class AlertView {
     private var window: UIWindow?
     public var alertController: UIAlertController?
     private var presentingViewController: ClearViewController
-    
+
+    @MainActor
+    private var firstWindow: UIWindow? {
+        UIApplication.shared.connectedScenes
+            .filter { $0.activationState == .foregroundActive }
+            .first(where: { $0 is UIWindowScene })
+            .flatMap({ $0 as? UIWindowScene })?.windows
+            .first
+    }
+
     init(title: String?, message: String?) {
         self.window = UIWindow(frame: UIScreen.main.bounds)
         self.presentingViewController = ClearViewController()
@@ -41,12 +50,13 @@ class AlertView {
             alertController.addAction(UIAlertAction(title: string, style: .cancel, handler: nil))
         }
     }
+
     func dismiss(animated: Bool) {
         DispatchQueue.main.async {
             self.window?.rootViewController?.dismiss(animated: animated, completion: nil)
             self.window?.rootViewController = nil
             self.window?.isHidden = true
-            UIApplication.shared.windows.first!.makeKeyAndVisible()
+            self.firstWindow?.makeKeyAndVisible()
             self.window = nil
             self.alertController = nil
         }
