@@ -12,6 +12,7 @@ public final class PaymentMethodListViewController: UITableViewController {
 
     private(set) var projectId: Identifier<Project>?
     private var data: [PaymentGroup] = []
+    private(set) weak var emptyViewController: PaymentEmptyViewController?
 
     public init(for projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) {
         self.projectId = projectId
@@ -21,6 +22,10 @@ public final class PaymentMethodListViewController: UITableViewController {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    deinit {
+        emptyViewController = nil
     }
 
     override public func viewDidLoad() {
@@ -34,6 +39,11 @@ public final class PaymentMethodListViewController: UITableViewController {
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.register(PaymentMethodListCell.self, forCellReuseIdentifier: "cell")
+        
+        let emptyViewController = PaymentEmptyViewController()
+        tableView.backgroundView = emptyViewController.view
+        tableView.backgroundView?.isHidden = true
+        self.emptyViewController = emptyViewController
     }
 
     override public func viewWillAppear(_ animated: Bool) {
