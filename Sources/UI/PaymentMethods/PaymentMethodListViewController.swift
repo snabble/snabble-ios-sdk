@@ -11,7 +11,12 @@ public final class PaymentMethodListViewController: UITableViewController {
     private weak var analyticsDelegate: AnalyticsDelegate?
 
     private(set) var projectId: Identifier<Project>?
-    private var data: [PaymentGroup] = []
+    private var data: [PaymentGroup] = [] {
+        didSet {
+            tableView.backgroundView?.isHidden = !data.isEmpty
+        }
+    }
+    private(set) weak var emptyViewController: PaymentEmptyViewController?
 
     public init(for projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) {
         self.projectId = projectId
@@ -21,6 +26,12 @@ public final class PaymentMethodListViewController: UITableViewController {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    deinit {
+        emptyViewController?.willMove(toParent: nil)
+        emptyViewController?.view.removeFromSuperview()
+        emptyViewController?.removeFromParent()
     }
 
     override public func viewDidLoad() {
@@ -34,6 +45,14 @@ public final class PaymentMethodListViewController: UITableViewController {
         tableView.tableFooterView = UIView(frame: .zero)
         tableView.rowHeight = UITableView.automaticDimension
         tableView.register(PaymentMethodListCell.self, forCellReuseIdentifier: "cell")
+        
+        let emptyViewController = PaymentEmptyViewController()
+        addChild(emptyViewController)
+        tableView.backgroundView = emptyViewController.view
+        emptyViewController.didMove(toParent: self)
+
+        tableView.backgroundView?.isHidden = true
+        self.emptyViewController = emptyViewController
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -50,10 +69,8 @@ public final class PaymentMethodListViewController: UITableViewController {
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.analyticsDelegate?.track(.viewPaymentMethodList)
-        
-        tableView.backgroundView?.isHidden = !data.isEmpty
 
-        if data.isEmpty {
+        if data.isEmpty && projectId != nil {
             addMethod()
         }
     }
