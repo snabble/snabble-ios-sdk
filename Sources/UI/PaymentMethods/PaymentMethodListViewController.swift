@@ -25,6 +25,9 @@ public final class PaymentMethodListViewController: UITableViewController {
     }
 
     deinit {
+        emptyViewController?.willMove(toParent: nil)
+        emptyViewController?.view.removeFromSuperview()
+        emptyViewController?.removeFromParent()
         emptyViewController = nil
     }
 
@@ -41,7 +44,10 @@ public final class PaymentMethodListViewController: UITableViewController {
         tableView.register(PaymentMethodListCell.self, forCellReuseIdentifier: "cell")
         
         let emptyViewController = PaymentEmptyViewController()
+        addChild(emptyViewController)
         tableView.backgroundView = emptyViewController.view
+        emptyViewController.didMove(toParent: self)
+
         tableView.backgroundView?.isHidden = true
         self.emptyViewController = emptyViewController
     }
