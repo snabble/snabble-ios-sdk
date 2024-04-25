@@ -49,13 +49,7 @@ extension AccountViewController: DynamicViewControllerDelegate {
             navigationController?.pushViewController(viewController, animated: true)
 
         case "Profile.paymentMethods":
-            let viewController: UIViewController
-            
-            if let projectId = Snabble.shared.projects.first?.id {
-                viewController = PaymentMethodListViewController(for: projectId, nil)
-            } else {
-                viewController = PaymentEmptyViewController()
-            }
+            let viewController = PaymentMethodListViewController(for: Snabble.shared.projects.first?.id, nil)
             navigationController?.pushViewController(viewController, animated: true)
 
         case "Profile.customerCard":
