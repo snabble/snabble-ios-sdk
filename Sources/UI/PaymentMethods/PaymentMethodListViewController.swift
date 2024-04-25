@@ -32,7 +32,6 @@ public final class PaymentMethodListViewController: UITableViewController {
         emptyViewController?.willMove(toParent: nil)
         emptyViewController?.view.removeFromSuperview()
         emptyViewController?.removeFromParent()
-        emptyViewController = nil
     }
 
     override public func viewDidLoad() {
