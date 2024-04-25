@@ -11,7 +11,11 @@ public final class PaymentMethodListViewController: UITableViewController {
     private weak var analyticsDelegate: AnalyticsDelegate?
 
     private(set) var projectId: Identifier<Project>?
-    private var data: [PaymentGroup] = []
+    private var data: [PaymentGroup] = [] {
+        didSet {
+            tableView.backgroundView?.isHidden = !data.isEmpty
+        }
+    }
     private(set) weak var emptyViewController: PaymentEmptyViewController?
 
     public init(for projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) {
@@ -66,10 +70,8 @@ public final class PaymentMethodListViewController: UITableViewController {
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         self.analyticsDelegate?.track(.viewPaymentMethodList)
-        
-        tableView.backgroundView?.isHidden = !data.isEmpty
 
-        if data.isEmpty {
+        if data.isEmpty && projectId != nil {
             addMethod()
         }
     }
