@@ -10,7 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Updated
 
-## [0.49] - 2024-04-25
+## [0.49] - 2024-05-02
 
 ### Changes
 * Injectable placeholder view for emtpy receipts #APPS-1526
