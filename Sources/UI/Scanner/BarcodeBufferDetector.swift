@@ -30,7 +30,9 @@ open class BarcodeBufferDetector: BarcodeCameraDetector {
             self.captureSession.addOutput(output)
         }
         output.setSampleBufferDelegate(self, queue: self.sessionQueue)
-        output.videoSettings = [kCVPixelBufferPixelFormatTypeKey: kCVPixelFormatType_32BGRA] as [String: Any]
+        output.videoSettings = [kCVPixelBufferPixelFormatTypeKey: kCVPixelFormatType_420YpCbCr8BiPlanarFullRange] as [String: Any]
+        output.alwaysDiscardsLateVideoFrames = true
+
     }
 }
 
