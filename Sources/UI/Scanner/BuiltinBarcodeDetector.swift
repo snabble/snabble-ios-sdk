@@ -53,7 +53,10 @@ public final class BuiltinBarcodeDetector: BarcodeCameraDetector {
 
     override public func scannerWillAppear(on view: UIView) {
         super.scannerWillAppear(on: view)
-       
+        
+        guard self.captureSession.canAddOutput(self.metadataOutput) else {
+            return
+        }
         self.captureSession.addOutput(self.metadataOutput)
         self.metadataOutput.metadataObjectTypes = self.scanFormats.map { $0.avType }
     }
