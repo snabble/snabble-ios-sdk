@@ -62,6 +62,8 @@ public final class BuiltinBarcodeDetector: BarcodeCameraDetector {
     }
 
     override public func setOverlayOffset(_ offset: CGFloat) {
+        super.setOverlayOffset(offset)
+
         guard let overlay = self.decorationOverlay else {
             return
         }
