@@ -69,6 +69,11 @@ open class BarcodeCameraDetector: BarcodeDetector {
         self.decorationOverlay = decorationOverlay
     }
 
+    override open func setOverlayOffset(_ offset: CGFloat) {
+        self.decorationOverlay?.centerYOffset = offset
+        self.decorationOverlay?.layoutIfNeeded()
+    }
+
     override open func scannerDidLayoutSubviews() {
         decorationOverlay?.layoutIfNeeded()
         if let previewLayer = self.previewLayer, let decorationOverlay = self.decorationOverlay {
