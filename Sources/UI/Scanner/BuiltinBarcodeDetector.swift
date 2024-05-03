@@ -40,94 +40,22 @@ extension AVMetadataObject.ObjectType {
     }
 }
 
-public final class BuiltinBarcodeDetector: BarcodeDetector {
-    private var camera: AVCaptureDevice?
-    private var videoInput: AVCaptureDeviceInput?
-    private var captureSession: AVCaptureSession
-    private var previewLayer: AVCaptureVideoPreviewLayer?
+public final class BuiltinBarcodeDetector: BarcodeCameraDetector {
     private var metadataOutput: AVCaptureMetadataOutput
 
     override public init(detectorArea: BarcodeDetectorArea) {
-        self.captureSession = AVCaptureSession()
         self.metadataOutput = AVCaptureMetadataOutput()
-
+        
         super.init(detectorArea: detectorArea)
-
+        
         self.metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
     }
 
     override public func scannerWillAppear(on view: UIView) {
-        startForegroundBackgroundObserver()
-
-        guard
-            self.camera == nil,
-            let camera = self.initializeCamera(),
-            let videoInput = try? AVCaptureDeviceInput(device: camera),
-            self.captureSession.canAddInput(videoInput)
-        else {
-            return
-        }
-
-        self.camera = camera
-        self.videoInput = videoInput
-        self.captureSession.addInput(videoInput)
+        super.scannerWillAppear(on: view)
+       
         self.captureSession.addOutput(self.metadataOutput)
         self.metadataOutput.metadataObjectTypes = self.scanFormats.map { $0.avType }
-
-        let previewLayer = AVCaptureVideoPreviewLayer(session: self.captureSession)
-        previewLayer.videoGravity = .resizeAspectFill
-        previewLayer.frame = .zero
-
-        view.layer.addSublayer(previewLayer)
-        self.previewLayer = previewLayer
-
-        addOverlay(to: view)
-
-        if #available(iOS 15, *) {
-            self.setRecommendedZoomFactor()
-        }
-    }
-
-    private func addOverlay(to view: UIView) {
-        guard self.decorationOverlay == nil else {
-            return
-        }
-
-        let decorationOverlay = BarcodeDetectorOverlay(detectorArea: detectorArea)
-        view.addSubview(decorationOverlay)
-        NSLayoutConstraint.activate([
-            decorationOverlay.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            decorationOverlay.topAnchor.constraint(equalTo: view.topAnchor),
-            decorationOverlay.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            decorationOverlay.bottomAnchor.constraint(equalTo: view.bottomAnchor)
-        ])
-
-        self.decorationOverlay = decorationOverlay
-    }
-
-    override public func scannerDidLayoutSubviews() {
-        decorationOverlay?.layoutIfNeeded()
-        if let previewLayer = self.previewLayer, let decorationOverlay = self.decorationOverlay {
-            previewLayer.frame = decorationOverlay.bounds
-        }
-    }
-
-    override public func scannerWillDisappear() {
-        stopForegroundBackgroundObserver()
-    }
-
-    override public func pauseScanning() {
-        self.sessionQueue.async {
-            self.captureSession.stopRunning()
-        }
-        self.stopIdleTimer()
-    }
-
-    override public func resumeScanning() {
-        self.sessionQueue.async {
-            self.captureSession.startRunning()
-        }
-        self.startIdleTimer()
     }
 
     override public func setOverlayOffset(_ offset: CGFloat) {
@@ -143,60 +71,6 @@ public final class BuiltinBarcodeDetector: BarcodeDetector {
                 // for some reason, running this on the main thread may block for ~10 seconds. WHY?!?
                 metadataOutput.rectOfInterest = rect ?? CGRect(origin: .zero, size: .init(width: 1, height: 1))
             }
-        }
-    }
-
-    override public func setTorch(_ on: Bool) {
-        try? camera?.lockForConfiguration()
-        defer { camera?.unlockForConfiguration() }
-        torchOn = on
-        camera?.torchMode = on ? .on : .off
-    }
-
-    // MARK: - private implementation
-
-    private func initializeCamera() -> AVCaptureDevice? {
-        // get the back camera device
-        guard let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) else {
-            print("no camera found")
-            return nil
-        }
-
-        // camera found, are we allowed to access it?
-        self.requestCameraPermission()
-
-        // set focus/low light properties of the camera
-        do {
-            try camera.lockForConfiguration()
-            defer { camera.unlockForConfiguration() }
-
-            if camera.isAutoFocusRangeRestrictionSupported {
-                camera.autoFocusRangeRestriction = .near
-            }
-            if camera.isFocusModeSupported(.continuousAutoFocus) {
-                camera.focusMode = .continuousAutoFocus
-            }
-            if camera.isLowLightBoostSupported {
-                camera.automaticallyEnablesLowLightBoostWhenAvailable = true
-            }
-        } catch {}
-
-        return camera
-    }
-
-    @available(iOS 15, *)
-    private func setRecommendedZoomFactor() {
-        guard let videoInput = self.videoInput else {
-            return
-        }
-
-        let zoomFactor = RecommendedZoom.factor(for: videoInput, codeWidth: expectedBarcodeWidth)
-        do {
-            try videoInput.device.lockForConfiguration()
-            videoInput.device.videoZoomFactor = CGFloat(zoomFactor)
-            videoInput.device.unlockForConfiguration()
-        } catch {
-            print("Could not lock for configuration: \(error)")
         }
     }
 }
