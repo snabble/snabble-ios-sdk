@@ -67,10 +67,7 @@ public final class BuiltinBarcodeDetector: BarcodeCameraDetector {
         guard let overlay = self.decorationOverlay else {
             return
         }
-
-        overlay.centerYOffset = offset
         DispatchQueue.main.async { [self] in
-            overlay.layoutIfNeeded()
             let rect = previewLayer?.metadataOutputRectConverted(fromLayerRect: overlay.roi)
             sessionQueue.async { [self] in
                 // for some reason, running this on the main thread may block for ~10 seconds. WHY?!?
