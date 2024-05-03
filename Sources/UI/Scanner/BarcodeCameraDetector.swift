@@ -22,7 +22,7 @@ open class BarcodeCameraDetector: BarcodeDetector {
         super.init(detectorArea: detectorArea)
     }
 
-    override public func scannerWillAppear(on view: UIView) {
+    override open func scannerWillAppear(on view: UIView) {
         startForegroundBackgroundObserver()
 
         guard
@@ -76,25 +76,25 @@ open class BarcodeCameraDetector: BarcodeDetector {
         }
     }
 
-    override public func scannerWillDisappear() {
+    override open func scannerWillDisappear() {
         stopForegroundBackgroundObserver()
     }
 
-    override public func pauseScanning() {
+    override open func pauseScanning() {
         self.sessionQueue.async {
             self.captureSession.stopRunning()
         }
         self.stopIdleTimer()
     }
 
-    override public func resumeScanning() {
+    override open func resumeScanning() {
         self.sessionQueue.async {
             self.captureSession.startRunning()
         }
         self.startIdleTimer()
     }
 
-    override public func setTorch(_ on: Bool) {
+    override open func setTorch(_ on: Bool) {
         try? camera?.lockForConfiguration()
         defer { camera?.unlockForConfiguration() }
         torchOn = on

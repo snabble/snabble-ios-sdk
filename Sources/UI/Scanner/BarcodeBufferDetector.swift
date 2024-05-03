@@ -22,7 +22,7 @@ open class BarcodeBufferDetector: BarcodeCameraDetector {
         super.init(detectorArea: detectorArea)
     }
 
-    override public func scannerWillAppear(on view: UIView) {
+    override open func scannerWillAppear(on view: UIView) {
         super.scannerWillAppear(on: view)
        
         let output = AVCaptureVideoDataOutput()
