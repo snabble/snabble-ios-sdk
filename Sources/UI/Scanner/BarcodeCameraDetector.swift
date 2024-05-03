@@ -69,7 +69,7 @@ open class BarcodeCameraDetector: BarcodeDetector {
         self.decorationOverlay = decorationOverlay
     }
 
-    override public func scannerDidLayoutSubviews() {
+    override open func scannerDidLayoutSubviews() {
         decorationOverlay?.layoutIfNeeded()
         if let previewLayer = self.previewLayer, let decorationOverlay = self.decorationOverlay {
             previewLayer.frame = decorationOverlay.bounds
