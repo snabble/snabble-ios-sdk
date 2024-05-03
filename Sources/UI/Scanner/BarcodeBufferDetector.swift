@@ -16,7 +16,7 @@ public protocol BarcodeBufferDetectorDelegate: AnyObject {
 }
 
 open class BarcodeBufferDetector: BarcodeCameraDetector {
-    public weak var videoDelegate: BarcodeBufferDetectorDelegate?
+    public weak var bufferDelegate: BarcodeBufferDetectorDelegate?
     private let outputQueue = DispatchQueue(label: "outputQueue", qos: .background)
 
     override public init(detectorArea: BarcodeDetectorArea) {
@@ -33,12 +33,11 @@ open class BarcodeBufferDetector: BarcodeCameraDetector {
         output.setSampleBufferDelegate(self, queue: outputQueue)
         output.videoSettings = [kCVPixelBufferPixelFormatTypeKey: kCVPixelFormatType_420YpCbCr8BiPlanarFullRange] as [String: Any]
         output.alwaysDiscardsLateVideoFrames = true
-
     }
 }
 
 extension BarcodeBufferDetector: AVCaptureVideoDataOutputSampleBufferDelegate {
     public func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        videoDelegate?.didOutput(sampleBuffer)
+        bufferDelegate?.didOutput(sampleBuffer)
     }
 }
