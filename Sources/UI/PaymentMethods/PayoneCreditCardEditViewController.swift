@@ -665,11 +665,6 @@ extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
             options: []) else {
             return "{}"
         }
-        guard let jsonString = String(
-            data: jsonData,
-            encoding: .utf8) else {
-            return "{}"
-        }
-        return jsonString
+        return String(decoding: jsonData, as: UTF8.self)
     }
 }

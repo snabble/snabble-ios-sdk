@@ -230,12 +230,11 @@ public final class TokenRegistry {
         project.request(.post, url, jwtRequired: false, parameters: parameters, timeout: 5) { request in
             guard
                 var request = request,
-                let password = self.generatePassword(date),
-                let data = "\(self.appId):\(password)".data(using: .utf8)
+                let password = self.generatePassword(date)
             else {
                 return completion(nil)
             }
-
+            let data = Data("\(self.appId):\(password)".utf8)
             let base64 = data.base64EncodedString()
             request.addValue("Basic \(base64)", forHTTPHeaderField: "Authorization")
             request.cachePolicy = .reloadIgnoringCacheData
@@ -272,12 +271,11 @@ public final class TokenRegistry {
         project.request(.get, url, jwtRequired: false, parameters: parameters, timeout: 5) { request in
             guard
                 var request = request,
-                let password = self.generatePassword(date),
-                let data = "\(self.appId):\(password):\(appUserId.value):\(appUserId.secret)".data(using: .utf8)
+                let password = self.generatePassword(date)
             else {
                 return completion(nil)
             }
-
+            let data = Data("\(self.appId):\(password):\(appUserId.value):\(appUserId.secret)".utf8)
             let base64 = data.base64EncodedString()
             request.addValue("Basic \(base64)", forHTTPHeaderField: "Authorization")
             request.cachePolicy = .reloadIgnoringCacheData
