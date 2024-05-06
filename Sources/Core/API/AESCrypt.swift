@@ -63,6 +63,7 @@ public struct AESCrypt {
         }
         
         let aes = AESCrypt(key: keyBytes, iv: ivBytes)
+        
         guard
             let bytes = Data(base64Encoded: string, options: .ignoreUnknownCharacters),
             let decrypted = aes.decrypt(bytes),
