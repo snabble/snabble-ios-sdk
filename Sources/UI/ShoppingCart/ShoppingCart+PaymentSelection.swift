@@ -182,8 +182,7 @@ final class PaymentMethodSelector {
             detail == nil,
             let parent = parentVC,
             method.isAddingAllowed(showAlertOn: parent) == true,
-            let editVC = method.editViewController(with: SnabbleCI.project.id, parent)
-        {
+            let editVC = method.editViewController(with: SnabbleCI.project.id, parent) {
             parent.navigationController?.pushViewController(editVC, animated: true)
         } else if method == .applePay && !ApplePay.canMakePayments(with: SnabbleCI.project.id) {
             ApplePay.openPaymentSetup()
