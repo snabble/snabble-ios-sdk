@@ -58,13 +58,13 @@ extension CheckoutStepStatus: CheckoutStepStatusViewModel {
     
     var image: Image? {
         switch self {
-        case .loading:
+        case .loading: 
             return nil
         case .success:
             return Image(systemName: "checkmark.circle.fill")
         case .failure, .aborted:
             return Image(systemName: "xmark.circle.fill")
-       }
+        }
     }
 }
 
