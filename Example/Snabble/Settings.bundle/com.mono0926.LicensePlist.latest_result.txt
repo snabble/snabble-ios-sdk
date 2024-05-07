@@ -1,6 +1,6 @@
-name: LicensePlist, nameSpecified: , owner: mono0926, version: 3.24.11, source: https://github.com/mono0926/LicensePlist
+name: LicensePlist, nameSpecified: , owner: mono0926, version: 3.25.1, source: https://github.com/mono0926/LicensePlist
 
-name: SwiftLint, nameSpecified: , owner: realm, version: 0.52.4, source: https://github.com/realm/SwiftLint
+name: SwiftLint, nameSpecified: , owner: realm, version: main, source: https://github.com/realm/SwiftLint
 
 name: DeviceKit, nameSpecified: DeviceKit, owner: devicekit, version: 5.2.3, source: https://github.com/devicekit/DeviceKit
 
@@ -26,4 +26,4 @@ name: ZIPFoundation, nameSpecified: ZIPFoundation, owner: weichsel, version: 0.9
 
 add-version-numbers: false
 
-LicensePlist Version: 3.24.11
+LicensePlist Version: 3.25.1
