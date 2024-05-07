@@ -10,8 +10,8 @@ import AVFoundation
 import SnabbleCore
 
 public struct BarcodeResult {
-    let code: String
-    let format: ScanFormat?
+    public let code: String
+    public let format: ScanFormat?
 }
 
 extension BarcodeResult: CustomStringConvertible {
