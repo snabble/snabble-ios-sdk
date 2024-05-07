@@ -12,6 +12,11 @@ import SnabbleCore
 public struct BarcodeResult {
     public let code: String
     public let format: ScanFormat?
+    
+    public init(code: String, format: ScanFormat?) {
+        self.code = code
+        self.format = format
+    }
 }
 
 extension BarcodeResult: CustomStringConvertible {
