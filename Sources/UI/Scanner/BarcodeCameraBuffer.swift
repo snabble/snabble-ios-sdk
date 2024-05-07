@@ -15,14 +15,11 @@ public protocol BarcodeBufferDelegate: AnyObject {
     func sampleOutput(_ sampleBuffer: CMSampleBuffer, completion: @escaping (BarcodeResult?) -> Void)
 }
 
-open class BarcodeCameraBuffer: BarcodeCamera {
+public class BarcodeCameraBuffer: BarcodeCamera {
     public weak var bufferDelegate: BarcodeBufferDelegate?
-    private let outputQueue = DispatchQueue(label: "outputQueue", qos: .background)
-    let output = AVCaptureVideoDataOutput()
 
-    override public init(detectorArea: BarcodeDetectorArea) {
-        super.init(detectorArea: detectorArea)
-    }
+    private let outputQueue = DispatchQueue(label: "outputQueue", qos: .background)
+    private let output = AVCaptureVideoDataOutput()
 
     override open func scannerWillAppear(on view: UIView) {
         super.scannerWillAppear(on: view)
