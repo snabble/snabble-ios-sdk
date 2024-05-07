@@ -10,10 +10,6 @@ final class QRCodeCell: UICollectionViewCell {
     @IBOutlet private var imageView: UIImageView!
     @IBOutlet private var imageWidth: NSLayoutConstraint!
 
-    override func awakeFromNib() {
-        super.awakeFromNib()
-    }
-
     override func prepareForReuse() {
         super.prepareForReuse()
 

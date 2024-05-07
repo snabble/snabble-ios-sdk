@@ -109,10 +109,6 @@ final class ScanningMessageView: UIView {
 
     struct Provider: ScanningMessageViewViewProvider {
         var messages: [ScanMessage]
-
-        init(messages: [ScanMessage]) {
-            self.messages = messages
-        }
     }
 }
 
