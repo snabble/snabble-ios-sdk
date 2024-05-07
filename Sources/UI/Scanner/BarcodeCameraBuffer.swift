@@ -1,5 +1,5 @@
 //
-//  BarcodeBufferDetector.swift
+//  BarcodeCameraBuffer.swift
 //  
 //
 //  Created by Uwe Tilemann on 03.05.24.
@@ -10,14 +10,15 @@ import AVFoundation
 import UIKit
 import SnabbleCore
 
-public protocol BarcodeBufferDetectorDelegate: AnyObject {
+public protocol BarcodeBufferDelegate: AnyObject {
     /// callback for a CMSampleBuffer output
-    func didOutput(_ sampleBuffer: CMSampleBuffer)
+    func sampleOutput(_ sampleBuffer: CMSampleBuffer) -> BarcodeResult?
 }
 
-open class BarcodeBufferDetector: BarcodeCameraDetector {
-    public weak var bufferDelegate: BarcodeBufferDetectorDelegate?
+open class BarcodeCameraBuffer: BarcodeCamera {
+    public weak var bufferDelegate: BarcodeBufferDelegate?
     private let outputQueue = DispatchQueue(label: "outputQueue", qos: .background)
+    let output = AVCaptureVideoDataOutput()
 
     override public init(detectorArea: BarcodeDetectorArea) {
         super.init(detectorArea: detectorArea)
@@ -26,7 +27,6 @@ open class BarcodeBufferDetector: BarcodeCameraDetector {
     override open func scannerWillAppear(on view: UIView) {
         super.scannerWillAppear(on: view)
        
-        let output = AVCaptureVideoDataOutput()
         if self.captureSession.canAddOutput(output) {
             self.captureSession.addOutput(output)
         }
@@ -36,8 +36,10 @@ open class BarcodeBufferDetector: BarcodeCameraDetector {
     }
 }
 
-extension BarcodeBufferDetector: AVCaptureVideoDataOutputSampleBufferDelegate {
+extension BarcodeCameraBuffer: AVCaptureVideoDataOutputSampleBufferDelegate {
     public func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        bufferDelegate?.didOutput(sampleBuffer)
+        if let barcode = bufferDelegate?.sampleOutput(sampleBuffer) {
+            self.delegate?.scannedCode(barcode)
+        }
     }
 }
