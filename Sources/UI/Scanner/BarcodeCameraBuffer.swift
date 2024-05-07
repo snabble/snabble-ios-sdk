@@ -12,7 +12,7 @@ import SnabbleCore
 
 public protocol BarcodeBufferDelegate: AnyObject {
     /// callback for a CMSampleBuffer output
-    func sampleOutput(_ sampleBuffer: CMSampleBuffer) -> BarcodeResult?
+    func sampleOutput(_ sampleBuffer: CMSampleBuffer, completion: @escaping (BarcodeResult?) -> Void)
 }
 
 open class BarcodeCameraBuffer: BarcodeCamera {
@@ -38,8 +38,10 @@ open class BarcodeCameraBuffer: BarcodeCamera {
 
 extension BarcodeCameraBuffer: AVCaptureVideoDataOutputSampleBufferDelegate {
     public func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-        if let barcode = bufferDelegate?.sampleOutput(sampleBuffer) {
-            self.delegate?.scannedCode(barcode)
+       bufferDelegate?.sampleOutput(sampleBuffer) { result in
+           if let result {
+               self.delegate?.scannedCode(result)
+           }
         }
     }
 }
