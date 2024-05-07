@@ -1,5 +1,5 @@
 //
-//  BarcodeCameraDetector.swift
+//  BarcodeCamera.swift
 //
 //
 //  Created by Uwe Tilemann on 02.05.24.
@@ -10,16 +10,52 @@ import AVFoundation
 import UIKit
 import SnabbleCore
 
+extension ScanFormat {
+    var avType: AVMetadataObject.ObjectType {
+        switch self {
+        case .ean8: return .ean8
+        case .unknown, .ean13: return .ean13
+        case .code128: return .code128
+        case .code39: return .code39
+        case .itf14: return .itf14
+        case .qr: return .qr
+        case .dataMatrix: return .dataMatrix
+        case .pdf417: return .pdf417
+        }
+    }
+}
+
+extension AVMetadataObject.ObjectType {
+    var scanFormat: ScanFormat? {
+        switch self {
+        case .ean13: return .ean13
+        case .ean8: return .ean8
+        case .code128: return .code128
+        case .code39: return .code39
+        case .itf14: return .itf14
+        case .qr: return .qr
+        case .dataMatrix: return .dataMatrix
+        case .pdf417: return .pdf417
+        default: return nil
+        }
+    }
+}
+
 open class BarcodeCamera: BarcodeDetector {
     private var camera: AVCaptureDevice?
     private var input: AVCaptureDeviceInput?
+    
     public var captureSession: AVCaptureSession
     public var previewLayer: AVCaptureVideoPreviewLayer?
     
+    private let metadataOutput = AVCaptureMetadataOutput()
+    
     override public init(detectorArea: BarcodeDetectorArea) {
         self.captureSession = AVCaptureSession()
-    
+
         super.init(detectorArea: detectorArea)
+        
+        self.metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
     }
 
     override open func scannerWillAppear(on view: UIView) {
@@ -50,14 +86,20 @@ open class BarcodeCamera: BarcodeDetector {
         if #available(iOS 15, *) {
             self.setRecommendedZoomFactor()
         }
-    }
+                
+        if self.captureSession.canAddOutput(self.metadataOutput) {
+            self.captureSession.addOutput(self.metadataOutput)
+            
+            self.metadataOutput.metadataObjectTypes = self.scanFormats.map { $0.avType }
+        }
+   }
 
     private func addOverlay(to view: UIView) {
         guard self.decorationOverlay == nil else {
             return
         }
 
-        let decorationOverlay = BarcodeDetectorOverlay(detectorArea: detectorArea)
+        let decorationOverlay = BarcodeOverlay(detectorArea: detectorArea)
         view.addSubview(decorationOverlay)
         NSLayoutConstraint.activate([
             decorationOverlay.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -70,8 +112,20 @@ open class BarcodeCamera: BarcodeDetector {
     }
 
     override open func setOverlayOffset(_ offset: CGFloat) {
-        self.decorationOverlay?.centerYOffset = offset
-        self.decorationOverlay?.layoutIfNeeded()
+        
+        guard let overlay = self.decorationOverlay else {
+            return
+        }
+        overlay.centerYOffset = offset
+        overlay.layoutIfNeeded()
+
+        DispatchQueue.main.async { [self] in
+            let rect = previewLayer?.metadataOutputRectConverted(fromLayerRect: overlay.roi)
+            sessionQueue.async { [self] in
+                // for some reason, running this on the main thread may block for ~10 seconds. WHY?!?
+                metadataOutput.rectOfInterest = rect ?? CGRect(origin: .zero, size: .init(width: 1, height: 1))
+            }
+        }
     }
 
     override open func scannerDidLayoutSubviews() {
@@ -151,5 +205,38 @@ open class BarcodeCamera: BarcodeDetector {
         } catch {
             print("Could not lock for configuration: \(error)")
         }
+    }
+}
+
+extension BarcodeCamera: AVCaptureMetadataOutputObjectsDelegate {
+    public func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
+        guard
+            let metadataObject = metadataObjects.first,
+            let codeObject = metadataObject as? AVMetadataMachineReadableCodeObject,
+            let code = codeObject.stringValue,
+            let format = codeObject.type.scanFormat
+        else {
+            return
+        }
+
+        if let barcodeObject = self.previewLayer?.transformedMetadataObject(for: codeObject) {
+            var bounds = barcodeObject.bounds
+            let center = CGPoint(x: bounds.midX, y: bounds.midY)
+            let minSize: CGFloat = 60
+            if bounds.height < minSize {
+                bounds.size.height = minSize
+                bounds.origin.y = center.y - minSize / 2
+            }
+            if bounds.width < minSize {
+                bounds.size.width = minSize
+                bounds.origin.x = center.x - minSize / 2
+            }
+
+            self.decorationOverlay?.showFrameView(at: bounds)
+        }
+        let barcode = BarcodeResult(code: code, format: format)
+        NSLog("got barcode \(barcode)")
+        self.startIdleTimer()
+        self.delegate?.scannedCode(barcode)
     }
 }
