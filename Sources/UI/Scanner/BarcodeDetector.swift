@@ -67,7 +67,7 @@ open class BarcodeDetector: NSObject {
     public weak var idleTimer: Timer?
     public var screenTap: UITapGestureRecognizer?
     public var detectorArea: BarcodeDetectorArea
-    public var decorationOverlay: BarcodeDetectorOverlay?
+    public var decorationOverlay: BarcodeOverlay?
 
     public init(detectorArea: BarcodeDetectorArea) {
         self.scanFormats = []
