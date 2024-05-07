@@ -98,6 +98,6 @@ struct WidgetWrapper: Decodable {
             value = try WidgetDeveloperMode(from: decoder)
         case .multiValue:
             value = try WidgetMultiValue(from: decoder)
-       }
+        }
     }
 }
