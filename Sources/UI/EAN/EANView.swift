@@ -46,10 +46,6 @@ public final class EANView: UIView {
 
     private var leftMargin: CGFloat = 0
 
-    public required init?(coder aDecoder: NSCoder) {
-        super.init(coder: aDecoder)
-    }
-
     override public func draw(_ rect: CGRect) {
         guard let ctx = UIGraphicsGetCurrentContext() else {
             return
