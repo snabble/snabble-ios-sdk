@@ -10,7 +10,7 @@ import AVFoundation
 import UIKit
 import SnabbleCore
 
-open class BarcodeCameraDetector: BarcodeDetector {
+open class BarcodeCamera: BarcodeDetector {
     private var camera: AVCaptureDevice?
     private var input: AVCaptureDeviceInput?
     public var captureSession: AVCaptureSession

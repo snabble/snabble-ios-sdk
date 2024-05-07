@@ -1,5 +1,5 @@
 //
-//  BarcodeDetectorOverlay.swift
+//  BarcodeOverlay.swift
 //
 //  Copyright © 2020 snabble. All rights reserved.
 //
@@ -14,7 +14,7 @@ public enum BarcodeDetectorArea {
     case square
 }
 
-public final class BarcodeDetectorOverlay: UIView {
+public final class BarcodeOverlay: UIView {
     /// the frame for showing where the barcode was scanned
     private let frameView = UIView()
 

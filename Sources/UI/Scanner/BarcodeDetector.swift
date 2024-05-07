@@ -9,9 +9,23 @@ import UIKit
 import AVFoundation
 import SnabbleCore
 
+public struct BarcodeResult {
+    let code: String
+    let format: ScanFormat?
+}
+
+extension BarcodeResult: CustomStringConvertible {
+    public var description: String {
+        guard let format else {
+            return code
+        }
+        return "\(code) \(format)"
+    }
+}
+
 public protocol BarcodeDetectorDelegate: AnyObject {
     /// callback for a successful scan
-    func scannedCode(_ code: String, _ format: ScanFormat)
+    func scannedCode(_ code: BarcodeResult)
 
     /// track an `AnalyticsEvent`
     func track(_ event: AnalyticsEvent)
