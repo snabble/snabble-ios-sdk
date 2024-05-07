@@ -2,13 +2,22 @@ name: SwiftLint
 
 on:
   pull_request:
+  merge_group:
+    types: [checks_requested]
+
+# This is what will cancel the workflow
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
 
 jobs:
   SwiftLint:
     runs-on: ubuntu-latest
+    container:
+      image: ghcr.io/realm/swiftlint:latest
+
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: GitHub Action for SwiftLint
-        uses: stanfordbdhg/action-swiftlint@v4
-        with:
-          args: --strict
+        run: |
+            swiftlint --reporter github-actions-logging --strict --quiet
