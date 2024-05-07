@@ -41,7 +41,7 @@ extension AVMetadataObject.ObjectType {
     }
 }
 
-public class BarcodeCamera: BarcodeDetector {
+open class BarcodeCamera: BarcodeDetector {
     private var camera: AVCaptureDevice?
     private var input: AVCaptureDeviceInput?
     

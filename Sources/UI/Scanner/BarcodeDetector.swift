@@ -53,7 +53,7 @@ public protocol BarcodeDetectorMessageDelegate: AnyObject {
 // NOTE that this class is not really a part of the public API of the Snabble SDK - it and its properties are only marked
 // `public`/`open` to support implementing `CortexDecoderBarcodeDetector` in its separate module
 
-public class BarcodeDetector: NSObject {
+open class BarcodeDetector: NSObject {
     public static var batterySaverTimeout: TimeInterval { 90 }
     public static var batterySaverKey: String { "io.snabble.sdk.batterySaver" }
 

@@ -15,7 +15,7 @@ public protocol BarcodeBufferDelegate: AnyObject {
     func sampleOutput(_ sampleBuffer: CMSampleBuffer, completion: @escaping (BarcodeResult?) -> Void)
 }
 
-public class BarcodeCameraBuffer: BarcodeCamera {
+open class BarcodeCameraBuffer: BarcodeCamera {
     public weak var bufferDelegate: BarcodeBufferDelegate?
 
     private let outputQueue = DispatchQueue(label: "outputQueue", qos: .background)
