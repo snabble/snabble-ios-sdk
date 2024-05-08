@@ -41,7 +41,6 @@ extension AVMetadataObject.ObjectType {
     }
 }
 
-
 public protocol BarcodeBufferDelegate: AnyObject {
     /// callback for a CMSampleBuffer output
     func sampleOutput(_ sampleBuffer: CMSampleBuffer, completion: @escaping (BarcodeResult?) -> Void)
