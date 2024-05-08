@@ -98,18 +98,4 @@ public final class BarcodeOverlay: UIView {
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
-    public func showFrameView(at frame: CGRect) {
-        UIView.animate(withDuration: 0.25) {
-            self.frameView.frame = frame
-        }
-
-        frameView.frame = frame
-        frameView.isHidden = false
-
-        frameTimer?.invalidate()
-        frameTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { _ in
-            self.frameView.isHidden = true
-        }
-    }
 }

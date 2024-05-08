@@ -256,21 +256,6 @@ extension BarcodeCamera: AVCaptureMetadataOutputObjectsDelegate {
             return
         }
 
-        if let barcodeObject = self.previewLayer?.transformedMetadataObject(for: codeObject) {
-            var bounds = barcodeObject.bounds
-            let center = CGPoint(x: bounds.midX, y: bounds.midY)
-            let minSize: CGFloat = 60
-            if bounds.height < minSize {
-                bounds.size.height = minSize
-                bounds.origin.y = center.y - minSize / 2
-            }
-            if bounds.width < minSize {
-                bounds.size.width = minSize
-                bounds.origin.x = center.x - minSize / 2
-            }
-
-            self.decorationOverlay?.showFrameView(at: bounds)
-        }
         let result = BarcodeResult(code: code, format: format)
         print("got barcode \(result)")
         handleBarCodeResult(result)
