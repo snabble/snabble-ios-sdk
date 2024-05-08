@@ -236,11 +236,11 @@ open class BarcodeCamera: BarcodeDetector {
     }
     
     private func handleBarCodeResult(_ result: BarcodeResult) {
-        print("got barcode \(result)")
         startIdleTimer()
         if removeDuplicatedCodes, result.code == lastScannedCode {
             return
         }
+        print("got barcode \(result)")
         delegate?.scannedCode(result)
     }
 }
@@ -257,7 +257,6 @@ extension BarcodeCamera: AVCaptureMetadataOutputObjectsDelegate {
         }
 
         let result = BarcodeResult(code: code, format: format)
-        print("got barcode \(result)")
         handleBarCodeResult(result)
     }
 }
