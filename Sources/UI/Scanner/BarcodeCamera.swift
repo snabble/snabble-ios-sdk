@@ -66,9 +66,6 @@ open class BarcodeCamera: BarcodeDetector {
         }
     }
     
-    public var removeDuplicatedCodes = true
-    private var lastScannedCode: String?
-    
     override public init(detectorArea: BarcodeDetectorArea) {
         captureSession = AVCaptureSession()
         
@@ -171,14 +168,14 @@ open class BarcodeCamera: BarcodeDetector {
         self.sessionQueue.async {
             self.captureSession.stopRunning()
         }
-        self.stopIdleTimer()
+        self.stopBatterySaverTimer()
     }
 
     override open func resumeScanning() {
         self.sessionQueue.async {
             self.captureSession.startRunning()
         }
-        self.startIdleTimer()
+        self.startBatterySaverTimer()
     }
 
     override open func setTorch(_ on: Bool) {
@@ -235,12 +232,13 @@ open class BarcodeCamera: BarcodeDetector {
         }
     }
     
+    private var lastScannedTime: Date?
     private func handleBarCodeResult(_ result: BarcodeResult) {
-        startIdleTimer()
-        if removeDuplicatedCodes, result.code == lastScannedCode {
+        startBatterySaverTimer()
+        if let lastScannedTime, lastScannedTime.addingTimeInterval(scanDebounce) > .now {
             return
         }
-        lastScannedCode = result.code
+        lastScannedTime = .now
         delegate?.scannedCodeResult(result)
     }
 }

@@ -372,7 +372,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ -z \"$CI_XCODE_CLOUD\" ]]; then\n    if [ $CONFIGURATION = \"Debug\" ]; then\n            if which mint > /dev/null; then\n            mint run mono0926/LicensePlist --output-path Snabble/Settings.bundle\n        else\n            echo \"warning: Mint not installed, download from https://github.com/yonaskolb/Mint\"\n        fi\n    fi\nfi\n";
+			shellScript = "if [[ -z \"$CI_XCODE_CLOUD\" ]]; then\n    if [ $CONFIGURATION = \"Debug\" ]; then\n            if which mint > /dev/null; then\n            source \"$PROJECT_DIR/../.env\"\n            mint run mono0926/LicensePlist --output-path Snabble/Settings.bundle --force\n        else\n            echo \"warning: Mint not installed, download from https://github.com/yonaskolb/Mint\"\n        fi\n    fi\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 

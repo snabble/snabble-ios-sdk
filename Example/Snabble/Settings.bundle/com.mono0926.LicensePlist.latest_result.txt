@@ -6,7 +6,7 @@ name: DeviceKit, nameSpecified: DeviceKit, owner: devicekit, version: 5.2.3, sou
 
 name: GRDB.swift, nameSpecified: GRDB.swift, owner: groue, version: 6.27.0, source: https://github.com/groue/GRDB.swift
 
-name: ios-sdk, nameSpecified: Datatrans, owner: datatrans, version: 3.6.1, source: https://github.com/datatrans/ios-sdk
+name: ios-sdk, nameSpecified: Datatrans, owner: datatrans, version: 3.6.3, source: https://github.com/datatrans/ios-sdk
 
 name: KeychainAccess, nameSpecified: KeychainAccess, owner: kishikawakatsumi, version: 4.2.2, source: https://github.com/kishikawakatsumi/KeychainAccess
 
@@ -14,7 +14,7 @@ name: Pulley, nameSpecified: Pulley, owner: snabble, version: 2.9.2, source: htt
 
 name: SDCAlertView, nameSpecified: SDCAlertView, owner: sberrevoets, version: 12.0.3, source: https://github.com/sberrevoets/SDCAlertView
 
-name: swift-crypto, nameSpecified: swift-crypto, owner: apple, version: 3.3.0, source: https://github.com/apple/swift-crypto
+name: swift-crypto, nameSpecified: swift-crypto, owner: apple, version: 3.4.0, source: https://github.com/apple/swift-crypto
 
 name: SwiftOTP, nameSpecified: SwiftOTP, owner: lachlanbell, version: 3.0.2, source: https://github.com/lachlanbell/SwiftOTP
 
