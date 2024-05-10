@@ -69,7 +69,9 @@ open class BarcodeDetector: NSObject {
     public let sessionQueue: DispatchQueue
     public var torchOn = false
 
-    public weak var idleTimer: Timer?
+    public weak var batterySaverTimer: Timer?
+    public var scanDebounce: TimeInterval = 3
+    
     public var screenTap: UITapGestureRecognizer?
     public var detectorArea: BarcodeDetectorArea
     public var decorationOverlay: BarcodeOverlay?
@@ -84,7 +86,7 @@ open class BarcodeDetector: NSObject {
     }
 
     // MARK: - idle timer
-    @objc public func startIdleTimer() {
+    @objc public func startBatterySaverTimer() {
         guard
             UserDefaults.standard.bool(forKey: Self.batterySaverKey),
             self.messageDelegate != nil
@@ -92,17 +94,17 @@ open class BarcodeDetector: NSObject {
             return
         }
 
-        self.idleTimer?.invalidate()
-        self.idleTimer = Timer.scheduledTimer(withTimeInterval: Self.batterySaverTimeout, repeats: false) { _ in
-            self.idleTimerFired()
+        batterySaverTimer?.invalidate()
+        batterySaverTimer = Timer.scheduledTimer(withTimeInterval: Self.batterySaverTimeout, repeats: false) { [weak self] _ in
+            self?.batterySaverTimerFired()
         }
     }
 
-    @objc public func stopIdleTimer() {
-        self.idleTimer?.invalidate()
+    @objc public func stopBatterySaverTimer() {
+        self.batterySaverTimer?.invalidate()
     }
 
-    private func idleTimerFired() {
+    private func batterySaverTimerFired() {
         self.pauseScanning()
         self.screenTap = UITapGestureRecognizer(target: self, action: #selector(screenTapped(_:)))
         self.decorationOverlay?.addGestureRecognizer(self.screenTap!)
@@ -129,8 +131,8 @@ open class BarcodeDetector: NSObject {
     // MARK: - foreground/background notifications
     public func startForegroundBackgroundObserver() {
         let nc = NotificationCenter.default
-        nc.addObserver(self, selector: #selector(self.stopIdleTimer), name: UIApplication.didEnterBackgroundNotification, object: nil)
-        nc.addObserver(self, selector: #selector(self.startIdleTimer), name: UIApplication.willEnterForegroundNotification, object: nil)
+        nc.addObserver(self, selector: #selector(self.stopBatterySaverTimer), name: UIApplication.didEnterBackgroundNotification, object: nil)
+        nc.addObserver(self, selector: #selector(self.startBatterySaverTimer), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
 
     public func stopForegroundBackgroundObserver() {
