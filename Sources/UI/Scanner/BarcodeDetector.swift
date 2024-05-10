@@ -30,7 +30,7 @@ extension BarcodeResult: CustomStringConvertible {
 
 public protocol BarcodeDetectorDelegate: AnyObject {
     /// callback for a successful scan
-    func scannedCode(_ code: BarcodeResult)
+    func scannedCodeResult(_ result: BarcodeResult)
 
     /// track an `AnalyticsEvent`
     func track(_ event: AnalyticsEvent)

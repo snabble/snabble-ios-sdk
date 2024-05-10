@@ -409,12 +409,12 @@ extension ScanningViewController: ScanConfirmationViewDelegate {
 
 // MARK: - scanning view delegate
 extension ScanningViewController: BarcodeDetectorDelegate {
-    public func scannedCode(_ code: BarcodeResult) {
-        if code.code == self.lastScannedCode {
+    public func scannedCodeResult(_ result: BarcodeResult) {
+        if result.code == self.lastScannedCode {
             return
         }
 
-        self.handleScannedCode(code.code, withFormat: code.format)
+        self.handleScannedCode(result.code, withFormat: result.format)
     }
 }
 
