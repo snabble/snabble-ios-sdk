@@ -235,10 +235,10 @@ open class BarcodeCamera: BarcodeDetector {
     private var lastScannedTime: Date?
     private func handleBarCodeResult(_ result: BarcodeResult) {
         startBatterySaverTimer()
-        if let lastScannedTime, lastScannedTime.addingTimeInterval(scanDebounce) > Date() {
+        if let lastScannedTime, lastScannedTime.addingTimeInterval(scanDebounce) > .now {
             return
         }
-        lastScannedTime = Date()
+        lastScannedTime = .now
         delegate?.scannedCodeResult(result)
     }
 }
