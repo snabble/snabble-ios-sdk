@@ -1,5 +1,5 @@
 //
-//  BarcodeDetectorOverlay.swift
+//  BarcodeOverlay.swift
 //
 //  Copyright © 2020 snabble. All rights reserved.
 //
@@ -14,7 +14,7 @@ public enum BarcodeDetectorArea {
     case square
 }
 
-public final class BarcodeDetectorOverlay: UIView {
+public final class BarcodeOverlay: UIView {
     /// the frame for showing where the barcode was scanned
     private let frameView = UIView()
 
@@ -97,19 +97,5 @@ public final class BarcodeDetectorOverlay: UIView {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    public func showFrameView(at frame: CGRect) {
-        UIView.animate(withDuration: 0.25) {
-            self.frameView.frame = frame
-        }
-
-        frameView.frame = frame
-        frameView.isHidden = false
-
-        frameTimer?.invalidate()
-        frameTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { _ in
-            self.frameView.isHidden = true
-        }
     }
 }

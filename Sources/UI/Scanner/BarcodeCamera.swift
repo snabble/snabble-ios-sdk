@@ -1,7 +1,8 @@
 //
-//  BuiltinBarcodeDetector.swift
+//  BarcodeCamera.swift
 //
-//  Copyright © 2020 snabble. All rights reserved.
+//
+//  Created by Uwe Tilemann on 02.05.24.
 //
 
 import Foundation
@@ -40,23 +41,52 @@ extension AVMetadataObject.ObjectType {
     }
 }
 
-public final class BuiltinBarcodeDetector: BarcodeDetector {
-    private var camera: AVCaptureDevice?
-    private var videoInput: AVCaptureDeviceInput?
-    private var captureSession: AVCaptureSession
-    private var previewLayer: AVCaptureVideoPreviewLayer?
-    private var metadataOutput: AVCaptureMetadataOutput
+public protocol BarcodeBufferDelegate: AnyObject {
+    /// callback for a CMSampleBuffer output
+    func sampleOutput(_ sampleBuffer: CMSampleBuffer, completion: @escaping (BarcodeResult?) -> Void)
+}
 
+open class BarcodeCamera: BarcodeDetector {
+    private var camera: AVCaptureDevice?
+    private var input: AVCaptureDeviceInput?
+    
+    public var captureSession: AVCaptureSession
+    public var previewLayer: AVCaptureVideoPreviewLayer?
+    
+    private let metadataOutputQueue: DispatchQueue
+    private let metadataOutput: AVCaptureMetadataOutput
+
+    private let videoDataoutputQueue: DispatchQueue
+    private let videoDataOutput: AVCaptureVideoDataOutput
+    public weak var bufferDelegate: BarcodeBufferDelegate? {
+        didSet {
+            if captureSession.canAddOutput(videoDataOutput) {
+                captureSession.addOutput(videoDataOutput)
+            }
+        }
+    }
+    
+    public var removeDuplicatedCodes = true
+    private var lastScannedCode: String?
+    
     override public init(detectorArea: BarcodeDetectorArea) {
-        self.captureSession = AVCaptureSession()
-        self.metadataOutput = AVCaptureMetadataOutput()
+        captureSession = AVCaptureSession()
+        
+        metadataOutput = AVCaptureMetadataOutput()
+        metadataOutputQueue = DispatchQueue(label: "metadataOutputQueue", qos: .background)
+        
+        videoDataOutput = AVCaptureVideoDataOutput()
+        videoDataOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey: kCVPixelFormatType_420YpCbCr8BiPlanarFullRange] as [String: Any]
+        videoDataOutput.alwaysDiscardsLateVideoFrames = true
+        videoDataoutputQueue = DispatchQueue(label: "videoDataOutputQueue", qos: .background)
 
         super.init(detectorArea: detectorArea)
-
-        self.metadataOutput.setMetadataObjectsDelegate(self, queue: DispatchQueue.main)
+        
+        metadataOutput.setMetadataObjectsDelegate(self, queue: metadataOutputQueue)
+        videoDataOutput.setSampleBufferDelegate(self, queue: videoDataoutputQueue)
     }
 
-    override public func scannerWillAppear(on view: UIView) {
+    override open func scannerWillAppear(on view: UIView) {
         startForegroundBackgroundObserver()
 
         guard
@@ -69,10 +99,8 @@ public final class BuiltinBarcodeDetector: BarcodeDetector {
         }
 
         self.camera = camera
-        self.videoInput = videoInput
+        self.input = videoInput
         self.captureSession.addInput(videoInput)
-        self.captureSession.addOutput(self.metadataOutput)
-        self.metadataOutput.metadataObjectTypes = self.scanFormats.map { $0.avType }
 
         let previewLayer = AVCaptureVideoPreviewLayer(session: self.captureSession)
         previewLayer.videoGravity = .resizeAspectFill
@@ -86,14 +114,20 @@ public final class BuiltinBarcodeDetector: BarcodeDetector {
         if #available(iOS 15, *) {
             self.setRecommendedZoomFactor()
         }
-    }
+                
+        if self.captureSession.canAddOutput(self.metadataOutput) {
+            self.captureSession.addOutput(self.metadataOutput)
+            
+            self.metadataOutput.metadataObjectTypes = self.scanFormats.map { $0.avType }
+        }
+   }
 
     private func addOverlay(to view: UIView) {
         guard self.decorationOverlay == nil else {
             return
         }
 
-        let decorationOverlay = BarcodeDetectorOverlay(detectorArea: detectorArea)
+        let decorationOverlay = BarcodeOverlay(detectorArea: detectorArea)
         view.addSubview(decorationOverlay)
         NSLayoutConstraint.activate([
             decorationOverlay.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -105,39 +139,15 @@ public final class BuiltinBarcodeDetector: BarcodeDetector {
         self.decorationOverlay = decorationOverlay
     }
 
-    override public func scannerDidLayoutSubviews() {
-        decorationOverlay?.layoutIfNeeded()
-        if let previewLayer = self.previewLayer, let decorationOverlay = self.decorationOverlay {
-            previewLayer.frame = decorationOverlay.bounds
-        }
-    }
-
-    override public func scannerWillDisappear() {
-        stopForegroundBackgroundObserver()
-    }
-
-    override public func pauseScanning() {
-        self.sessionQueue.async {
-            self.captureSession.stopRunning()
-        }
-        self.stopIdleTimer()
-    }
-
-    override public func resumeScanning() {
-        self.sessionQueue.async {
-            self.captureSession.startRunning()
-        }
-        self.startIdleTimer()
-    }
-
-    override public func setOverlayOffset(_ offset: CGFloat) {
+    override open func setOverlayOffset(_ offset: CGFloat) {
+        
         guard let overlay = self.decorationOverlay else {
             return
         }
-
         overlay.centerYOffset = offset
+        overlay.layoutIfNeeded()
+
         DispatchQueue.main.async { [self] in
-            overlay.layoutIfNeeded()
             let rect = previewLayer?.metadataOutputRectConverted(fromLayerRect: overlay.roi)
             sessionQueue.async { [self] in
                 // for some reason, running this on the main thread may block for ~10 seconds. WHY?!?
@@ -146,7 +156,32 @@ public final class BuiltinBarcodeDetector: BarcodeDetector {
         }
     }
 
-    override public func setTorch(_ on: Bool) {
+    override open func scannerDidLayoutSubviews() {
+        decorationOverlay?.layoutIfNeeded()
+        if let previewLayer = self.previewLayer, let decorationOverlay = self.decorationOverlay {
+            previewLayer.frame = decorationOverlay.bounds
+        }
+    }
+
+    override open func scannerWillDisappear() {
+        stopForegroundBackgroundObserver()
+    }
+
+    override open func pauseScanning() {
+        self.sessionQueue.async {
+            self.captureSession.stopRunning()
+        }
+        self.stopIdleTimer()
+    }
+
+    override open func resumeScanning() {
+        self.sessionQueue.async {
+            self.captureSession.startRunning()
+        }
+        self.startIdleTimer()
+    }
+
+    override open func setTorch(_ on: Bool) {
         try? camera?.lockForConfiguration()
         defer { camera?.unlockForConfiguration() }
         torchOn = on
@@ -186,7 +221,7 @@ public final class BuiltinBarcodeDetector: BarcodeDetector {
 
     @available(iOS 15, *)
     private func setRecommendedZoomFactor() {
-        guard let videoInput = self.videoInput else {
+        guard let videoInput = self.input else {
             return
         }
 
@@ -199,9 +234,18 @@ public final class BuiltinBarcodeDetector: BarcodeDetector {
             print("Could not lock for configuration: \(error)")
         }
     }
+    
+    private func handleBarCodeResult(_ result: BarcodeResult) {
+        startIdleTimer()
+        if removeDuplicatedCodes, result.code == lastScannedCode {
+            return
+        }
+        print("got barcode \(result)")
+        delegate?.scannedCode(result)
+    }
 }
 
-extension BuiltinBarcodeDetector: AVCaptureMetadataOutputObjectsDelegate {
+extension BarcodeCamera: AVCaptureMetadataOutputObjectsDelegate {
     public func metadataOutput(_ output: AVCaptureMetadataOutput, didOutput metadataObjects: [AVMetadataObject], from connection: AVCaptureConnection) {
         guard
             let metadataObject = metadataObjects.first,
@@ -212,24 +256,17 @@ extension BuiltinBarcodeDetector: AVCaptureMetadataOutputObjectsDelegate {
             return
         }
 
-        if let barcodeObject = self.previewLayer?.transformedMetadataObject(for: codeObject) {
-            var bounds = barcodeObject.bounds
-            let center = CGPoint(x: bounds.midX, y: bounds.midY)
-            let minSize: CGFloat = 60
-            if bounds.height < minSize {
-                bounds.size.height = minSize
-                bounds.origin.y = center.y - minSize / 2
-            }
-            if bounds.width < minSize {
-                bounds.size.width = minSize
-                bounds.origin.x = center.x - minSize / 2
-            }
+        let result = BarcodeResult(code: code, format: format)
+        handleBarCodeResult(result)
+    }
+}
 
-            self.decorationOverlay?.showFrameView(at: bounds)
+extension BarcodeCamera: AVCaptureVideoDataOutputSampleBufferDelegate {
+    public func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
+       bufferDelegate?.sampleOutput(sampleBuffer) { [weak self] result in
+           if let result, let self {
+               handleBarCodeResult(result)
+           }
         }
-
-        NSLog("got code \(code) \(format)")
-        self.startIdleTimer()
-        self.delegate?.scannedCode(code, format)
     }
 }

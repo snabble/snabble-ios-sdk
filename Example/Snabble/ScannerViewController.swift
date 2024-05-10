@@ -68,7 +68,7 @@ class AppScannerViewController: UIViewController {
     }
 
     @objc private func scannerButtonTapped(_ sender: Any) {
-        let detector = BuiltinBarcodeDetector(detectorArea: .rectangle)
+        let detector = BarcodeCamera(detectorArea: .rectangle)
         let scannerViewController = ScannerViewController(shoppingCart, shop, detector)
         scannerViewController.scannerDelegate = self
         scannerViewController.shoppingCartDelegate = self

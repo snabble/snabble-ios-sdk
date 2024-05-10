@@ -9,9 +9,28 @@ import UIKit
 import AVFoundation
 import SnabbleCore
 
+public struct BarcodeResult {
+    public let code: String
+    public let format: ScanFormat?
+    
+    public init(code: String, format: ScanFormat?) {
+        self.code = code
+        self.format = format
+    }
+}
+
+extension BarcodeResult: CustomStringConvertible {
+    public var description: String {
+        guard let format else {
+            return code
+        }
+        return "\(code) \(format)"
+    }
+}
+
 public protocol BarcodeDetectorDelegate: AnyObject {
     /// callback for a successful scan
-    func scannedCode(_ code: String, _ format: ScanFormat)
+    func scannedCode(_ code: BarcodeResult)
 
     /// track an `AnalyticsEvent`
     func track(_ event: AnalyticsEvent)
@@ -53,7 +72,7 @@ open class BarcodeDetector: NSObject {
     public weak var idleTimer: Timer?
     public var screenTap: UITapGestureRecognizer?
     public var detectorArea: BarcodeDetectorArea
-    public var decorationOverlay: BarcodeDetectorOverlay?
+    public var decorationOverlay: BarcodeOverlay?
 
     public init(detectorArea: BarcodeDetectorArea) {
         self.scanFormats = []
