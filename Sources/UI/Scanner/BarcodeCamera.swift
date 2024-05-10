@@ -241,7 +241,7 @@ open class BarcodeCamera: BarcodeDetector {
             return
         }
         print("got barcode \(result)")
-        delegate?.scannedCode(result)
+        delegate?.scannedCodeResult(result)
     }
 }
 
