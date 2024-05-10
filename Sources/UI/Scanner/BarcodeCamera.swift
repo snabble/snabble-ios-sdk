@@ -240,7 +240,7 @@ open class BarcodeCamera: BarcodeDetector {
         if removeDuplicatedCodes, result.code == lastScannedCode {
             return
         }
-        print("got barcode \(result)")
+        lastScannedCode = result.code
         delegate?.scannedCodeResult(result)
     }
 }
