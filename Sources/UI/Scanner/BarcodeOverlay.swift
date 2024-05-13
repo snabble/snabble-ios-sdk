@@ -15,9 +15,6 @@ public enum BarcodeDetectorArea {
 }
 
 public final class BarcodeOverlay: UIView {
-    /// the frame for showing where the barcode was scanned
-    private let frameView = UIView()
-
     private let barcodeOverlay = UIImageView()
 
     // our virtual reticle - used so that we can easily position it using auto layout
@@ -86,14 +83,8 @@ public final class BarcodeOverlay: UIView {
 
             reticle.centerYAnchor.constraint(equalTo: barcodeOverlay.centerYAnchor)
         ])
-
-        frameView.backgroundColor = .clear
-        frameView.layer.borderColor = UIColor.border().cgColor
-        frameView.layer.borderWidth = 1 / UIScreen.main.scale
-        frameView.layer.cornerRadius = 3
-
-        addSubview(frameView)
     }
+
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")

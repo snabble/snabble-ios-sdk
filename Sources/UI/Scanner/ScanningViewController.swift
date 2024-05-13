@@ -52,9 +52,6 @@ final class ScanningViewController: UIViewController {
     private var customAppearance: CustomAppearance?
     private var torchButton: UIBarButtonItem?
 
-    private var lastScannedCode: String?
-
-    private weak var lastScanTimer: Timer?
     private weak var spinnerTimer: Timer?
     private weak var messageTimer: Timer?
 
@@ -255,9 +252,8 @@ final class ScanningViewController: UIViewController {
             reopenDrawer = self.pulleyViewController?.drawerPosition == .open
         }
 
-        if self.pulleyViewController?.supportedDrawerPositions().contains(.collapsed) == true {
-            self.pulleyViewController?.setDrawerPosition(position: hidden ? .collapsed : .closed, animated: true)
-        }
+        self.pulleyViewController?.setDrawerPosition(position: .collapsed, animated: true)
+        self.pulleyViewController?.allowsUserDrawerPositionChange = hidden
 
         self.confirmationVisible = !hidden
 
@@ -354,7 +350,6 @@ extension ScanningViewController: ScanConfirmationViewDelegate {
         let reopen = reopenDrawer
         
         self.displayScanConfirmationView(hidden: true)
-        self.startLastScanTimer()
 
         if let item = item {
             var messages = [ScanMessage]()
@@ -371,8 +366,6 @@ extension ScanningViewController: ScanConfirmationViewDelegate {
                 drawer.markScannedProduct(item.product)
             }
         }
-
-        self.lastScannedCode = nil
 
         if reopen {
             self.pulleyViewController?.setDrawerPosition(position: .open, animated: true)
@@ -410,10 +403,6 @@ extension ScanningViewController: ScanConfirmationViewDelegate {
 // MARK: - scanning view delegate
 extension ScanningViewController: BarcodeDetectorDelegate {
     public func scannedCodeResult(_ result: BarcodeResult) {
-        if result.code == self.lastScannedCode {
-            return
-        }
-
         self.handleScannedCode(result.code, withFormat: result.format)
     }
 }
@@ -426,20 +415,9 @@ extension ScanningViewController {
         let message = ScanMessage(messageText)
         self.showMessage(message)
         self.scannerDelegate?.track(.scanUnknown(code))
-        self.startLastScanTimer()
-    }
-
-    private func startLastScanTimer() {
-        self.lastScanTimer?.invalidate()
-        self.lastScanTimer = Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { _ in
-            self.lastScannedCode = nil
-        }
     }
 
     private func handleScannedCode(_ scannedCode: String, withFormat format: ScanFormat?, withTemplate template: String? = nil) {
-        // Log.debug("handleScannedCode \(scannedCode) \(self.lastScannedCode)")
-        self.lastScannedCode = scannedCode
-
         self.spinnerTimer?.invalidate()
         self.spinnerTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { _ in
             self.spinner?.startAnimating()
@@ -472,7 +450,6 @@ extension ScanningViewController {
 
             // check for sale stop / notForSale
             if self.isSaleProhibited(of: product, scannedCode: scannedCode) {
-                self.startLastScanTimer()
                 return
             }
 
@@ -481,7 +458,6 @@ extension ScanningViewController {
                 let msg = Asset.localizedString(forKey: "Snabble.Scanner.scannedShelfCode")
                 self.scannedUnknown(messageText: msg, code: scannedCode)
                 self.barcodeDetector.resumeScanning()
-                self.startLastScanTimer()
                 return
             }
 
@@ -533,7 +509,6 @@ extension ScanningViewController {
                                       preferredStyle: .alert)
 
         alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { _ in
-            self.lastScannedCode = nil
             self.barcodeDetector.resumeScanning()
         })
 
@@ -544,7 +519,6 @@ extension ScanningViewController {
         self.tapticFeedback.notificationOccurred(.error)
         if let msg = self.scannerDelegate?.scanMessage(for: SnabbleCI.project, self.shop, product) {
             self.showMessage(msg)
-            self.lastScannedCode = nil
         } else {
             self.scannedUnknown(messageText: Asset.localizedString(forKey: "Snabble.NotForSale.ErrorMsg.scan"), code: scannedCode)
         }
@@ -576,7 +550,6 @@ extension ScanningViewController {
         }
 
         alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.cancel"), style: .cancel) { _ in
-            self.lastScannedCode = nil
             self.barcodeDetector.resumeScanning()
         })
 

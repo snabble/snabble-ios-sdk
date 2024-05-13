@@ -159,7 +159,7 @@ extension ProductItemModel {
             self.image = img
             return
         }
-        // SDK Supermarket hack to resolve wrong domain in data
+        // SDK Supermarket hack to re arcsolve wrong domain in data
         if url.host == "snabble.io" {
             let path = url.path
             

@@ -97,8 +97,10 @@ open class BarcodeCamera: BarcodeDetector {
         self.camera = camera
         self.input = videoInput
         self.captureSession.addInput(videoInput)
+        self.captureSession.addOutput(metadataOutput)
+        self.metadataOutput.metadataObjectTypes = scanFormats.map { $0.avType }
 
-        let previewLayer = AVCaptureVideoPreviewLayer(session: self.captureSession)
+        let previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         previewLayer.videoGravity = .resizeAspectFill
         previewLayer.frame = .zero
 
@@ -109,11 +111,6 @@ open class BarcodeCamera: BarcodeDetector {
 
         if #available(iOS 15, *) {
             self.setRecommendedZoomFactor()
-        }
-                
-        if self.captureSession.canAddOutput(self.metadataOutput) {
-            self.captureSession.addOutput(self.metadataOutput)
-            self.metadataOutput.metadataObjectTypes = self.scanFormats.map { $0.avType }
         }
    }
 
@@ -135,7 +132,6 @@ open class BarcodeCamera: BarcodeDetector {
     }
 
     override open func setOverlayOffset(_ offset: CGFloat) {
-        
         guard let overlay = self.decorationOverlay else {
             return
         }
