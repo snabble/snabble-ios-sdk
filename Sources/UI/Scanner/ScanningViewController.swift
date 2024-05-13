@@ -252,7 +252,7 @@ final class ScanningViewController: UIViewController {
             reopenDrawer = self.pulleyViewController?.drawerPosition == .open
         }
 
-        self.pulleyViewController?.setDrawerPosition(position: .collapsed, animated: true)
+        self.pulleyViewController?.setDrawerPosition(position: hidden ? .collapsed : .closed, animated: false)
         self.pulleyViewController?.allowsUserDrawerPositionChange = hidden
 
         self.confirmationVisible = !hidden

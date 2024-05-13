@@ -57,13 +57,7 @@ open class BarcodeCamera: BarcodeDetector {
 
     private let outputQueue: DispatchQueue
     private let videoDataOutput: AVCaptureVideoDataOutput
-    public weak var bufferDelegate: BarcodeBufferDelegate? {
-        didSet {
-            if captureSession.canAddOutput(videoDataOutput) {
-                captureSession.addOutput(videoDataOutput)
-            }
-        }
-    }
+    public weak var bufferDelegate: BarcodeBufferDelegate?
     
     override public init(detectorArea: BarcodeDetectorArea) {
         captureSession = AVCaptureSession()
@@ -97,8 +91,17 @@ open class BarcodeCamera: BarcodeDetector {
         self.camera = camera
         self.input = videoInput
         self.captureSession.addInput(videoInput)
-        self.captureSession.addOutput(metadataOutput)
-        self.metadataOutput.metadataObjectTypes = scanFormats.map { $0.avType }
+        
+        // Built-in Decoding
+        if captureSession.canAddOutput(metadataOutput) {
+            captureSession.addOutput(metadataOutput)
+            metadataOutput.metadataObjectTypes = scanFormats.map { $0.avType }
+        }
+        
+        // Buffer Decoding
+        if captureSession.canAddOutput(videoDataOutput) {
+            captureSession.addOutput(videoDataOutput)
+        }
 
         let previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         previewLayer.videoGravity = .resizeAspectFill
@@ -136,9 +139,9 @@ open class BarcodeCamera: BarcodeDetector {
             return
         }
         overlay.centerYOffset = offset
-        overlay.layoutIfNeeded()
 
         DispatchQueue.main.async { [self] in
+            overlay.layoutIfNeeded()
             let rect = previewLayer?.metadataOutputRectConverted(fromLayerRect: overlay.roi)
             sessionQueue.async { [self] in
                 // for some reason, running this on the main thread may block for ~10 seconds. WHY?!?
