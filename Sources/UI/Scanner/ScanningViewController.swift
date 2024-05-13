@@ -256,8 +256,7 @@ final class ScanningViewController: UIViewController {
         }
 
         if self.pulleyViewController?.supportedDrawerPositions().contains(.collapsed) == true {
-            self.pulleyViewController?.setDrawerPosition(position: .collapsed, animated: false)
-            self.pulleyViewController?.allowsUserDrawerPositionChange = false
+            self.pulleyViewController?.setDrawerPosition(position: hidden ? .collapsed : .closed, animated: true)
         }
 
         self.confirmationVisible = !hidden
@@ -374,8 +373,7 @@ extension ScanningViewController: ScanConfirmationViewDelegate {
         }
 
         self.lastScannedCode = nil
-        self.pulleyViewController?.allowsUserDrawerPositionChange = true
-        
+
         if reopen {
             self.pulleyViewController?.setDrawerPosition(position: .open, animated: true)
         } else {
