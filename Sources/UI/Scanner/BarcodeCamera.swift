@@ -53,34 +53,27 @@ open class BarcodeCamera: BarcodeDetector {
     public var captureSession: AVCaptureSession
     public var previewLayer: AVCaptureVideoPreviewLayer?
     
-    private let metadataOutputQueue: DispatchQueue
     private let metadataOutput: AVCaptureMetadataOutput
 
-    private let videoDataoutputQueue: DispatchQueue
+    private let outputQueue: DispatchQueue
     private let videoDataOutput: AVCaptureVideoDataOutput
-    public weak var bufferDelegate: BarcodeBufferDelegate? {
-        didSet {
-            if captureSession.canAddOutput(videoDataOutput) {
-                captureSession.addOutput(videoDataOutput)
-            }
-        }
-    }
+    public weak var bufferDelegate: BarcodeBufferDelegate?
     
     override public init(detectorArea: BarcodeDetectorArea) {
         captureSession = AVCaptureSession()
         
         metadataOutput = AVCaptureMetadataOutput()
-        metadataOutputQueue = DispatchQueue(label: "metadataOutputQueue", qos: .background)
         
         videoDataOutput = AVCaptureVideoDataOutput()
         videoDataOutput.videoSettings = [kCVPixelBufferPixelFormatTypeKey: kCVPixelFormatType_420YpCbCr8BiPlanarFullRange] as [String: Any]
         videoDataOutput.alwaysDiscardsLateVideoFrames = true
-        videoDataoutputQueue = DispatchQueue(label: "videoDataOutputQueue", qos: .background)
+        
+        outputQueue = DispatchQueue(label: "outputQueue", qos: .background)
 
         super.init(detectorArea: detectorArea)
         
-        metadataOutput.setMetadataObjectsDelegate(self, queue: metadataOutputQueue)
-        videoDataOutput.setSampleBufferDelegate(self, queue: videoDataoutputQueue)
+        metadataOutput.setMetadataObjectsDelegate(self, queue: outputQueue)
+        videoDataOutput.setSampleBufferDelegate(self, queue: outputQueue)
     }
 
     override open func scannerWillAppear(on view: UIView) {
@@ -98,8 +91,19 @@ open class BarcodeCamera: BarcodeDetector {
         self.camera = camera
         self.input = videoInput
         self.captureSession.addInput(videoInput)
+        
+        // Built-in Decoding
+        if captureSession.canAddOutput(metadataOutput) {
+            captureSession.addOutput(metadataOutput)
+            metadataOutput.metadataObjectTypes = scanFormats.map { $0.avType }
+        }
+        
+        // Buffer Decoding
+        if captureSession.canAddOutput(videoDataOutput) {
+            captureSession.addOutput(videoDataOutput)
+        }
 
-        let previewLayer = AVCaptureVideoPreviewLayer(session: self.captureSession)
+        let previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         previewLayer.videoGravity = .resizeAspectFill
         previewLayer.frame = .zero
 
@@ -110,12 +114,6 @@ open class BarcodeCamera: BarcodeDetector {
 
         if #available(iOS 15, *) {
             self.setRecommendedZoomFactor()
-        }
-                
-        if self.captureSession.canAddOutput(self.metadataOutput) {
-            self.captureSession.addOutput(self.metadataOutput)
-            
-            self.metadataOutput.metadataObjectTypes = self.scanFormats.map { $0.avType }
         }
    }
 
@@ -137,14 +135,13 @@ open class BarcodeCamera: BarcodeDetector {
     }
 
     override open func setOverlayOffset(_ offset: CGFloat) {
-        
         guard let overlay = self.decorationOverlay else {
             return
         }
         overlay.centerYOffset = offset
-        overlay.layoutIfNeeded()
 
         DispatchQueue.main.async { [self] in
+            overlay.layoutIfNeeded()
             let rect = previewLayer?.metadataOutputRectConverted(fromLayerRect: overlay.roi)
             sessionQueue.async { [self] in
                 // for some reason, running this on the main thread may block for ~10 seconds. WHY?!?
@@ -260,11 +257,11 @@ extension BarcodeCamera: AVCaptureMetadataOutputObjectsDelegate {
 }
 
 extension BarcodeCamera: AVCaptureVideoDataOutputSampleBufferDelegate {
-    public func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {
-       bufferDelegate?.sampleOutput(sampleBuffer) { [weak self] result in
-           if let result, let self {
-               handleBarCodeResult(result)
-           }
+    public func captureOutput(_ output: AVCaptureOutput, didOutput sampleBuffer: CMSampleBuffer, from connection: AVCaptureConnection) {        
+        bufferDelegate?.sampleOutput(sampleBuffer) { [weak self] result in
+            if let result, let self {
+                handleBarCodeResult(result)
+            }
         }
     }
 }
