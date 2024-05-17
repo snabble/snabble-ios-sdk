@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import SnabbleAssetProviding
 
 internal class EmptyStateView: UIView {
     let textLabel = UILabel()

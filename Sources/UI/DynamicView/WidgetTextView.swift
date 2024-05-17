@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SnabbleAssetProviding
 
 private protocol WidgetTextStyling {
     var textColor: Color { get }

@@ -21,11 +21,13 @@ import Foundation
 /// - Returns: An initialized decodable object
 ///
 /// - Important: If the file `filename` does not exists or contains corrupt JSON data this function throws an `fatalError()`
-func loadJSON<T: Decodable>(_ filename: String) -> T {
+public func loadJSON<T: Decodable>(_ filename: String) -> T {
     let data: Data
 
-    guard let file = Asset.url(forResource: filename, withExtension: nil) else {
-        fatalError("Couldn't find \(filename) in bundle.")
+    guard let file = Asset.url(forResource: filename, withExtension: "json") else {
+//        guard let file = Bundle.main.url(forResource: filename, withExtension: "json") else {
+            fatalError("Couldn't find \(filename) in bundle.")
+//        }
     }
 
     do {

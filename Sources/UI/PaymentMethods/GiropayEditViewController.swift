@@ -7,6 +7,7 @@
 import UIKit
 import WebKit
 import SnabbleCore
+import SnabbleAssetProviding
 
 private struct GiropayAuthorizationResult: Decodable {
     let id: String

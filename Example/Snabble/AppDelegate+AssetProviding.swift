@@ -8,12 +8,13 @@
 
 import Foundation
 import SnabbleUI
+import SnabbleAssetProviding
 import SwiftUI
 import UIKit
 
 extension AppDelegate: AssetProviding {
-    func gatekeeper(viewModel: SnabbleUI.GatekeeperViewModel, domain: Any?) -> UIViewController? {
-        return nil
+    func font(_ name: String, size: CGFloat?, relativeTo textStyle: Font.TextStyle?, domain: Any?) -> Font? {
+        nil
     }
     
     func color(named name: String, domain: Any?) -> UIColor? {

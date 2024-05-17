@@ -7,6 +7,7 @@
 import UIKit
 import WCAG_Colors
 import SnabbleCore
+import SnabbleAssetProviding
 
 protocol ScanConfirmationViewDelegate: AnalyticsDelegate {
     func closeConfirmation(forItem item: CartItem?)

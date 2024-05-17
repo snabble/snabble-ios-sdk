@@ -7,6 +7,7 @@
 import UIKit
 import Pulley
 import SnabbleCore
+import SnabbleAssetProviding
 
 public final class ScannerViewController: PulleyViewController {
     private var customAppearance: CustomAppearance?

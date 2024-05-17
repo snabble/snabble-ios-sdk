@@ -8,6 +8,7 @@
 import UIKit
 import SnabbleCore
 import KeychainAccess
+import SnabbleAssetProviding
 
 extension CheckInManager {
     func shop(for provider: ShopProviding) -> Shop? {

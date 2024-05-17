@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 import SnabbleCore
+import SnabbleAssetProviding
 
 public enum SepaStrings: String {
     case iban

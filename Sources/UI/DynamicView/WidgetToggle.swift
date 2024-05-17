@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SnabbleAssetProviding
 
 public struct WidgetToggleView: View {
     var widget: WidgetToggle

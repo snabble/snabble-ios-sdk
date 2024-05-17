@@ -7,6 +7,7 @@
 import UIKit
 import SnabbleCore
 import Combine
+import SnabbleAssetProviding
 
 public final class PaymentMethodStartCheck {
     private var method: PaymentMethod

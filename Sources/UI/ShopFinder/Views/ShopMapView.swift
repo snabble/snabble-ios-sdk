@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import MapKit
 import Contacts
+import SnabbleAssetProviding
 
 struct ShopLocation: Swift.Identifiable {
     var id = UUID()

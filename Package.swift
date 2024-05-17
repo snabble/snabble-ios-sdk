@@ -12,15 +12,19 @@ let package = Package(
     products: [
         .library(
             name: "Snabble",
-            targets: ["SnabbleCore", "SnabbleUI"]
+            targets: ["SnabbleAssetProviding", "SnabbleCore", "SnabbleUI"]
+        ),
+        .library(
+            name: "SnabbleAssetProviding",
+            targets: ["SnabbleAssetProviding"]
         ),
         .library(
             name: "SnabbleCore",
             targets: ["SnabbleCore"]
         ),
-        .library(
+       .library(
             name: "SnabbleUI",
-            targets: ["SnabbleUI"]
+            targets: ["SnabbleAssetProviding", "SnabbleUI"]
         ),
         .library(
             name: "SnabbleDatatrans",
@@ -40,6 +44,16 @@ let package = Package(
         .package(url: "https://github.com/chrs1885/WCAG-Colors.git", from: "1.0.0")
     ],
     targets: [
+        .target(
+            name: "SnabbleAssetProviding",
+            dependencies: [
+                "WCAG-Colors",
+            ],
+            path: "Sources/Packages/SnabbleAssetProviding",
+            resources: [
+                .process("Resources")
+            ]
+        ),
         .target(
             name: "SnabbleCore",
             dependencies: [

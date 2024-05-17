@@ -14,7 +14,7 @@ public enum Asset {
     public static weak var provider: AssetProviding?
 
     /// Reference to the current domain
-    public internal(set) static var domain: Any?
+    public static var domain: Any?
 
     // MARK: - Color
     public static func color(named name: String, domain: Any? = domain, bundle: Bundle? = nil) -> UIColor? {
@@ -62,13 +62,13 @@ public enum Asset {
 // MARK: SwiftUI - Extensions
 
 extension SwiftUI.Image {
-    static func image(named name: String, systemName: String? = nil, domain: Any? = nil) -> SwiftUI.Image {
+    public static func image(named name: String, systemName: String? = nil, domain: Any? = nil) -> SwiftUI.Image {
         Asset.image(named: name, domain: domain ?? Asset.domain) ?? SwiftUI.Image(systemName: systemName ?? name)
     }
 }
 
 extension Text {
-    init(keyed key: String) {
+    public init(keyed key: String) {
         let value = Asset.localizedString(forKey: key)
         self.init(value)
     }

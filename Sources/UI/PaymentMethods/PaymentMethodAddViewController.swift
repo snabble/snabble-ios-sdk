@@ -6,6 +6,7 @@
 
 import UIKit
 import SnabbleCore
+import SnabbleAssetProviding
 
 private struct MethodEntry {
     var name: String

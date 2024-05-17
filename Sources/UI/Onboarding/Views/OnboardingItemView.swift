@@ -8,6 +8,7 @@
 //
 
 import SwiftUI
+import SnabbleAssetProviding
 
 struct URLModifier: ViewModifier {
     @Binding var url: URL?

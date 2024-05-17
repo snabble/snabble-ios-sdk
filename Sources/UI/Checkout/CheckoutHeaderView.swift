@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import SnabbleAssetProviding
 
 protocol CheckoutHeaderViewModel {
     var statusViewModel: CheckoutStepStatusViewModel { get }

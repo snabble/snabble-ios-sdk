@@ -9,6 +9,7 @@ import Combine
 import UIKit
 import SwiftUI
 import SnabbleCore
+import SnabbleAssetProviding
 
 /// Methods for managing callbacks for widges
 public protocol SepaAcceptViewControllerDelegate: AnyObject {

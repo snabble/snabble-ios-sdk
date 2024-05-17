@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import SnabbleCore
+import SnabbleAssetProviding
 
 extension IBANFormatter.HintState {
     public var localizedString: String {

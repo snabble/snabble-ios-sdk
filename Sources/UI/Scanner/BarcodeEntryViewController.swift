@@ -6,6 +6,7 @@
 
 import UIKit
 import SnabbleCore
+import SnabbleAssetProviding
 
 public final class BarcodeEntryViewController: UIViewController {
     private let tableView = UITableView()

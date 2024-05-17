@@ -6,6 +6,7 @@
 
 import UIKit
 import SnabbleCore
+import SnabbleAssetProviding
 
 public final class PaymentMethodListViewController: UITableViewController {
     private weak var analyticsDelegate: AnalyticsDelegate?

@@ -9,6 +9,7 @@ import Foundation
 import SnabbleCore
 import Combine
 import SwiftUI
+import SnabbleAssetProviding
 
 protocol CouponViewModelDelegate: AnyObject {
     func couponViewModel(_ couponViewModel: CouponViewModel, shouldActivateCoupon coupon: Coupon) -> Bool

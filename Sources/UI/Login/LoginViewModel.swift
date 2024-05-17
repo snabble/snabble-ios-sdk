@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import SnabbleAssetProviding
 
 public protocol Loginable {
     var username: String? { get set }

@@ -7,6 +7,7 @@ import UIKit
 import SwiftUI
 import SnabbleCore
 import Combine
+import SnabbleAssetProviding
 
 open class BaseCheckViewModel: ObservableObject, CheckViewModel {
     @Published public var checkModel: CheckModel

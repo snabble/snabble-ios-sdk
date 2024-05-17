@@ -6,6 +6,7 @@
 
 import UIKit
 import SnabbleCore
+import SnabbleAssetProviding
 
 final class ShoppingListCell: UITableViewCell {
     private var task: URLSessionDataTask?

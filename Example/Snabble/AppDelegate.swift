@@ -9,6 +9,7 @@ import UIKit
 import SnabbleUI
 import SnabbleCore
 import SwiftUI
+import SnabbleAssetProviding
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {

@@ -12,4 +12,3 @@ extension SwiftUI.Font {
         return Asset.font(name, size: size, relativeTo: textStyle, domain: domain)
     }
 }
-

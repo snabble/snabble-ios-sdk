@@ -8,6 +8,7 @@ import UIKit
 import Datatrans
 import SnabbleCore
 import SnabbleUI
+import SnabbleAssetProviding
 
 public final class DatatransAliasViewController: UIViewController {
     private weak var containerView: UIStackView?

@@ -10,6 +10,7 @@ import UIKit
 import SwiftUI
 import Combine
 import SnabbleCore
+import SnabbleAssetProviding
 
 /// Methods for managing callbacks
 public protocol InvoiceViewControllerDelegate: AnyObject {
