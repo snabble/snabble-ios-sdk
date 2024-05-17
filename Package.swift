@@ -51,7 +51,7 @@ let package = Package(
             ],
             path: "Sources/Packages/SnabbleAssetProviding",
             resources: [
-                .process("Resources")
+                .process("AssetProviding/Resources")
             ]
         ),
         .target(
