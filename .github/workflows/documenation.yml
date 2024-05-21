@@ -1,11 +1,8 @@
-on: 
+on:
   workflow_dispatch:
   push:
     tags:
-      - '**'
-
-env:
-  DEVELOPER_DIR: /Applications/Xcode_14.2.app/Contents/Developer
+      - "**"
 
 name: Documentation
 jobs:
@@ -24,13 +21,13 @@ jobs:
 
       - name: Create static-website folder
         run: mkdir static-website
-        
+
       - name: Static Website Core
         run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphonesimulator/SnabbleCore.doccarchive --output-path ./static-website/core --hosting-base-path /snabble-ios-sdk/core
 
       - name: Static Website UI
         run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphonesimulator/SnabbleUI.doccarchive --output-path ./static-website/ui --hosting-base-path /snabble-ios-sdk/ui
-        
+
       - name: Zip
         run: zip -r static-website.zip static-website
 
@@ -48,11 +45,11 @@ jobs:
       - name: Download Artifacts
         uses: actions/download-artifact@v3
         with:
-          name: documentation
+          name: Documentation
 
       - name: Unzip
         run: unzip static-website.zip -d ./
-      
+
       - name: GitHub Pages Deploy
         uses: Cecilapp/GitHub-Pages-deploy@v3
         env:
@@ -61,4 +58,4 @@ jobs:
           email: info@snabble.io
           build_dir: static-website
           branch: gh-pages
-          commit_message: update documentation
+          commit_message: Update documentation
