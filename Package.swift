@@ -29,7 +29,10 @@ let package = Package(
         .library(
             name: "SnabbleDatatrans",
             targets: ["SnabbleDatatrans"]
-        )
+        ),
+        .library(
+            name: "SnabbleNetwork",
+            targets: ["SnabbleNetwork"]),
     ],
     dependencies: [
         .package(url: "https://github.com/lachlanbell/SwiftOTP", from: "3.0.2"),
@@ -44,6 +47,19 @@ let package = Package(
         .package(url: "https://github.com/chrs1885/WCAG-Colors.git", from: "1.0.0")
     ],
     targets: [
+        .target(
+            name: "SnabbleNetwork",
+            dependencies: ["SwiftOTP"],
+            path: "Network/Sources"
+        ),
+        .testTarget(
+            name: "SnabbleNetworkTests",
+            dependencies: ["SnabbleNetwork"],
+            path: "Network/Tests",
+            resources: [
+                .process("Resources")
+            ]
+        ),
         .target(
             name: "SnabbleAssetProviding",
             dependencies: [
