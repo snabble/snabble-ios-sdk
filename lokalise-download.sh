@@ -1,5 +1,5 @@
 #!/usr/bin/env zsh
-# 
+#
 # Lokalise CLI v2 can be found here: https://github.com/lokalise/lokalise-cli-2-go
 #
 # Setting the environment variable LOKALISE2_TOKEN is necessary to execute this script.
@@ -22,7 +22,7 @@ function lokalise {
 }
 
 # sdk
-lokalise 3931709465f04f20a1bc18.55914019 Sources/Packages/SnabbleAssetProviding/Sources/AssetProviding/Resources
+lokalise 3931709465f04f20a1bc18.55914019 Sources/AssetProviding/Resources
 
 # sample
 lokalise 8964099365f434ac71f546.06213099 Example/Snabble
