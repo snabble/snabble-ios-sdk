@@ -261,10 +261,6 @@ public extension SwiftUI.Color {
         color(.darkGray)
     }
 
-//    static var clear: SwiftUI.Color {
-//        color(.clear)
-//    }
-
     static var magenta: SwiftUI.Color {
         color(.magenta)
     }
