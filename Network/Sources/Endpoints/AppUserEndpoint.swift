@@ -26,7 +26,7 @@ extension Endpoints {
 
         private static func authorization(appId: String, appSecret: String) -> String? {
             guard let password = password(withSecret: appSecret, forDate: Date()) else { return nil }
-            return "\(appId):\(password)".data(using: .utf8)?.base64EncodedString()
+            return Data("\(appId):\(password)".utf8).base64EncodedString()
         }
 
         private static func password(withSecret secret: String, forDate date: Date) -> String? {

@@ -1,6 +1,17 @@
 included:
-  - Sources
+  - Core
+  - UI
+  - AssetProviding
+  - Network
+  - Datatrans
   - Example/Snabble
+
+excluded:
+  - Core/Tests
+  - UI/Tests
+  - AssetsProvding/Tests
+  - Network/Tests
+  - Datatrans/Tests
 
 disabled_rules:
   - todo

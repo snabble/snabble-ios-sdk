@@ -34,7 +34,7 @@ extension Endpoints {
 
         private static func authorization(appId: String, appSecret: String, appUser: SnabbleNetwork.AppUser) -> String? {
             guard let password = password(withSecret: appSecret, forDate: Date()) else { return nil }
-            return "\(appId):\(password):\(appUser.id):\(appUser.secret)".data(using: .utf8)?.base64EncodedString()
+            return Data("\(appId):\(password):\(appUser.id):\(appUser.secret)".utf8).base64EncodedString()
         }
 
         private static func password(withSecret secret: String, forDate date: Date) -> String? {

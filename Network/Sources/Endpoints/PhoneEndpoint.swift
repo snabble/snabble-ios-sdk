@@ -76,7 +76,6 @@ extension Endpoints {
                     }
                 })
         }
-        
 
         public static func delete() -> Endpoint<Void> {
             return .init(
