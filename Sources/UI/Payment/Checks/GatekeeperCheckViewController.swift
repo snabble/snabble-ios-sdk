@@ -6,6 +6,28 @@
 import SnabbleCore
 import SwiftUI
 import Combine
+import SnabbleAssetProviding
+
+public protocol GatekeeperProviding: AnyObject {
+    /// Providing an optional `UIViewController` for the given `GatekeeperViewModel`
+    /// - Parameter viewModel: The viewModel describing the current `GatekeeperViewModel`
+    /// - Parameter domain: The domain, usually the current `Identifier<Project>`
+    /// - Returns: The custom view controller for the specified viewModel or `nil`
+    func gatekeeper(viewModel: GatekeeperViewModel, domain: Any?) -> UIViewController?
+}
+
+public enum Gatekeeper {
+    /// Reference to the implementation of the `GatekeeperProviding` implementation
+    public static weak var provider: GatekeeperProviding?
+ 
+    /// Reference to the current domain
+    public static var domain: Any?
+    
+    // MARK: - Color
+    public static func gatekeeper(viewModel: GatekeeperViewModel, domain: Any? = domain) -> UIViewController? {
+        provider?.gatekeeper(viewModel: viewModel, domain: domain)
+    }
+}
 
 public final class GatekeeperViewModel: BaseCheckViewModel {
     override func updateCodeImage() {

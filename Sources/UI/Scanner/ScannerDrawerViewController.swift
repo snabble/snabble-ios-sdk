@@ -7,6 +7,7 @@
 import UIKit
 import Pulley
 import SnabbleCore
+import SnabbleAssetProviding
 
 final class ScannerDrawerViewController: UIViewController {
     private var shoppingList: ShoppingList?

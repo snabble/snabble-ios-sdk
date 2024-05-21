@@ -87,9 +87,9 @@
         <key>zero</key>
         <string>No stores</string>
         <key>one</key>
-        <string>%li filiale</string>
+        <string>%li store</string>
         <key>other</key>
-        <string>%li filiali</string>
+        <string>%li stores</string>
       </dict>
     </dict>
     <key>Snabble.Shoppingcart.numberOfItems</key>

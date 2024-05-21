@@ -6,6 +6,7 @@
 
 import UIKit
 import SnabbleCore
+import SnabbleAssetProviding
 
 final class SupervisorRejectedViewController: UIViewController {
     private let process: CheckoutProcess?

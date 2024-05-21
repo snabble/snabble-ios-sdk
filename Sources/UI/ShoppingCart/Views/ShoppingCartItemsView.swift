@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SnabbleAssetProviding
 
 struct HiddenScrollView: ViewModifier {
     func body(content: Content) -> some View {

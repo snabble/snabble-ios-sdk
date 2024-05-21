@@ -5,6 +5,7 @@
 //
 import SwiftUI
 import SnabbleCore
+import SnabbleAssetProviding
 
 final class SupervisorViewModel: BaseCheckViewModel {
     override func updateCodeImage() {

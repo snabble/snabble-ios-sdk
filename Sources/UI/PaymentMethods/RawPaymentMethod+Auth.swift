@@ -7,6 +7,7 @@
 import UIKit
 import LocalAuthentication
 import SnabbleCore
+import SnabbleAssetProviding
 
 extension RawPaymentMethod {
     func isAddingAllowed(showAlertOn viewController: UIViewController) -> Bool {

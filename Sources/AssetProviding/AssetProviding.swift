@@ -9,6 +9,12 @@ import Foundation
 import UIKit
 import SwiftUI
 
+public protocol CustomAppearance {
+    var accent: UIColor { get }
+    var onAccent: UIColor { get }
+    var titleIcon: UIImage? { get }
+}
+
 public protocol ImageProviding: AnyObject {
     /// Providing an image for the given `name` compatible with the `domain`
     /// - Parameters:
@@ -56,6 +62,16 @@ public protocol UrlProviding: AnyObject {
     func url(forResource name: String?, withExtension ext: String?, domain: Any?) -> URL?
 }
 
+public protocol FontProviding: AnyObject {
+    /// Providing a font for the given `name` and `extension` compatible with the `domain`
+    /// - Parameters:
+    ///   - name: The name of the font file.
+    ///   - ext: The extension of the resource file.
+    ///   - domain: The domain, usually the current `Identifier<Project>`
+    /// - Returns: The file URL for the resource file or nil if the file could not be located.
+    func font(_ name: String, size: CGFloat?, relativeTo textStyle: Font.TextStyle?, domain: Any?) -> SwiftUI.Font?
+}
+
 public protocol AppearanceProviding: AnyObject {
     /// Providing a `CustomAppearance` for the given `projectId`
     /// - Parameter domain: The domain, usually the current `Identifier<Project>`
@@ -63,12 +79,4 @@ public protocol AppearanceProviding: AnyObject {
     func appearance(for domain: Any?) -> CustomAppearance?
 }
 
-public protocol ViewProviding: AnyObject {
-    /// Providing an optional `UIViewController` for the given `GatekeeperViewModel`
-    /// - Parameter viewModel: The viewModel describing the current `GatekeeperViewModel`
-    /// - Parameter domain: The domain, usually the current `Identifier<Project>`
-    /// - Returns: The custom view controller for the specified viewModel or `nil`
-    func gatekeeper(viewModel: GatekeeperViewModel, domain: Any?) -> UIViewController?
-}
-
-public typealias AssetProviding = ImageProviding & ColorProviding & StringProviding & UrlProviding & AppearanceProviding & ViewProviding
+public typealias AssetProviding = ImageProviding & ColorProviding & StringProviding & UrlProviding & FontProviding & AppearanceProviding

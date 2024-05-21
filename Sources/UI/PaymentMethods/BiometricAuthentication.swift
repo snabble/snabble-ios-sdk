@@ -6,6 +6,7 @@
 
 import UIKit
 import LocalAuthentication
+import SnabbleAssetProviding
 
 // helpful blog post: http://michael-brown.net/2018/touch-id-and-face-id-on-ios/
 

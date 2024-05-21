@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import UIKit
+import SnabbleAssetProviding
 
 extension InvoiceLoginModel {
     public var image: SwiftUI.Image? {

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SnabbleAssetProviding
 
 public struct SnabbleEmptyView: View {
     public let message: String

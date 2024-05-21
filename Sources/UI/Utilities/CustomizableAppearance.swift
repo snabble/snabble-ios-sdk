@@ -6,6 +6,7 @@
 
 import Foundation
 import UIKit
+import SnabbleAssetProviding
 
 public protocol CustomizableAppearance: AnyObject {
     func setCustomAppearance(_ appearance: CustomAppearance)

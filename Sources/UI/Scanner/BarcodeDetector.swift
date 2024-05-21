@@ -8,6 +8,7 @@ import Foundation
 import UIKit
 import AVFoundation
 import SnabbleCore
+import SnabbleAssetProviding
 
 public struct BarcodeResult {
     public let code: String

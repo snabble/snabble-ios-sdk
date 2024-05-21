@@ -7,6 +7,7 @@
 import UIKit
 import AVFoundation
 import SnabbleCore
+import SnabbleAssetProviding
 
 public extension Notification.Name {
     static let snabbleShowScanConfirmation = Notification.Name("snabbleShowScanConfirmation")

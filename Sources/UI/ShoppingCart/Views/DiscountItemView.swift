@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SnabbleCore
+import SnabbleAssetProviding
 
 struct DiscountItemView: View {
     let amount: String

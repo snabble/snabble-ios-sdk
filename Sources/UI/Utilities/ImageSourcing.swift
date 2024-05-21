@@ -10,6 +10,7 @@
 import Foundation
 import SwiftUI
 import UIKit
+import SnabbleAssetProviding
 
 public protocol ImageSourcing {
     /// Type of the image source

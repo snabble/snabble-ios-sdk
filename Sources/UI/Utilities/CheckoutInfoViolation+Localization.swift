@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import SnabbleCore
+import SnabbleAssetProviding
 
 extension CheckoutInfo.Violation {
     public var text: String {

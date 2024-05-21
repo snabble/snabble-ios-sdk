@@ -8,6 +8,7 @@
 import Foundation
 import SnabbleCore
 import SwiftUI
+import SnabbleAssetProviding
 
 public struct CouponView: View {
     @ObservedObject var couponModel: CouponViewModel

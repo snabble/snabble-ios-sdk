@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 import SnabbleCore
+import SnabbleAssetProviding
 
 public struct PaymentSubjectView: View {
     @ObservedObject var viewModel: PaymentSubjectViewModel

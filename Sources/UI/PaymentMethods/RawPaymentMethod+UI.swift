@@ -7,6 +7,7 @@
 import UIKit
 import SwiftUI
 import SnabbleCore
+import SnabbleAssetProviding
 
 extension PaymentMethodDetail {
     public var icon: UIImage? {

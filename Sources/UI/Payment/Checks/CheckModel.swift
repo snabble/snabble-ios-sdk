@@ -8,6 +8,7 @@
 import UIKit
 import SnabbleCore
 import Combine
+import SnabbleAssetProviding
 
 public protocol CheckViewModel {
     var checkModel: CheckModel { get }

@@ -6,6 +6,7 @@
 
 import UIKit
 import SnabbleCore
+import SnabbleAssetProviding
 
 /// global settings for the Snabble UI classes
 public enum SnabbleCI {

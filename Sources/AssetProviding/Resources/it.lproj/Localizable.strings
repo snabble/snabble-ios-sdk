@@ -217,8 +217,8 @@
 "Snabble.QRCode.showThisCode" = "Mostra questo codice alla cassa";
 "Snabble.QRCode.title" = "Pagare alla cassa";
 "Snabble.QRCode.total" = "Somma totale: ";
-"Snabble.Receipt.errorDownload" = "Receipt could not be downloaded";
-"Snabble.Receipt.pdfReaderUnavailable" = "No suitable PDF reader application found";
+"Snabble.Receipt.errorDownload" = "Non è stato possibile scaricare la ricevuta";
+"Snabble.Receipt.pdfReaderUnavailable" = "Non è stata trovata un’applicazione per leggere i PDF";
 "Snabble.Receipts.loading" = "(in caricamento)";
 "Snabble.Receipts.noReceipts" = "Non hai ancora fatto acquisti con Snabble";
 "Snabble.Receipts.oClock" = "Orario";
@@ -305,8 +305,8 @@
 "Snabble.Shop.List.ShowDetails.accessibility" = "Show shop details";
 "Snabble.Shopping.title" = "Shopping";
 "Snabble.ShoppingCart.title" = "Carrello";
-"Snabble.ShoppingList.AddItem.viaScan" = "Scan products";
-"Snabble.ShoppingList.AddItem.viaVoice" = "Tell products";
+"Snabble.ShoppingList.AddItem.viaScan" = "Scansiona prodotti";
+"Snabble.ShoppingList.AddItem.viaVoice" = "Detta prodotti";
 "Snabble.ShoppingList.CreateList.drilldownTitle" = "Create new shopping list for %@";
 "Snabble.ShoppingList.CreateList.title" = "Crea nuova lista della spesa";
 "Snabble.ShoppingList.EditItem.name" = "Name";

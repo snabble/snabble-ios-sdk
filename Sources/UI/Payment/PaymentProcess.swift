@@ -6,6 +6,7 @@
 
 import UIKit
 import SnabbleCore
+import SnabbleAssetProviding
 
 /// Manage the payment process
 public final class PaymentProcess {
@@ -343,7 +344,7 @@ extension PaymentProcess {
             return supervisor
         case .gatekeeper:
             let model = GatekeeperViewModel(shop: shop, shoppingCart: cart, checkoutProcess: process, paymentDelegate: paymentDelegate)
-            if let object = Asset.gatekeeper(viewModel: model) {
+            if let object = Gatekeeper.gatekeeper(viewModel: model) {
                 return object
             } else {
                 let gatekeeper = GatekeeperCheckViewController(model: model)

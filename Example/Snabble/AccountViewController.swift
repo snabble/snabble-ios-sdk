@@ -9,6 +9,7 @@ import UIKit
 import SwiftUI
 import SnabbleUI
 import SnabbleCore
+import SnabbleAssetProviding
 import KeychainAccess
 
 final class AccountViewController: DynamicViewController {

@@ -11,6 +11,7 @@ import NetworkExtension
 import Combine
 import Network
 import SnabbleCore
+import SnabbleAssetProviding
 
 final class ConnectWifiViewModel: ObservableObject {
     let configuration: DynamicViewConfiguration

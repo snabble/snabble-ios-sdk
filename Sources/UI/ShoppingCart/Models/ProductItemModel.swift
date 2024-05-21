@@ -9,6 +9,7 @@ import Foundation
 import Combine
 import SnabbleCore
 import SwiftUI
+import SnabbleAssetProviding
 
 open class ProductItemModel: CartItemModel, ShoppingCartItemCounting {
     public override var id: String {

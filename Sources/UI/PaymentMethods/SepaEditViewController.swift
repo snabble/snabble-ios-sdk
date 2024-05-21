@@ -6,6 +6,7 @@
 
 import UIKit
 import SnabbleCore
+import SnabbleAssetProviding
 
 protocol SepaEditViewControllerDelegate: AnyObject {
     func sepaEditViewControllerDidSave(iban: String)

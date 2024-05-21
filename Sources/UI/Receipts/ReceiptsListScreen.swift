@@ -8,6 +8,7 @@
 import SwiftUI
 import SnabbleCore
 import Combine
+import SnabbleAssetProviding
 
 public extension PurchaseProviding {
     var dateString: String? {

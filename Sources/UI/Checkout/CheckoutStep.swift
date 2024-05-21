@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import SnabbleCore
+import SnabbleAssetProviding
 
 struct CheckoutStep {
     enum Kind {

@@ -8,6 +8,7 @@
 import SwiftUI
 import Combine
 import SnabbleCore
+import SnabbleAssetProviding
 
 #if canImport(UIKit)
 import UIKit

@@ -14,7 +14,7 @@ public enum Asset {
     public static weak var provider: AssetProviding?
 
     /// Reference to the current domain
-    public internal(set) static var domain: Any?
+    public static var domain: Any?
 
     // MARK: - Color
     public static func color(named name: String, domain: Any? = domain) -> UIColor? {
@@ -26,7 +26,7 @@ public enum Asset {
         provider?.image(named: name, domain: domain) ?? UIImage(named: name, in: Bundle.module, with: nil) ?? UIImage(systemName: name)
     }
 
-    public static func image(named name: String, domain: Any? = domain) -> SwiftUI.Image? {
+    public static func image(named name: String, domain: Any? = domain, bundle: Bundle? = nil) -> SwiftUI.Image? {
         if let image: SwiftUI.Image = provider?.image(named: name, domain: domain) {
             return image
         }
@@ -39,7 +39,7 @@ public enum Asset {
     }
 
     // MARK: - Localized String
-    public static func localizedString(forKey key: String, arguments: CVarArg..., table: String? = nil, value: String? = nil, domain: Any? = domain) -> String {
+    public static func localizedString(forKey key: String, arguments: CVarArg..., table: String? = nil, value: String? = nil, domain: Any? = domain, bundle: Bundle? = nil) -> String {
         guard let localizedString = provider?.localizedString(forKey: key, arguments: arguments, domain: domain) else {
             let format = Bundle.module.localizedString(forKey: key, value: value, table: table)
             return String.localizedStringWithFormat(format, arguments)
@@ -47,25 +47,24 @@ public enum Asset {
         return localizedString
     }
 
-    public static func url(forResource name: String?, withExtension ext: String?, domain: Any? = domain) -> URL? {
+    public static func url(forResource name: String?, withExtension ext: String?, domain: Any? = domain, bundle: Bundle? = nil) -> URL? {
         provider?.url(forResource: name, withExtension: ext, domain: domain) ?? Bundle.module.url(forResource: name, withExtension: ext)
     }
-    
-    public static func gatekeeper(viewModel: GatekeeperViewModel, domain: Any? = domain) -> UIViewController? {
-        provider?.gatekeeper(viewModel: viewModel, domain: domain)
+    public static func font(_ name: String, size: CGFloat?, relativeTo textStyle: Font.TextStyle?, domain: Any?) -> SwiftUI.Font? {
+        provider?.font(name, size: size, relativeTo: textStyle, domain: domain) ?? nil
     }
 }
 
 // MARK: SwiftUI - Extensions
 
 extension SwiftUI.Image {
-    static func image(named name: String, systemName: String? = nil, domain: Any? = nil) -> SwiftUI.Image {
+    public static func image(named name: String, systemName: String? = nil, domain: Any? = nil) -> SwiftUI.Image {
         Asset.image(named: name, domain: domain ?? Asset.domain) ?? SwiftUI.Image(systemName: systemName ?? name)
     }
 }
 
 extension Text {
-    init(keyed key: String) {
+    public init(keyed key: String) {
         let value = Asset.localizedString(forKey: key)
         self.init(value)
     }

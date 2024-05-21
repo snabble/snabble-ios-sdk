@@ -7,6 +7,7 @@
 import SnabbleCore
 import SwiftUI
 import Combine
+import SnabbleAssetProviding
 
 final class CheckoutModel: ObservableObject {
 

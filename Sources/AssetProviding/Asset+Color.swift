@@ -91,7 +91,7 @@ extension SwiftUI.Color {
     }
 }
 
-extension SwiftUI.Color {
+public extension SwiftUI.Color {
     // MARK: - Semantic Colors
 
     static var label: SwiftUI.Color {
@@ -259,10 +259,6 @@ extension SwiftUI.Color {
 
     static var darkGray: SwiftUI.Color {
         color(.darkGray)
-    }
-
-    static var clear: SwiftUI.Color {
-        color(.clear)
     }
 
     static var magenta: SwiftUI.Color {

@@ -7,6 +7,7 @@
 
 import UIKit
 import SnabbleCore
+import SnabbleAssetProviding
 
 final class ShoppingListCellView: UIView {
     private weak var productImage: UIImageView?

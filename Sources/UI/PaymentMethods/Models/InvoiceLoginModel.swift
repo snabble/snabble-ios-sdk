@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 import SnabbleCore
+import SnabbleAssetProviding
 
 public struct InvoiceLoginInfo: Decodable {
     public let username: String?

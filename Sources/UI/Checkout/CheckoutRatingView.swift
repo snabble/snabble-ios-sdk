@@ -6,6 +6,7 @@
 //
 import SwiftUI
 import SnabbleCore
+import SnabbleAssetProviding
 import Combine
 
 struct RatingItem: Swift.Identifiable, Equatable {

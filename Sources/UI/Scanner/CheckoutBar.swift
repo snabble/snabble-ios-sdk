@@ -7,6 +7,7 @@
 import UIKit
 import Pulley
 import SnabbleCore
+import SnabbleAssetProviding
 
 final class CheckoutBar: UIView {
     private weak var itemCountLabel: UILabel?
