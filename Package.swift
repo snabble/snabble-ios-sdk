@@ -65,7 +65,7 @@ let package = Package(
             dependencies: [
                 "WCAG-Colors",
             ],
-            path: "Sources/AssetProviding",
+            path: "AssetProviding/Sources",
             resources: [
                 .process("Resources")
             ]
@@ -79,7 +79,7 @@ let package = Package(
                 .product(name: "GRDB", package: "GRDB.swift"),
                 "ZIPFoundation",
             ],
-            path: "Sources/Core",
+            path: "Core/Sources",
             resources: [
                 .process("Resources")
             ]
@@ -89,7 +89,7 @@ let package = Package(
             dependencies: [
                 "SnabbleCore"
             ],
-            path: "Tests/Core",
+            path: "Core/Tests",
             resources: [
                 .process("Resources")
             ]
@@ -103,7 +103,7 @@ let package = Package(
                 "Pulley",
                 "WCAG-Colors",
             ],
-            path: "Sources/UI",
+            path: "UI/Sources",
             resources: [
                 .process("Resources")
             ]
@@ -115,7 +115,7 @@ let package = Package(
                 "SnabbleUI",
                 .product(name: "Datatrans", package: "ios-sdk"),
             ],
-            path: "Sources/Datatrans"
+            path: "Datatrans/Sources"
         )
     ]
 )
