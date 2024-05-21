@@ -49,9 +49,9 @@ let package = Package(
             dependencies: [
                 "WCAG-Colors",
             ],
-            path: "Sources/Packages/SnabbleAssetProviding",
+            path: "Sources/AssetProviding",
             resources: [
-                .process("Sources/AssetProviding/Resources")
+                .process("Resources")
             ]
         ),
         .target(
