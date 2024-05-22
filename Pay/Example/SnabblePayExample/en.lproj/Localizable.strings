@@ -1,0 +1,37 @@
+/* 
+  Localizable.strings
+  SnabblePayExample
+
+  Created by Uwe Tilemann on 24.02.23.
+  
+*/
+
+"MISSING" = "SEPA mandate not available";
+"ACCEPTED" = "SEPA mandate accepted";
+"PENDING" = "SEPA mandate pending";
+"DECLINED" = "SEPA mandate declined";
+
+"Accept" = "Confirm Mandate";
+"Decline" = "Revoke Mandate";
+"No Mandate" = "Mandate could not be loaded.";
+
+"Your account" = "Your account";
+"Account Name" = "Account Name";
+"Give this account a name." = "Give this account a name.";
+"Delete account" = "Delete account";
+"Edit name" = "Edit name";
+"Delete" = "Delete";
+
+/* Error handling */
+"Error for action" = "Error while %@";
+
+"Loading Accounts" = "loading accounts";
+"Start Account Check" = "starting account check";
+
+"Request Mandate" = "requesting the mandate";
+"Create Mandate" = "creating the mandate";
+"Accept Mandate" = "confirming the mandate";
+"Decline Mandate" = "revoking the mandate";
+
+"Start Session" = "loading QRCode";
+"Refresh Token" = "refreshing QRCode";
