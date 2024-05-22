@@ -41,10 +41,10 @@
 		7691BAA02976C3F500477EDD /* PhoneLogin.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = PhoneLogin.entitlements; sourceTree = "<group>"; };
 		7691BAA22976C3F500477EDD /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		76A9F71F2A09272100C162B1 /* SnabbleConfig.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = SnabbleConfig.swift; sourceTree = "<group>"; };
-		76A9F7222A0A563C00C162B1 /* snabble-phoneauth-ios-sdk */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "snabble-phoneauth-ios-sdk"; path = ..; sourceTree = "<group>"; };
 		76A9F7232A0A56DA00C162B1 /* PhoneAuthScreen.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = PhoneAuthScreen.swift; sourceTree = "<group>"; };
 		76FA1AD32A14BBFA008C15BF /* PhoneLoginTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = PhoneLoginTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		76FA1AD52A14BBFA008C15BF /* PhoneLoginTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneLoginTests.swift; sourceTree = "<group>"; };
+		E126AB7E2BFE1769004F7694 /* snabble-ios-sdk */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "snabble-ios-sdk"; path = ../..; sourceTree = "<group>"; };
 		E167829F2A14CAF6008CAB2B /* PhoneLogin.xctestplan */ = {isa = PBXFileReference; lastKnownFileType = text; path = PhoneLogin.xctestplan; sourceTree = "<group>"; };
 		E1E9826D2B7B9B6600BB995E /* ProgressButtonView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ProgressButtonView.swift; sourceTree = "<group>"; };
 		E1E9826E2B7B9B6600BB995E /* CodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CodeView.swift; sourceTree = "<group>"; };
@@ -104,8 +104,8 @@
 		7691BA8E2976C3F400477EDD = {
 			isa = PBXGroup;
 			children = (
+				E126AB7E2BFE1769004F7694 /* snabble-ios-sdk */,
 				E167829F2A14CAF6008CAB2B /* PhoneLogin.xctestplan */,
-				76A9F7212A0A563C00C162B1 /* Packages */,
 				7691BA992976C3F400477EDD /* PhoneLogin */,
 				76FA1AD42A14BBFA008C15BF /* PhoneLoginTests */,
 				7691BA982976C3F400477EDD /* Products */,
@@ -142,14 +142,6 @@
 				7691BAA22976C3F500477EDD /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		76A9F7212A0A563C00C162B1 /* Packages */ = {
-			isa = PBXGroup;
-			children = (
-				76A9F7222A0A563C00C162B1 /* snabble-phoneauth-ios-sdk */,
-			);
-			name = Packages;
 			sourceTree = "<group>";
 		};
 		76FA1AD42A14BBFA008C15BF /* PhoneLoginTests */ = {
@@ -280,7 +272,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ -z \"$CI_XCODE_CLOUD\" ]]; then\n    if which mint > /dev/null; then\n        cd ..\n        mint run swiftlint --fix\n        mint run swiftlint\n    else\n        echo \"warning: Mint not installed, download from https://github.com/yonaskolb/Mint\"\n    fi\nfi\n";
+			shellScript = "if [[ -z \"$CI_XCODE_CLOUD\" ]]; then\n    if which mint > /dev/null; then\n        cd ../..\n        mint run swiftlint --fix\n        mint run swiftlint\n    else\n        echo \"warning: Mint not installed, download from https://github.com/yonaskolb/Mint\"\n    fi\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
