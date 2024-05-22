@@ -1,0 +1,17 @@
+{
+  "id": "a10cd49b-994b-4d88-b5b9-f3a4edc49929",
+  "phoneNumber": "+49123456789",
+  "details": {
+    "firstName": "Bob",
+    "lastName": "Biscuit",
+    "email": "bobby@example.com"
+  },
+  "detailFields": [
+    { "id": "firstName", "required": true },
+    { "id": "lastName", "required": true },
+    { "id": "email", "required": true }
+  ],
+  "currentConsent": {
+      "version": "1.0"
+  }
+}
