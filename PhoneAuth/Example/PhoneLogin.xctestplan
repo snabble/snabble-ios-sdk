@@ -1,0 +1,44 @@
+{
+  "configurations" : [
+    {
+      "id" : "0CFEE455-B7FA-4953-9E09-543B628D4BCD",
+      "name" : "Test Scheme Action",
+      "options" : {
+
+      }
+    }
+  ],
+  "defaultOptions" : {
+    "codeCoverage" : false,
+    "targetForVariableExpansion" : {
+      "containerPath" : "container:PhoneLogin.xcodeproj",
+      "identifier" : "7691BA962976C3F400477EDD",
+      "name" : "PhoneLogin"
+    }
+  },
+  "testTargets" : [
+    {
+      "parallelizable" : true,
+      "target" : {
+        "containerPath" : "container:PhoneLogin.xcodeproj",
+        "identifier" : "E17225472A0BB8A900377187",
+        "name" : "PhoneLoginTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..",
+        "identifier" : "SnabbleNetworkTests",
+        "name" : "SnabbleNetworkTests"
+      }
+    },
+    {
+      "target" : {
+        "containerPath" : "container:..",
+        "identifier" : "SnabblePhoneAuthTests",
+        "name" : "SnabblePhoneAuthTests"
+      }
+    }
+  ],
+  "version" : 1
+}

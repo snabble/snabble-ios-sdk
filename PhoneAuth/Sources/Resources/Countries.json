@@ -1,0 +1,950 @@
+[
+  {
+    "callingCode": 93,
+    "code": "AF"
+  },
+  {
+    "callingCode": 355,
+    "code": "AL"
+  },
+  {
+    "callingCode": 13,
+    "code": "DZ"
+  },
+  {
+    "callingCode": 1,
+    "code": "AS"
+  },
+  {
+    "callingCode": 376,
+    "code": "AD"
+  },
+  {
+    "callingCode": 244,
+    "code": "AO"
+  },
+  {
+    "callingCode": 1,
+    "code": "AI"
+  },
+  {
+    "callingCode": 672,
+    "code": "AQ"
+  },
+  {
+    "callingCode": 1,
+    "code": "AG"
+  },
+  {
+    "callingCode": 54,
+    "code": "AR"
+  },
+  {
+    "callingCode": 374,
+    "code": "AM"
+  },
+  {
+    "callingCode": 297,
+    "code": "AW"
+  },
+  {
+    "callingCode": 61,
+    "code": "AU"
+  },
+  {
+    "callingCode": 43,
+    "code": "AT"
+  },
+  {
+    "callingCode": 994,
+    "code": "AZ"
+  },
+  {
+    "callingCode": 1,
+    "code": "BS"
+  },
+  {
+    "callingCode": 973,
+    "code": "BH"
+  },
+  {
+    "callingCode": 880,
+    "code": "BD"
+  },
+  {
+    "callingCode": 1,
+    "code": "BB"
+  },
+  {
+    "callingCode": 375,
+    "code": "BY"
+  },
+  {
+    "callingCode": 32,
+    "code": "BE"
+  },
+  {
+    "callingCode": 501,
+    "code": "BZ"
+  },
+  {
+    "callingCode": 229,
+    "code": "BJ"
+  },
+  {
+    "callingCode": 1,
+    "code": "BM"
+  },
+  {
+    "callingCode": 975,
+    "code": "BT"
+  },
+  {
+    "callingCode": 591,
+    "code": "BO"
+  },
+  {
+    "callingCode": 599,
+    "code": "BQ"
+  },
+  {
+    "callingCode": 387,
+    "code": "BA"
+  },
+  {
+    "callingCode": 267,
+    "code": "BW"
+  },
+  {
+    "callingCode": 47,
+    "code": "BV"
+  },
+  {
+    "callingCode": 55,
+    "code": "BR"
+  },
+  {
+    "callingCode": 246,
+    "code": "IO"
+  },
+  {
+    "callingCode": 673,
+    "code": "BN"
+  },
+  {
+    "callingCode": 359,
+    "code": "BG"
+  },
+  {
+    "callingCode": 226,
+    "code": "BF"
+  },
+  {
+    "callingCode": 257,
+    "code": "BI"
+  },
+  {
+    "callingCode": 855,
+    "code": "KH"
+  },
+  {
+    "callingCode": 237,
+    "code": "CM"
+  },
+  {
+    "callingCode": 1,
+    "code": "CA"
+  },
+  {
+    "callingCode": 238,
+    "code": "CV"
+  },
+  {
+    "callingCode": 1,
+    "code": "KY"
+  },
+  {
+    "callingCode": 236,
+    "code": "CF"
+  },
+  {
+    "callingCode": 235,
+    "code": "TD"
+  },
+  {
+    "callingCode": 56,
+    "code": "CL"
+  },
+  {
+    "callingCode": 86,
+    "code": "CN"
+  },
+  {
+    "callingCode": 599,
+    "code": "CW"
+  },
+  {
+    "callingCode": 61,
+    "code": "CX"
+  },
+  {
+    "callingCode": 61,
+    "code": "CC"
+  },
+  {
+    "callingCode": 57,
+    "code": "CO"
+  },
+  {
+    "callingCode": 269,
+    "code": "KM"
+  },
+  {
+    "callingCode": 242,
+    "code": "CG"
+  },
+  {
+    "callingCode": 682,
+    "code": "CK"
+  },
+  {
+    "callingCode": 506,
+    "code": "CR"
+  },
+  {
+    "callingCode": 225,
+    "code": "CI"
+  },
+  {
+    "callingCode": 385,
+    "code": "HR"
+  },
+  {
+    "callingCode": 53,
+    "code": "CU"
+  },
+  {
+    "callingCode": 357,
+    "code": "CY"
+  },
+  {
+    "callingCode": 420,
+    "code": "CZ"
+  },
+  {
+    "callingCode": 45,
+    "code": "DK"
+  },
+  {
+    "callingCode": 253,
+    "code": "DJ"
+  },
+  {
+    "callingCode": 1,
+    "code": "DM"
+  },
+  {
+    "callingCode": 1,
+    "code": "DO"
+  },
+  {
+    "callingCode": 670,
+    "code": "TL"
+  },
+  {
+    "callingCode": 593,
+    "code": "EC"
+  },
+  {
+    "callingCode": 20,
+    "code": "EG"
+  },
+  {
+    "callingCode": 503,
+    "code": "SV"
+  },
+  {
+    "callingCode": 240,
+    "code": "GQ"
+  },
+  {
+    "callingCode": 291,
+    "code": "ER"
+  },
+  {
+    "callingCode": 372,
+    "code": "EE"
+  },
+  {
+    "callingCode": 251,
+    "code": "ET"
+  },
+  {
+    "callingCode": 500,
+    "code": "FK"
+  },
+  {
+    "callingCode": 298,
+    "code": "FO"
+  },
+  {
+    "callingCode": 679,
+    "code": "FJ"
+  },
+  {
+    "callingCode": 358,
+    "code": "FI"
+  },
+  {
+    "callingCode": 33,
+    "code": "FR"
+  },
+  {
+    "callingCode": 594,
+    "code": "GF"
+  },
+  {
+    "callingCode": 689,
+    "code": "PF"
+  },
+  {
+    "callingCode": 262,
+    "code": "TF"
+  },
+  {
+    "callingCode": 241,
+    "code": "GA"
+  },
+  {
+    "callingCode": 220,
+    "code": "GM"
+  },
+  {
+    "callingCode": 995,
+    "code": "GE"
+  },
+  {
+    "callingCode": 49,
+    "code": "DE"
+  },
+  {
+    "callingCode": 233,
+    "code": "GH"
+  },
+  {
+    "callingCode": 350,
+    "code": "GI"
+  },
+  {
+    "callingCode": 30,
+    "code": "GR"
+  },
+  {
+    "callingCode": 299,
+    "code": "GL"
+  },
+  {
+    "callingCode": 1,
+    "code": "GD"
+  },
+  {
+    "callingCode": 590,
+    "code": "GP"
+  },
+  {
+    "callingCode": 1,
+    "code": "GU"
+  },
+  {
+    "callingCode": 502,
+    "code": "GT"
+  },
+  {
+    "callingCode": 224,
+    "code": "GN"
+  },
+  {
+    "callingCode": 245,
+    "code": "GW"
+  },
+  {
+    "callingCode": 592,
+    "code": "GY"
+  },
+  {
+    "callingCode": 509,
+    "code": "HT"
+  },
+  {
+    "callingCode": 672,
+    "code": "HM"
+  },
+  {
+    "callingCode": 504,
+    "code": "HN"
+  },
+  {
+    "callingCode": 852,
+    "code": "HK"
+  },
+  {
+    "callingCode": 36,
+    "code": "HU"
+  },
+  {
+    "callingCode": 354,
+    "code": "IS"
+  },
+  {
+    "callingCode": 91,
+    "code": "IN"
+  },
+  {
+    "callingCode": 62,
+    "code": "ID"
+  },
+  {
+    "callingCode": 98,
+    "code": "IR"
+  },
+  {
+    "callingCode": 964,
+    "code": "IQ"
+  },
+  {
+    "callingCode": 353,
+    "code": "IE"
+  },
+  {
+    "callingCode": 972,
+    "code": "IL"
+  },
+  {
+    "callingCode": 39,
+    "code": "IT"
+  },
+  {
+    "callingCode": 1,
+    "code": "JM"
+  },
+  {
+    "callingCode": 81,
+    "code": "JP"
+  },
+  {
+    "callingCode": 962,
+    "code": "JO"
+  },
+  {
+    "callingCode": 7,
+    "code": "KZ"
+  },
+  {
+    "callingCode": 254,
+    "code": "KE"
+  },
+  {
+    "callingCode": 686,
+    "code": "KI"
+  },
+  {
+    "callingCode": 850,
+    "code": "KP"
+  },
+  {
+    "callingCode": 82,
+    "code": "KR"
+  },
+  {
+    "callingCode": 965,
+    "code": "KW"
+  },
+  {
+    "callingCode": 996,
+    "code": "KG"
+  },
+  {
+    "callingCode": 856,
+    "code": "LA"
+  },
+  {
+    "callingCode": 371,
+    "code": "LV"
+  },
+  {
+    "callingCode": 961,
+    "code": "LB"
+  },
+  {
+    "callingCode": 266,
+    "code": "LS"
+  },
+  {
+    "callingCode": 231,
+    "code": "LR"
+  },
+  {
+    "callingCode": 218,
+    "code": "LY"
+  },
+  {
+    "callingCode": 423,
+    "code": "LI"
+  },
+  {
+    "callingCode": 370,
+    "code": "LT"
+  },
+  {
+    "callingCode": 352,
+    "code": "LU"
+  },
+  {
+    "callingCode": 853,
+    "code": "MO"
+  },
+  {
+    "callingCode": 261,
+    "code": "MG"
+  },
+  {
+    "callingCode": 265,
+    "code": "MW"
+  },
+  {
+    "callingCode": 60,
+    "code": "MY"
+  },
+  {
+    "callingCode": 960,
+    "code": "MV"
+  },
+  {
+    "callingCode": 223,
+    "code": "ML"
+  },
+  {
+    "callingCode": 356,
+    "code": "MT"
+  },
+  {
+    "callingCode": 692,
+    "code": "MH"
+  },
+  {
+    "callingCode": 596,
+    "code": "MQ"
+  },
+  {
+    "callingCode": 222,
+    "code": "MR"
+  },
+  {
+    "callingCode": 230,
+    "code": "MU"
+  },
+  {
+    "callingCode": 262,
+    "code": "YT"
+  },
+  {
+    "callingCode": 52,
+    "code": "MX"
+  },
+  {
+    "callingCode": 691,
+    "code": "FM"
+  },
+  {
+    "callingCode": 373,
+    "code": "MD"
+  },
+  {
+    "callingCode": 377,
+    "code": "MC"
+  },
+  {
+    "callingCode": 976,
+    "code": "MN"
+  },
+  {
+    "callingCode": 1,
+    "code": "MS"
+  },
+  {
+    "callingCode": 212,
+    "code": "MA"
+  },
+  {
+    "callingCode": 258,
+    "code": "MZ"
+  },
+  {
+    "callingCode": 95,
+    "code": "MM"
+  },
+  {
+    "callingCode": 264,
+    "code": "NA"
+  },
+  {
+    "callingCode": 674,
+    "code": "NR"
+  },
+  {
+    "callingCode": 977,
+    "code": "NP"
+  },
+  {
+    "callingCode": 31,
+    "code": "NL"
+  },
+  {
+    "callingCode": 687,
+    "code": "NC"
+  },
+  {
+    "callingCode": 64,
+    "code": "NZ"
+  },
+  {
+    "callingCode": 505,
+    "code": "NI"
+  },
+  {
+    "callingCode": 227,
+    "code": "NE"
+  },
+  {
+    "callingCode": 234,
+    "code": "NG"
+  },
+  {
+    "callingCode": 683,
+    "code": "NU"
+  },
+  {
+    "callingCode": 672,
+    "code": "NF"
+  },
+  {
+    "callingCode": 1,
+    "code": "MP"
+  },
+  {
+    "callingCode": 47,
+    "code": "NO"
+  },
+  {
+    "callingCode": 968,
+    "code": "OM"
+  },
+  {
+    "callingCode": 92,
+    "code": "PK"
+  },
+  {
+    "callingCode": 680,
+    "code": "PW"
+  },
+  {
+    "callingCode": 507,
+    "code": "PA"
+  },
+  {
+    "callingCode": 675,
+    "code": "PG"
+  },
+  {
+    "callingCode": 595,
+    "code": "PY"
+  },
+  {
+    "callingCode": 51,
+    "code": "PE"
+  },
+  {
+    "callingCode": 63,
+    "code": "PH"
+  },
+  {
+    "callingCode": 64,
+    "code": "PN"
+  },
+  {
+    "callingCode": 48,
+    "code": "PL"
+  },
+  {
+    "callingCode": 351,
+    "code": "PT"
+  },
+  {
+    "callingCode": 1,
+    "code": "PR"
+  },
+  {
+    "callingCode": 974,
+    "code": "QA"
+  },
+  {
+    "callingCode": 389,
+    "code": "MK"
+  },
+  {
+    "callingCode": 262,
+    "code": "RE"
+  },
+  {
+    "callingCode": 40,
+    "code": "RO"
+  },
+  {
+    "callingCode": 7,
+    "code": "RU"
+  },
+  {
+    "callingCode": 250,
+    "code": "RW"
+  },
+  {
+    "callingCode": 1,
+    "code": "KN"
+  },
+  {
+    "callingCode": 1,
+    "code": "LC"
+  },
+  {
+    "callingCode": 1,
+    "code": "VC"
+  },
+  {
+    "callingCode": 685,
+    "code": "WS"
+  },
+  {
+    "callingCode": 378,
+    "code": "SM"
+  },
+  {
+    "callingCode": 239,
+    "code": "ST"
+  },
+  {
+    "callingCode": 966,
+    "code": "SA"
+  },
+  {
+    "callingCode": 221,
+    "code": "SN"
+  },
+  {
+    "callingCode": 248,
+    "code": "SC"
+  },
+  {
+    "callingCode": 232,
+    "code": "SL"
+  },
+  {
+    "callingCode": 65,
+    "code": "SG"
+  },
+  {
+    "callingCode": 421,
+    "code": "SK"
+  },
+  {
+    "callingCode": 386,
+    "code": "SI"
+  },
+  {
+    "callingCode": 677,
+    "code": "SB"
+  },
+  {
+    "callingCode": 252,
+    "code": "SO"
+  },
+  {
+    "callingCode": 1,
+    "code": "SX"
+  },
+  {
+    "callingCode": 27,
+    "code": "ZA"
+  },
+  {
+    "callingCode": 500,
+    "code": "GS"
+  },
+  {
+    "callingCode": 34,
+    "code": "ES"
+  },
+  {
+    "callingCode": 94,
+    "code": "LK"
+  },
+  {
+    "callingCode": 290,
+    "code": "SH"
+  },
+  {
+    "callingCode": 508,
+    "code": "PM"
+  },
+  {
+    "callingCode": 249,
+    "code": "SD"
+  },
+  {
+    "callingCode": 597,
+    "code": "SR"
+  },
+  {
+    "callingCode": 47,
+    "code": "SJ"
+  },
+  {
+    "callingCode": 268,
+    "code": "SZ"
+  },
+  {
+    "callingCode": 46,
+    "code": "SE"
+  },
+  {
+    "callingCode": 41,
+    "code": "CH"
+  },
+  {
+    "callingCode": 963,
+    "code": "SY"
+  },
+  {
+    "callingCode": 886,
+    "code": "TW"
+  },
+  {
+    "callingCode": 992,
+    "code": "TJ"
+  },
+  {
+    "callingCode": 255,
+    "code": "TZ"
+  },
+  {
+    "callingCode": 66,
+    "code": "TH"
+  },
+  {
+    "callingCode": 228,
+    "code": "TG"
+  },
+  {
+    "callingCode": 690,
+    "code": "TK"
+  },
+  {
+    "callingCode": 676,
+    "code": "TO"
+  },
+  {
+    "callingCode": 1,
+    "code": "TT"
+  },
+  {
+    "callingCode": 216,
+    "code": "TN"
+  },
+  {
+    "callingCode": 90,
+    "code": "TR"
+  },
+  {
+    "callingCode": 993,
+    "code": "TM"
+  },
+  {
+    "callingCode": 1,
+    "code": "TC"
+  },
+  {
+    "callingCode": 688,
+    "code": "TV"
+  },
+  {
+    "callingCode": 256,
+    "code": "UG"
+  },
+  {
+    "callingCode": 380,
+    "code": "UA"
+  },
+  {
+    "callingCode": 971,
+    "code": "AE"
+  },
+  {
+    "callingCode": 44,
+    "code": "GB"
+  },
+  {
+    "callingCode": 1,
+    "code": "US"
+  },
+  {
+    "callingCode": 598,
+    "code": "UY"
+  },
+  {
+    "callingCode": 998,
+    "code": "UZ"
+  },
+  {
+    "callingCode": 678,
+    "code": "VU"
+  },
+  {
+    "callingCode": 39,
+    "code": "VA"
+  },
+  {
+    "callingCode": 58,
+    "code": "VE"
+  },
+  {
+    "callingCode": 84,
+    "code": "VN"
+  },
+  {
+    "callingCode": 1,
+    "code": "VG"
+  },
+  {
+    "callingCode": 1,
+    "code": "VI"
+  },
+  {
+    "callingCode": 681,
+    "code": "WF"
+  },
+  {
+    "callingCode": 967,
+    "code": "YE"
+  },
+  {
+    "callingCode": 243,
+    "code": "CD"
+  },
+  {
+    "callingCode": 260,
+    "code": "ZM"
+  },
+  {
+    "callingCode": 263,
+    "code": "ZW"
+  }
+]
