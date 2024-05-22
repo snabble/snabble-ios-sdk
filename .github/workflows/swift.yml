@@ -9,7 +9,7 @@ on:
   pull_request:
 
 jobs:
-  test:
+  Test:
     runs-on: macos-14
 
     steps:
