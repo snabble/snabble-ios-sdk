@@ -34,6 +34,10 @@ let package = Package(
             name: "SnabblePay",
             targets: ["SnabblePay"]
         ),
+		.library(
+            name: "SnabbleNetwork",
+            targets: ["SnabbleNetwork"]
+		),
     ],
     dependencies: [
         .package(url: "https://github.com/lachlanbell/SwiftOTP", from: "3.0.2"),
@@ -50,6 +54,19 @@ let package = Package(
         .package(url: "https://github.com/apple/swift-log.git", from: "1.5.3")
     ],
     targets: [
+        .target(
+            name: "SnabbleNetwork",
+            dependencies: ["SwiftOTP"],
+            path: "Network/Sources"
+        ),
+        .testTarget(
+            name: "SnabbleNetworkTests",
+            dependencies: ["SnabbleNetwork"],
+            path: "Network/Tests",
+            resources: [
+                .process("Resources")
+            ]
+        ),
         .target(
             name: "SnabbleAssetProviding",
             dependencies: [

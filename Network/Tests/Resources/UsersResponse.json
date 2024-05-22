@@ -1,0 +1,12 @@
+{
+    "appUser": {
+        "id": "a10cd49b-994b-4d88-b5b9-f3a4edc49929",
+        "secret": "abcdefghijklmnopqrstuvwxyz1234567890ABCDEFGHIJ"
+    },
+    "token": {
+        "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIvYXBwcy91c2Vycy90ZXN0IiwiZXhwIjowLCJpYXQiOjAsImp0aSI6ImExMGNkNDliLTk5NGItNGQ4OC1iNWI5LWYzYTRlZGM0OTkyOSIsImNsaWVudCI6ImExMGNkNDliLTk5NGItNGQ4OC1iNWI5LWYzYTRlZGM0OTkyOSIsImNzIjpbeyJjIjoiL2NsaWVudHMvYTEwY2Q0OWItOTk0Yi00ZDg4LWI1YjktZjNhNGVkYzQ5OTI5IiwiciI6InJldGFpbGVyQXBwIn0seyJjIjoiL2RlbW8iLCJyIjoicmV0YWlsZXJBcHAifSx7ImMiOiIvYXBwcy91c2Vycy9hMTBjZDQ5Yi05OTRiLTRkODgtYjViOS1mM2E0ZWRjNDk5MjkiLCJyIjoicmV0YWlsZXJBcHAifV19.r_5gtHitmkdPAdgj2Ytt90oL77KiUzZJG5d_T7biXGs",
+        "id": "a10cd49b-994b-4d88-b5b9-f3a4edc49929",
+        "issuedAt": 1680000000,
+        "expiresAt": 1680000000
+    }
+}
