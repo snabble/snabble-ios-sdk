@@ -4,6 +4,7 @@ included:
   - AssetProviding
   - Network
   - Datatrans
+  - Pay
   - Example/Snabble
 
 excluded:
@@ -12,6 +13,7 @@ excluded:
   - AssetsProvding/Tests
   - Network/Tests
   - Datatrans/Tests
+  - Pay/Tests
 
 disabled_rules:
   - todo
@@ -48,6 +50,8 @@ nesting:
 
 type_name:
   max_length: 45
+  excluded:
+    - ID
 
 identifier_name:
   min_length: 3

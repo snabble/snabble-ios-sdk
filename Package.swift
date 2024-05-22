@@ -31,8 +31,17 @@ let package = Package(
             targets: ["SnabbleDatatrans"]
         ),
         .library(
+            name: "SnabblePay",
+            targets: ["SnabblePay"]
+        ),
+		.library(
             name: "SnabbleNetwork",
-            targets: ["SnabbleNetwork"]),
+            targets: ["SnabbleNetwork"]
+		),
+        .library(
+            name: "SnabblePhoneAuth",
+            targets: ["SnabblePhoneAuth"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/lachlanbell/SwiftOTP", from: "3.0.2"),
@@ -44,7 +53,9 @@ let package = Package(
         .package(url: "https://github.com/sberrevoets/SDCAlertView.git", from: "12.0.3"),
         .package(url: "https://github.com/devicekit/DeviceKit.git", from: "5.2.3"),
         .package(url: "https://github.com/snabble/Pulley.git", from: "2.9.2"),
-        .package(url: "https://github.com/chrs1885/WCAG-Colors.git", from: "1.0.0")
+        .package(url: "https://github.com/chrs1885/WCAG-Colors.git", from: "1.0.0"),
+        .package(url: "https://github.com/pointfreeco/swift-tagged", from: "0.10.0"),
+        .package(url: "https://github.com/apple/swift-log.git", from: "1.5.3")
     ],
     targets: [
         .target(
@@ -116,6 +127,74 @@ let package = Package(
                 .product(name: "Datatrans", package: "ios-sdk"),
             ],
             path: "Datatrans/Sources"
-        )
+        ),
+        .target(
+            name: "SnabbleLogger",
+            dependencies: [
+                .product(name: "Logging", package: "swift-log"),
+            ],
+            path: "Pay/Sources/Logger"
+        ),
+        .target(
+            name: "SnabblePayNetwork",
+            dependencies: [
+                "SnabbleLogger",
+            ],
+            path: "Pay/Sources/Network"
+        ),
+        .target(
+            name: "SnabblePay",
+            dependencies: [
+                .product(name: "Tagged", package: "swift-tagged"),
+                "SnabblePayNetwork",
+                "SnabbleLogger",
+            ],
+            path: "Pay/Sources/Core"
+        ),
+        .target(
+            name: "TestHelper",
+            dependencies: [],
+            path: "Pay/Tests/Helper"
+        ),
+        .testTarget(
+            name: "SnabblePayCoreTests",
+            dependencies: [
+                "SnabblePay",
+                "TestHelper"
+            ],
+            path: "Pay/Tests/Core",
+            resources: [
+                .process("Resources")
+            ]
+        ),
+        .testTarget(
+            name: "SnabblePayNetworkTests",
+            dependencies: [
+                "SnabblePayNetwork",
+                "TestHelper",
+            ],
+            path: "Pay/Tests/Network",
+            resources: [
+                .process("Resources")
+            ]
+        ),
+        .target(
+            name: "SnabblePhoneAuth",
+            dependencies: [
+                "SnabbleNetwork"
+            ],
+            path: "PhoneAuth/Sources",
+            resources: [
+                .process("Resources")
+            ]
+        ),
+        .testTarget(
+            name: "SnabblePhoneAuthTests",
+            dependencies: ["SnabblePhoneAuth"],
+            path: "PhoneAuth/Tests",
+            resources: [
+                .process("Resources")
+            ]
+        ),
     ]
 )

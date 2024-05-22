@@ -1,0 +1,10 @@
+{
+    "id": "1",
+    "name": "John Doe's Account",
+    "holderName": "John Doe",
+    "currencyCode": "EUR",
+    "createdAt": "2022-12-22T09:24:38Z",
+    "bank": "Bank Name",
+    "iban": "DE123**********",
+    "mandateState": "ACCEPTED"
+}

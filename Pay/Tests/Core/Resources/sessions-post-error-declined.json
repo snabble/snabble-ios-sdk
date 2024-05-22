@@ -1,0 +1,6 @@
+{
+  "error": {
+    "reason": "mandate_not_accepted",
+    "message": "The user has to accept the mandate to start a session"
+  }
+}

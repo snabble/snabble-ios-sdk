@@ -118,6 +118,62 @@
                ReferencedContainer = "container:">
             </BuildableReference>
          </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "SnabbleAssetProviding"
+               BuildableName = "SnabbleAssetProviding"
+               BlueprintName = "SnabbleAssetProviding"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "SnabbleNetwork"
+               BuildableName = "SnabbleNetwork"
+               BlueprintName = "SnabbleNetwork"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "SnabblePay"
+               BuildableName = "SnabblePay"
+               BlueprintName = "SnabblePay"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
+         <BuildActionEntry
+            buildForTesting = "YES"
+            buildForRunning = "YES"
+            buildForProfiling = "YES"
+            buildForArchiving = "YES"
+            buildForAnalyzing = "YES">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "SnabblePhoneAuth"
+               BuildableName = "SnabblePhoneAuth"
+               BlueprintName = "SnabblePhoneAuth"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </BuildActionEntry>
       </BuildActionEntries>
    </BuildAction>
    <TestAction
@@ -133,6 +189,46 @@
                BlueprintIdentifier = "SnabbleCoreTests"
                BuildableName = "SnabbleCoreTests"
                BlueprintName = "SnabbleCoreTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "SnabbleNetworkTests"
+               BuildableName = "SnabbleNetworkTests"
+               BlueprintName = "SnabbleNetworkTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "SnabblePayCoreTests"
+               BuildableName = "SnabblePayCoreTests"
+               BlueprintName = "SnabblePayCoreTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "SnabblePayNetworkTests"
+               BuildableName = "SnabblePayNetworkTests"
+               BlueprintName = "SnabblePayNetworkTests"
+               ReferencedContainer = "container:">
+            </BuildableReference>
+         </TestableReference>
+         <TestableReference
+            skipped = "NO">
+            <BuildableReference
+               BuildableIdentifier = "primary"
+               BlueprintIdentifier = "SnabblePhoneAuthTests"
+               BuildableName = "SnabblePhoneAuthTests"
+               BlueprintName = "SnabblePhoneAuthTests"
                ReferencedContainer = "container:">
             </BuildableReference>
          </TestableReference>
