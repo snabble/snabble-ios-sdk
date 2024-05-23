@@ -17,7 +17,7 @@ jobs:
         run: defaults write com.apple.dt.Xcode IDESkipPackagePluginFingerprintValidatation -bool YES
 
       - name: Build Documentation
-        run: xcodebuild docbuild -scheme Snabble -destination 'platform=iOS Simulator,name=iPhone 14' -derivedDataPath ${{ runner.temp }}/derivedDataPath
+        run: xcodebuild docbuild -scheme Snabble -destination 'generic/platform=iOS' -derivedDataPath ${{ runner.temp }}/derivedDataPath
 
       - name: Create static-website folder
         run: mkdir static-website
