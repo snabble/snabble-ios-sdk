@@ -16,6 +16,10 @@ name: SDCAlertView, nameSpecified: SDCAlertView, owner: sberrevoets, version: 12
 
 name: swift-crypto, nameSpecified: swift-crypto, owner: apple, version: 3.4.0, source: https://github.com/apple/swift-crypto
 
+name: swift-log, nameSpecified: swift-log, owner: apple, version: 1.5.4, source: https://github.com/apple/swift-log
+
+name: swift-tagged, nameSpecified: swift-tagged, owner: pointfreeco, version: 0.10.0, source: https://github.com/pointfreeco/swift-tagged
+
 name: SwiftOTP, nameSpecified: SwiftOTP, owner: lachlanbell, version: 3.0.2, source: https://github.com/lachlanbell/SwiftOTP
 
 name: TrustKit, nameSpecified: TrustKit, owner: datatheorem, version: 3.0.4, source: https://github.com/datatheorem/TrustKit
