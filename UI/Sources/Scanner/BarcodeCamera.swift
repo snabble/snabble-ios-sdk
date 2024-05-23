@@ -236,7 +236,9 @@ open class BarcodeCamera: BarcodeDetector {
             return
         }
         lastScannedTime = .now
-        delegate?.scannedCodeResult(result)
+        DispatchQueue.main.async {
+            self.delegate?.scannedCodeResult(result)
+        }
     }
 }
 
