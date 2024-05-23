@@ -17,13 +17,13 @@ jobs:
         run: defaults write com.apple.dt.Xcode IDESkipPackagePluginFingerprintValidatation -bool YES
 
       - name: Build Documentation
-        run: xcodebuild docbuild -scheme SnabblePay -destination 'generic/platform=iOS' -derivedDataPath ${{ runner.temp }}/docc
+        run: xcodebuild docbuild -scheme SnabblePay -destination 'generic/platform=iOS' -derivedDataPath ${{ runner.temp }}/derivedDataPath
 
-      - name: Static Website
-        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/docc/Build/Products/Debug-iphoneos/SnabblePay.doccarchive --output-path ./docs --hosting-base-path snabble-pay-ios-sdk
+      - name: Static Website Pay
+        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabblePay.doccarchive --output-path ./static-website/pay --hosting-base-path /snabble-ios-sdk/pay
 
       - name: Zip
-        run: zip -r static-website.zip ./docs
+        run: zip -r static-website.zip static-website
 
       - name: Upload Artifacts
         uses: actions/upload-artifact@v4
@@ -50,6 +50,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           email: info@snabble.io
-          build_dir: docs
+          build_dir: static-website
           branch: gh-pages
           commit_message: update documentation

@@ -28,6 +28,12 @@ jobs:
       - name: Static Website UI
         run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabbleUI.doccarchive --output-path ./static-website/ui --hosting-base-path /snabble-ios-sdk/ui
 
+      - name: Build Documentation
+        run: xcodebuild docbuild -scheme SnabblePay -destination 'generic/platform=iOS' -derivedDataPath ${{ runner.temp }}/derivedDataPath
+
+      - name: Static Website Pay
+        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabblePay.doccarchive --output-path ./static-website/pay --hosting-base-path /snabble-ios-sdk/pay
+
       - name: Zip
         run: zip -r static-website.zip static-website
 
