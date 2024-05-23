@@ -11,7 +11,7 @@ jobs:
     runs-on: macos-12
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Xcode Plugin
         run: defaults write com.apple.dt.Xcode IDESkipPackagePluginFingerprintValidatation -bool YES
@@ -26,7 +26,7 @@ jobs:
         run: zip -r static-website.zip ./docs
 
       - name: Upload Artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: documentation
           path: static-website.zip
@@ -37,7 +37,7 @@ jobs:
     needs: DocC
     steps:
       - name: Download Artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
         with:
           name: documentation
 
