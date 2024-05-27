@@ -30,8 +30,12 @@ public struct User: Codable {
 }
 
 extension User {
+    private static func userKey(forConfig config: Configuration) -> String {
+        "Snabble.user.\(config.domainName).\(config.appId)"
+    }
+    
     public static func get(forConfig config: Configuration) -> User? {
-        guard let data = UserDefaults.standard.data(forKey: "Snabble.user.\(config.domainName)") else { return nil }
+        guard let data = UserDefaults.standard.data(forKey: userKey(forConfig: config)) else { return nil }
         let jsonDecoder = JSONDecoder()
         do {
             return try jsonDecoder.decode(User.self, from: data)
@@ -43,9 +47,9 @@ extension User {
     public static func set(_ user: User?, forConfig config: Configuration) {
         do {
             let encoded = try JSONEncoder().encode(user)
-            UserDefaults.standard.set(encoded, forKey: "Snabble.user.\(config.domainName)")
+            UserDefaults.standard.set(encoded, forKey: userKey(forConfig: config))
         } catch {
-            UserDefaults.standard.set(nil, forKey: "Snabble.user.\(config.domainName)")
+            UserDefaults.standard.set(nil, forKey: userKey(forConfig: config))
         }
     }
 }
