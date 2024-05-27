@@ -87,7 +87,6 @@ let package = Package(
             name: "SnabbleCore",
             dependencies: [
                 "TrustKit",
-                "KeychainAccess",
                 "SwiftOTP",
                 .product(name: "GRDB", package: "GRDB.swift"),
                 "ZIPFoundation",

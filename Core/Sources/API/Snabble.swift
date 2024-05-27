@@ -5,7 +5,6 @@
 //
 
 import Foundation
-import KeychainAccess
 import CoreLocation
 import SnabbleUser
 
@@ -387,65 +386,6 @@ public class Snabble {
         databases[project.id] = nil
     }
 }
-
-///// SnabbleSDK application user identification
-/////
-///// A plain text username and password combination.
-///// - Important: It contains a sensitve data. Be careful when you store it.
-//public struct AppUserId {
-//    /// the `userId` of the `AppUserId`
-//    public let value: String
-//
-//    /// an opaque information for the backend
-//    public let secret: String
-//
-//    /// A formatted string that specifies the components of the `AppUserId`.
-//    ///
-//    /// The string representation always has two components separated by a colon. The first is the `value` and last is the `secret`
-//    public var stringRepresentation: String {
-//        "\(value):\(secret)"
-//    }
-//
-//    /// initialize an `AppUserId` with a received `value` and `secret`
-//    /// - Parameters:
-//    ///   - value: the actual information of the `userId`
-//    ///   - secret: an opaque information for the backend
-//    public init(value: String, secret: String) {
-//        self.value = value
-//        self.secret = secret
-//    }
-//
-//    /**
-//     An optional initializer with a valid `stringRepresentation` value
-//
-//     `value` and `secret` must be separated by a colon.
-//
-//     - Precondition:
-//        - `value` is the first part and `secret` the second.
-//        - Only two elements allowed after split by colon
-//     */
-//    public init?(stringRepresentation: String) {
-//        let components = stringRepresentation.split(separator: ":")
-//        guard components.count == 2 else {
-//            return nil
-//        }
-//
-//        value = String(components[0])
-//        secret = String(components[1])
-//    }
-//}
-
-//extension AppUser {
-//    func fromDTO() -> AppUserId {
-//        AppUserId(value: id, secret: secret)
-//    }
-//}
-//
-//extension AppUserId {
-//    func toDTO() -> SnabbleUser.AppUser {
-//        SnabbleUser.AppUser(id: value, secret: secret)
-//    }
-//}
 
 public struct User: Codable {
     public let firstname: String?
