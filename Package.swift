@@ -91,6 +91,7 @@ let package = Package(
                 "SwiftOTP",
                 .product(name: "GRDB", package: "GRDB.swift"),
                 "ZIPFoundation",
+                "SnabbleUser",
             ],
             path: "Core/Sources",
             resources: [

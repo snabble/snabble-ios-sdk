@@ -55,4 +55,28 @@ public struct AppUser: Codable {
     }
 }
 
+import KeychainAccess
+
+extension AppUser {
+    private static let service = "io.snabble.sdk"
+    
+    // MARK: - app user id
+    private static func appUserKey(forConfig config: Configuration) -> String {
+        "Snabble.api.appUserId.\(config.domainName).\(config.appId)"
+    }
+    
+    public static func get(forConfig config: Configuration) -> AppUser? {
+        let keychain = Keychain(service: Self.service)
+        guard let stringRepresentation = keychain[appUserKey(forConfig: config)] else {
+            return nil
+        }
+        return AppUser(stringRepresentation: stringRepresentation)
+    }
+    
+    public static func set(_ appUser: AppUser?, forConfig config: Configuration) {
+        let keychain = Keychain(service: Self.service)
+        keychain[appUserKey(forConfig: config)] = appUser?.stringRepresentation
+        UserDefaults.standard.set(appUser?.id, forKey: "Snabble.api.appUserId")
+    }
+}
 

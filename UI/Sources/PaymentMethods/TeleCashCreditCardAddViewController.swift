@@ -134,7 +134,7 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
             .init(name: "platform", value: "ios"),
             .init(name: "paymentMethod", value: creditCardBrand.rawValue)
         ]
-        if let appUserId = Snabble.shared.appUserId?.value {
+        if let appUserId = Snabble.shared.appUser?.id {
             urlComponents?.queryItems?.append(.init(name: "appUserID", value: appUserId))
         }
         guard let url = urlComponents?.url else {

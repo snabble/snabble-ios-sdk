@@ -28,3 +28,24 @@ public struct User: Codable {
         self.state = state
     }
 }
+
+extension User {
+    public static func get(forConfig config: Configuration) -> User? {
+        guard let data = UserDefaults.standard.data(forKey: "Snabble.user.\(config.domainName)") else { return nil }
+        let jsonDecoder = JSONDecoder()
+        do {
+            return try jsonDecoder.decode(User.self, from: data)
+        } catch {
+            return nil
+        }
+    }
+    
+    public static func set(_ user: User?, forConfig config: Configuration) {
+        do {
+            let encoded = try JSONEncoder().encode(user)
+            UserDefaults.standard.set(encoded, forKey: "Snabble.user.\(config.domainName)")
+        } catch {
+            UserDefaults.standard.set(nil, forKey: "Snabble.user.\(config.domainName)")
+        }
+    }
+}
