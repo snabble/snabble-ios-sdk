@@ -8,20 +8,21 @@
 import Foundation
 import SnabbleNetwork
 import Combine
+import SnabbleUser
 
 public protocol PhoneAuthProviding {
     func startAuthorization(phoneNumber: String) async throws -> String
-    func signIn(phoneNumber: String, OTP: String) async throws -> AppUser?
-    func changePhoneNumber(phoneNumber: String, OTP: String) async throws -> AppUser?
+    func signIn(phoneNumber: String, OTP: String) async throws -> SnabbleUser.AppUser?
+    func changePhoneNumber(phoneNumber: String, OTP: String) async throws -> SnabbleUser.AppUser?
     func delete(phoneNumber: String) async throws
 }
 
 public protocol PhoneAuthDelegate: AnyObject {
-    func phoneAuth(_ phoneAuth: PhoneAuth, didReceiveAppUser: AppUser)
+    func phoneAuth(_ phoneAuth: PhoneAuth, didReceiveAppUser: SnabbleUser.AppUser)
 }
 
 public protocol PhoneAuthDataSource: AnyObject {
-    func appUserId(forConfiguration configuration: Configuration) -> AppUser?
+    func appUserId(forConfiguration configuration: Configuration) -> SnabbleUser.AppUser?
     func projectId(forConfiguration configuration: Configuration) -> String?
 }
 
@@ -77,26 +78,26 @@ extension PhoneAuth: PhoneAuthProviding {
     }
 
     @discardableResult
-    public func signIn(phoneNumber: String, OTP: String) async throws -> AppUser? {
+    public func signIn(phoneNumber: String, OTP: String) async throws -> SnabbleUser.AppUser? {
         let endpoint = Endpoints.Phone.signIn(
             phoneNumber: phoneNumber,
             OTP: OTP
         )
 
         return try await useContinuation(endpoint: endpoint) { response, continuation in
-            continuation.resume(with: .success(response?.fromDTO()))
+            continuation.resume(with: .success(response))
         }
     }
 
     @discardableResult
-    public func changePhoneNumber(phoneNumber: String, OTP: String) async throws -> AppUser? {
+    public func changePhoneNumber(phoneNumber: String, OTP: String) async throws -> SnabbleUser.AppUser? {
         let endpoint = Endpoints.Phone.changePhoneNumber(
             phoneNumber: phoneNumber,
             OTP: OTP
         )
 
         return try await useContinuation(endpoint: endpoint) { response, continuation in
-            continuation.resume(with: .success(response?.fromDTO()))
+            continuation.resume(with: .success(response))
         }
     }
 
@@ -122,12 +123,12 @@ extension Publisher {
 }
 
 extension PhoneAuth: NetworkManagerDelegate {
-    public func networkManager(_ networkManager: SnabbleNetwork.NetworkManager, appUserForConfiguration configuration: SnabbleNetwork.Configuration) -> SnabbleNetwork.AppUser? {
-        dataSource?.appUserId(forConfiguration: configuration.fromDTO())?.toDTO()
+    public func networkManager(_ networkManager: SnabbleNetwork.NetworkManager, appUserForConfiguration configuration: SnabbleNetwork.Configuration) -> SnabbleUser.AppUser? {
+        dataSource?.appUserId(forConfiguration: configuration.fromDTO())
     }
 
-    public func networkManager(_ networkManager: SnabbleNetwork.NetworkManager, appUserUpdated appUser: SnabbleNetwork.AppUser) {
-        delegate?.phoneAuth(self, didReceiveAppUser: appUser.fromDTO())
+    public func networkManager(_ networkManager: SnabbleNetwork.NetworkManager, appUserUpdated appUser: SnabbleUser.AppUser) {
+        delegate?.phoneAuth(self, didReceiveAppUser: appUser)
     }
 
     public func networkManager(_ networkManager: SnabbleNetwork.NetworkManager, projectIdForConfiguration configuration: SnabbleNetwork.Configuration) -> String? {

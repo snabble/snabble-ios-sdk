@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import SnabbleUser
 
-public struct Configuration {
+public struct Configuration: SnabbleUser.Configuration {
     public let appId: String
     public let appSecret: String
     public let domain: Domain
@@ -18,6 +19,10 @@ public struct Configuration {
         self.appSecret = appSecret
         self.domain = domain
         self.projectId = projectId
+    }
+    
+    public var domainName: String {
+        domain.name
     }
 }
 

@@ -34,14 +34,16 @@ let package = Package(
             name: "SnabblePay",
             targets: ["SnabblePay"]
         ),
-		.library(
+        .library(
             name: "SnabbleNetwork",
             targets: ["SnabbleNetwork"]
-		),
+        ),
         .library(
             name: "SnabblePhoneAuth",
             targets: ["SnabblePhoneAuth"]
         ),
+        .library(name: "SnabbleUser",
+                 targets: ["SnabbleUser"])
     ],
     dependencies: [
         .package(url: "https://github.com/lachlanbell/SwiftOTP", from: "3.0.2"),
@@ -60,7 +62,7 @@ let package = Package(
     targets: [
         .target(
             name: "SnabbleNetwork",
-            dependencies: ["SwiftOTP"],
+            dependencies: ["SwiftOTP", "SnabbleUser"],
             path: "Network/Sources"
         ),
         .testTarget(
@@ -181,7 +183,8 @@ let package = Package(
         .target(
             name: "SnabblePhoneAuth",
             dependencies: [
-                "SnabbleNetwork"
+                "SnabbleNetwork",
+                "SnabbleUser"
             ],
             path: "PhoneAuth/Sources",
             resources: [
@@ -196,5 +199,10 @@ let package = Package(
                 .process("Resources")
             ]
         ),
+        .target(
+            name: "SnabbleUser",
+            dependencies: ["KeychainAccess"],
+            path: "User/Sources"
+        )
     ]
 )
