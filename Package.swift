@@ -115,6 +115,7 @@ let package = Package(
                 "DeviceKit",
                 "Pulley",
                 "WCAG-Colors",
+                "SnabbleUser"
             ],
             path: "UI/Sources",
             resources: [

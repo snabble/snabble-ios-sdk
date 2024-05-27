@@ -8,6 +8,7 @@ import UIKit
 import WebKit
 import SnabbleCore
 import SnabbleAssetProviding
+import SnabbleUser
 
 // sample data for testing:
 //
@@ -35,7 +36,7 @@ public protocol PrefillData {
     var state: String? { get }
 }
 
-extension SnabbleCore.User: PrefillData {}
+extension SnabbleUser.User: PrefillData {}
 
 public final class PayoneCreditCardEditViewController: UIViewController {
     private let webViewContainer = UIView()
