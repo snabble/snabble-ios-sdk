@@ -387,8 +387,6 @@ public class Snabble {
     }
 }
 
-import SnabbleUser
-
 extension Snabble {
     /**
      SnabbleSDK client identification
