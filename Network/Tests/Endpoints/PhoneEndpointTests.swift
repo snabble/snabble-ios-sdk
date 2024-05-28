@@ -7,6 +7,7 @@
 
 import XCTest
 @testable import SnabbleNetwork
+import SnabbleUser
 
 final class PhoneEndpointTests: XCTestCase {
 
@@ -21,7 +22,7 @@ final class PhoneEndpointTests: XCTestCase {
         // Put teardown code here. This method is called after the invocation of each test method in the class.
     }
 
-    var configuration: Configuration = .init(appId: "1", appSecret: "2", domain: .production)
+    var configuration: SnabbleNetwork.Configuration = .init(appId: "1", appSecret: "2", domain: .production)
     var appUser: AppUser = .init(id: "555", secret: "123-456-789")
 
     func testAuth() throws {

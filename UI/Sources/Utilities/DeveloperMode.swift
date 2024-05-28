@@ -187,7 +187,7 @@ public extension DeveloperMode {
     static func resetAppId(viewController: DynamicViewController) {
         let alert = UIAlertController(title: "Create new app user id?", message: "You will irrevocably lose all previous orders.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .destructive) { _ in
-            Snabble.shared.appUserId = nil
+            Snabble.shared.appUser = nil
         })
         alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "cancel"), style: .cancel, handler: nil))
         viewController.present(alert, animated: true)
@@ -200,7 +200,7 @@ public extension DeveloperMode {
             let keychain = Keychain(service: "io.snabble.sdk")
             keychain["Snabble.api.clientId"] = nil
             _ = Snabble.clientId
-            Snabble.shared.appUserId = nil
+            Snabble.shared.appUser = nil
         })
         alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "cancel"), style: .cancel, handler: nil))
         viewController.present(alert, animated: true)

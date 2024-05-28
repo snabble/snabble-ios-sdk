@@ -5,8 +5,8 @@
 //
 
 import Foundation
-import KeychainAccess
 import CoreLocation
+import SnabbleUser
 
 public var globalButterOverflow: String?
 
@@ -69,6 +69,12 @@ public struct Config {
         self.appId = appId
         self.environment = environment
         self.secret = secret
+    }
+}
+
+extension Config: SnabbleUser.Configuration {
+    public var domainName: String {
+        environment.name
     }
 }
 
@@ -381,81 +387,7 @@ public class Snabble {
     }
 }
 
-/// SnabbleSDK application user identification
-///
-/// A plain text username and password combination.
-/// - Important: It contains a sensitve data. Be careful when you store it.
-public struct AppUserId {
-    /// the `userId` of the `AppUserId`
-    public let value: String
-
-    /// an opaque information for the backend
-    public let secret: String
-
-    /// A formatted string that specifies the components of the `AppUserId`.
-    ///
-    /// The string representation always has two components separated by a colon. The first is the `value` and last is the `secret`
-    public var stringRepresentation: String {
-        "\(value):\(secret)"
-    }
-
-    /// initialize an `AppUserId` with a received `value` and `secret`
-    /// - Parameters:
-    ///   - value: the actual information of the `userId`
-    ///   - secret: an opaque information for the backend
-    public init(value: String, secret: String) {
-        self.value = value
-        self.secret = secret
-    }
-
-    /**
-     An optional initializer with a valid `stringRepresentation` value
-
-     `value` and `secret` must be separated by a colon.
-
-     - Precondition:
-        - `value` is the first part and `secret` the second.
-        - Only two elements allowed after split by colon
-     */
-    public init?(stringRepresentation: String) {
-        let components = stringRepresentation.split(separator: ":")
-        guard components.count == 2 else {
-            return nil
-        }
-
-        value = String(components[0])
-        secret = String(components[1])
-    }
-}
-
-public struct User: Codable {
-    public let firstname: String?
-    public let lastname: String?
-    public let email: String?
-    public let street: String?
-    public let zip: String?
-    public let city: String?
-    public let country: String?
-    public let state: String?
-    
-    public init(firstname: String?, lastname: String?, email: String?, street: String?, zip: String?, city: String?, country: String?, state: String?) {
-        self.firstname = firstname
-        self.lastname = lastname
-        self.email = email
-        self.street = street
-        self.zip = zip
-        self.city = city
-        self.country = country
-        self.state = state
-    }
-}
-
 extension Snabble {
-    private static let service = "io.snabble.sdk"
-
-    // MARK: - client id
-    private static let idKey = "Snabble.api.clientId"
-
     /**
      SnabbleSDK client identification
 
@@ -464,27 +396,10 @@ extension Snabble {
      - Important: [Apple Developer Forum Thread 36442](https://developer.apple.com/forums/thread/36442?answerId=281900022#281900022)
     */
     public static var clientId: String {
-        let keychain = Keychain(service: service)
-
-        if let id = keychain[idKey] {
-            return id
-        }
-
-        if let id = UserDefaults.standard.string(forKey: idKey) {
-            keychain[idKey] = id
-            return id
-        }
-
-        let id = UUID().uuidString.lowercased().replacingOccurrences(of: "-", with: "")
-        keychain[idKey] = id
-        UserDefaults.standard.set(id, forKey: idKey)
-        return id
+        SnabbleUser.Client.id
     }
 
     // MARK: - app user id
-    private var appUserKey: String {
-        "Snabble.api.appUserId.\(config.environment.name).\(config.appId)"
-    }
 
     /**
      SnabbleSDK application user identification
@@ -493,20 +408,12 @@ extension Snabble {
 
      - Important: [Apple Developer Forum Thread 36442](https://developer.apple.com/forums/thread/36442?answerId=281900022#281900022)
     */
-    public var appUserId: AppUserId? {
+    public var appUser: AppUser? {
         get {
-            let keychain = Keychain(service: Self.service)
-            guard let stringRepresentation = keychain[appUserKey] else {
-                return nil
-            }
-            return AppUserId(stringRepresentation: stringRepresentation)
+            SnabbleUser.AppUser.get(forConfig: config)
         }
-
         set {
-            let keychain = Keychain(service: Self.service)
-            keychain[appUserKey] = newValue?.stringRepresentation
-            UserDefaults.standard.set(newValue?.value, forKey: "Snabble.api.appUserId")
-
+            SnabbleUser.AppUser.set(newValue, forConfig: config)
             tokenRegistry.invalidate()
             OrderList.clearCache()
         }
@@ -514,22 +421,10 @@ extension Snabble {
     
     public var user: User? {
         get {
-            guard let data = UserDefaults.standard.data(forKey: "Snabble.user") else { return nil }
-            let jsonDecoder = JSONDecoder()
-            do {
-                return try jsonDecoder.decode(User.self, from: data)
-            } catch {
-                return nil
-            }
+            SnabbleUser.User.get(forConfig: config)
         }
         set {
-            let jsonEncoder = JSONEncoder()
-            do {
-                let encoded = try jsonEncoder.encode(newValue)
-                UserDefaults.standard.set(encoded, forKey: "Snabble.user")
-            } catch {
-                UserDefaults.standard.set(nil, forKey: "Snabble.user")
-            }
+            SnabbleUser.User.set(newValue, forConfig: config)
         }
     }
 }
@@ -621,7 +516,7 @@ extension Snabble {
     /// `Sec-CH-UA-Platform: iOS`
     /// `Sec-CH-UA-Platform-Version: 16.5.0`
     /// `Sec-CH-UA-Arch: iPhone13,3
-    /// 
+    ///
     /// - Returns: Dictionary with keys and values `[String: String]`
     private static let headerFields: [String: String] = {
         guard
@@ -713,12 +608,12 @@ extension Snabble {
         guard
             Self.appUserDataTask == nil,
             let project = project(for: projectId),
-            let appUserId = appUserId
+            let appUserId = appUser?.id
         else {
             return
         }
 
-        let url = links.appUser.href.replacingOccurrences(of: "{appUserID}", with: appUserId.value)
+        let url = links.appUser.href.replacingOccurrences(of: "{appUserID}", with: appUserId)
         project.request(.get, url, timeout: 2) { request in
             guard let request = request else {
                 return
@@ -743,14 +638,14 @@ extension Snabble {
 
     public func saveTermsConsent(_ version: String, completion: @escaping (Bool) -> Void) {
         guard
-            let appUserId = appUserId,
+            let appUserId = appUser?.id,
             let consents = links.consents?.href,
             let project = projects.first
         else {
             return
         }
 
-        let url = consents.replacingOccurrences(of: "{appUserID}", with: appUserId.value)
+        let url = consents.replacingOccurrences(of: "{appUserID}", with: appUserId)
 
         let termsVersion = TermsVersion(version: version)
         project.request(.post, url, body: termsVersion) { request in

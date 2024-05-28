@@ -45,8 +45,8 @@ extension OrderList {
             url = clientOrdersUrl.replacingOccurrences(of: "{clientID}", with: Snabble.clientId)
         }
 
-        if let appUserId = Snabble.shared.appUserId {
-            url = Snabble.shared.links.appUserOrders.href.replacingOccurrences(of: "{appUserID}", with: appUserId.value)
+        if let appUserId = Snabble.shared.appUser?.id {
+            url = Snabble.shared.links.appUserOrders.href.replacingOccurrences(of: "{appUserID}", with: appUserId)
         }
 
         guard let ordersUrl = url else {

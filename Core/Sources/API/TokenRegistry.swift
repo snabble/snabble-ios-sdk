@@ -6,6 +6,7 @@
 
 import Foundation
 import SwiftOTP
+import SnabbleUser
 
 #if canImport(UIKit)
 import UIKit
@@ -211,9 +212,9 @@ public final class TokenRegistry {
     }
 
     private func retrieveToken(for projectId: Identifier<Project>, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void) {
-        if let appUserId = Snabble.shared.appUserId {
-            if verboseToken { Log.debug("retrieveToken p=\(projectId.rawValue) app=\(self.appId) client=\(Snabble.clientId) au=\(appUserId), date=\(String(describing: date))") }
-            self.retrieveTokenForUser(for: projectId, appUserId, date, completion: completion)
+        if let appUser = Snabble.shared.appUser {
+            if verboseToken { Log.debug("retrieveToken p=\(projectId.rawValue) app=\(self.appId) client=\(Snabble.clientId) au=\(appUser), date=\(String(describing: date))") }
+            self.retrieveTokenForUser(for: projectId, appUser, date, completion: completion)
         } else {
             if verboseToken { Log.debug("retrieveToken+User p=\(projectId.rawValue) app=\(self.appId) client=\(Snabble.clientId) date=\(String(describing: date))") }
             self.retrieveAppUserAndToken(for: projectId, date, completion: completion)
@@ -245,7 +246,7 @@ public final class TokenRegistry {
                     if self.verboseToken { Log.debug("retrieveAppUserAndToken succeeded") }
                     self.verboseToken = false
                     print(#function, "new appUserID: \(appUserData.appUser.id)")
-                    Snabble.shared.appUserId = AppUserId(value: appUserData.appUser.id, secret: appUserData.appUser.secret)
+                    Snabble.shared.appUser = AppUser(id: appUserData.appUser.id, secret: appUserData.appUser.secret)
                     completion(TokenData(appUserData.token, projectId))
                 case .failure:
                     self.verboseToken = true && Snabble.debugMode
@@ -260,7 +261,7 @@ public final class TokenRegistry {
         }
     }
 
-    private func retrieveTokenForUser(for projectId: Identifier<Project>, _ appUserId: AppUserId, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void ) {
+    private func retrieveTokenForUser(for projectId: Identifier<Project>, _ appUser: AppUser, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void ) {
         guard let project = Snabble.shared.project(for: projectId) else {
             return completion(nil)
         }
@@ -275,7 +276,7 @@ public final class TokenRegistry {
             else {
                 return completion(nil)
             }
-            let data = Data("\(self.appId):\(password):\(appUserId.value):\(appUserId.secret)".utf8)
+            let data = Data("\(self.appId):\(password):\(appUser.id):\(appUser.secret)".utf8)
             let base64 = data.base64EncodedString()
             request.addValue("Basic \(base64)", forHTTPHeaderField: "Authorization")
             request.cachePolicy = .reloadIgnoringCacheData

@@ -45,7 +45,7 @@ class SnabbleTests: XCTestCase {
         expectation.assertForOverFulfill = true
 
         Snabble.setup(config: config) { snabble in
-            snabble.appUserId = nil
+            snabble.appUser = nil
             self.runDbTests(expectation)
         }
 

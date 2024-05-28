@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftOTP
+import SnabbleUser
 
 extension Endpoints {
     enum AppUser {
@@ -42,5 +43,5 @@ extension Endpoints {
 }
 
 struct UsersResponse: Codable {
-    let appUser: AppUser
+    let appUser: SnabbleUser.AppUser
 }

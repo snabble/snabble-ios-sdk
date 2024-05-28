@@ -8,6 +8,7 @@
 import XCTest
 @testable import SnabbleNetwork
 import Combine
+import SnabbleUser
 
 final class AuthenticatorTests: XCTestCase {
 
@@ -86,11 +87,11 @@ extension AuthenticatorTests: AuthenticatorDelegate {
         self.appUser = appUser
     }
 
-    func authenticator(_ authenticator: Authenticator, appUserForConfiguration configuration: Configuration) -> AppUser? {
+    func authenticator(_ authenticator: Authenticator, appUserForConfiguration configuration: SnabbleNetwork.Configuration) -> AppUser? {
         appUser
     }
 
-    func authenticator(_ authenticator: Authenticator, projectIdForConfiguration configuration: Configuration) -> String? {
+    func authenticator(_ authenticator: Authenticator, projectIdForConfiguration configuration: SnabbleNetwork.Configuration) -> String? {
         projectId
     }
 }

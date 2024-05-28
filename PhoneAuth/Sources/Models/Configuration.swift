@@ -1,12 +1,13 @@
 //
 //  Configuration.swift
-//  
+//
 //
 //  Created by Andreas Osberghaus on 2023-05-03.
 //
 
 import Foundation
 import SnabbleNetwork
+import SnabbleUser
 
 public struct Configuration {
     public let appId: String
@@ -18,10 +19,7 @@ public struct Configuration {
         self.appSecret = appSecret
         self.domain = domain
     }
-
 }
-
-extension Configuration: Equatable {}
 
 extension Configuration {
     func toDTO() -> SnabbleNetwork.Configuration {

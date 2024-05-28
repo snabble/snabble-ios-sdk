@@ -6,8 +6,9 @@
 //
 
 import Foundation
+import SnabbleUser
 
-public enum Domain {
+public enum Domain: String {
     case testing
     case staging
     case production
@@ -26,6 +27,17 @@ public enum Domain {
             return "https://api.snabble-staging.io"
         case .production:
             return "https://api.snabble.io"
+        }
+    }
+}
+
+extension Domain {
+    public var name: String {
+        switch self {
+        case .testing, .staging:
+            return rawValue
+        case .production:
+            return "prod"
         }
     }
 }

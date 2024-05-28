@@ -1,20 +1,30 @@
 //
 //  Environment.swift
-//  
+//
 //
 //  Created by Andreas Osberghaus on 2022-12-12.
 //
 
 import Foundation
 import SnabbleNetwork
+import SnabbleUser
 
-public enum Domain {
+public enum Domain: String {
     case testing
     case staging
     case production
+    
+    public var name: String {
+        switch self {
+        case .testing, .staging:
+            return rawValue
+        case .production:
+            return "prod"
+        }
+    }
 }
 
-extension Domain {
+extension SnabblePhoneAuth.Domain {
     func toDTO() -> SnabbleNetwork.Domain {
         switch self {
         case .production:
@@ -28,7 +38,7 @@ extension Domain {
 }
 
 extension SnabbleNetwork.Domain {
-    func fromDTO() -> Domain {
+    func fromDTO() -> SnabblePhoneAuth.Domain {
         switch self {
         case .production:
             return .production

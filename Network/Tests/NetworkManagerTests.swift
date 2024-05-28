@@ -9,12 +9,13 @@ import XCTest
 import Foundation
 @testable import SnabbleNetwork
 import Combine
+import SnabbleUser
 
 final class NetworkManagerTests: XCTestCase {
 
     var cancellables: Set<AnyCancellable>!
     var networkManager: NetworkManager!
-    var configuration: Configuration = .init(appId: "123", appSecret: "2", domain: .production)
+    var configuration: SnabbleNetwork.Configuration = .init(appId: "123", appSecret: "2", domain: .production)
     var appUser: AppUser?
 
     override func setUpWithError() throws {
@@ -127,11 +128,11 @@ extension NetworkManagerTests: NetworkManagerDelegate {
         self.appUser = appUser
     }
 
-    func networkManager(_ networkManager: NetworkManager, appUserForConfiguration configuration: Configuration) -> AppUser? {
+    func networkManager(_ networkManager: NetworkManager, appUserForConfiguration configuration: SnabbleNetwork.Configuration) -> AppUser? {
         appUser
     }
 
-    func networkManager(_ networkManager: NetworkManager, projectIdForConfiguration configuration: Configuration) -> String? {
+    func networkManager(_ networkManager: NetworkManager, projectIdForConfiguration configuration: SnabbleNetwork.Configuration) -> String? {
         "123"
     }
 }
