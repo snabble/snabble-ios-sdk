@@ -31,7 +31,7 @@ public struct User: Codable {
 
 extension User {
     private static func userKey(forConfig config: Configuration) -> String {
-        "Snabble.user.\(config.domainName).\(config.appId)"
+        "Snabble.api.user.\(config.domainName).\(config.appId)"
     }
     
     public static func get(forConfig config: Configuration) -> User? {
