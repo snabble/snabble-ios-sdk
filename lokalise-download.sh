@@ -22,7 +22,7 @@ function lokalise {
 }
 
 # sdk
-lokalise 3931709465f04f20a1bc18.55914019 Sources/AssetProviding/Resources
+lokalise 3931709465f04f20a1bc18.55914019 AssetProviding/Sources/Resources
 
 # sample
 lokalise 8964099365f434ac71f546.06213099 Example/Snabble
