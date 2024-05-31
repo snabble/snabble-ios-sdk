@@ -7,7 +7,8 @@
 
 import SwiftUI
 import SnabblePhoneAuth
-import Defaults
+import SnabbleUser
+import SnabbleAssetProviding
 
 private extension AppUserId {
     func toAppUser() -> SnabblePhoneAuth.AppUser {
@@ -24,11 +25,9 @@ private extension SnabblePhoneAuth.AppUser {
 class PhoneAuthScreenViewModel {
     let phoneAuth: PhoneAuth
     
-    init(configuration: SnabbleCore.Config) {
-        phoneAuth = PhoneAuth(
-            configuration: Configuration.configuration(
-                from: configuration)
-        )
+    init(configuration: SnabblePhoneAuth.Configuration) {
+        phoneAuth = PhoneAuth(configuration: configuration)
+        
         phoneAuth.delegate = self
         phoneAuth.dataSource = self
     }
@@ -36,17 +35,17 @@ class PhoneAuthScreenViewModel {
 
 extension PhoneAuthScreenViewModel: PhoneAuthDataSource {
     func projectId(forConfiguration configuration: SnabblePhoneAuth.Configuration) -> String? {
-        Snabble.shared.projects.first?.id.rawValue
+        nil // Snabble.shared.projects.first?.id.rawValue
     }
     
     func appUserId(forConfiguration configuration: SnabblePhoneAuth.Configuration) -> SnabblePhoneAuth.AppUser? {
-        Snabble.shared.appUserId?.toAppUser()
+        SnabbleAppUser.shared.appUserId?.toAppUser()
     }
 }
 
 extension PhoneAuthScreenViewModel: PhoneAuthDelegate {
     func phoneAuth(_ phoneAuth: SnabblePhoneAuth.PhoneAuth, didReceiveAppUser appUser: SnabblePhoneAuth.AppUser) {
-        Snabble.shared.appUserId = appUser.toAppUserId()
+        SnabbleAppUser.shared.appUserId = appUser.toAppUserId()
     }
 }
 
@@ -73,7 +72,7 @@ struct PhoneAuthScreen: View {
     
     @State private var showOTPInput: Bool = false
     
-    init(configuration: SnabbleCore.Config, kind: PhoneAuthViewKind, onCompletion: ((SnabblePhoneAuth.AppUser?) -> Void)? = nil) {
+    init(configuration: SnabblePhoneAuth.Configuration, kind: PhoneAuthViewKind, onCompletion: ((SnabblePhoneAuth.AppUser?) -> Void)? = nil) {
         self.viewModel = PhoneAuthScreenViewModel(configuration: configuration)
         self.viewKind = kind
         self.onCompletion = onCompletion

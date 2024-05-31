@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SnabblePhoneAuth
+import SnabbleAssetProviding
 
 private extension PhoneAuthViewKind {
     var message: String {
@@ -48,7 +49,7 @@ private struct LabelWithImageAccent: View {
             Text(title)
         }, icon: {
             Image(systemName: systemName)
-                .foregroundStyle(.accent)
+                .foregroundStyle(Color.accent())
         })
     }
 }
@@ -56,7 +57,8 @@ private struct LabelWithImageAccent: View {
 struct NumberView: View {
     let kind: PhoneAuthViewKind
     let countries: [SnabblePhoneAuth.Country] = SnabblePhoneAuth.Country.all
-    
+    @ViewProvider(.phoneBenefits) var phoneBenefits
+
     @State var country: SnabblePhoneAuth.Country = .germany
     @State var number: String = ""
     
@@ -83,18 +85,7 @@ struct NumberView: View {
                         .multilineTextAlignment(.center)
                         .fixedSize(horizontal: false, vertical: true)
                     if kind == .initial {
-                        VStack(alignment: .leading, spacing: 8) {
-                            LabelWithImageAccent(
-                                title: Asset.localizedString(forKey: "Account.SignIn.benefit1"),
-                                systemName: "checkmark.circle")
-                            LabelWithImageAccent(
-                                title: Asset.localizedString(forKey: "Account.SignIn.benefit2"),
-                                systemName: "checkmark.circle")
-                            LabelWithImageAccent(
-                                title: Asset.localizedString(forKey: "Account.SignIn.benefit3"),
-                                systemName: "checkmark.circle")
-                        }
-                        .multilineTextAlignment(.leading)
+                        phoneBenefits
                     }
                 }
                 .padding(.bottom)

@@ -209,7 +209,10 @@ let package = Package(
             dependencies: [
                 "SnabblePhoneAuth",
             ],
-            path: "PhoneAuthUI/Sources"
+            path: "PhoneAuthUI/Sources",
+            resources: [
+                .process("Resources")
+            ]
         ),
         .testTarget(
             name: "SnabblePhoneAuthUITests",
