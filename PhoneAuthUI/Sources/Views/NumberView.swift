@@ -7,8 +7,6 @@
 
 import SwiftUI
 import SnabblePhoneAuth
-//import SnabbleCore
-//import SnabbleUI
 
 private extension PhoneAuthViewKind {
     var message: String {

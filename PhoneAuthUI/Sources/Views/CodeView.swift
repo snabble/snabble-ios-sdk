@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-//import SnabbleUI
 import SnabbleAssetProviding
 
 extension PhoneAuthViewKind {

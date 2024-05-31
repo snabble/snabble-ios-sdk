@@ -42,6 +42,10 @@ let package = Package(
             name: "SnabblePhoneAuth",
             targets: ["SnabblePhoneAuth"]
         ),
+        .library(
+            name: "SnabblePhoneAuthUI",
+            targets: ["SnabblePhoneAuthUI"]
+        ),
         .library(name: "SnabbleUser",
                  targets: ["SnabbleUser"])
     ],
@@ -199,6 +203,20 @@ let package = Package(
             resources: [
                 .process("Resources")
             ]
+        ),
+        .target(
+            name: "SnabblePhoneAuthUI",
+            dependencies: [
+                "SnabblePhoneAuth",
+            ],
+            path: "PhoneAuthUI/Sources"
+        ),
+        .testTarget(
+            name: "SnabblePhoneAuthUITests",
+            dependencies: [
+                "SnabblePhoneAuthUI",
+            ],
+            path: "PhoneAuthUI/Tests"
         ),
         .target(
             name: "SnabbleUser",
