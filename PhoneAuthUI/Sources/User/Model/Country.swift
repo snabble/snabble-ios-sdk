@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SnabbleAssetProviding
 
 struct Country: Decodable, Equatable {
     public static var all: [Country] = loadJSON("countries")

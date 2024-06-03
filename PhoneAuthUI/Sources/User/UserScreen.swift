@@ -6,12 +6,12 @@
 //
 
 import SwiftUI
+
+import SnabbleCore
 import SnabbleNetwork
 import SnabblePhoneAuth
-import SnabbleAppUser
+import SnabbleUser
 import SnabbleAssetProviding
-
-import Defaults
 
 struct UserScreen: View {
     enum Kind {
@@ -330,9 +330,8 @@ struct UserScreen: View {
                 isLoading = true
                 try await networkManager.publisher(for: Endpoints.User.erase())
                 DispatchQueue.main.async {
-                    Defaults[.isSignedIn] = false
-                    SnabbleAppUser.shared.appUserId = nil
-                    
+                    UserDefaults.standard.setUserSignedIn(false)
+                    Snabble.shared.user = nil                    
                     killApp()
                 }
             } catch {
@@ -389,29 +388,6 @@ struct UserScreen: View {
     
     private func isRequired(_ field: Field) -> Bool {
         return user.fields?.first(where: { $0.id == field.rawValue })?.isRequired ?? false
-    }
-}
-
-//extension SnabbleCore.Config {
-//    func toNetworkConfiguration() -> SnabbleNetwork.Configuration {
-//        SnabbleNetwork.Configuration(
-//            appId: appId,
-//            appSecret: secret,
-//            domain: environment.toNetworkDomain())
-//    }
-//}
-//
-
-extension SnabbleEnvironment {
-    func toNetworkDomain() -> SnabbleNetwork.Domain {
-        switch self {
-        case .production:
-            return .production
-        case .staging:
-            return .staging
-        case .testing:
-            return .testing
-        }
     }
 }
 

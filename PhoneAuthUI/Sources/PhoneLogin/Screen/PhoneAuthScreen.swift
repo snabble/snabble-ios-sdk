@@ -10,18 +10,6 @@ import SnabblePhoneAuth
 import SnabbleUser
 import SnabbleAssetProviding
 
-private extension AppUserId {
-    func toAppUser() -> SnabblePhoneAuth.AppUser {
-        SnabblePhoneAuth.AppUser(id: value, secret: secret)
-    }
-}
-
-private extension SnabblePhoneAuth.AppUser {
-    func toAppUserId() -> AppUserId {
-        AppUserId(value: id, secret: secret)
-    }
-}
-
 class PhoneAuthScreenViewModel {
     let phoneAuth: PhoneAuth
     
@@ -35,17 +23,17 @@ class PhoneAuthScreenViewModel {
 
 extension PhoneAuthScreenViewModel: PhoneAuthDataSource {
     func projectId(forConfiguration configuration: SnabblePhoneAuth.Configuration) -> String? {
-        nil // Snabble.shared.projects.first?.id.rawValue
+        nil
     }
     
-    func appUserId(forConfiguration configuration: SnabblePhoneAuth.Configuration) -> SnabblePhoneAuth.AppUser? {
-        SnabbleAppUser.shared.appUserId?.toAppUser()
+    func appUserId(forConfiguration configuration: SnabblePhoneAuth.Configuration) -> SnabbleUser.AppUser? {
+        AppUser.get(forConfig: configuration)
     }
 }
 
 extension PhoneAuthScreenViewModel: PhoneAuthDelegate {
-    func phoneAuth(_ phoneAuth: SnabblePhoneAuth.PhoneAuth, didReceiveAppUser appUser: SnabblePhoneAuth.AppUser) {
-        SnabbleAppUser.shared.appUserId = appUser.toAppUserId()
+    func phoneAuth(_ phoneAuth: SnabblePhoneAuth.PhoneAuth, didReceiveAppUser appUser: SnabbleUser.AppUser) {
+        AppUser.set(appUser, forConfig: phoneAuth.configuration)
     }
 }
 
@@ -65,14 +53,14 @@ struct PhoneAuthScreen: View {
         }
     }
     
-    var onCompletion: ((SnabblePhoneAuth.AppUser?) -> Void)?
+    var onCompletion: ((SnabbleUser.AppUser?) -> Void)?
     
     @State var showProgress: Bool = false
     @State var errorMessage: String = ""
     
     @State private var showOTPInput: Bool = false
     
-    init(configuration: SnabblePhoneAuth.Configuration, kind: PhoneAuthViewKind, onCompletion: ((SnabblePhoneAuth.AppUser?) -> Void)? = nil) {
+    init(configuration: SnabblePhoneAuth.Configuration, kind: PhoneAuthViewKind, onCompletion: ((SnabbleUser.AppUser?) -> Void)? = nil) {
         self.viewModel = PhoneAuthScreenViewModel(configuration: configuration)
         self.viewKind = kind
         self.onCompletion = onCompletion
@@ -162,7 +150,7 @@ struct PhoneAuthScreen: View {
                     appUser = try await viewModel.phoneAuth.changePhoneNumber(phoneNumber: phoneNumber, OTP: OTP)
                 }
                 DispatchQueue.main.sync {
-                    Defaults[.isSignedIn] = true
+                    UserDefaults.standard.setUserSignedIn(true)
                     onCompletion?(appUser)
                     dismiss()
                 }

@@ -7,8 +7,8 @@
 
 import SwiftUI
 import SnabbleNetwork
-import Defaults
 import SnabbleAssetProviding
+import SnabbleUser
 
 private extension SnabbleNetwork.User {
     var fullName: String? {
@@ -45,10 +45,13 @@ struct UserNotLoggedInView: View {
 }
     
 public struct UserProfileView: View {
-    @Default(.user) var user
+    // TODO: this must be fixed, @AppStorage not working here
+//    @AppStorage(UserDefaults.userKey) var user
+    @State private var user: SnabbleNetwork.User?
+
     @State private var editUser = false
     @State private var changePhoneNumber = false
-
+    
     public init() {
     }
     
@@ -108,7 +111,7 @@ public struct UserProfileView: View {
                 }
     
                 SecondaryButtonView(title: Asset.localizedString(forKey: "Settings.signOut")) {
-                    Defaults[.isSignedIn] = false
+                    UserDefaults.standard.setUserSignedIn(false)
                 }
                 .sheet(isPresented: $editUser) {
                     UserScreen(user: user, kind: .management)
@@ -125,7 +128,7 @@ public struct UserProfileView: View {
     
     @ViewBuilder
     var content: some View {
-        if Defaults[.isSignedIn] {
+        if UserDefaults.standard.isUserSignedIn() {
             logginView
         } else {
             UserNotLoggedInView()

@@ -7,46 +7,27 @@
 
 import Foundation
 import SnabbleNetwork
-//import Defaults
+import SnabbleUser
 
-private extension UserDefaults {
-    private var userKey: String {
-        "io.snabble.sdk.network.user"
-    }
-    
-    func user() -> SnabbleNetwork.User? {
-        guard object(forKey: userKey) != nil else {
-            return nil
-        }
-        return object(forKey: userKey)
-    }
-    
-    func setUser(_ user: SnabbleNetwork.User?) {
-        setValue(user, forKey: userKey)
-    }
-}
-
-private extension UserDefaults {
-    private var isSignedInKey: String {
+public extension UserDefaults {
+    var isSignedInKey: String {
         "io.snabble.sdk.network.user.isSignedIn"
     }
     func isUserSignedIn() -> Bool {
         return bool(forKey: isSignedInKey)
     }
+    func setUserSignedIn(_ signedIn: Bool) {
+        setValue(signedIn, forKey: isSignedInKey)
+    }
 }
 
-//extension Defaults.Keys {
-//    static let user = Key<SnabbleNetwork.User?>("User", default: nil)
-//    static let isSignedIn = Key<Bool>("isSignedIn", default: false)
-//}
-
-extension SnabbleNetwork.User: Defaults.Serializable {}
-
 extension SnabbleNetwork.User {
-    func update(withDetails details: User.Details) {
-        UserDefauls.standard.setUser(.init(user: self, details: details))
+    func update(withDetails details: SnabbleNetwork.User.Details) {
+        print("TODO: SnabbleNetwork.User update(withDetails:)")
+//        UserDefaults.standard.setUser(.init(user: self, details: details))
     }
-    func update(withConsent consent: User.Consent) {
-        UserDefauls.standard.setUser(.init(user: self, consent: consent))
+    func update(withConsent consent: SnabbleNetwork.User.Consent) {
+        print("TODO: SnabbleNetwork.User update(withConsent:)")
+//        UserDefaults.standard.setUser(.init(user: self, consent: consent))
     }
 }
