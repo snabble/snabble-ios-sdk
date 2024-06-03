@@ -219,6 +219,7 @@ let package = Package(
             name: "SnabblePhoneAuthUITests",
             dependencies: [
                 "SnabblePhoneAuthUI",
+                "SnabbleAssetProviding",
             ],
             path: "PhoneAuthUI/Tests"
         ),
