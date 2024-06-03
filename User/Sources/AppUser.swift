@@ -7,6 +7,7 @@
 
 import Foundation
 import KeychainAccess
+import SnabbleEnvironment
 
 /// SnabbleSDK application user identification
 ///
@@ -62,7 +63,7 @@ extension AppUser {
     
     // MARK: - app user id
     private static func appUserKey(forConfig config: Configuration) -> String {
-        "Snabble.api.appUserId.\(config.domainName).\(config.appId)"
+        "Snabble.api.appUserId.\(config.domain.rawValue).\(config.appId)"
     }
     
     public static func get(forConfig config: Configuration) -> AppUser? {

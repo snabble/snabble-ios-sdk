@@ -43,7 +43,11 @@ let package = Package(
             targets: ["SnabblePhoneAuth"]
         ),
         .library(name: "SnabbleUser",
-                 targets: ["SnabbleUser"])
+                 targets: ["SnabbleUser"]
+        ),
+        .library(name: "SnabbleEnvironment",
+                 targets: ["SnabbleEnvironment"]
+        )
     ],
     dependencies: [
         .package(url: "https://github.com/lachlanbell/SwiftOTP", from: "3.0.2"),
@@ -202,8 +206,16 @@ let package = Package(
         ),
         .target(
             name: "SnabbleUser",
-            dependencies: ["KeychainAccess"],
+            dependencies: [
+                "KeychainAccess",
+                "SnabbleEnvironment"
+            ],
             path: "User/Sources"
+        ),
+        .target(
+            name: "SnabbleEnvironment",
+            dependencies: [],
+            path: "Environment/Sources"
         )
     ]
 )

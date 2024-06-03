@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SnabbleEnvironment
 
 public struct User: Codable {
     public let firstname: String?
@@ -31,7 +32,7 @@ public struct User: Codable {
 
 extension User {
     private static func userKey(forConfig config: Configuration) -> String {
-        "Snabble.api.user.\(config.domainName).\(config.appId)"
+        "Snabble.api.user.\(config.domain.rawValue).\(config.appId)"
     }
     
     public static func get(forConfig config: Configuration) -> User? {

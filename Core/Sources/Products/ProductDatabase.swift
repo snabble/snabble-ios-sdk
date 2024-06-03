@@ -7,6 +7,7 @@
 import Foundation
 import GRDB
 import ZIPFoundation
+import SnabbleEnvironment
 
 #if canImport(UIKit)
 import UIKit
@@ -35,7 +36,7 @@ final class ProductDatabase: ProductStoring {
     private let dbName = "products.sqlite3"
     private var db: DatabaseQueue?
     private var dbDirectory: URL
-    private let config: Config
+    private let config: Configuration
     private let useFTS: Bool
     let project: Project
 
@@ -106,7 +107,7 @@ final class ProductDatabase: ProductStoring {
     /// initialize a ProductDatabase instance with the given configuration
     /// - parameter config: a `Config` structure
     /// - parameter project: the snabble `Project`
-    public init(_ config: Config, _ project: Project) {
+    public init(_ config: Configuration, _ project: Project) {
         self.config = config
         self.project = project
 
