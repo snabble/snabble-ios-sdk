@@ -535,7 +535,7 @@ extension PayoneCreditCardEditViewController {
 
 extension PayoneCreditCardEditViewController {
     private func prepareAndInjectPage(_ payoneTokenization: PayoneTokenization) {
-        var languageCode = Locale.current.languageCode ?? "en"
+        var languageCode = Locale.current.language.languageCode?.identifier ?? "en"
         switch languageCode {
         case "de", "en", "fr", "it", "es", "pt", "nl": () // payone supported language
         default: languageCode = "en"
