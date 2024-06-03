@@ -15,70 +15,6 @@ public enum CustomProperty: Hashable {
     case externalBillingSubjectLimit(projectId: String)
 }
 
-/// General config data for using the snabble.
-/// Applications must call `Snabble.setup(config: completion:)` with an instance of this struct before they make their first API call.
-//public struct Config {
-//    /// the appID assigned by snabble
-//    public let appId: String
-//    /// the environment  to use
-//    public let environment: Snabble.Environment
-//    /// the secrect assigned by snabble, used to retrieve authorization tokens
-//    public let secret: String
-//
-//    /// the app version that is passed to the metadata endpoint. if not set, the app's `CFBundleShortVersionString` is used
-//    public var appVersion: String?
-//
-//    /// set this to true if you want to use the `productsByName` method of `ProductDB`
-//    /// this flag is ignored for projects that have a `shoppingListDB` link
-//    public var useFTS = false
-//
-//    /// set to false to disable certificate pinning for requests to the snabble API server
-//    /// NOTE: this setting is intended for debugging purposes only and is ignored in Release builds
-//    public var useCertificatePinning = true
-//
-//    /// if the app comes with a zipped seed database, set this to the path in the Bundle
-//    public var seedDatabase: String?
-//    /// if the app comes with a zipped seed database, set this to the db revision of the seed
-//    public var seedRevision: Int64?
-//    /// if the app comes with a seed metadata JSON, set this to the path in the Bundle
-//    public var seedMetadata: String?
-//
-//    /// max age for the local product database. if the last update of the db is older than this,
-//    /// the asychronous lookup methods will not use the local database anymore.
-//    public var maxProductDatabaseAge: TimeInterval = 3600
-//
-//    /// load shop list from the `activeShops` endpoint?
-//    public var loadActiveShops = false
-//
-//    // Workaround: Bug Fix #APPS-995
-//    // https://snabble.atlassian.net/browse/APPS-995
-//    public var showExternalBilling = true
-//
-//    // debug mode only:
-//    // SQL statements that are executed just before the product database is opened
-//    public var initialSQL: [String]?
-//    
-//    /// Custom Properties
-//    public var customProperties: [CustomProperty: Any] = [:]
-//
-//    /// Initialize the configuration for Snabble
-//    /// - Parameters:
-//    ///   - appId: Provide your personal `appId`
-//    ///   - secret: The secret matching your `appId`
-//    ///   - environment: Choose an environment you want to use
-//    public init(appId: String, secret: String, environment: Snabble.Environment = .production) {
-//        self.appId = appId
-//        self.environment = environment
-//        self.secret = secret
-//    }
-//}
-//
-//extension Config: SnabbleUser.Configuration {
-//    public var domainName: String {
-//        environment.name
-//    }
-//}
-
 public extension Notification.Name {
     static var metadataLoaded = Notification.Name(rawValue: "io.snabble.metadataLoaded")
 }
@@ -196,8 +132,8 @@ public class Snabble {
     private var databases: [Identifier<Project>: ProductDatabase]
 
     /// Current environment
-    public var environment: Environment {
-        return self.config.environment
+    public var domain: Domain {
+        return self.config.domain
     }
 
     /// Gateway certificates for payment routes
@@ -241,14 +177,14 @@ public class Snabble {
     /// - Parameters:
     ///   - config: `SnabbleAPIConfig` with at least an `appId` and a `secret`
     ///   - completion: CompletionHandler is called as soon as everything is finished
-    public static func setup(config: Config, completion: @escaping (Snabble) -> Void) {
+    public static func setup(config: Configuration, completion: @escaping (Snabble) -> Void) {
         if config.useCertificatePinning {
             initializeTrustKit()
         }
 
         shared = Snabble(
             config: config,
-            tokenRegistry: TokenRegistry(appId: config.appId, secret: config.secret)
+            tokenRegistry: TokenRegistry(appId: config.appId, secret: config.appSecret)
         )
         shared?.update(completion: completion)
     }
@@ -437,7 +373,7 @@ extension Snabble {
 
     private func absoluteUrl(_ url: String) -> String {
         if url.hasPrefix("/") {
-            return config.environment.apiURLString + url
+            return config.domain.apiURLString + url
         } else {
             return url
         }

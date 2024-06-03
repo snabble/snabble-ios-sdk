@@ -7,6 +7,8 @@
 import Foundation
 import Security
 
+import SnabbleEnvironment
+
 // just a marker protocol
 protocol PaymentRequestOrigin: Encodable { }
 
@@ -17,7 +19,7 @@ struct PaymentDataEncrypter {
     private var certificate: Data?
 
     init?(_ gatewayCert: Data?) {
-        let caName = "\(Snabble.shared.config.environment.name)-ca"
+        let caName = "\(Snabble.shared.config.domain.name)-ca"
         guard
             let gatewayCert = gatewayCert,
             let rootPath = Bundle.module.path(forResource: caName, ofType: "der")

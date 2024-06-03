@@ -12,7 +12,7 @@ public enum Domain: String {
     case staging
     case production = "prod"
     
-    var name: String {
+    public var name: String {
         rawValue
     }
     

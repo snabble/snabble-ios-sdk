@@ -8,6 +8,7 @@ import UIKit
 import WebKit
 import SnabbleCore
 import SnabbleAssetProviding
+import SnabbleEnvironment
 
 // sample data for testing:
 //
@@ -129,7 +130,7 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
     }
 
     private func loadForm(withProjectId projectId: Identifier<Project>, forCreditCardBrand creditCardBrand: CreditCardBrand) {
-        var urlComponents = URLComponents(string: "\(Snabble.shared.environment.apiURLString)/\(projectId)/telecash/form")
+        var urlComponents = URLComponents(string: "\(Snabble.shared.domain.apiURLString)/\(projectId)/telecash/form")
         urlComponents?.queryItems = [
             .init(name: "platform", value: "ios"),
             .init(name: "paymentMethod", value: creditCardBrand.rawValue)

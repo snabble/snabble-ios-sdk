@@ -64,8 +64,8 @@ extension AccountViewController: DynamicViewControllerDelegate {
             DeveloperMode.resetClientId(viewController: viewController)
 
         case "io.snabble.environment":
-            if let value = userInfo?["value"] as? String, let model = userInfo?["model"] as? MultiValueViewModel, let env = DeveloperMode.environment(for: value) {
-                DeveloperMode.switchEnvironment(environment: env, model: model, viewController: viewController)
+            if let value = userInfo?["value"] as? String, let model = userInfo?["model"] as? MultiValueViewModel, let domain = DeveloperMode.domain(for: value) {
+                DeveloperMode.switchDomain(domain: domain, model: model, viewController: viewController)
             }
         default:
             break

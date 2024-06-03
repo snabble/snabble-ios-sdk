@@ -9,6 +9,7 @@ import UIKit
 import SnabbleCore
 import KeychainAccess
 import SnabbleAssetProviding
+import SnabbleEnvironment
 
 extension CheckInManager {
     func shop(for provider: ShopProviding) -> Shop? {
@@ -52,7 +53,7 @@ public enum DeveloperMode {
     public enum Keys: String {
         case activation = "io.snabble.developerMode"
         case checkInShop = "io.snabble.checkInShopId"
-        case environment = "io.snabble.environment"
+        case domain = "io.snabble.environment"
 
         var value: Any? {
             return UserDefaults.standard.value(forKey: self.rawValue)
@@ -159,25 +160,25 @@ public extension DeveloperMode {
 }
 
 public extension DeveloperMode {
-    static func environment(for string: String) -> Snabble.Environment? {
+    static func domain(for string: String) -> SnabbleEnvironment.Domain? {
         
-        if let env = Snabble.Environment(rawValue: string) {
+        if let env = SnabbleEnvironment.Domain(rawValue: string) {
             return env
         }
-        if let last = string.components(separatedBy: ".").last, let env = Snabble.Environment(rawValue: last) {
+        if let last = string.components(separatedBy: ".").last, let env = SnabbleEnvironment.Domain(rawValue: last) {
             return env
         }
         return nil
     }
     
-    static var environmentMode: Snabble.Environment {
-        guard let value = Self.Keys.environment.value as? String, let env = environment(for: value) else {
+    static var domainMode: SnabbleEnvironment.Domain {
+        guard let value = Self.Keys.domain.value as? String, let env = domain(for: value) else {
             return BuildConfig.debug ? .staging : .production
         }
         return env
     }
-    static func setEnvironmentMode(_ mode: Snabble.Environment) {
-        UserDefaults.standard.set("\(mode.rawValue)", forKey: Self.Keys.environment.rawValue)
+    static func setDomainMode(_ mode: SnabbleEnvironment.Domain) {
+        UserDefaults.standard.set("\(mode.rawValue)", forKey: Self.Keys.domain.rawValue)
 
     }
 }
@@ -206,10 +207,10 @@ public extension DeveloperMode {
         viewController.present(alert, animated: true)
     }
     
-    static func switchEnvironment(environment: Snabble.Environment, model: MultiValueViewModel, viewController: DynamicViewController) {
+    static func switchDomain(domain: SnabbleEnvironment.Domain, model: MultiValueViewModel, viewController: DynamicViewController) {
         
-        if Snabble.shared.environment != environment {
-            print("will switch environment to \(environment)")
+        if Snabble.shared.domain != domain {
+            print("will switch environment to \(domain)")
             
             let alert = UIAlertController(title: "Clean Restart required", message: "Delete all databases and restart app?", preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: "Yes", style: .default) { _ in
@@ -225,7 +226,7 @@ public extension DeveloperMode {
                             try FileManager.default.removeItem(at: db)
                         }
                     }
-                    self.setEnvironmentMode(environment)
+                    self.setDomainMode(domain)
                     DeveloperMode.Keys.checkInShop.remove()
                     
                     UserDefaults.standard.synchronize()
@@ -237,13 +238,13 @@ public extension DeveloperMode {
                 } catch {
                     print(error)
                     
-                    self.setEnvironmentMode(Snabble.shared.environment)
-                    model.selectedValue = "io.snabble.environment." + Snabble.shared.environment.rawValue
+                    self.setDomainMode(Snabble.shared.domain)
+                    model.selectedValue = "io.snabble.environment." + Snabble.shared.domain.rawValue
                 }
             })
             alert.addAction(UIAlertAction(title: "No", style: .cancel) { _ in
-                self.setEnvironmentMode(Snabble.shared.environment)
-                model.selectedValue = "io.snabble.environment." + Snabble.shared.environment.rawValue
+                self.setDomainMode(Snabble.shared.domain)
+                model.selectedValue = "io.snabble.environment." + Snabble.shared.domain.rawValue
             })
             
             viewController.present(alert, animated: true)

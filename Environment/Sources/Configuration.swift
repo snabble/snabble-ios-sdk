@@ -11,6 +11,8 @@ public enum CustomProperty: Hashable {
     case externalBillingSubjectLimit(projectId: String)
 }
 
+/// General config data for using the snabble.
+/// Applications must call `Snabble.setup(config: completion:)` with an instance of this struct before they make their first API call.
 public struct Configuration {
     /// the appID assigned by snabble
     public let appId: String

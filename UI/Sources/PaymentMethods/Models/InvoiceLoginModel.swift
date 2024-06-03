@@ -39,7 +39,7 @@ public struct InvoiceLoginCredentials: Encodable {
 
 extension Project {
     public var externalBillingAuthURLString: String {
-        return "\(Snabble.shared.environment.apiURLString)/\(self.id)/external-billing/credentials/auth"
+        return "\(Snabble.shared.domain.apiURLString)/\(self.id)/external-billing/credentials/auth"
     }
 
     public func getUserLoginInfo(with credentials: InvoiceLoginCredentials,

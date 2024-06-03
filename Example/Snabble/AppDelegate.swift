@@ -10,6 +10,7 @@ import SnabbleUI
 import SnabbleCore
 import SwiftUI
 import SnabbleAssetProviding
+import SnabbleEnvironment
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -35,7 +36,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     }
 
     private func snabbleSetup() {
-        let config = Config.config(for: DeveloperMode.environmentMode)
+        let config = Configuration.config(for: DeveloperMode.domainMode)
         
         Snabble.setup(config: config) { [unowned self] snabble in
             // initial config parsed/loaded

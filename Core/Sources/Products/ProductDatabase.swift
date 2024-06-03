@@ -36,7 +36,7 @@ final class ProductDatabase: ProductStoring {
     private let dbName = "products.sqlite3"
     private var db: DatabaseQueue?
     private var dbDirectory: URL
-    private let config: Configuration
+    private let config: SnabbleEnvironment.Configuration
     private let useFTS: Bool
     let project: Project
 
@@ -107,7 +107,7 @@ final class ProductDatabase: ProductStoring {
     /// initialize a ProductDatabase instance with the given configuration
     /// - parameter config: a `Config` structure
     /// - parameter project: the snabble `Project`
-    public init(_ config: Configuration, _ project: Project) {
+    public init(_ config: SnabbleEnvironment.Configuration, _ project: Project) {
         self.config = config
         self.project = project
 

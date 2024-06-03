@@ -360,7 +360,7 @@ struct PaymentMethodDetailStorage {
 
     private var keychain = Keychain(service: "io.snabble.app").accessibility(.whenPasscodeSetThisDeviceOnly)
     private var key: String {
-        SettingsKeys.paymentMethods + "." + Snabble.shared.config.environment.name + "." + Snabble.shared.config.appId
+        SettingsKeys.paymentMethods + "." + Snabble.shared.config.domain.name + "." + Snabble.shared.config.appId
     }
 
     func read() -> [PaymentMethodDetail] {
@@ -445,7 +445,7 @@ struct PaymentMethodDetailStorage {
     }
 
     func removeAll() {
-        let oldKey = SettingsKeys.paymentMethods + Snabble.shared.config.environment.name
+        let oldKey = SettingsKeys.paymentMethods + Snabble.shared.config.domain.name
         let oldData = self.keychain[oldKey]
 
         let keys = self.keychain.allKeys()
