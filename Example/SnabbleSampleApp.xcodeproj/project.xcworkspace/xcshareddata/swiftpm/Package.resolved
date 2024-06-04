@@ -5,8 +5,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/devicekit/DeviceKit.git",
       "state" : {
-        "revision" : "5757447e9f92c476ee2ca41ead7eb6db07936430",
-        "version" : "5.4.0"
+        "revision" : "65f18eb08eb6e03739e3591639d308620615a139",
+        "version" : "5.3.0"
       }
     },
     {

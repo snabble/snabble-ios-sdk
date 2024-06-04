@@ -25,7 +25,9 @@ public func loadJSON<T: Decodable>(_ filename: String) -> T {
     let data: Data
 
     guard let file = Asset.url(forResource: filename, withExtension: "json") else {
-        fatalError("Couldn't find \(filename) in bundle.")
+//        guard let file = Bundle.main.url(forResource: filename, withExtension: "json") else {
+            fatalError("Couldn't find \(filename) in bundle.")
+//        }
     }
 
     do {

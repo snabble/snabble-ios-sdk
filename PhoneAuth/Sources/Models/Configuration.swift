@@ -9,11 +9,7 @@ import Foundation
 import SnabbleNetwork
 import SnabbleUser
 
-public struct Configuration: SnabbleUser.Configuration {
-    public var domainName: String {
-        return domain.name
-    }
-    
+public struct Configuration {
     public let appId: String
     public let appSecret: String
     public let domain: Domain
