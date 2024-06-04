@@ -7,12 +7,12 @@ let package = Package(
     name: "Snabble",
     defaultLocalization: "en",
     platforms: [
-        .iOS(.v15)
+        .iOS(.v16)
     ],
     products: [
         .library(
             name: "Snabble",
-            targets: ["SnabbleAssetProviding", "SnabbleCore", "SnabbleUI"]
+            targets: ["SnabbleAssetProviding", "SnabbleCore", "SnabbleUI", "SnabblePhoneAuthUI"]
         ),
         .library(
             name: "SnabbleAssetProviding",
@@ -41,6 +41,10 @@ let package = Package(
         .library(
             name: "SnabblePhoneAuth",
             targets: ["SnabblePhoneAuth"]
+        ),
+        .library(
+            name: "SnabblePhoneAuthUI",
+            targets: ["SnabblePhoneAuthUI"]
         ),
         .library(name: "SnabbleUser",
                  targets: ["SnabbleUser"])
@@ -115,7 +119,7 @@ let package = Package(
                 "DeviceKit",
                 "Pulley",
                 "WCAG-Colors",
-                "SnabbleUser"
+                "SnabbleUser",
             ],
             path: "UI/Sources",
             resources: [
@@ -199,6 +203,25 @@ let package = Package(
             resources: [
                 .process("Resources")
             ]
+        ),
+        .target(
+            name: "SnabblePhoneAuthUI",
+            dependencies: [
+                "SnabblePhoneAuth",
+                "SnabbleCore",
+            ],
+            path: "PhoneAuthUI/Sources",
+            resources: [
+                .process("Resources")
+            ]
+        ),
+        .testTarget(
+            name: "SnabblePhoneAuthUITests",
+            dependencies: [
+                "SnabblePhoneAuthUI",
+                "SnabbleAssetProviding",
+            ],
+            path: "PhoneAuthUI/Tests"
         ),
         .target(
             name: "SnabbleUser",
