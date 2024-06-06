@@ -10,8 +10,10 @@ import SnabbleNetwork
 import SnabbleUser
 
 public extension UserDefaults {
+    // if the hosting app uses https://github.com/sindresorhus/Defaults there is a restriction:
+    // `The key name must be ASCII, not start with @, and cannot contain a dot (.).`
     var isSignedInKey: String {
-        "io.snabble.sdk.network.user.isSignedIn"
+        "io-snabble-sdk-network-user-isSignedIn"
     }
     func isUserSignedIn() -> Bool {
         return bool(forKey: isSignedInKey)
