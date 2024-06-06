@@ -20,6 +20,7 @@ public struct AccentButtonStyle: ButtonStyle {
             .padding([.leading, .trailing], 20)
             .background(Color("AccentColor"))
             .foregroundColor(.white.opacity(disabled ? 0.5 : 1.0))
+            .tint(SwiftUI.Color.onAccent())
             .disabled(disabled)
             .clipShape(RoundedRectangle(cornerRadius: 10))
     }
