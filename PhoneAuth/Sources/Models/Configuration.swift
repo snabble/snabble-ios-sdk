@@ -43,4 +43,7 @@ extension SnabbleNetwork.Configuration {
             domain: domain.fromDTO()
         )
     }
+    public func toPhoneAuthConfiguration() -> Configuration {
+        fromDTO()
+    }
 }
