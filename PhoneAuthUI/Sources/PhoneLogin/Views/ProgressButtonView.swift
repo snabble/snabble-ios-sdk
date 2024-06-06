@@ -29,3 +29,9 @@ struct ProgressButtonView: View {
         }
     }
 }
+
+#Preview {
+    ProgressButtonView(title: "Weiter", 
+                       showProgress: .constant(true),
+                       action: {})
+}
