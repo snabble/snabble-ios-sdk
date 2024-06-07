@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+
+import SnabbleCore
 import SnabblePhoneAuth
 import SnabbleUser
 import SnabbleAssetProviding
@@ -13,8 +15,15 @@ import SnabbleAssetProviding
 class PhoneAuthScreenViewModel {
     let phoneAuth: PhoneAuth
     
-    init(configuration: SnabblePhoneAuth.Configuration) {
-        phoneAuth = PhoneAuth(configuration: configuration)
+    init(phoneAuth: PhoneAuth) {
+        self.phoneAuth = phoneAuth
+    }
+
+    init(configuration: SnabbleCore.Config) {
+        let phoneConfig = Configuration(appId: configuration.appId,
+                                        appSecret: configuration.secret,
+                                        domain: Domain(rawValue: configuration.environment.rawValue) ?? .production)
+        phoneAuth = PhoneAuth(configuration: phoneConfig)
         
         phoneAuth.delegate = self
         phoneAuth.dataSource = self
@@ -37,12 +46,12 @@ extension PhoneAuthScreenViewModel: PhoneAuthDelegate {
     }
 }
 
-enum PhoneAuthViewKind {
+public enum PhoneAuthViewKind {
     case initial
     case management
 }
 
-struct PhoneAuthScreen: View {
+public struct PhoneAuthScreen: View {
     @Environment(\.dismiss) var dismiss
     let viewModel: PhoneAuthScreenViewModel
     let viewKind: PhoneAuthViewKind
@@ -60,8 +69,8 @@ struct PhoneAuthScreen: View {
     
     @State private var showOTPInput: Bool = false
     
-    init(configuration: SnabblePhoneAuth.Configuration, kind: PhoneAuthViewKind, onCompletion: ((SnabbleUser.AppUser?) -> Void)? = nil) {
-        self.viewModel = PhoneAuthScreenViewModel(configuration: configuration)
+    public init(phoneAuth: PhoneAuth, kind: PhoneAuthViewKind, onCompletion: ((SnabbleUser.AppUser?) -> Void)? = nil) {
+        self.viewModel = PhoneAuthScreenViewModel(phoneAuth: phoneAuth)
         self.viewKind = kind
         self.onCompletion = onCompletion
     }
@@ -93,7 +102,7 @@ struct PhoneAuthScreen: View {
         )
     }
     
-    var body: some View {
+    public var body: some View {
         NavigationStack {
             numberView
             .navigationBarTitleDisplayMode(.inline)
@@ -119,7 +128,11 @@ struct PhoneAuthScreen: View {
         case "invalid_otp":
             message = "Account.Code.error"
         default:
-            message = "Account.genericError"
+            if clientError.validationErrors?.first(where: { $0.field == "phoneNumber" }) != nil {
+                message = "Account.SignIn.error"
+            } else {
+                message = "Account.genericError"
+            }
         }
         return Asset.localizedString(forKey: message)
    }
@@ -128,9 +141,7 @@ struct PhoneAuthScreen: View {
         Task {
             do {
                 startLoading()
-                self.phoneNumber = try await viewModel.phoneAuth.startAuthorization(
-                    phoneNumber: phoneNumber
-                )
+                self.phoneNumber = try await viewModel.phoneAuth.startAuthorization(phoneNumber: phoneNumber)
             } catch {
                 errorMessage = messageFor(error: error)
             }

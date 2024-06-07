@@ -6,7 +6,10 @@
 //
 
 import SwiftUI
+
+import SnabbleCore
 import SnabbleNetwork
+import SnabblePhoneAuth
 import SnabbleAssetProviding
 import SnabbleUser
 
@@ -29,7 +32,12 @@ struct UserFallBackView: View {
 
 struct UserNotLoggedInView: View {
     @State private var showSignin: Bool = false
-    
+    let phoneAuth: PhoneAuth
+
+    public init(phoneAuth: PhoneAuth) {
+        self.phoneAuth = phoneAuth
+    }
+
     var body: some View {
         VStack(spacing: 24) {
             Text(Asset.localizedString(forKey: "Settings.notSignedIn")).header()
@@ -38,91 +46,103 @@ struct UserNotLoggedInView: View {
             }
         }
         .padding(.horizontal)
-        .sheet(isPresented: $showSignin, content: {
-            PhoneAuthScreen(configuration: phoneAuthConfguration, kind: .initial)
-        })
+        .sheet(isPresented: $showSignin) {
+            PhoneAuthScreen(phoneAuth: phoneAuth, kind: .initial)
+        }
     }
 }
     
 public struct UserProfileView: View {
-    // TODO: this must be fixed, @AppStorage not working here
-//    @AppStorage(UserDefaults.userKey) var user
-    @State private var user: SnabbleNetwork.User?
+    @Binding public var user: SnabbleNetwork.User?
+    
+    @ViewProvider(.phoneLoggedIn) var phoneLoggedInView
 
     @State private var editUser = false
     @State private var changePhoneNumber = false
+    let phoneAuth: PhoneAuth
     
-    public init() {
+    public init(phoneAuth: PhoneAuth, user: Binding<SnabbleNetwork.User?>) {
+        self.phoneAuth = phoneAuth
+        self._user = user
     }
     
     @ViewBuilder
     var logginView: some View {
         if let user {
-            VStack(spacing: 16) {
-                if let name = user.fullName {
-                    Text(name).header()
-                        .frame(maxWidth: .infinity)
-                        .truncationMode(.middle)
-                        .lineLimit(1)
+            VStack(spacing: 24) {
+                if _phoneLoggedInView.isAvailable {
+                    phoneLoggedInView
                 } else {
-                    Text(Asset.localizedString(forKey: "Account.Info.fallback")).header()
-                        .frame(maxWidth: .infinity)
-                        .multilineTextAlignment(.center)
-                }
-                if let details = user.details {
-                    ZStack(alignment: .trailing) {
-                        VStack {
-                            if let street = details.street {
-                                Text(street)
-                            }
-                            if let zip = details.zip, let city = details.city {
-                                Text(zip + " " + city)
-                            }
-                            if let email = details.email {
-                                Text(email)
-                            }
-                        }
-                        .lineLimit(1)
-                        .frame(maxWidth: .infinity)
-                        .padding([.leading, .trailing])
-                        .truncationMode(.middle)
-
-                        Image(systemName: "square.and.pencil")
-                            .foregroundColor(.secondary)
+                    if let name = user.fullName {
+                        Text(name).header()
+                            .frame(maxWidth: .infinity)
+                            .truncationMode(.middle)
+                            .lineLimit(1)
+                    } else {
+                        Text(Asset.localizedString(forKey: "Account.Info.fallback")).header()
+                            .frame(maxWidth: .infinity)
+                            .multilineTextAlignment(.center)
                     }
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        editUser.toggle()
-                    }
-                }
-                if let phoneNumber = user.phoneNumber {
-                    ZStack(alignment: .trailing) {
-                        Text(phoneNumber)
+                    if let details = user.details {
+                        ZStack(alignment: .trailing) {
+                            VStack {
+                                if let street = details.street {
+                                    Text(street)
+                                }
+                                if let zip = details.zip, let city = details.city {
+                                    Text(zip + " " + city)
+                                }
+                                if let email = details.email {
+                                    Text(email)
+                                }
+                            }
+                            .lineLimit(1)
                             .frame(maxWidth: .infinity)
                             .padding([.leading, .trailing])
-                        
-                        Image(systemName: "square.and.pencil")
-                            .foregroundColor(.secondary)
+                            .truncationMode(.middle)
+
+                            Image(systemName: "square.and.pencil")
+                                .foregroundColor(.secondary)
+                        }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            editUser.toggle()
+                        }
                     }
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        changePhoneNumber.toggle()
+                    if let phoneNumber = user.phoneNumber {
+                        ZStack(alignment: .trailing) {
+                            Text(phoneNumber)
+                                .frame(maxWidth: .infinity)
+                                .padding([.leading, .trailing])
+                            
+                            Image(systemName: "square.and.pencil")
+                                .foregroundColor(.secondary)
+                        }
+                        .contentShape(Rectangle())
+                        .onTapGesture {
+                            changePhoneNumber.toggle()
+                        }
                     }
-                }
-    
-                SecondaryButtonView(title: Asset.localizedString(forKey: "Settings.signOut")) {
-                    UserDefaults.standard.setUserSignedIn(false)
-                }
-                .sheet(isPresented: $editUser) {
-                    UserScreen(user: user, kind: .management)
-                }
-                .sheet(isPresented: $changePhoneNumber) {
-                    PhoneAuthScreen(configuration: phoneAuthConfguration, kind: .management)
+                    
+                    SecondaryButtonView(title: Asset.localizedString(forKey: "Settings.signOut")) {
+                        UserDefaults.standard.setUserSignedIn(false)
+                    }
+                    .sheet(isPresented: $editUser) {
+                        UserScreen(networkManager: phoneAuth.networkManager, user: user, kind: .management)
+                    }
+                    .sheet(isPresented: $changePhoneNumber) {
+                        PhoneAuthScreen(phoneAuth: phoneAuth, kind: .management)
+                    }
                 }
             }
             .padding([.leading, .trailing])
        } else {
-            UserFallBackView()
+           VStack(spacing: 24) {
+               UserFallBackView()
+               SecondaryButtonView(title: Asset.localizedString(forKey: "Settings.signOut")) {
+                   UserDefaults.standard.setUserSignedIn(false)
+               }
+           }
         }
     }
     
@@ -131,41 +151,11 @@ public struct UserProfileView: View {
         if UserDefaults.standard.isUserSignedIn() {
             logginView
         } else {
-            UserNotLoggedInView()
+            UserNotLoggedInView(phoneAuth: phoneAuth)
         }
     }
     
     public var body: some View {
         content
-            .frame(maxWidth: .infinity, minHeight: 220)
-            .background(Color.systemBackground)
-            .clipShape(RoundedRectangle(cornerRadius: 12))
-            // TODO: .shadow(color: Color.shadow, radius: 6, x: 0, y: 6)
-            .shadow(radius: 6, x: 0, y: 6)
-            .padding()
-    }
-}
-
-public class UserProfileViewController: UIHostingController<UserProfileView> {
-
-    public init() {
-        super.init(rootView: UserProfileView())
-    }
-    
-    @MainActor required dynamic init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    public override func viewDidLayoutSubviews() {
-        super.viewDidLayoutSubviews()
-        view.invalidateIntrinsicContentSize()
-    }
-
-    open override func viewDidLoad() {
-        super.viewDidLoad()
-        
-        view.isOpaque = false
-        view.backgroundColor = .clear
-        view.layer.zPosition = 1
     }
 }

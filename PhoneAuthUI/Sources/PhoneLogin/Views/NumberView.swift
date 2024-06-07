@@ -81,12 +81,12 @@ struct NumberView: View {
         ScrollView {
             VStack(spacing: 8) {
                 VStack(spacing: 16) {
-                    Text(Asset.localizedString(forKey: kind.message))
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
                     if kind == .initial {
                         phoneBenefits
                     }
+                    Text(Asset.localizedString(forKey: kind.message))
+                        .multilineTextAlignment(.center)
+                        .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(.bottom)
                 .font(.callout)
