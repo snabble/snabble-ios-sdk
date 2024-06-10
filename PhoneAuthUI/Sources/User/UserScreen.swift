@@ -274,10 +274,10 @@ struct UserScreen: View {
                                         state: stateSelection?.code ?? "")
                         })
                     if kind == .management {
-                        SecondaryButtonView(title: Asset.localizedString(forKey: "Account.Delete.buttonLabel"),
-                                            disabled: Binding(get: { isLoading }, set: { _ in }),
-                                            onAction: {
-                            showAccountConfirmation = true
+                        AccountDeleteButton(networkManager: networkManager, onSuccess: {
+                            UserDefaults.standard.setUserSignedIn(false)
+                            Snabble.shared.user = nil
+                            killApp()
                         })
                     }
                     
@@ -309,14 +309,6 @@ struct UserScreen: View {
                         stateSelection = nil
                     }
                 }
-                .alert(isPresented: $showAccountConfirmation) {
-                    Alert(title: Text("Account.Delete.Dialog.title"),
-                          message: Text("Account.Delete.Dialog.message"),
-                          primaryButton: .destructive(Text("Account.Delete.Dialog.continue")) {
-                        delete()
-                    },
-                          secondaryButton: .cancel())
-                }
                 .navigationBarTitleDisplayMode(.inline)
                 .navigationTitle(Asset.localizedString(forKey: kind.title))
                 .padding()
@@ -324,23 +316,6 @@ struct UserScreen: View {
         }
     }
 
-    private func delete() {
-        Task {
-            do {
-                isLoading = true
-                try await networkManager.publisher(for: Endpoints.User.erase())
-                DispatchQueue.main.async {
-                    UserDefaults.standard.setUserSignedIn(false)
-                    Snabble.shared.user = nil                    
-                    killApp()
-                }
-            } catch {
-                errorMessage = "Account.Delete.failed"
-            }
-            isLoading = false
-        }
-    }
-    
     private func killApp() {
         let application = UIApplication.shared
         let suspend = #selector(URLSessionTask.suspend)
