@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-import SnabbleCore
+//import SnabbleCore
 import SnabbleNetwork
 import SnabblePhoneAuth
 import SnabbleAssetProviding
@@ -30,12 +30,15 @@ struct UserFallBackView: View {
     }
 }
 
-struct UserNotLoggedInView: View {
+struct UserNotLoggedInView<Teaser: View>: View {
     @State private var showSignin: Bool = false
     let phoneAuth: PhoneAuth
 
-    public init(phoneAuth: PhoneAuth) {
+    let teaser: (() -> Teaser)?
+    
+    public init(phoneAuth: PhoneAuth, teaser: (() -> Teaser)?) {
         self.phoneAuth = phoneAuth
+        self.teaser = teaser
     }
 
     var body: some View {
@@ -47,31 +50,42 @@ struct UserNotLoggedInView: View {
         }
         .padding(.horizontal)
         .sheet(isPresented: $showSignin) {
-            PhoneAuthScreen(phoneAuth: phoneAuth, kind: .initial)
+            PhoneAuthScreen(phoneAuth: phoneAuth, kind: .initial, header: teaser)
         }
     }
 }
-    
-public struct UserProfileView: View {
+
+public struct UserProfileView<Teaser: View, Login: View, Fallback: View>: View {
+    let phoneAuth: PhoneAuth
     @Binding public var user: SnabbleNetwork.User?
     
-    @ViewProvider(.phoneLoggedIn) var phoneLoggedInView
-
+    private var teaser: (() -> Teaser)?
+    private var login: (() -> Login)?
+    private var fallback: (() -> Fallback)?
+    
     @State private var editUser = false
     @State private var changePhoneNumber = false
-    let phoneAuth: PhoneAuth
     
-    public init(phoneAuth: PhoneAuth, user: Binding<SnabbleNetwork.User?>) {
+    public init(phoneAuth: PhoneAuth,
+                user: Binding<SnabbleNetwork.User?>,
+                teaser: (() -> Teaser)?,
+                login: (() -> Login)?,
+                fallback: (() -> Fallback)?
+    ) {
         self.phoneAuth = phoneAuth
         self._user = user
+        
+        self.teaser = teaser
+        self.login = login
+        self.fallback = fallback
     }
     
     @ViewBuilder
     var logginView: some View {
         if let user {
             VStack(spacing: 24) {
-                if _phoneLoggedInView.isAvailable {
-                    phoneLoggedInView
+                if let login {
+                    login()
                 } else {
                     if let name = user.fullName {
                         Text(name).header()
@@ -138,9 +152,13 @@ public struct UserProfileView: View {
             .padding([.leading, .trailing])
        } else {
            VStack(spacing: 24) {
-               UserFallBackView()
-               SecondaryButtonView(title: Asset.localizedString(forKey: "Settings.signOut")) {
-                   UserDefaults.standard.setUserSignedIn(false)
+               if let fallback {
+                   fallback()
+               } else {
+                   UserFallBackView()
+                   SecondaryButtonView(title: Asset.localizedString(forKey: "Settings.signOut")) {
+                       UserDefaults.standard.setUserSignedIn(false)
+                   }
                }
            }
         }
@@ -151,11 +169,20 @@ public struct UserProfileView: View {
         if UserDefaults.standard.isUserSignedIn() {
             logginView
         } else {
-            UserNotLoggedInView(phoneAuth: phoneAuth)
+            UserNotLoggedInView(phoneAuth: phoneAuth, teaser: teaser)
         }
     }
     
     public var body: some View {
         content
+    }
+}
+
+extension UserProfileView {
+    public init(phoneAuth: PhoneAuth, user: Binding<SnabbleNetwork.User?>) where Teaser == Never, Login == Never, Fallback == Never {
+        self.init(phoneAuth: phoneAuth, user: user, teaser: nil, login: nil, fallback: nil )
+    }
+    public init(phoneAuth: PhoneAuth, user: Binding<SnabbleNetwork.User?>, fallback: (() -> Fallback)?) where Teaser == Never, Login == Never {
+        self.init(phoneAuth: phoneAuth, user: user, teaser: nil, login: nil, fallback: fallback)
     }
 }
