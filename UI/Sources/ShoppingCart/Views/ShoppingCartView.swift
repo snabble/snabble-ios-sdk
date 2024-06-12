@@ -16,6 +16,7 @@ public struct ShoppingCartView: View {
         self.cartModel = cartModel
         self.compactMode = compactMode
     }
+
     public init(shoppingCart: ShoppingCart, compactMode: Bool = false) {
         self.cartModel = ShoppingCartViewModel(shoppingCart: shoppingCart)
         self.compactMode = compactMode
