@@ -12,11 +12,15 @@ public struct ShoppingCartView: View {
     @ObservedObject var cartModel: ShoppingCartViewModel
     let compactMode: Bool
     
+    public init(cartModel: ShoppingCartViewModel, compactMode: Bool = false) {
+        self.cartModel = cartModel
+        self.compactMode = compactMode
+    }
     public init(shoppingCart: ShoppingCart, compactMode: Bool = false) {
         self.cartModel = ShoppingCartViewModel(shoppingCart: shoppingCart)
         self.compactMode = compactMode
     }
-    
+
     @ViewBuilder
     var footer: some View {
         if !compactMode {
