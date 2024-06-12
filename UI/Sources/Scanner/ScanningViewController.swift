@@ -20,7 +20,7 @@ private enum ScannerLookup {
     case failure(ProductLookupError)
 }
 
-final class ScanningViewController: UIViewController {
+public final class ScanningViewController: UIViewController {
     private weak var spinner: UIActivityIndicatorView?
 
     private var messageView: ScanningMessageView?
@@ -779,14 +779,14 @@ extension ScanningViewController {
 }
 
 extension ScanningViewController: KeyboardHandling {
-    func keyboardWillShow(_ info: KeyboardInfo) {
+    public func keyboardWillShow(_ info: KeyboardInfo) {
         self.scanConfirmationViewBottom?.constant = -(info.keyboardHeight - 48)
         UIView.animate(withDuration: info.animationDuration) {
             self.view.layoutIfNeeded()
         }
     }
 
-    func keyboardWillHide(_ info: KeyboardInfo) {
+    public func keyboardWillHide(_ info: KeyboardInfo) {
         self.scanConfirmationViewBottom?.constant = self.confirmationVisible ? self.visibleConfirmationOffset : self.hiddenConfirmationOffset
         UIView.animate(withDuration: info.animationDuration) {
             self.view.layoutIfNeeded()

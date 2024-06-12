@@ -105,9 +105,9 @@ struct PullView: ViewModifier {
                     content.padding(.top, 16)
                 }
                 .frame(minWidth: UIScreen.main.bounds.width)
-                .scaleEffect(x: 1, y: 1, anchor: .center)
+//                .scaleEffect(x: 1, y: 1, anchor: .center)
                 .thickMaterial()
-                .clipShape( CardShape(radius: 16) )
+//                .clipShape( CardShape(radius: 16) )
             }
             .onChange(of: minHeight) { _ in
                 setupMinHeight(geom: geom)
@@ -115,8 +115,8 @@ struct PullView: ViewModifier {
             .onAppear {
                 setupMinHeight(geom: geom)
             }
-            .frame(maxHeight: geom.size.height - (position + self.dragTracker.height))
-            .offset(y: max(0, position + self.dragTracker.height))
+            .frame(maxHeight: geom.size.height - (position + self.dragTracker.height /*- 10*/))
+            .offset(y: max(0, position + self.dragTracker.height + 20))
             .animation(.easeInOut(duration: 0.2), value: position)
             .animation(Animation.interpolatingSpring(stiffness: 250.0, damping: 40.0, initialVelocity: 5.0), value: dragging)
             .gesture(

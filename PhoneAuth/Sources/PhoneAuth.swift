@@ -30,12 +30,16 @@ public class PhoneAuth {
     public weak var delegate: PhoneAuthDelegate?
     public weak var dataSource: PhoneAuthDataSource?
 
-    private let networkManager: NetworkManager
+    public let networkManager: NetworkManager
 
     public var configuration: Configuration {
         networkManager.configuration.fromDTO()
     }
-
+    
+    public init(networkManager: NetworkManager, urlSession: URLSession = .shared) {
+        self.networkManager = networkManager
+    }
+    
     public init(configuration: Configuration, urlSession: URLSession = .shared) {
         self.networkManager = NetworkManager(
             configuration: configuration.toDTO(),

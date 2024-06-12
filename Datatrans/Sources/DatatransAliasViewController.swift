@@ -337,7 +337,7 @@ extension DatatransAliasViewController {
             return completion(nil)
         }
 
-        let language = Locale.current.languageCode ?? "en"
+        let language = Locale.current.language.languageCode?.identifier ?? "en"
         let tokenInput = TokenInput(paymentMethod: method.rawValue, language: language)
 
         project.request(.post, url, body: tokenInput, timeout: 2) { request in

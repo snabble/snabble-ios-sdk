@@ -7,8 +7,14 @@
 
 import SnabbleCore
 
-enum CartEntry: Swift.Identifiable {
-    var id: String {
+extension CartEntry: Equatable {
+    public static func == (lhs: CartEntry, rhs: CartEntry) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
+public enum CartEntry: Swift.Identifiable {
+    public var id: String {
         switch self {
         case .cartItem(let cartItem, _):
             return cartItem.uuid

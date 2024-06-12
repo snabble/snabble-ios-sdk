@@ -21,7 +21,9 @@ public struct SecondaryButtonView: View {
     
     public var body: some View {
         Button(action: {
-            onAction()
+            withAnimation {
+                onAction()
+            }
         }) {
             Text(title)
                 .fontWeight(.bold)

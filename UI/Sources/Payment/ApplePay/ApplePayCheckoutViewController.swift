@@ -192,7 +192,7 @@ extension ApplePayCheckoutViewController {
 
         let identifier = Locale.identifier(fromComponents: [NSLocale.Key.countryCode.rawValue: code ])
         let locale = Locale(identifier: identifier)
-        return locale.regionCode
+        return locale.region?.identifier
     }
 
 }

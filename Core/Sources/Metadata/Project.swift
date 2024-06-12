@@ -468,7 +468,7 @@ public struct Project: Decodable, Identifiable {
         // AFAICT there is no API to get the symbol from the code directly, so we need to loop over
         // all available locales to find the first that has a matching code and use its symbol :(
         let allLocales = Locale.availableIdentifiers.lazy.map { Locale(identifier: $0) }
-        if let matchingLocale = allLocales.first(where: { $0.currencyCode == currencyCode }) {
+        if let matchingLocale = allLocales.first(where: { $0.currency?.identifier == currencyCode }) {
             formatter.locale = matchingLocale
         } else {
             formatter.locale = Locale(identifier: locale)
