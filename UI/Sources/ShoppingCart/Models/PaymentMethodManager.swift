@@ -233,7 +233,7 @@ extension Project {
                                          withSubtitle subtitle: String? = nil,
                                          inColor textColor: UIColor) -> NSAttributedString {
 
-      let titleAttributes: [NSAttributedString.Key: Any] = [
+        let titleAttributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.systemFont(ofSize: 17),
             .foregroundColor: textColor
         ]
