@@ -42,21 +42,11 @@ struct PaymentMethodAction: PaymentPovider {
         self.title = title
         self.item = item
     }
-    var method: SnabbleCore.RawPaymentMethod {
-        item.method
-    }
-    
-    var methodDetail: SnabbleCore.PaymentMethodDetail? {
-        item.methodDetail
-    }
-    
-    var selectable: Bool {
-        item.selectable
-    }
-    
-    var active: Bool {
-        item.active
-    }
+
+    var method: SnabbleCore.RawPaymentMethod { item.method }
+    var methodDetail: SnabbleCore.PaymentMethodDetail? { item.methodDetail }
+    var selectable: Bool { item.selectable }
+    var active: Bool { item.active }
 }
 
 extension PaymentMethodItem {
@@ -227,21 +217,23 @@ extension Project {
         // combine all payment methods of all projects
         let items = paymentItems(for: shoppingCart)
         
-        let actions = items.map({ item in
+        let actions = items.map { item in
             let title = Self.attributedString(
                 forText: item.title,
                 withSubtitle: item.subtitle,
                 inColor: (item.active) ? .label : .secondaryLabel
             )
-
             return PaymentMethodAction(title: title, item: item)
-        })
+        }
         
         return actions
     }
 
-    private static func attributedString(forText text: String, withSubtitle subtitle: String? = nil, inColor textColor: UIColor) -> NSAttributedString {
-        let titleAttributes: [NSAttributedString.Key: Any] = [
+    private static func attributedString(forText text: String, 
+                                         withSubtitle subtitle: String? = nil,
+                                         inColor textColor: UIColor) -> NSAttributedString {
+
+      let titleAttributes: [NSAttributedString.Key: Any] = [
             .font: UIFont.systemFont(ofSize: 17),
             .foregroundColor: textColor
         ]
@@ -378,7 +370,24 @@ public final class PaymentMethodManager: ObservableObject {
         self.selectedPayment = project.preferredPayment
     }
     
-    public func paymentSelectionAlertController() -> AlertController {
+    private func userSelectedPaymentMethod(with action: PaymentMethodAction) {
+        guard action.selectable else {
+            return
+        }
+        let method = action.method
+        let detail = action.methodDetail
+        
+        setSelectedPayment(method, detail: detail)
+        delegate?.paymentMethodManager(didSelectItem: action.item)
+    }
+}
+
+public protocol AlertProviding {
+    func alertController() -> UIViewController
+}
+
+extension PaymentMethodManager: AlertProviding {
+    public func alertController() -> UIViewController {
         let title = Asset.localizedString(forKey: "Snabble.Shoppingcart.howToPay")
         let sheet = AlertController(title: title, message: nil, preferredStyle: .actionSheet)
         sheet.visualStyle = .snabbleActionSheet
@@ -406,16 +415,5 @@ public final class PaymentMethodManager: ObservableObject {
         sheet.addAction(AlertAction(title: Asset.localizedString(forKey: "Snabble.cancel"), style: .preferred))
         
         return sheet
-    }
-    
-    private func userSelectedPaymentMethod(with action: PaymentMethodAction) {
-        guard action.selectable else {
-            return
-        }
-        let method = action.method
-        let detail = action.methodDetail
-        
-        setSelectedPayment(method, detail: detail)
-        delegate?.paymentMethodManager(didSelectItem: action.item)
     }
 }

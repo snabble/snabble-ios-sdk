@@ -27,17 +27,17 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
     
     let shoppingCart: ShoppingCart
     
-    weak var shoppingCartDelegate: ShoppingCartDelegate?
+    public weak var shoppingCartDelegate: ShoppingCartDelegate?
     
-    @Published var productError: Bool = false
-    @Published var voucherError: Bool = false
+    @Published public var productError: Bool = false
+    @Published public var voucherError: Bool = false
     var productErrorMessage: String = ""
     
-    @Published var confirmDeletion: Bool = false
+    @Published public var confirmDeletion: Bool = false
     var deletionMessage: String = ""
     var deletionItemIndex: Int?
     
-    @Published var items = [CartEntry]()
+    @Published public var items = [CartEntry]()
 
     func index(for itemModel: CartItemModel) -> Int? {
         guard let index = items.firstIndex(where: { $0.id == itemModel.id }) else {
@@ -49,7 +49,7 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
     private var knownImages = Set<String>()
     internal var showImages = false
     
-    init(shoppingCart: ShoppingCart) {
+    public init(shoppingCart: ShoppingCart) {
         self.shoppingCart = shoppingCart
         
         NotificationCenter.default.addObserver(self, selector: #selector(self.shoppingCartUpdated(_:)), name: .snabbleCartUpdated, object: nil)

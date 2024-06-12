@@ -73,17 +73,8 @@ final class PaymentMethodSelector {
     }
     
     @objc private func methodSelectionTapped(_ gesture: UITapGestureRecognizer) {
-        let sheet = paymentManager.paymentSelectionAlertController()
+        let sheet = paymentManager.alertController()
         
-//        sheet.shouldDismissHandler = { action in
-//            if let action = action, let icon = action.imageView.icon, let methodIcon = self.methodIcon {
-//                UIView.transition(with: methodIcon, duration: 0.16, options: .transitionCrossDissolve, animations: {
-//                    methodIcon.image = icon
-//                })
-//            }
-//            return true
-//        }
-
         self.parentVC?.present(sheet, animated: true)
     }
 }
