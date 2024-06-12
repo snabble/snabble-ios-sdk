@@ -51,11 +51,14 @@ public enum PhoneAuthViewKind {
     case management
 }
 
-public struct PhoneAuthScreen: View {
+public struct PhoneAuthScreen<Header: View, Footer: View>: View {
     @Environment(\.dismiss) var dismiss
+    
     let viewModel: PhoneAuthScreenViewModel
     let viewKind: PhoneAuthViewKind
-    
+    let header: (() -> Header)?
+    let footer: (() -> Footer)?
+
     @State var phoneNumber: String = "" {
         didSet {
             showOTPInput = !phoneNumber.isEmpty
@@ -68,10 +71,17 @@ public struct PhoneAuthScreen: View {
     @State var errorMessage: String = ""
     
     @State private var showOTPInput: Bool = false
-    
-    public init(phoneAuth: PhoneAuth, kind: PhoneAuthViewKind, onCompletion: ((SnabbleUser.AppUser?) -> Void)? = nil) {
+
+    public init(phoneAuth: PhoneAuth,
+                kind: PhoneAuthViewKind,
+                header: (() -> Header)?,
+                footer: (() -> Footer)?,
+                onCompletion: ((SnabbleUser.AppUser?) -> Void)? = nil
+    ) {
         self.viewModel = PhoneAuthScreenViewModel(phoneAuth: phoneAuth)
         self.viewKind = kind
+        self.header = header
+        self.footer = footer
         self.onCompletion = onCompletion
     }
     
@@ -80,7 +90,9 @@ public struct PhoneAuthScreen: View {
         NumberView(
             kind: viewKind,
             showProgress: $showProgress,
-            footerMessage: $errorMessage
+            footerMessage: $errorMessage,
+            header: header,
+            footer: footer
         ) { phoneNumber in
             sendPhoneNumber(phoneNumber)
         }
@@ -170,5 +182,25 @@ public struct PhoneAuthScreen: View {
             }
             showProgress = false
         }
+    }
+}
+
+extension PhoneAuthScreen {
+    public init(phoneAuth: PhoneAuth,
+                kind: PhoneAuthViewKind,
+                onCompletion: ((SnabbleUser.AppUser?) -> Void)? = nil) where Header == Never, Footer == Never {
+        self.init(phoneAuth: phoneAuth, kind: kind, header: nil, footer: nil, onCompletion: onCompletion)
+    }
+    public init(phoneAuth: PhoneAuth,
+                kind: PhoneAuthViewKind,
+                footer: (() -> Footer)?,
+                onCompletion: ((SnabbleUser.AppUser?) -> Void)? = nil) where Header == Never {
+        self.init(phoneAuth: phoneAuth, kind: kind, header: nil, footer: footer, onCompletion: onCompletion)
+    }
+    public init(phoneAuth: PhoneAuth,
+                kind: PhoneAuthViewKind,
+                header: (() -> Header)?,
+                onCompletion: ((SnabbleUser.AppUser?) -> Void)? = nil) where Footer == Never {
+        self.init(phoneAuth: phoneAuth, kind: kind, header: header, footer: nil, onCompletion: onCompletion)
     }
 }

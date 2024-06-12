@@ -11,10 +11,12 @@ import SnabbleAssetProviding
 public struct SnabbleEmptyView: View {
     public let message: String
     public let image: Image
+    public let imageWidth: CGFloat
     
-    public init(message: String, image: Image) {
+    public init(message: String, image: Image, imageWidth: CGFloat = 72.0) {
         self.message = message
         self.image = image
+        self.imageWidth = imageWidth
     }
 
     public var body: some View {
@@ -22,7 +24,7 @@ public struct SnabbleEmptyView: View {
             image
                 .resizable()
                 .scaledToFit()
-                .frame(width: 72)
+                .frame(width: imageWidth)
                 .foregroundColor(.accentColor)
             
             Text(message)

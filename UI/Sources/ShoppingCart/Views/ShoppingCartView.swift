@@ -12,7 +12,7 @@ public struct ShoppingCartView: View {
     @ObservedObject var cartModel: ShoppingCartViewModel
     let compactMode: Bool
     
-    init(shoppingCart: ShoppingCart, compactMode: Bool = false) {
+    public init(shoppingCart: ShoppingCart, compactMode: Bool = false) {
         self.cartModel = ShoppingCartViewModel(shoppingCart: shoppingCart)
         self.compactMode = compactMode
     }

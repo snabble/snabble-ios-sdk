@@ -54,17 +54,19 @@ private struct LabelWithImageAccent: View {
     }
 }
 
-struct NumberView: View {
+struct NumberView<Header: View, Footer: View>: View {
     let kind: PhoneAuthViewKind
     let countries: [SnabblePhoneAuth.Country] = SnabblePhoneAuth.Country.all
-    @ViewProvider(.phoneBenefits) var phoneBenefits
-
+    
     @State var country: SnabblePhoneAuth.Country = .germany
     @State var number: String = ""
     
     @Binding var showProgress: Bool
     @Binding var footerMessage: String
-    
+
+    private let header: (() -> Header)?
+    private let footer: (() -> Footer)?
+
     var callback: (_ phoneNumber: String) -> Void
     
     private enum Field: Hashable {
@@ -76,17 +78,36 @@ struct NumberView: View {
     private var isEnabled: Bool {
         number.count > 3 && !showProgress
     }
-    
+    public init(kind: PhoneAuthViewKind,
+                showProgress: Binding<Bool>,
+                footerMessage: Binding<String>,
+                header: (() -> Header)?,
+                footer: (() -> Footer)?,
+                callback: @escaping (_: String) -> Void) {
+        self.kind = kind
+        self._showProgress = showProgress
+        self._footerMessage = footerMessage
+        self.header = header
+        self.footer = footer
+        self.callback = callback
+    }
     var body: some View {
         ScrollView {
             VStack(spacing: 8) {
                 VStack(spacing: 16) {
                     if kind == .initial {
-                        phoneBenefits
+                        if let header {
+                            header()
+                        } else {
+                            Text(Asset.localizedString(forKey: kind.message))
+                                .multilineTextAlignment(.center)
+                                .fixedSize(horizontal: false, vertical: true)
+                        }
+                    } else {
+                        Text(Asset.localizedString(forKey: kind.message))
+                            .multilineTextAlignment(.center)
+                            .fixedSize(horizontal: false, vertical: true)
                     }
-                    Text(Asset.localizedString(forKey: kind.message))
-                        .multilineTextAlignment(.center)
-                        .fixedSize(horizontal: false, vertical: true)
                 }
                 .padding(.bottom)
                 .font(.callout)
@@ -131,6 +152,11 @@ struct NumberView: View {
                 .font(.footnote)
                 .multilineTextAlignment(.center)
                 
+                if kind == .management {
+                    if let footer {
+                        footer()
+                    }
+                }
                 Spacer(minLength: 0)
             }
             .padding([.top, .leading, .trailing])
@@ -143,5 +169,43 @@ struct NumberView: View {
     
     private func submit() {
         callback("+\(country.callingCode)\(number)")
+    }
+}
+
+extension NumberView {
+    public init(kind: PhoneAuthViewKind, 
+                showProgress: Binding<Bool>,
+                footerMessage: Binding<String>,
+                callback: @escaping (_: String) -> Void) where Footer == Never, Header == Never {
+        self.init(kind: kind,
+                  showProgress: showProgress,
+                  footerMessage: footerMessage,
+                  header: nil,
+                  footer: nil,
+                  callback: callback)
+    }
+    public init(kind: PhoneAuthViewKind,
+                showProgress: Binding<Bool>,
+                footerMessage: Binding<String>,
+                header: (() -> Header)?,
+                callback: @escaping (_: String) -> Void) where Footer == Never {
+        self.init(kind: kind,
+                  showProgress: showProgress,
+                  footerMessage: footerMessage,
+                  header: header,
+                  footer: nil,
+                  callback: callback)
+    }
+    public init(kind: PhoneAuthViewKind,
+                showProgress: Binding<Bool>,
+                footerMessage: Binding<String>,
+                footer: (() -> Footer)?,
+                callback: @escaping (_: String) -> Void) where Header == Never {
+        self.init(kind: kind,
+                  showProgress: showProgress,
+                  footerMessage: footerMessage,
+                  header: nil,
+                  footer: footer,
+                  callback: callback)
     }
 }
