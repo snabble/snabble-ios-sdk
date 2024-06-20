@@ -44,12 +44,11 @@ extension ShoppingCartViewModel {
     }
 }
 
-public struct ShoppingCartItemsView<Footer: View>: View {
+private struct ItemsAsListView<Footer: View>: View {
     @ObservedObject var cartModel: ShoppingCartViewModel
-    
     var footer: Footer
-    
-    public var body: some View {
+
+    var body: some View {
         VStack {
             if cartModel.items.isEmpty {
                 Spacer()
@@ -70,6 +69,53 @@ public struct ShoppingCartItemsView<Footer: View>: View {
                 .hiddenScrollView()
             }
         }
+    }
+    private func delete(at offset: IndexSet) {
+        cartModel.trash(at: offset)
+    }
+}
+
+private struct ItemsAsCustomView<Footer: View>: View {
+    @ObservedObject var cartModel: ShoppingCartViewModel
+    var footer: Footer
+
+    var body: some View {
+        VStack {
+            if cartModel.items.isEmpty {
+                Spacer()
+            } else {
+                ForEach(cartModel.items, id: \.id) { item in
+                    VStack {
+                        cartModel.view(for: item)
+                            .environmentObject(cartModel)
+                            .padding([.top, .bottom, .trailing], 4)
+                        Divider()
+                            .padding(.leading, 52)
+                    }
+                    .padding(.leading, 10)
+                }
+                footer
+            }
+        }
+    }
+}
+
+public struct ShoppingCartItemsView<Footer: View>: View {
+    @ObservedObject var cartModel: ShoppingCartViewModel
+    var footer: Footer
+    var asList: Bool = true
+    
+    @ViewBuilder
+    var content: some View {
+        if asList {
+            ItemsAsListView(cartModel: cartModel, footer: footer)
+        } else {
+            ItemsAsCustomView(cartModel: cartModel, footer: footer)
+        }
+    }
+
+    public var body: some View {
+        content
         .alert(isPresented: $cartModel.productError) {
             Alert(
                 title: Text(keyed: "Snabble.SaleStop.ErrorMsg.title"),
@@ -106,8 +152,5 @@ public struct ShoppingCartItemsView<Footer: View>: View {
                                     cartModel.cancelDeletion()
                                 }))
         }
-    }
-    private func delete(at offset: IndexSet) {
-        cartModel.trash(at: offset)
     }
 }
