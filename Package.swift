@@ -209,6 +209,7 @@ let package = Package(
             dependencies: [
                 "SnabblePhoneAuth",
                 "SnabbleCore",
+                "SnabbleUI",
             ],
             path: "PhoneAuthUI/Sources",
             resources: [
