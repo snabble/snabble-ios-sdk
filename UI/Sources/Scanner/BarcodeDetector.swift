@@ -29,16 +29,18 @@ extension BarcodeResult: CustomStringConvertible {
     }
 }
 
-public protocol BarcodeDetectorDelegate: AnyObject {
+public protocol BarcodeScanning: AnyObject {
     /// callback for a successful scan
     func scannedCodeResult(_ result: BarcodeResult)
+}
 
-    /// track an `AnalyticsEvent`
-    func track(_ event: AnalyticsEvent)
 
+public protocol BarcodePresenting: AnyObject {
     /// this is used to present permission alerts. If the delegate instance is a `UIViewController`, no more code is needed
     func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
 }
+
+public typealias BarcodeDetectorDelegate = BarcodeScanning & BarcodePresenting
 
 public protocol BarcodeDetectorMessageDelegate: AnyObject {
     /// show a message covering the entire screen (used by the "battery saver" function e.g. in the Cortex Decoder implementation)
