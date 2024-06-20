@@ -20,7 +20,7 @@ private enum ScannerLookup {
     case failure(ProductLookupError)
 }
 
-public final class ScanningViewController: UIViewController {
+public final class ScanningViewController: UIViewController, BarcodePresenting {
     private weak var spinner: UIActivityIndicatorView?
 
     private var messageView: ScanningMessageView?
@@ -402,7 +402,7 @@ extension ScanningViewController: ScanConfirmationViewDelegate {
 }
 
 // MARK: - scanning view delegate
-extension ScanningViewController: BarcodeDetectorDelegate {
+extension ScanningViewController: BarcodeScanning {
     public func scannedCodeResult(_ result: BarcodeResult) {
         self.handleScannedCode(result.code, withFormat: result.format)
     }
