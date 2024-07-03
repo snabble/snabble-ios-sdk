@@ -44,59 +44,42 @@ extension ShoppingCartViewModel {
     }
 }
 
-private struct ItemsAsListView<Footer: View>: View {
-    @ObservedObject var cartModel: ShoppingCartViewModel
-    var footer: Footer
-
-    var body: some View {
-        VStack {
-            if cartModel.items.isEmpty {
-                Spacer()
-            } else {
-                List {
-                    Section(footer: footer) {
-                        ForEach(cartModel.items, id: \.id) { item in
-                            cartModel.view(for: item)
-                                .environmentObject(cartModel)
-                        }
-                        .onDelete(perform: delete)
-                        .listRowInsets(EdgeInsets(top: 4, leading: 10, bottom: 4, trailing: 4))
-                        .listRowBackground(Color.clear)
-                    }
-                }
-                .listStyle(PlainListStyle())
-                .background(Color.clear)
-                .hiddenScrollView()
-            }
-        }
+extension ShoppingCartViewModel {
+    public var confirmDeletionAlert: Alert {
+        Alert(
+            title: Text(""),
+            message: Text(deletionMessage),
+            primaryButton:
+                    .destructive(Text(keyed: "Snabble.yes"),
+                                 action: {
+                                     self.processDeletion()
+                                 }),
+            secondaryButton:
+                    .cancel(Text(keyed: "Snabble.no"),
+                            action: {
+                                self.cancelDeletion()
+                            }))
+        
     }
-    private func delete(at offset: IndexSet) {
-        cartModel.trash(at: offset)
+    public var voucherErrorAlert: Alert {
+        Alert(
+            title: Text(keyed: "Snabble.InvalidDepositVoucher.errorMsg"),
+            message: nil,
+            dismissButton:
+                    .default(Text(keyed: "Snabble.ok"),
+                             action: {
+                                 self.voucherError = false
+                             }))
     }
-}
-
-private struct ItemsAsCustomView<Footer: View>: View {
-    @ObservedObject var cartModel: ShoppingCartViewModel
-    var footer: Footer
-
-    var body: some View {
-        VStack {
-            if cartModel.items.isEmpty {
-                Spacer()
-            } else {
-                ForEach(cartModel.items, id: \.id) { item in
-                    VStack {
-                        cartModel.view(for: item)
-                            .environmentObject(cartModel)
-                            .padding([.top, .bottom, .trailing], 4)
-                        Divider()
-                            .padding(.leading, 52)
-                    }
-                    .padding(.leading, 10)
-                }
-                footer
-            }
-        }
+    public var productErrorAlert: Alert {
+        Alert(
+            title: Text(keyed: "Snabble.SaleStop.ErrorMsg.title"),
+            message: Text(self.productErrorMessage),
+            dismissButton:
+                    .default(Text(keyed: "Snabble.ok"),
+                             action: {
+                                 self.productError = false
+                             }))
     }
 }
 
@@ -107,50 +90,43 @@ public struct ShoppingCartItemsView<Footer: View>: View {
     
     @ViewBuilder
     var content: some View {
-        if asList {
-            ItemsAsListView(cartModel: cartModel, footer: footer)
+        if cartModel.items.isEmpty {
+            VStack {
+                Spacer()
+            }
         } else {
-            ItemsAsCustomView(cartModel: cartModel, footer: footer)
+            List {
+                Section(footer: footer) {
+                    ForEach(cartModel.items, id: \.id) { item in
+                        cartModel.view(for: item)
+                            .environmentObject(cartModel)
+                    }
+                    .onDelete(perform: delete)
+                    .listRowInsets(EdgeInsets(top: 4, leading: 10, bottom: 4, trailing: 4))
+                    .listRowBackground(Color.clear)
+                }
+            }
+            .listStyle(.plain)
+            .background(.clear)
+            .hiddenScrollView()
         }
     }
 
     public var body: some View {
         content
-        .alert(isPresented: $cartModel.productError) {
-            Alert(
-                title: Text(keyed: "Snabble.SaleStop.ErrorMsg.title"),
-                message: Text(cartModel.productErrorMessage),
-                dismissButton:
-                        .default(Text(keyed: "Snabble.ok"),
-                                 action: {
-                                     cartModel.productError = false
-                                 }))
-                
-        }
-        .alert(isPresented: $cartModel.voucherError) {
-            Alert(
-                title: Text(keyed: "Snabble.InvalidDepositVoucher.errorMsg"),
-                message: nil,
-                dismissButton:
-                        .default(Text(keyed: "Snabble.ok"),
-                                 action: {
-                                     cartModel.voucherError = false
-                                 }))
-        }
-        .alert(isPresented: $cartModel.confirmDeletion) {
-            Alert(
-                title: Text(""),
-                message: Text(cartModel.deletionMessage),
-                primaryButton:
-                        .destructive(Text(keyed: "Snabble.yes"),
-                                     action: {
-                                         cartModel.processDeletion()
-                                     }),
-                secondaryButton:
-                        .cancel(Text(keyed: "Snabble.no"),
-                                action: {
-                                    cartModel.cancelDeletion()
-                                }))
-        }
+            .alert(isPresented: $cartModel.productError) {
+                cartModel.productErrorAlert
+            }
+            .alert(isPresented: $cartModel.voucherError) {
+                cartModel.voucherErrorAlert
+            }
+            .alert(isPresented: $cartModel.confirmDeletion) {
+                cartModel.confirmDeletionAlert
+            }
     }
+
+    private func delete(at offset: IndexSet) {
+        cartModel.trash(at: offset)
+    }
+
 }
