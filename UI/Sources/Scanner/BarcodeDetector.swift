@@ -34,7 +34,6 @@ public protocol BarcodeScanning: AnyObject {
     func scannedCodeResult(_ result: BarcodeResult)
 }
 
-
 public protocol BarcodePresenting: AnyObject {
     /// this is used to present permission alerts. If the delegate instance is a `UIViewController`, no more code is needed
     func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
