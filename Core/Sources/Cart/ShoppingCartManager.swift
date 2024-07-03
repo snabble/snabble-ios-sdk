@@ -19,8 +19,6 @@ public final class ShoppingCartManager {
 
     public private(set) lazy var couponManager: CouponManager = Snabble.shared.couponManager
 
-    init() {}
-
     @discardableResult
     public func shoppingCart(for shop: Shop) -> ShoppingCart {
         if let shoppingCart = shoppingCart, self.shop == shop, shop.id == shoppingCart.shopId {

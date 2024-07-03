@@ -24,6 +24,7 @@ public struct UIViewControllerPreview<ViewController>: UIViewControllerRepresent
         viewController
     }
 
+    // swiftlint:disable:next no_empty_block
     public func updateUIViewController(_ uiViewController: ViewController, context: UIViewControllerRepresentableContext<UIViewControllerPreview<ViewController>>) {}
 }
 #endif
