@@ -13,9 +13,9 @@ struct BorderedButtonStyle: ButtonStyle {
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .padding(4)
-            .background(Color.secondarySystemBackground)
+            .background(Color.quaternarySystemFill)
             .overlay(
-                RoundedRectangle(cornerRadius: 6)
+                RoundedRectangle(cornerRadius: 4)
                     .stroke(Color.gray, lineWidth: 0.5)
                 )
     }
@@ -50,7 +50,7 @@ struct CartStepperView: View {
                 minusImage
             }
             .buttonStyle(BorderedButtonStyle())
-            
+
             Text("\(itemModel.quantity)")
                 .font(.footnote)
                 .fontWeight(.bold)
@@ -64,7 +64,6 @@ struct CartStepperView: View {
                 plusImage
             }
             .buttonStyle(BorderedButtonStyle())
-
         }
     }
     func plus() {
