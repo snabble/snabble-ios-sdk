@@ -13,8 +13,8 @@ import SnabblePhoneAuth
 import SnabbleUser
 import SnabbleAssetProviding
 
-struct UserScreen: View {
-    enum Kind {
+public struct UserScreen: View {
+    public enum Kind {
         case initial
         case management
         
@@ -63,7 +63,7 @@ struct UserScreen: View {
         return formatter
     }()
     
-    init(networkManager: NetworkManager = .shared, user: SnabbleNetwork.User, kind: Kind) {
+    public init(networkManager: NetworkManager = .shared, user: SnabbleNetwork.User, kind: Kind) {
         self.networkManager = networkManager
         self.user = user
         self.kind = kind
@@ -146,7 +146,7 @@ struct UserScreen: View {
         return true
     }
     
-    var body: some View {
+    public var body: some View {
         NavigationStack {
             ScrollView {
                 VStack(spacing: 16) {
