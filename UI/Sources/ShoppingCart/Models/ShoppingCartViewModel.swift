@@ -14,12 +14,6 @@ public extension ShoppingCart {
     static let textFieldMagic: Int = 0x4711
 }
 
-extension CheckoutInfo.LineItem {
-    var quantity: Int {
-        weight ?? units ?? amount
-    }
-}
-
 open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatable {
     public let id = UUID()
     
@@ -306,7 +300,8 @@ extension ShoppingCartViewModel {
             guard let modifiers = lineItem.priceModifiers else { continue }
             
             for modifier in modifiers {
-                let discountCartItem = ShoppingCartItemDiscount(discount: lineItem.quantity * modifier.price, name: modifier.name, type: .priceModifier)
+                let discount = item.discounted(price: modifier.price, for: lineItem)
+                let discountCartItem = ShoppingCartItemDiscount(discount: discount, name: modifier.name, type: .priceModifier)
                 discountItems.append(discountCartItem)
             }
         }
