@@ -16,7 +16,7 @@ public extension ShoppingCart {
 
 extension CheckoutInfo.LineItem {
     var quantity: Int {
-        units ?? amount
+        weight ?? units ?? amount
     }
 }
 
