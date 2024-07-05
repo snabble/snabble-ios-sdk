@@ -49,6 +49,7 @@ struct WebViewRepresentable: UIViewRepresentable {
             _refresh = refresh
         }
 
+        // swiftlint:disable:next no_empty_block
         func webView(_ webView: WKWebView, didCommit navigation: WKNavigation!) {}
 
         func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {

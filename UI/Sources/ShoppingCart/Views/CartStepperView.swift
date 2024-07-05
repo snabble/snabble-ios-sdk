@@ -9,13 +9,19 @@ import SwiftUI
 import SnabbleCore
 
 struct BorderedButtonStyle: ButtonStyle {
-    
+    let radius: CGFloat
+
+    init(radius: CGFloat = 6) {
+        self.radius = radius
+    }
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .padding(4)
-            .background(Color.quaternarySystemFill)
+            .padding(radius)
+            .background(.regularMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: radius))
             .overlay(
-                RoundedRectangle(cornerRadius: 4)
+                RoundedRectangle(cornerRadius: radius)
                     .stroke(Color.gray, lineWidth: 0.5)
                 )
     }

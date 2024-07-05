@@ -36,8 +36,6 @@ public final class OfflineCarts {
     private var pendingCarts = 0
     private let queue = DispatchQueue(label: "io.snabble.saved-carts", qos: .utility)
 
-    private init() { }
-
     /// append a shopping cart to the list of carts that need to be sent later
     public func saveCartForLater(_ cart: ShoppingCart) {
         guard !cart.items.isEmpty else {

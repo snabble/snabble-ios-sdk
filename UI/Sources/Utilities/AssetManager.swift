@@ -134,8 +134,6 @@ final class AssetManager {
 
     private var pendingRequests = [AssetRequest]()
 
-    private init() {}
-
     /// Get a named asset, or its local fallback
     /// - Parameters:
     ///   - asset: type of the asset, e.g. `.checkoutOffline`
