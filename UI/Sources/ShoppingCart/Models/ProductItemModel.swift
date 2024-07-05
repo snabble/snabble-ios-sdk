@@ -28,10 +28,10 @@ open class ProductItemModel: CartItemModel, ShoppingCartItemCounting {
         
         let defaultItem = lineItems.first { $0.type == .default }
         
-        self.quantity = defaultItem?.weight ?? defaultItem?.units ?? item.quantity
-
         let product = item.product
-        
+
+        self.quantity = defaultItem?.quantity(for: product) ?? item.quantity
+
         super.init(title: defaultItem?.name ?? product.name, showImages: showImages)
         
         if item.editable {
