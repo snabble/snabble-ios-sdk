@@ -300,7 +300,8 @@ extension ShoppingCartViewModel {
             guard let modifiers = lineItem.priceModifiers else { continue }
             
             for modifier in modifiers {
-                let discountCartItem = ShoppingCartItemDiscount(discount: lineItem.amount * modifier.price, name: modifier.name, type: .priceModifier)
+                let discount = item.discounted(price: modifier.price, for: lineItem)
+                let discountCartItem = ShoppingCartItemDiscount(discount: discount, name: modifier.name, type: .priceModifier)
                 discountItems.append(discountCartItem)
             }
         }

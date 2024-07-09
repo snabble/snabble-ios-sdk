@@ -8,6 +8,7 @@
 import Foundation
 import KeychainAccess
 
+// swiftlint:disable:next convenience_type
 public struct Client {
     private static let service = "io.snabble.sdk"
 

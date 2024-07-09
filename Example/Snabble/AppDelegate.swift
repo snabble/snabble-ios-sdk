@@ -138,11 +138,13 @@ extension AppDelegate: OnboardingViewControllerDelegate {
 import CoreLocation
 
 extension AppDelegate: CheckInManagerDelegate {
+    // swiftlint:disable no_empty_block
     func checkInManager(_ checkInManager: CheckInManager, locationAuthorizationNotGranted authorizationStatus: CLAuthorizationStatus) {}
 
     func checkInManager(_ checkInManager: CheckInManager, locationAccuracyNotSufficient accuracyAuthorization: CLAccuracyAuthorization) {}
 
     func checkInManager(_ checkInManager: CheckInManager, didFailWithError error: Error) {}
+    // swiftlint:enable no_empty_block
 
     func checkInManager(_ checkInManager: CheckInManager, didCheckInTo shop: Shop) {
         shopsViewController?.viewModel.shop = shop
