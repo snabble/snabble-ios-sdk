@@ -382,13 +382,18 @@ public final class PaymentMethodManager: ObservableObject {
     }
 }
 
-public protocol AlertProviding {
+public protocol SheetProviding {
     typealias DismissHandler = () -> Void
-    func alertController(_ onDismiss: DismissHandler?) -> UIViewController
+    func sheetController(_ onDismiss: DismissHandler?) -> UIViewController
 }
 
-extension PaymentMethodManager: AlertProviding {
-    public func alertController(_ onDismiss: DismissHandler? = { }) -> UIViewController {
+public protocol AlertProviding {
+    typealias DismissHandler = (UIAlertAction) -> Void
+    func alertController(_ onDismiss: DismissHandler?) -> UIAlertController
+}
+
+extension PaymentMethodManager: SheetProviding {
+    public func sheetController(_ onDismiss: DismissHandler? = { }) -> UIViewController {
         let title = Asset.localizedString(forKey: "Snabble.Shoppingcart.howToPay")
         let sheet = AlertController(title: title, message: nil, preferredStyle: .actionSheet)
         sheet.outsideTapHandler = onDismiss
