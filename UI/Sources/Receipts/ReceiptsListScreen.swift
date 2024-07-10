@@ -108,8 +108,8 @@ public struct ReceiptsListScreen: View {
     @ObservedObject var viewModel: PurchasesViewModel
     @ViewProvider(.receiptsEmpty) var emptyView
 
-    public init() {
-        self.viewModel = PurchasesViewModel()
+    public init(model: PurchasesViewModel = .init()) {
+        self.viewModel = model
     }
 
     public var body: some View {
