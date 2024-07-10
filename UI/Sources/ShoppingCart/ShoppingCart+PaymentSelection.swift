@@ -73,7 +73,7 @@ final class PaymentMethodSelector {
     }
     
     @objc private func methodSelectionTapped(_ gesture: UITapGestureRecognizer) {
-        let sheet = paymentManager.alertController()
+        let sheet = paymentManager.sheetController()
         
         self.parentVC?.present(sheet, animated: true)
     }
