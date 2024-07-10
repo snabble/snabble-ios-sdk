@@ -9,19 +9,29 @@ import LocalAuthentication
 import SnabbleCore
 import SnabbleAssetProviding
 
+extension RawPaymentMethod: AlertProviding {
+    public func alertController(_ onDismiss: ((UIAlertAction) -> Void)?) -> UIAlertController {
+        let mode = BiometricAuthentication.supportedBiometry
+        let msg = mode == .none ?
+            Asset.localizedString(forKey: "Snabble.PaymentMethods.NoCodeAlert.noBiometry")
+            : Asset.localizedString(forKey: "Snabble.PaymentMethods.NoCodeAlert.biometry")
+
+        let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.PaymentMethods.noDeviceCode"),
+                                      message: msg,
+                                      preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default, handler: onDismiss))
+        return alert
+    }
+}
+
 extension RawPaymentMethod {
+    public var isAddingAllowed: Bool {
+        return self.codeRequired && !devicePasscodeSet() ? false : true
+    }
+    
     func isAddingAllowed(showAlertOn viewController: UIViewController) -> Bool {
-        if self.codeRequired && !devicePasscodeSet() {
-            let mode = BiometricAuthentication.supportedBiometry
-            let msg = mode == .none ?
-                Asset.localizedString(forKey: "Snabble.PaymentMethods.NoCodeAlert.noBiometry")
-                : Asset.localizedString(forKey: "Snabble.PaymentMethods.NoCodeAlert.biometry")
-
-            let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.PaymentMethods.noDeviceCode"),
-                                          message: msg,
-                                          preferredStyle: .alert)
-
-            alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default, handler: nil))
+        if !isAddingAllowed {
+            let alert = self.alertController(nil)
             viewController.present(alert, animated: true)
             return false
         } else {
