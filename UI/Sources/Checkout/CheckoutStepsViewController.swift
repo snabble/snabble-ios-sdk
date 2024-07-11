@@ -278,6 +278,7 @@ extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
         self.model.update(checkoutSteps: steps)
     }
 
+    // swiftlint:disable:next no_empty_block
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateHeaderViewModel headerViewModel: CheckoutHeaderViewModel) { }
 
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateExitToken exitToken: ExitToken) {

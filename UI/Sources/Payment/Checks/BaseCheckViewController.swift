@@ -41,6 +41,7 @@ open class BaseCheckViewModel: ObservableObject, CheckViewModel {
         self.init(checkModel: model)
     }
     
+    // swiftlint:disable:next no_empty_block
     func updateCodeImage() {
     }
 

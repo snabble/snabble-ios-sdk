@@ -334,6 +334,39 @@ public struct CartItem: Codable {
     }
 }
 
+extension CheckoutInfo.LineItem {
+    public var quantity: Int {
+        units ?? amount
+    }
+    
+    public func quantity(for product: Product) -> Int {
+        if product.type == .userMustWeigh {
+            return weight ?? 0 * amount
+        } else {
+            return quantity
+        }
+    }
+}
+
+extension CartItem {
+    public func discounted(price: Int, for lineItem: CheckoutInfo.LineItem) -> Int {
+        let quantity = lineItem.quantity(for: product)
+        
+        if product.type == .userMustWeigh {
+            // if we get here but have no units, fall back to our previous default of kilograms/grams
+            let referenceUnit = product.referenceUnit ?? .kilogram
+            let weightUnit = lineItem.weightUnit ?? .gram
+            
+            let factor = Units.convert(quantity, from: weightUnit, to: referenceUnit)
+            let total = Decimal(price) * factor
+            
+            return total.rounded(mode: self.roundingMode).intValue
+        } else {
+            return quantity * price
+        }
+    }
+}
+
 public struct BackendCartInfo: Codable {
     public let lineItems: [CheckoutInfo.LineItem]
     public let totalPrice: Int
