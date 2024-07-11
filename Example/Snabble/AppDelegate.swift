@@ -145,7 +145,7 @@ extension AppDelegate: CheckInManagerDelegate {
 
     func checkInManager(_ checkInManager: CheckInManager, didFailWithError error: Error) {}
     // swiftlint:enable no_empty_block
-    
+
     func checkInManager(_ checkInManager: CheckInManager, didCheckInTo shop: Shop) {
         shopsViewController?.viewModel.shop = shop
     }

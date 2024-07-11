@@ -6,6 +6,8 @@ included:
   - Datatrans
   - Pay
   - Example/Snabble
+  - PhoneAuth
+  - User
 
 excluded:
   - Core/Tests
@@ -14,6 +16,7 @@ excluded:
   - Network/Tests
   - Datatrans/Tests
   - Pay/Tests
+  - PhoneAuth/Tests
 
 disabled_rules:
   - todo

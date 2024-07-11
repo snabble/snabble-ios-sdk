@@ -55,8 +55,6 @@ public struct AppUser: Codable {
     }
 }
 
-import KeychainAccess
-
 extension AppUser {
     private static let service = "io.snabble.sdk"
     
@@ -79,4 +77,3 @@ extension AppUser {
         UserDefaults.standard.set(appUser?.id, forKey: "Snabble.api.appUserId")
     }
 }
-
