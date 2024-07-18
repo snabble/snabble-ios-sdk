@@ -41,6 +41,10 @@ public final class CouponsViewController: UICollectionViewController {
         configureCollectionView(collectionView)
         configureEmptyLabel(on: collectionView)
         update(with: coupons)
+        
+        registerForTraitChanges([UITraitUserInterfaceStyle.self], handler: { (self: Self, _: UITraitCollection) in
+            self.update(with: self.coupons)
+        })
     }
 
     private func configureCollectionView(_ collectionView: UICollectionView) {
@@ -60,10 +64,10 @@ public final class CouponsViewController: UICollectionViewController {
         self.emptyLabel = emptyLabel
     }
 
-    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        update(with: coupons)
-    }
+//    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+//        super.traitCollectionDidChange(previousTraitCollection)
+//        update(with: coupons)
+//    }
 
     private func update(with coupons: [Coupon]) {
         emptyLabel?.isHidden = !coupons.isEmpty

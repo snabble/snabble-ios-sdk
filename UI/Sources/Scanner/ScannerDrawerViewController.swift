@@ -173,7 +173,14 @@ final class ScannerDrawerViewController: UIViewController {
 
         let nc = NotificationCenter.default
         nc.addObserver(self, selector: #selector(self.shoppingCartUpdated(_:)), name: .snabbleCartUpdated, object: nil)
-    }
+      
+        registerForTraitChanges([UITraitUserInterfaceStyle.self], handler: { (self: Self, _: UITraitCollection) in
+            self.setupBlurEffect()
+            if let customAppearance = self.customAppearance {
+                self.checkoutBar?.setCustomAppearance(customAppearance)
+            }
+        })
+   }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -187,14 +194,14 @@ final class ScannerDrawerViewController: UIViewController {
         checkoutBar?.updateTotals()
     }
 
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        setupBlurEffect()
-        if let customAppearance = self.customAppearance {
-            self.checkoutBar?.setCustomAppearance(customAppearance)
-        }
-    }
+//    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+//        super.traitCollectionDidChange(previousTraitCollection)
+//
+//        setupBlurEffect()
+//        if let customAppearance = self.customAppearance {
+//            self.checkoutBar?.setCustomAppearance(customAppearance)
+//        }
+//    }
 
     private func setupBlurEffect() {
         self.effectView?.effect = UIBlurEffect(style: traitCollection.userInterfaceStyle == .light ? .extraLight : .dark)
