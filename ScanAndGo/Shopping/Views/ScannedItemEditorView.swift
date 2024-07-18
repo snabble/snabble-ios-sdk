@@ -144,12 +144,11 @@ struct ScannerCartItemView: View {
         self.scannedItem = scannedItem
         
         let result = model.cartItem(for: scannedItem)
+        self.alreadyInCart = result.alreadyInCart
+        self.onAction = onAction
+
         self.cartItem = result.cartItem
         self.quantity = result.cartItem.quantity
-        self.alreadyInCart = result.alreadyInCart
-        
-        self.onAction = onAction
-        
         self.strikePrice = model.strikePrice(for: scannedItem)
     }
     
