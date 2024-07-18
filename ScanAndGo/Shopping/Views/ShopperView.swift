@@ -85,6 +85,7 @@ public struct ShopperView: View {
              }
             .onChange(of: showEditor) {
                 if !showEditor {
+                    model.scannedItem = nil
                     model.startScanner()
                 }
             }
