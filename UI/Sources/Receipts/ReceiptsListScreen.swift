@@ -128,6 +128,7 @@ public struct ReceiptsListScreen: View {
                     }
                     ForEach(output, id: \.id) { provider in
                         ReceiptsItemView(provider: provider, image: viewModel.imageFor(projectId: provider.projectId))
+                            .contentShape(Rectangle())
                             .onTapGesture {
                                 viewModel.actionPublisher.send(provider)
                             }
