@@ -7,8 +7,10 @@
 
 import SwiftUI
 
-struct ShopperLoadingView: View {
-    var body: some View {
+public struct ShopperLoadingView: View {
+    public init() { }
+    
+    public var body: some View {
         ZStack {
             Rectangle()
                 .foregroundColor(.gray)

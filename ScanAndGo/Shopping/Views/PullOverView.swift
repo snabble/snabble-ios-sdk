@@ -7,6 +7,8 @@
 
 import SwiftUI
 
+import SnabbleAssetProviding
+
 struct DraggableModifier: ViewModifier {
     enum Direction {
         case vertical

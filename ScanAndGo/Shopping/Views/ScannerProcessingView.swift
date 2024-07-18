@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-struct ScannerProcessingView: View {
-    var body: some View {
+public struct ScannerProcessingView: View {
+    public var body: some View {
         VStack {
             Spacer()
             HStack(spacing: 12) {

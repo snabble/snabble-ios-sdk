@@ -44,7 +44,7 @@ struct InvalidNavigationView: View {
 
 extension Shopper {
     @ViewBuilder
-    func navigationDestination(isPresented: Binding<Bool>) -> some View {
+    public func navigationDestination(isPresented: Binding<Bool>) -> some View {
         if let controller {
             ContainerView(viewController: controller, isPresented: isPresented)
                 .navigationTitle(controller.navigationItem.title ?? "Navigation")

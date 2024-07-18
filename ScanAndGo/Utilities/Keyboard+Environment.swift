@@ -13,7 +13,7 @@ private struct KeyboardHeightEnvironmentKey: EnvironmentKey {
 
 extension EnvironmentValues {
     /// Height of software keyboard when visible
-    var keyboardHeight: CGFloat {
+    public var keyboardHeight: CGFloat {
         get { self[KeyboardHeightEnvironmentKey.self] }
         set { self[KeyboardHeightEnvironmentKey.self] = newValue }
     }
@@ -52,7 +52,7 @@ public extension View {
     /// Must be applied on a view taller than the keyboard that touches the bottom edge of the safe area.
     /// Access keyboard height in any child view with
     /// @Environment(\.keyboardHeight) var keyboardHeight
-    func keyboardHeightEnvironmentValue() -> some View {
+    public func keyboardHeightEnvironmentValue() -> some View {
         modifier(KeyboardHeightEnvironmentValue())
     }
 }

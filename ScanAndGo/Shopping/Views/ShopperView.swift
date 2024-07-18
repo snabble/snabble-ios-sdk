@@ -10,15 +10,18 @@ import SwiftUI
 import SnabbleAssetProviding
 
 public struct ShopperView: View {
+    @ObservedObject public var model: Shopper
     @AppStorage(UserDefaults.scanningDisabledKey) var expanded: Bool = false
-
-    @ObservedObject var model: Shopper
     
     @State private var showSearch: Bool = false
     @State private var showError: Bool = false
     @State private var showEditor: Bool = false
     @State private var showDialog: Bool = false
     
+    public init(model: Shopper) {
+        self.model = model
+    }
+
     public var body: some View {
         ShoppingScannerView(model: model)
             .animation(.easeInOut, value: model.scannedItem)

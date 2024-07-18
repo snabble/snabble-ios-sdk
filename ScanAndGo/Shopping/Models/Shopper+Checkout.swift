@@ -19,7 +19,7 @@ extension ShoppingCart {
     }
 }
 extension Shopper {
-    func sendAction(_ actionType: ActionType) {
+    public func sendAction(_ actionType: ActionType) {
         ActionManager.shared.actionPublisher.send(actionType)
     }
 

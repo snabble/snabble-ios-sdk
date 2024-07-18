@@ -9,6 +9,7 @@ import SwiftUI
 import OSLog
 import Combine
 import SnabbleUI
+import SnabbleAssetProviding
 
 public enum ActionType: Equatable {
     /// Nothing to display
@@ -75,10 +76,10 @@ struct ActionItem: Swift.Identifiable, Equatable {
 }
 
 public final class ActionManager: ObservableObject {
-    static let shared = ActionManager()
+    public static let shared = ActionManager()
     
     let logger = Logger(subsystem: "ScanAndGo", category: "ActionManager")
-    let actionPublisher = PassthroughSubject<ActionType, Never>()
+    public let actionPublisher = PassthroughSubject<ActionType, Never>()
     
     @Published var actionState: ActionType = .idle {
         didSet {

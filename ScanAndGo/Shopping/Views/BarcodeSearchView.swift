@@ -32,7 +32,7 @@ struct BarcodeSearchRowView: View {
         .task {
             update()
         }
-        .onChange(of: searchText) {
+        .onChange(of: searchText) { _ in
             update()
         }
     }
@@ -93,7 +93,7 @@ struct BarcodeSearchView: View {
                     }
             }
             .listStyle(.plain)
-            .onChange(of: selection) {
+            .onChange(of: selection) { _ in
                 if let selection {
                     let codeEntry = selection.codes.filter { $0.code.hasPrefix(self.searchText)
                     }.first ?? selection.codes.first!
@@ -110,7 +110,7 @@ struct BarcodeSearchView: View {
                             isPresented: $showSearch,
                             placement: .navigationBarDrawer(displayMode: .always),
                             prompt: Text(Asset.localizedString(forKey: "Snabble.Scanner.enterBarcode")))
-                .onChange(of: showSearch) {
+                .onChange(of: showSearch) { _ in
                     if !showSearch {
                         dismiss()
                     }

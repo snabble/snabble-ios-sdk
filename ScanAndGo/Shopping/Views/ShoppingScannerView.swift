@@ -49,7 +49,7 @@ struct ShoppingScannerView: View {
         .hud(isPresented: $showHud) {
             ScanMessageView(message: model.scanMessage)
         }
-        .onChange(of: showHud) {
+        .onChange(of: showHud) { _ in
             if !showHud {
                 model.scanMessage = nil
                 withAnimation {
