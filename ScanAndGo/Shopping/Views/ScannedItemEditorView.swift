@@ -89,7 +89,12 @@ struct ScannerQuantityView: View {
     let canEdit: Bool
     
     @State private var quantityString: String = "0"
-    
+
+    enum FocusedField: Hashable {
+      case quantity
+    }
+    @FocusState var focusedField: FocusedField?
+
     var body: some View {
         HStack {
             Spacer()
@@ -106,11 +111,25 @@ struct ScannerQuantityView: View {
                     .strokeBorder(Color.secondary, lineWidth: 1)
                 )
                 .disabled(!canEdit)
-            
+                .focused($focusedField, equals: .quantity)
+
             QuantityPlusButton(quantity: $quantity)
                 .disabled(!(quantity < ShoppingCart.maxAmount))
 
             Spacer()
+        }
+        .onAppear {
+            if canEdit {
+                if quantity == 0 {
+                    quantityString = "1"
+                }
+                focusedField = .quantity
+            }
+        }
+        .onChange(of: quantityString) {
+            if let intValue = Int(quantityString) {
+                self.quantity = intValue
+            }
         }
         .onChange(of: quantity) {
             quantityString = String(quantity)
@@ -132,7 +151,7 @@ struct ScannerCartItemView: View {
     @State private var cartItem: CartItem
     @State private var quantity: Int
 
-    @State private var canAddToCart: Bool = false
+    @State private var disableCheckout: Bool = true
     @State private var strikePrice: String?
     @State private var price: String?
     @State private var selectedCoupon: CouponItem?
@@ -188,7 +207,7 @@ struct ScannerCartItemView: View {
                     DiscountMenu(coupons: model.barcodeManager.coupons, selection: $selectedCoupon)
                 }
                 
-                ScannerQuantityView(quantity: $quantity, canEdit: true /*cartItem.editable*/)
+                ScannerQuantityView(quantity: $quantity, canEdit: cartItem.editable)
                     .onChange(of: quantity) { _, newValue in
                         self.cartItem.setQuantity(newValue)
                         self.price = model.priceString(for: self.cartItem)
@@ -197,7 +216,7 @@ struct ScannerCartItemView: View {
 
                 let title = alreadyInCart ? Asset.localizedString(forKey: "Snabble.Scanner.updateCart") : Asset.localizedString(forKey: "Snabble.Scanner.addToCart")
                 
-                PrimaryButtonView(title: title, onAction: {
+                PrimaryButtonView(title: title, disabled: $disableCheckout, onAction: {
                     onAction(self.cartItem)
                     dismiss()
                })
@@ -208,11 +227,18 @@ struct ScannerCartItemView: View {
             }
             .onChange(of: cartItem) { _, newItem in
                 self.cartItem = newItem
+                self.disableCheckout = !canAddItem(newItem)
             }
             .frame(maxWidth: .infinity)
             .cardStyle()
             .padding()
         }
+    }
+    func canAddItem(_ cartItem: CartItem) -> Bool {
+        if cartItem.editable {
+            return cartItem.quantity > 0
+        }
+        return true
     }
 }
 
