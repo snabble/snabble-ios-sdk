@@ -126,9 +126,9 @@ struct ScannerCartItemView: View {
     @ObservedObject var model: Shopper
     
     let scannedItem: BarcodeManager.ScannedItem
-    let alreadyInCart: Bool
     let onAction: (_: CartItem?) -> Void
-    
+    let alreadyInCart: Bool
+
     @State private var cartItem: CartItem
     @State private var canAddToCart: Bool = false
     @State private var strikePrice: String?
@@ -142,10 +142,10 @@ struct ScannerCartItemView: View {
     ) {
         self.model = model
         self.scannedItem = scannedItem
-        
+        self.onAction = onAction
+
         let result = model.cartItem(for: scannedItem)
         self.alreadyInCart = result.alreadyInCart
-        self.onAction = onAction
 
         self.cartItem = result.cartItem
         self.quantity = result.cartItem.quantity
