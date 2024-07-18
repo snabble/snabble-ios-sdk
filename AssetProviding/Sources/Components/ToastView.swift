@@ -19,7 +19,10 @@ public struct Toast: Swift.Identifiable, Equatable {
         case warning
         case error
     }
-
+    public init(text: String, style: Toast.Style = .information) {
+        self.text = text
+        self.style = style
+    }
     public var image: SwiftUI.Image {
         switch style {
         case .information:
