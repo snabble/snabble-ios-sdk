@@ -118,11 +118,11 @@ struct ScannerQuantityView: View {
 
             Spacer()
         }
+        .task {
+            quantityString = String(quantity)
+        }
         .onAppear {
             if canEdit {
-                if quantity == 0 {
-                    quantityString = "1"
-                }
                 focusedField = .quantity
             }
         }
@@ -132,9 +132,6 @@ struct ScannerQuantityView: View {
             }
         }
         .onChange(of: quantity) {
-            quantityString = String(quantity)
-        }
-        .task {
             quantityString = String(quantity)
         }
     }
@@ -165,13 +162,15 @@ struct ScannerCartItemView: View {
         self.onAction = onAction
 
         let result = model.cartItem(for: scannedItem)
-        let cartItem = result.cartItem
+        var cartItem = result.cartItem
         
         self.alreadyInCart = result.alreadyInCart
 
+        cartItem.setQuantity(cartItem.quantity > 0 ? cartItem.quantity : 1)
         self._cartItem = State(initialValue: cartItem)
         self._quantity = State(initialValue: cartItem.quantity)
-        
+
+        self.price = model.priceString(for: cartItem)
         self.strikePrice = model.strikePrice(for: scannedItem)
     }
     
@@ -224,6 +223,8 @@ struct ScannerCartItemView: View {
             }
             .task {
                 self.price = model.priceString(for: cartItem)
+                self.quantity = cartItem.quantity > 0 ? cartItem.quantity : 1
+                self.disableCheckout = !canAddItem(cartItem)
             }
             .onChange(of: cartItem) { _, newItem in
                 self.cartItem = newItem
