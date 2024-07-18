@@ -109,7 +109,7 @@ struct PullView: ViewModifier {
                 .thickMaterial()
 //                .clipShape( CardShape(radius: 16) )
             }
-            .onChange(of: minHeight) { _ in
+            .onChange(of: minHeight) {
                 setupMinHeight(geom: geom)
             }
             .onAppear {

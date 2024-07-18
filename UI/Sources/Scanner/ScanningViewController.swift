@@ -20,7 +20,7 @@ private enum ScannerLookup {
     case failure(ProductLookupError)
 }
 
-public final class ScanningViewController: UIViewController {
+public final class ScanningViewController: UIViewController, BarcodePresenting {
     private weak var spinner: UIActivityIndicatorView?
 
     private var messageView: ScanningMessageView?
@@ -156,6 +156,12 @@ public final class ScanningViewController: UIViewController {
 
         let searchButton = UIBarButtonItem(image: Asset.image(named: "SnabbleSDK/icon-entercode"), style: .plain, target: self, action: #selector(searchTapped(_:)))
         self.pulleyViewController?.navigationItem.rightBarButtonItem = searchButton
+        
+        registerForTraitChanges([UITraitUserInterfaceStyle.self], handler: { (self: Self, _: UITraitCollection) in
+            if let appearance = self.customAppearance {
+                self.setCustomAppearance(appearance)
+            }
+        })
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -402,7 +408,7 @@ extension ScanningViewController: ScanConfirmationViewDelegate {
 }
 
 // MARK: - scanning view delegate
-extension ScanningViewController: BarcodeDetectorDelegate {
+extension ScanningViewController: BarcodeScanning {
     public func scannedCodeResult(_ result: BarcodeResult) {
         self.handleScannedCode(result.code, withFormat: result.format)
     }
@@ -805,16 +811,6 @@ extension ScanningViewController: CustomizableAppearance {
                 let imgView = UIImageView(image: image)
                 self.navigationItem.titleView = imgView
             }
-        }
-    }
-}
-
-extension ScanningViewController {
-    override public func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-
-        if let appearance = self.customAppearance {
-            self.setCustomAppearance(appearance)
         }
     }
 }

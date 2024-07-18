@@ -108,8 +108,8 @@ public struct ReceiptsListScreen: View {
     @ObservedObject var viewModel: PurchasesViewModel
     @ViewProvider(.receiptsEmpty) var emptyView
 
-    public init() {
-        self.viewModel = PurchasesViewModel()
+    public init(model: PurchasesViewModel = .init()) {
+        self.viewModel = model
     }
 
     public var body: some View {
@@ -128,6 +128,7 @@ public struct ReceiptsListScreen: View {
                     }
                     ForEach(output, id: \.id) { provider in
                         ReceiptsItemView(provider: provider, image: viewModel.imageFor(projectId: provider.projectId))
+                            .contentShape(Rectangle())
                             .onTapGesture {
                                 viewModel.actionPublisher.send(provider)
                             }

@@ -21,7 +21,7 @@ public enum ApplePay {
         return
             Snabble.shared.project(for: projectId)?.paymentMethods.contains(.applePay) ?? false &&
             isSupported() &&
-            PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: paymentNetworks(with: projectId), capabilities: .capability3DS)
+        PKPaymentAuthorizationViewController.canMakePayments(usingNetworks: paymentNetworks(with: projectId), capabilities: .threeDSecure)
     }
 
     public static func paymentNetworks(with projectId: SnabbleCore.Identifier<Project>) -> [PKPaymentNetwork] {

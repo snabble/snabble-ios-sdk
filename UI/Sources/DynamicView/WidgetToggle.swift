@@ -27,7 +27,7 @@ public struct WidgetToggleView: View {
         HStack {
             Toggle(Asset.localizedString(forKey: widget.text), isOn: $value)
         }
-        .onChange(of: value) { newState in
+        .onChange(of: value) { _, newState in
             action(.init(
                 widget: widget,
                 userInfo: [widget.key: newState]

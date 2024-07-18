@@ -87,59 +87,57 @@ public struct UserProfileView<Teaser: View, Login: View, Fallback: View>: View {
                 if let login {
                     login()
                 } else {
-                    if let name = user.fullName {
-                        Text(name).header()
-                            .frame(maxWidth: .infinity)
-                            .truncationMode(.middle)
-                            .lineLimit(1)
-                    } else {
-                        Text(Asset.localizedString(forKey: "Account.Info.fallback")).header()
-                            .frame(maxWidth: .infinity)
-                            .multilineTextAlignment(.center)
-                    }
-                    if let details = user.details {
-                        ZStack(alignment: .trailing) {
-                            VStack {
-                                if let street = details.street {
-                                    Text(street)
-                                }
-                                if let zip = details.zip, let city = details.city {
-                                    Text(zip + " " + city)
-                                }
-                                if let email = details.email {
-                                    Text(email)
-                                }
-                            }
-                            .lineLimit(1)
-                            .frame(maxWidth: .infinity)
-                            .padding([.leading, .trailing])
-                            .truncationMode(.middle)
-
-                            Image(systemName: "square.and.pencil")
-                                .foregroundColor(.secondary)
+                    Group {
+                        if let name = user.fullName {
+                            Text(name).header()
+                                .frame(maxWidth: .infinity)
+                                .truncationMode(.middle)
+                                .lineLimit(1)
+                        } else {
+                            Text(Asset.localizedString(forKey: "Account.Info.fallback")).header()
+                                .frame(maxWidth: .infinity)
+                                .multilineTextAlignment(.center)
                         }
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            editUser.toggle()
-                        }
-                    }
-                    if let phoneNumber = user.phoneNumber {
-                        ZStack(alignment: .trailing) {
-                            Text(phoneNumber)
+                        if let details = user.details {
+                            ZStack(alignment: .trailing) {
+                                VStack {
+                                    if let street = details.street {
+                                        Text(street)
+                                    }
+                                    if let zip = details.zip, let city = details.city {
+                                        Text(zip + " " + city)
+                                    }
+                                    if let email = details.email {
+                                        Text(email)
+                                    }
+                                }
+                                .lineLimit(1)
                                 .frame(maxWidth: .infinity)
                                 .padding([.leading, .trailing])
-                            
-                            Image(systemName: "square.and.pencil")
-                                .foregroundColor(.secondary)
+                                .truncationMode(.middle)
+                                
+                                Image(systemName: "square.and.pencil")
+                                    .foregroundColor(.secondary)
+                            }
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                editUser.toggle()
+                            }
                         }
-                        .contentShape(Rectangle())
-                        .onTapGesture {
-                            changePhoneNumber.toggle()
+                        if let phoneNumber = user.phoneNumber {
+                            ZStack(alignment: .trailing) {
+                                Text(phoneNumber)
+                                    .frame(maxWidth: .infinity)
+                                    .padding([.leading, .trailing])
+                                
+                                Image(systemName: "square.and.pencil")
+                                    .foregroundColor(.secondary)
+                            }
+                            .contentShape(Rectangle())
+                            .onTapGesture {
+                                changePhoneNumber.toggle()
+                            }
                         }
-                    }
-                    
-                    SecondaryButtonView(title: Asset.localizedString(forKey: "Settings.signOut")) {
-                        UserDefaults.standard.setUserSignedIn(false)
                     }
                     .sheet(isPresented: $editUser) {
                         UserScreen(networkManager: phoneAuth.networkManager, user: user, kind: .management)
@@ -156,9 +154,6 @@ public struct UserProfileView<Teaser: View, Login: View, Fallback: View>: View {
                    fallback()
                } else {
                    UserFallBackView()
-                   SecondaryButtonView(title: Asset.localizedString(forKey: "Settings.signOut")) {
-                       UserDefaults.standard.setUserSignedIn(false)
-                   }
                }
            }
         }

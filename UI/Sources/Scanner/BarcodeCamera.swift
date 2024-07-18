@@ -11,7 +11,7 @@ import UIKit
 import SnabbleCore
 
 extension ScanFormat {
-    var avType: AVMetadataObject.ObjectType {
+    public var avType: AVMetadataObject.ObjectType {
         switch self {
         case .ean8: return .ean8
         case .unknown, .ean13: return .ean13
@@ -26,7 +26,7 @@ extension ScanFormat {
 }
 
 extension AVMetadataObject.ObjectType {
-    var scanFormat: ScanFormat? {
+    public var scanFormat: ScanFormat? {
         switch self {
         case .ean13: return .ean13
         case .ean8: return .ean8
@@ -209,7 +209,7 @@ open class BarcodeCamera: BarcodeDetector {
                 camera.automaticallyEnablesLowLightBoostWhenAvailable = true
             }
             // swiftlint:disable:next no_empty_block
-       } catch {}
+        } catch {}
 
         return camera
     }

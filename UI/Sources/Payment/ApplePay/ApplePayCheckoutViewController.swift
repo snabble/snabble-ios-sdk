@@ -71,7 +71,7 @@ final class ApplePayCheckoutViewController: UIViewController {
         paymentRequest.countryCode = countryCode
         paymentRequest.currencyCode = process.currency
         paymentRequest.supportedNetworks = ApplePay.paymentNetworks(with: project.id)
-        paymentRequest.merchantCapabilities = .capability3DS
+        paymentRequest.merchantCapabilities = .threeDSecure
 
         let totalAmount = decimalPrice(process.pricing.price.price, decimalDigits)
         let sumItem = PKPaymentSummaryItem(label: project.name, amount: totalAmount)

@@ -144,7 +144,7 @@ struct IBANHintView: View {
 
     var body: some View {
         content
-            .onChange(of: model.ibanNumber) { _ in
+            .onChange(of: model.ibanNumber) {
                 attributedString = model.attributedInputPlaceholderString
             }
     }

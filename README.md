@@ -17,7 +17,8 @@ Prior to version 0.22.2 only Cocoapods is supported
 
 ## Requirements
 
-- Requires Xcode 12.5 or above
+- Requires Xcode 15.4 or above
+- Requires iOS 17.0 or above
 - See [Package.swift](Package.swift) for supported platform versions.
 
 ### Installing from Xcode
@@ -108,6 +109,53 @@ $ open SnabbleSampleApp.xcodeproj
 To run this sample app, you will need an application identifier and a corresponding secret. [Contact us via e-mail](mailto:&#105;&#110;&#102;&#111;&#064;&#115;&#110;&#097;&#098;&#098;&#108;&#101;&#046;&#105;&#111;) for this information.
 
 
+## What's new
+
+With this version, the **Scan&Go** module `SnabbleScanAndGo` is available as a SwiftUI component. This extension allows you to integrate the entire Scan&Go workflow by simply calling `ShopperView(model: Shopper)`.
+
+To create a `Shopper` you must be checked into a `Shop`:
+```Swift
+import SnabbleScanAndGo
+
+final class AppState: ObservableObject {
+   @Published var shop: Shop? {
+        didSet {
+            if let shop {
+                self.shopper = Shopper(shop: shop)
+            } else {
+                self.shopper = nil
+            }
+        }
+    }
+   @Published var shopper: Shopper?
+   ...
+}
+```
+You can now start a **Scan&Go** session with a `Shopper` instance:
+```Swift
+import SnabbleScanAndGo
+
+public struct ShoppingContainer: View {
+    @EnvironmentObject var appState: AppState
+    
+    public var body: some View {
+        if let model = appState.shopper {
+            ShopperView(model: model)
+        } else {
+            ShopperLoadingView()
+        }
+    }
+}
+```
+All actions during a **Scan&Go** session are performed in `ShopperView`. This includes:
+- Selection of a payment method that has not yet been configured with forwarding to the respective input form.
+- Selection of an already configured payment method.
+- Adding scanned items to the shopping basket.
+- Managing the shopping cart (changing article quantities, deleting articles).
+- Search mask for manual entry of barcodes.
+- Performing a payment process with checkout.
+- Error handling during a Scan&Go session
+
 ## Author
 
 snabble GmbH, Bonn
@@ -115,4 +163,4 @@ snabble GmbH, Bonn
 
 ## License
 
-snabble is (c) 2021 snabble GmbH, Bonn. The SDK is made available under the [MIT License](https://github.com/snabble/iOS-SDK/blob/main/LICENSE).
+snabble is (c) 2021-2024 snabble GmbH, Bonn. The SDK is made available under the [MIT License](https://github.com/snabble/iOS-SDK/blob/main/LICENSE).

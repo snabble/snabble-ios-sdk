@@ -5,6 +5,7 @@
 //
 
 import UIKit
+
 import SnabbleCore
 import SnabbleAssetProviding
 
@@ -262,7 +263,7 @@ extension PaymentProcess {
             return completion(Result.failure(.noRequest))
         }
 
-        UIApplication.shared.mainKeyWindow?.isUserInteractionEnabled = false
+        UIApplication.shared.sceneKeyWindow?.isUserInteractionEnabled = false
         self.startBlurOverlayTimer()
 
         let project = shop.project ?? .none
@@ -270,7 +271,7 @@ extension PaymentProcess {
         
         self.signedCheckoutInfo.createCheckoutProcess(project, id: id, paymentMethod: method, timeout: Self.createTimeout) { result in
             self.hudTimer?.invalidate()
-            UIApplication.shared.mainKeyWindow?.isUserInteractionEnabled = true
+            UIApplication.shared.sceneKeyWindow?.isUserInteractionEnabled = true
             self.hideBlurOverlay()
             
             func checkoutProcess(process: CheckoutProcess) {

@@ -382,14 +382,21 @@ public final class PaymentMethodManager: ObservableObject {
     }
 }
 
-public protocol AlertProviding {
-    func alertController() -> UIViewController
+public protocol SheetProviding {
+    typealias DismissHandler = () -> Void
+    func sheetController(_ onDismiss: DismissHandler?) -> UIViewController
 }
 
-extension PaymentMethodManager: AlertProviding {
-    public func alertController() -> UIViewController {
+public protocol AlertProviding {
+    typealias DismissHandler = (UIAlertAction) -> Void
+    func alertController(_ onDismiss: DismissHandler?) -> UIAlertController
+}
+
+extension PaymentMethodManager: SheetProviding {
+    public func sheetController(_ onDismiss: DismissHandler? = { }) -> UIViewController {
         let title = Asset.localizedString(forKey: "Snabble.Shoppingcart.howToPay")
         let sheet = AlertController(title: title, message: nil, preferredStyle: .actionSheet)
+        sheet.outsideTapHandler = onDismiss
         sheet.visualStyle = .snabbleActionSheet
         
         let actions = project.paymentActions(for: shoppingCart)
@@ -401,6 +408,7 @@ extension PaymentMethodManager: AlertProviding {
             let alertAction = AlertAction(attributedTitle: action.title, style: .normal) { [self] _ in
                 if action.selectable {
                     userSelectedPaymentMethod(with: action)
+                    onDismiss?()
                 }
             }
 
@@ -412,7 +420,9 @@ extension PaymentMethodManager: AlertProviding {
         }
 
         // add the cancel action
-        sheet.addAction(AlertAction(title: Asset.localizedString(forKey: "Snabble.cancel"), style: .preferred))
+        sheet.addAction(AlertAction(title: Asset.localizedString(forKey: "Snabble.cancel"), style: .preferred) { _ in
+            onDismiss?()
+        })
         
         return sheet
     }
