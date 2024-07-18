@@ -114,11 +114,16 @@ struct AttributedText: UIViewRepresentable {
         init(_ control: AttributedText) {
             self.control = control
         }
-
-        func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-            self.control.openURL = url
-            return false
+        func textView(_ textView: UITextView, primaryActionFor textItem: UITextItem, defaultAction: UIAction) -> UIAction? {
+            if case .link(let url) = textItem.content {
+                self.control.openURL = url
+            }
+            return nil
         }
+//        func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
+//            self.control.openURL = url
+//            return false
+//        }
     }
 
 }
