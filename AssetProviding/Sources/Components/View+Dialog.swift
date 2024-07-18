@@ -33,6 +33,8 @@ struct DialogViewModifier<Dialog: View>: ViewModifier {
                 GeometryReader { geometry in
                     ZStack(alignment: .center) {
                         if isShowing {
+                            Color.black
+                                .opacity(0.3)
                             dialog()
                                 .frame(width: geometry.size.width, height: geometry.size.height)
                         }
