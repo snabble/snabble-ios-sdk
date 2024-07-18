@@ -46,7 +46,7 @@ class BarcodeScannerViewController: UIViewController {
     }
     private func addLayer(_ layer: CALayer, to viewController: UIViewController) {
         let frame = viewController.view.bounds
-        let insets = UIApplication.shared.keyWindow?.safeAreaInsets ?? UIEdgeInsets()
+        let insets = UIApplication.shared.sceneKeyWindow?.safeAreaInsets ?? UIEdgeInsets()
         
         let rect = CGRect(x: 0, y: 0, width: frame.width, height: frame.height - insets.top - insets.bottom - UITabBarController().height)
         

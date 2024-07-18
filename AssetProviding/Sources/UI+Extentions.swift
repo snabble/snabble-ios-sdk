@@ -8,7 +8,7 @@
 import SwiftUI
 
 extension UIApplication {
-    var keyWindow: UIWindow? {
+    public var sceneKeyWindow: UIWindow? {
         connectedScenes
             .filter { $0.activationState == .foregroundActive }
             .first(where: { $0 is UIWindowScene })
@@ -29,7 +29,7 @@ public extension UITabBarController {
 
 private struct SafeAreaInsetsKey: EnvironmentKey {
     static var defaultValue: EdgeInsets {
-        UIApplication.shared.keyWindow?.safeAreaInsets.swiftUIInsets ?? EdgeInsets()
+        UIApplication.shared.sceneKeyWindow?.safeAreaInsets.swiftUIInsets ?? EdgeInsets()
     }
 }
 private extension UIEdgeInsets {
