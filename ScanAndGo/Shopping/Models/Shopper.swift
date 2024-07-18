@@ -34,8 +34,8 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
         lhs.barcodeManager.shop == rhs.barcodeManager.shop
     }
     
-    @ObservedObject var barcodeManager: BarcodeManager
-    @ObservedObject var cartModel: ShoppingCartViewModel
+    @ObservedObject public var barcodeManager: BarcodeManager
+    @ObservedObject public var cartModel: ShoppingCartViewModel
     
     @Published public var paymentManager: PaymentMethodManager
     @Published public var selectedPayment: Payment?
