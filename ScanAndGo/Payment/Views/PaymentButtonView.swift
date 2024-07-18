@@ -30,7 +30,7 @@ struct PaymentButtonView: View {
                 Spacer(minLength: 2)
                 Image(systemName: "chevron.down")
             }
-            .frame(width: 88, height: 24)
+            .frame(width: 88, height: 38)
             .contentShape(Rectangle())
         })
         .buttonStyle(BorderedButtonStyle())
