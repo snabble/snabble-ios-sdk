@@ -11,6 +11,7 @@ import SnabbleUI
 
 struct ScanMessageView: View {
     var message: ScanMessage?
+    @Binding var isPresented: Bool
     
     var body: some View {
         VStack {
@@ -22,13 +23,15 @@ struct ScanMessageView: View {
                     .frame(maxWidth: .infinity)
                 Spacer()
                 SwiftUI.Image(systemName: "xmark")
-                    .padding()
+                    .onTapGesture {
+                        isPresented = false
+                    }
             }
-            .padding(.horizontal)
+            .padding()
         }
     }
 }
 
 #Preview {
-    ScanMessageView(message: ScanMessage("Hello World"))
+    ScanMessageView(message: ScanMessage("Hello World"), isPresented: .constant(true))
 }
