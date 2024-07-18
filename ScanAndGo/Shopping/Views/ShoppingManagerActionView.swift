@@ -37,7 +37,6 @@ extension Shopper {
 struct ShoppingManagerActionView: View {
     @ObservedObject var model: Shopper
     
-//    @State private var actionImage: SwiftUI.Image = Image(systemName: "questionmark.circle.fill")
     @State private var detectorImage: SwiftUI.Image = Image(systemName: "questionmark.circle.fill")
     
     var body: some View {

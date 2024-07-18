@@ -213,10 +213,6 @@ final class AssetManager {
         let lightImage = UIImage(data: lightData, scale: UIScreen.main.scale)
 
         if let darkData = getLocallyCachedData(named: name, projectId, .dark), let darkImage = UIImage(data: darkData, scale: UIScreen.main.scale) {
-//            let traitCollection = UITraitCollection(traitsFrom: [
-//                .init(displayScale: UIScreen.main.scale),
-//                .init(userInterfaceStyle: .dark)
-//            ])
             let traitCollection = UITraitCollection { mutableTraits in
                 mutableTraits.displayScale = UIScreen.main.scale
                 mutableTraits.userInterfaceStyle = .dark

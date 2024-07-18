@@ -155,21 +155,6 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
     public func stopScanner() {
         barcodeManager.barcodeDetector.stop()
     }
-    
-//    public enum ShoppingState {
-//        case idle
-//        case scanning
-//        case processing
-//        case editing
-//        case messaging
-//        
-////        func nextState(_ after: ShoppingState) -> ShoppingState {
-////            switch after {
-////            }
-////        }
-//    }
-//    @Published public var shoppingState: ShoppingState = .idle
-
 }
 
 extension Shopper: AnalyticsDelegate {

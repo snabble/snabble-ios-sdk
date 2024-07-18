@@ -85,9 +85,6 @@ extension Shopper: PaymentMethodManagerDelegate {
 extension Shopper: PaymentDelegate {
     public func checkoutFinished(_ cart: SnabbleCore.ShoppingCart, _ process: SnabbleCore.CheckoutProcess?) {
         logger.debug("checkout finished")
-//        let paymentState = process?.paymentState
-//        if paymentState == .successful || paymentState == .transferred {
-//        }
     }
     
     public var view: UIView! {

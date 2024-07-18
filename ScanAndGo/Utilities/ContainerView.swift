@@ -7,35 +7,35 @@
 
 import SwiftUI
 
- struct ContainerView: UIViewControllerRepresentable {
+struct ContainerView: UIViewControllerRepresentable {
     let viewController: UIViewController
     @Binding var isPresented: Bool
-
+    
     func makeUIViewController(context: Context) -> UIViewController {
         return ContainerViewController(viewController: viewController, isPresented: $isPresented)
     }
-
-     // swiftlint:disable:next no_empty_block
+    
+    // swiftlint:disable:next no_empty_block
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
-
+    
     class ContainerViewController: UIViewController {
         let childViewController: UIViewController
         @Binding var isPresented: Bool
-
+        
         init(viewController: UIViewController, isPresented: Binding<Bool>) {
             self.childViewController = viewController
             self._isPresented = isPresented
             
             super.init(nibName: nil, bundle: nil)
         }
-
+        
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
-
+        
         override func viewDidLoad() {
             super.viewDidLoad()
-
+            
             addChild(childViewController)
             view.addSubview(childViewController.view)
             childViewController.didMove(toParent: self)
@@ -47,16 +47,6 @@ import SwiftUI
                 childViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
                 childViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             ])
-
-//            addChild(childViewController)
-//            view.addSubview(childViewController.view)
-//            childViewController.view.frame = view.bounds
-//            childViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-//            childViewController.didMove(toParent: self)
         }
-//        override func viewDidDisappear(_ animated: Bool) {
-//            super.viewDidDisappear(animated)
-//            isPresented = false
-//        }
     }
- }
+}

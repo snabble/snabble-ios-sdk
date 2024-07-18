@@ -120,10 +120,6 @@ struct AttributedText: UIViewRepresentable {
             }
             return nil
         }
-//        func textView(_ textView: UITextView, shouldInteractWith url: URL, in characterRange: NSRange, interaction: UITextItemInteraction) -> Bool {
-//            self.control.openURL = url
-//            return false
-//        }
     }
 
 }

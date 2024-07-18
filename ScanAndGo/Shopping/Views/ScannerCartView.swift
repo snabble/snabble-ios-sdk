@@ -43,7 +43,6 @@ struct ScannerCartView: View {
             // Without this Spacer(), we have a transparent background
             Spacer(minLength: 1)
         }
-//        .background(.thinMaterial)
         .scrollDisabled(!model.scanningPaused)
         .onReceive(NotificationCenter.default.publisher(for: .snabbleCartUpdated)) { _ in
             update()

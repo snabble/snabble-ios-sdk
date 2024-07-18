@@ -100,8 +100,5 @@ extension Shopper {
         )
         let msg = start + "\n\n" + offendingProducts.joined(separator: "\n")
         errorMessage = msg
-        
-//        sendAction(.alert(Alert(title: Text(Asset.localizedString(forKey: "Snabble.SaleStop.ErrorMsg.title")),
-//                           message: Text(msg))))
     }
 }
