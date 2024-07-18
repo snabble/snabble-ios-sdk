@@ -22,10 +22,10 @@ public enum QRCode: CodeRenderer {
         let lightImage = generate(for: string, inScale: scale, withCorrectionLevel: correctionLevel, for: .light)
 
         if let darkImage = generate(for: string, inScale: scale, withCorrectionLevel: correctionLevel, for: .dark) {
-            let traitCollection = UITraitCollection(traitsFrom: [
-                .init(displayScale: UIScreen.main.scale),
-                .init(userInterfaceStyle: .dark)
-            ])
+            let traitCollection = UITraitCollection { mutableTraits in
+                mutableTraits.displayScale = UIScreen.main.scale
+                mutableTraits.userInterfaceStyle = .dark
+            }
             lightImage?.imageAsset?.register(darkImage, with: traitCollection)
 
         }
