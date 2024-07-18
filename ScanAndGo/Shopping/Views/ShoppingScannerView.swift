@@ -47,7 +47,7 @@ struct ShoppingScannerView: View {
             }
         }
         .hud(isPresented: $showHud) {
-            ScanMessageView(message: model.scanMessage)
+            ScanMessageView(message: model.scanMessage, isPresented: $showHud)
         }
         .onChange(of: showHud) {
             if !showHud {
