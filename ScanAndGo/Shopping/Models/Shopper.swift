@@ -45,10 +45,15 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
     private var subscriptions = Set<AnyCancellable>()
     public var restrictedPayments: [RawPaymentMethod] = []
         
-    public init(manager: BarcodeManager) {
-        self.barcodeManager = manager
-        self.cartModel = ShoppingCartViewModel(shoppingCart: manager.shoppingCart)
-        self.paymentManager = PaymentMethodManager(shoppingCart: manager.shoppingCart)
+    public init(shop: Shop, detector: InternalBarcodeDetector = .init(detectorArea: .rectangle)) {
+        let shoppingCart = Snabble.shared.shoppingCartManager.shoppingCart(for: shop)
+        let barcodeManager = BarcodeManager(shop: shop,
+                                             shoppingCart: shoppingCart,
+                                             detector: detector)
+
+        self.barcodeManager = barcodeManager
+        self.cartModel = ShoppingCartViewModel(shoppingCart: shoppingCart)
+        self.paymentManager = PaymentMethodManager(shoppingCart: shoppingCart)
         
         self.cartModel.shoppingCartDelegate = self
         self.barcodeManager.processingDelegate = self
