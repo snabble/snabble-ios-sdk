@@ -12,7 +12,7 @@ let package = Package(
     products: [
         .library(
             name: "Snabble",
-            targets: ["SnabbleAssetProviding", "SnabbleCore", "SnabbleUI", "SnabblePhoneAuthUI"]
+            targets: ["SnabbleAssetProviding", "SnabbleCore", "SnabbleUI", "SnabblePhoneAuthUI", "SnabbleScanAndGo"]
         ),
         .library(
             name: "SnabbleAssetProviding",
@@ -46,7 +46,11 @@ let package = Package(
             name: "SnabblePhoneAuthUI",
             targets: ["SnabblePhoneAuthUI"]
         ),
-        .library(name: "SnabbleUser",
+        .library(
+            name: "SnabbleScanAndGo",
+            targets: ["SnabbleScanAndGo"]
+        ),
+       .library(name: "SnabbleUser",
                  targets: ["SnabbleUser"])
     ],
     dependencies: [
@@ -228,6 +232,16 @@ let package = Package(
             name: "SnabbleUser",
             dependencies: ["KeychainAccess"],
             path: "User/Sources"
-        )
+        ),
+        .target(
+            name: "SnabbleScanAndGo",
+            dependencies: [
+                "SnabbleCore",
+                "SnabbleAssetProviding",
+                "SnabbleUI",
+            ],
+            path: "ScanAndGo"
+        ),
+
     ]
 )
