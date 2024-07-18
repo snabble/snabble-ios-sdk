@@ -1,6 +1,6 @@
 //
 //  View+HUD.swift
-//  Quartier
+//  SnabbleAssetProviding
 //
 //  Created by Andreas Osberghaus on 2024-05-14.
 //

@@ -1,6 +1,6 @@
 //
 //  View+Dialog.swift
-//  Quartier
+//  SnabbleAssetProviding
 //
 //  Created by Uwe Tilemann on 12.06.24.
 //

@@ -1,6 +1,6 @@
 //
 //  CardStyle.swift
-//  Quartier
+//  SnabbleAssetProviding
 //
 //  Created by Uwe Tilemann on 16.06.24.
 //

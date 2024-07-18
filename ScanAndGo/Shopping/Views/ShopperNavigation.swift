@@ -1,6 +1,6 @@
 //
 //  ShopperNavigation.swift
-//  Quartier
+//  SnabbleScanAndGo
 //
 //  Created by Uwe Tilemann on 04.07.24.
 //

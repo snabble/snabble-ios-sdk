@@ -1,6 +1,6 @@
 //
 //  HUD.swift
-//  Quartier
+//  SnabbleScanAndGo
 //
 //  Created by Uwe Tilemann on 05.07.24.
 //

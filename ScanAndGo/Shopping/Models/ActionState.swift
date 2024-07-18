@@ -1,6 +1,6 @@
 //
 //  ActionState.swift
-//  Quartier
+//  SnabbleScanAndGo
 //
 //  Created by Uwe Tilemann on 28.06.24.
 //
