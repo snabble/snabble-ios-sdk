@@ -64,11 +64,6 @@ public final class CouponsViewController: UICollectionViewController {
         self.emptyLabel = emptyLabel
     }
 
-//    public override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-//        super.traitCollectionDidChange(previousTraitCollection)
-//        update(with: coupons)
-//    }
-
     private func update(with coupons: [Coupon]) {
         emptyLabel?.isHidden = !coupons.isEmpty
         collectionView.reloadData()

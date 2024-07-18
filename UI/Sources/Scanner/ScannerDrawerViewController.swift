@@ -194,15 +194,6 @@ final class ScannerDrawerViewController: UIViewController {
         checkoutBar?.updateTotals()
     }
 
-//    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-//        super.traitCollectionDidChange(previousTraitCollection)
-//
-//        setupBlurEffect()
-//        if let customAppearance = self.customAppearance {
-//            self.checkoutBar?.setCustomAppearance(customAppearance)
-//        }
-//    }
-
     private func setupBlurEffect() {
         self.effectView?.effect = UIBlurEffect(style: traitCollection.userInterfaceStyle == .light ? .extraLight : .dark)
     }

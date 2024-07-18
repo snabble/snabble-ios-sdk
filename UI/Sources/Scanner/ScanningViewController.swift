@@ -814,13 +814,3 @@ extension ScanningViewController: CustomizableAppearance {
         }
     }
 }
-
-// extension ScanningViewController {
-//    override public func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-//        super.traitCollectionDidChange(previousTraitCollection)
-//
-//        if let appearance = self.customAppearance {
-//            self.setCustomAppearance(appearance)
-//        }
-//    }
-// }
