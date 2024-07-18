@@ -130,10 +130,11 @@ struct ScannerCartItemView: View {
     let alreadyInCart: Bool
 
     @State private var cartItem: CartItem
+    @State private var quantity: Int
+
     @State private var canAddToCart: Bool = false
     @State private var strikePrice: String?
     @State private var price: String?
-    @State private var quantity: Int
     @State private var selectedCoupon: CouponItem?
     
     init(model: Shopper,
@@ -145,10 +146,13 @@ struct ScannerCartItemView: View {
         self.onAction = onAction
 
         let result = model.cartItem(for: scannedItem)
+        let cartItem = result.cartItem
+        
         self.alreadyInCart = result.alreadyInCart
 
-        self.cartItem = result.cartItem
-        self.quantity = result.cartItem.quantity
+        self._cartItem = State(initialValue: cartItem)
+        self._quantity = State(initialValue: cartItem.quantity)
+        
         self.strikePrice = model.strikePrice(for: scannedItem)
     }
     
