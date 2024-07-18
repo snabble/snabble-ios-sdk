@@ -60,7 +60,7 @@ extension View {
     ///   - isPresented: Binding to display the toast
     /// - Returns: A view that presents a toast
     public func dialog<Dialog: View>(isPresented: Binding<Bool>,
-                              @ViewBuilder dialog: @escaping () -> Dialog) -> some View {
+                                     @ViewBuilder dialog: @escaping () -> Dialog) -> some View {
         modifier(DialogViewModifier(isPresented: isPresented,
                                     dialog: dialog)
         )

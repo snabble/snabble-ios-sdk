@@ -36,7 +36,7 @@ struct CountryCallingCodeView: View {
         .sheet(isPresented: $showMenu, onDismiss: {}) {
             CountryCallingCodeListView(countries: countries, selection: $selection)
         }
-        .onChange(of: selection) { value in
+        .onChange(of: selection) { _, value in
             if let value, let country = countries.country(forCode: value) {
                 selectedCountry = country
             }

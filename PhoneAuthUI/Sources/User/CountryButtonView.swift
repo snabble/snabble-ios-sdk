@@ -77,7 +77,7 @@ struct CountryButtonView: View {
         .sheet(isPresented: $showStateMenu, onDismiss: {}) {
             CountryStateListView(country: selectedCountry, selection: $selectedState)
         }
-        .onChange(of: selectedCountry) { country in
+        .onChange(of: selectedCountry) { _, country in
             showStateButton = country.states != nil
         }
     }

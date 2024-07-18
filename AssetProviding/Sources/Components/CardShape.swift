@@ -11,7 +11,7 @@ public struct CardShape: Shape {
     let radius: CGFloat
     let inset: Edge
     
-    public enum Edge {
+    public enum Edge: Sendable {
         case top
         case bottom
     }

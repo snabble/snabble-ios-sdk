@@ -52,7 +52,7 @@ public extension View {
     /// Must be applied on a view taller than the keyboard that touches the bottom edge of the safe area.
     /// Access keyboard height in any child view with
     /// @Environment(\.keyboardHeight) var keyboardHeight
-    public func keyboardHeightEnvironmentValue() -> some View {
+    func keyboardHeightEnvironmentValue() -> some View {
         modifier(KeyboardHeightEnvironmentValue())
     }
 }

@@ -112,7 +112,7 @@ struct ScannerQuantityView: View {
 
             Spacer()
         }
-        .onChange(of: quantity) { _ in
+        .onChange(of: quantity) {
             quantityString = String(quantity)
         }
         .task {

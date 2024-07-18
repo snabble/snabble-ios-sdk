@@ -220,14 +220,14 @@ struct CheckoutRatingView: View {
         VStack(alignment: .center, spacing: 8) {
             stateContent
         }
-        .onChange(of: model.selectionIndex) { _ in
+        .onChange(of: model.selectionIndex) {
             if model.showTextEditor, _customView.isAvailable {
                 height = 40
             } else {
                 height = 0
             }
         }
-        .onChange(of: model.hasFeedbackSend) { newFeedback in
+        .onChange(of: model.hasFeedbackSend) { _, newFeedback in
             if newFeedback {
                 height = 0
             }

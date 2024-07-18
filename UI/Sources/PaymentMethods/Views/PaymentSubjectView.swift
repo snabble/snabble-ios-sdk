@@ -80,7 +80,7 @@ public struct PaymentSubjectView: View {
                     .padding([.top, .trailing], 20)
             }
         }
-        .onChange(of: subject) { newSubject in
+        .onChange(of: subject) { _, newSubject in
             viewModel.subject = newSubject
         }
         .background(Color.systemBackground)

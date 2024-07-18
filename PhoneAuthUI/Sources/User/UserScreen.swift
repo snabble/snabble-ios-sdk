@@ -304,7 +304,7 @@ public struct UserScreen: View {
                         }
                     }
                 }
-                .onChange(of: countrySelection) { country in
+                .onChange(of: countrySelection) { _, country in
                     if user.details?.country != country.code {
                         stateSelection = nil
                     }
