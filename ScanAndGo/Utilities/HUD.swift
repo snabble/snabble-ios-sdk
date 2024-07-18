@@ -9,13 +9,13 @@ import SwiftUI
 import SnabbleAssetProviding
 
 struct HUD<Content: View>: View {
-  @ViewBuilder let content: Content
-
-  var body: some View {
-    content
-          .background(.regularMaterial)
-          .clipShape(CardShape(radius: 16, .top))
-  }
+    @ViewBuilder let content: Content
+    
+    var body: some View {
+        content
+            .background(.regularMaterial)
+            .clipShape(CardShape(radius: 16, .top))
+    }
 }
 
 extension View {
