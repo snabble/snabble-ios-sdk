@@ -7,16 +7,20 @@
 
 import SwiftUI
 
-struct ContainerView: UIViewControllerRepresentable {
-    let viewController: UIViewController
-    @Binding var isPresented: Bool
+public struct ContainerView: UIViewControllerRepresentable {
+    public let viewController: UIViewController
+    @Binding public var isPresented: Bool
     
-    func makeUIViewController(context: Context) -> UIViewController {
+    public init(viewController: UIViewController, isPresented: Binding<Bool>) {
+        self.viewController = viewController
+        self._isPresented = isPresented
+    }
+    public func makeUIViewController(context: Context) -> UIViewController {
         return ContainerViewController(viewController: viewController, isPresented: $isPresented)
     }
     
     // swiftlint:disable:next no_empty_block
-    func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+    public func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
     
     class ContainerViewController: UIViewController {
         let childViewController: UIViewController
