@@ -25,7 +25,7 @@ extension Shopper {
 }
 
 extension Shopper {
-   var actionImage: SwiftUI.Image {
+    var actionImage: SwiftUI.Image {
         if processing {
             Image(systemName: "gear.circle.fill")
         } else {

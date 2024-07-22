@@ -44,7 +44,7 @@ public final class BarcodeManager: ObservableObject {
             product.name
         }
     }
-
+    
     let tapticFeedback = UINotificationFeedbackGenerator()
     public let barcodeDetector: InternalBarcodeDetector
     
@@ -52,21 +52,21 @@ public final class BarcodeManager: ObservableObject {
     public weak var processingDelegate: BarcodeProcessing?
     
     private var subscriptions = Set<AnyCancellable>()
-
+    
     public init(shop: Shop,
                 shoppingCart: ShoppingCart,
                 detector: InternalBarcodeDetector
     ) {
         self.shop = shop
         self.shoppingCart = shoppingCart
- 
+        
         let project = shop.project ?? .none
         self.project = project
         self.productProvider = Snabble.shared.productProvider(for: project)
-       
+        
         self.barcodeDetector = detector
         self.barcodeDetector.scanFormats = project.scanFormats
-                
+        
         self.barcodeDetector.$scannedBarcode
             .receive(on: RunLoop.main)
             .sink { [unowned self] barcode in

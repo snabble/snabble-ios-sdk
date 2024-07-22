@@ -22,17 +22,17 @@ extension Shopper {
     public func sendAction(_ actionType: ActionType) {
         ActionManager.shared.actionPublisher.send(actionType)
     }
-
+    
     func startCheckout() {
         guard let paymentMethod = self.selectedPayment?.method else {
             logger.debug("selectedPayment method is nil")
             sendAction(.alertSheet(paymentManager))
             return
         }
-
+        
         let paymentDetail = self.selectedPayment?.detail
         let shoppingCart = barcodeManager.shoppingCart
-
+        
         if  paymentDetail == nil {
             logger.debug("selectedPayment detail is nil")
         }
@@ -40,12 +40,12 @@ extension Shopper {
         
         self.barcodeManager.shoppingCart.createCheckoutInfo(barcodeManager.project, timeout: 10) { result in
             self.processing = false
-
+            
             switch result {
             case .success(let info):
                 // force any required info to be re-requested on the next attempt
                 shoppingCart.resetInformationData() // requiredInformationData = []
-
+                
                 let detail = self.selectedPayment?.detail
                 self.gotoPayment(paymentMethod, detail, info, shoppingCart) { didStart in
                     if !didStart {
@@ -59,19 +59,19 @@ extension Shopper {
                         self.showProductError(offendingSkus)
                         return
                     }
-
+                    
                     if paymentMethod.offline {
                         // if the payment method works offline, ignore the error and continue anyway
                         let info = SignedCheckoutInfo([paymentMethod])
                         self.gotoPayment(paymentMethod, nil, info, self.barcodeManager.shoppingCart) { _ in }
                         return
                     }
-
+                    
                     if case SnabbleError.urlError = error {
                         self.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.offlineHint"))
                         return
                     }
-
+                    
                     switch error.type {
                     case .noAvailableMethod:
                         self.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.noMethodAvailable"))
@@ -83,9 +83,9 @@ extension Shopper {
                 }
             }
         }
-
+        
     }
-
+    
     private func showProductError(_ skus: [String]) {
         var offendingProducts = [String]()
         for sku in skus {
@@ -93,10 +93,10 @@ extension Shopper {
                 offendingProducts.append(item.product.name)
             }
         }
-
+        
         let start = Asset.localizedString(forKey: offendingProducts.count == 1
-                                           ? "Snabble.SaleStop.ErrorMsg.one"
-                                           : "Snabble.SaleStop.errorMsg"
+                                          ? "Snabble.SaleStop.ErrorMsg.one"
+                                          : "Snabble.SaleStop.errorMsg"
         )
         let msg = start + "\n\n" + offendingProducts.joined(separator: "\n")
         errorMessage = msg

@@ -33,7 +33,7 @@ struct InvalidNavigationView: View {
             dismiss()
         }
     }
-
+    
     /// Dismisses the toast and the full screen cover animated
     private func dismiss() {
         withAnimation {

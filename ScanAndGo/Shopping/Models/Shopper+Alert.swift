@@ -14,7 +14,7 @@ extension Shopper {
     func alert(_ controller: UIAlertController?) -> Alert {
         if let controller {
             Alert(title: Text(controller.title ?? "no title"),
-                              message: Text(controller.message ?? "No message available!"))
+                  message: Text(controller.message ?? "No message available!"))
         } else {
             Alert(title: Text("No Alert Controller"))
         }

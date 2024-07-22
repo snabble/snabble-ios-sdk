@@ -14,26 +14,26 @@ struct DraggableModifier: ViewModifier {
         case vertical
         case horizontal
     }
-
+    
     let direction: Direction
-
+    
     @State private var draggedOffset: CGSize = .zero
-
+    
     func body(content: Content) -> some View {
         content
-        .offset(
-            CGSize(width: direction == .vertical ? 0 : draggedOffset.width,
-                   height: direction == .horizontal ? 0 : draggedOffset.height)
-        )
-        .gesture(
-            DragGesture()
-            .onChanged { value in
-                self.draggedOffset = value.translation
-            }
-            .onEnded { _ in
-                self.draggedOffset = .zero
-            }
-        )
+            .offset(
+                CGSize(width: direction == .vertical ? 0 : draggedOffset.width,
+                       height: direction == .horizontal ? 0 : draggedOffset.height)
+            )
+            .gesture(
+                DragGesture()
+                    .onChanged { value in
+                        self.draggedOffset = value.translation
+                    }
+                    .onEnded { _ in
+                        self.draggedOffset = .zero
+                    }
+            )
     }
 }
 extension View {
@@ -56,7 +56,7 @@ struct PullOverView<Content>: View where Content: View {
     @Binding var expanded: Bool
     @Binding var paddingTop: CGFloat
     let content: () -> Content
-
+    
     init(minHeight: Binding<CGFloat>, 
          expanded: Binding<Bool>,
          paddingTop: Binding<CGFloat>,
@@ -84,7 +84,7 @@ struct PullView: ViewModifier {
     @Binding var minHeight: CGFloat
     @Binding var expanded: Bool
     @Binding var paddingTop: CGFloat
-
+    
     @State private var dragging = false
     @GestureState private var dragTracker = CGSize.zero
     @State private var position: CGFloat = 0
@@ -139,7 +139,7 @@ struct PullView: ViewModifier {
                 .onEnded(onDragEnded)
             )
         }
-
+        
     }
     func expand() {
         expanded = true

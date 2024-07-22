@@ -14,9 +14,9 @@ import Combine
 class BarcodeScannerViewController: UIViewController {
     let manager: BarcodeManager
     let logger = Logger(subsystem: "ScanAndGo", category: "BarcodeScannerViewController")
-
+    
     private var subscriptions = Set<AnyCancellable>()
-
+    
     init(manager: BarcodeManager) {
         self.manager = manager
         super.init(nibName: nil, bundle: nil)
@@ -24,11 +24,11 @@ class BarcodeScannerViewController: UIViewController {
     public required init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
-
+    
     override public func loadView() {
         self.view = UIView(frame: UIScreen.main.bounds)
     }
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .systemGray
@@ -52,7 +52,7 @@ class BarcodeScannerViewController: UIViewController {
         
         layer.frame = rect
         logger.debug("preview layer size: \(rect.width) x \(rect.height)")
-
+        
         if layer.superlayer == nil {
             DispatchQueue.main.async {
                 viewController.view.layer.addSublayer(layer)
@@ -65,7 +65,7 @@ struct BarcodeScannerView: UIViewControllerRepresentable {
     @SwiftUI.Environment(\.safeAreaInsets) var insets
     
     let manager: BarcodeManager
-
+    
     func makeUIViewController(context: UIViewControllerRepresentableContext<BarcodeScannerView>) -> UIViewController {
         return BarcodeScannerViewController(manager: manager)
     }
@@ -73,12 +73,12 @@ struct BarcodeScannerView: UIViewControllerRepresentable {
     func updateUIViewController(_ uiViewController: UIViewController, context: UIViewControllerRepresentableContext<BarcodeScannerView>) { }
     
     func makeCoordinator() -> Coordinator {
-           Coordinator(self)
+        Coordinator(self)
     }
     class Coordinator: NSObject {
         var parent: BarcodeScannerView
         private var subscriptions = Set<AnyCancellable>()
-
+        
         init(_ parent: BarcodeScannerView) {
             self.parent = parent
             let manager = parent.manager
@@ -97,6 +97,6 @@ struct BarcodeScannerView: UIViewControllerRepresentable {
                     }
                 }
                 .store(in: &subscriptions)
-       }
+        }
     }
 }
