@@ -13,7 +13,7 @@ public struct SnabbleEmptyView: View {
     public let image: Image
     public let imageWidth: CGFloat
     
-    public init(message: String, image: Image, imageWidth: CGFloat = 72.0) {
+    public init(message: String, image: Image, imageWidth: CGFloat = 200) {
         self.message = message
         self.image = image
         self.imageWidth = imageWidth
@@ -40,7 +40,7 @@ public class ReceiptsEmptyViewController: UIHostingController<SnabbleEmptyView> 
     public init() {
         super.init(rootView: SnabbleEmptyView(
             message: Asset.localizedString(forKey: "Snabble.Receipts.noReceipts"),
-            image: Image(systemName: "scroll")))
+            image: SwiftUI.Image.image(named: "scroll", systemName: "scroll")))
     }
         
     @MainActor required dynamic public init?(coder aDecoder: NSCoder) {
@@ -52,9 +52,10 @@ public class PaymentEmptyViewController: UIHostingController<SnabbleEmptyView> {
     public init() {
         super.init(rootView: SnabbleEmptyView(
             message: Asset.localizedString(forKey: "Snabble.Payment.EmptyState.message"),
-            image: Image(systemName: "creditcard")))
+            image: SwiftUI.Image.image(named: "creditcard", systemName: "creditcart"))
+        )
     }
-        
+    
     @MainActor required dynamic public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
