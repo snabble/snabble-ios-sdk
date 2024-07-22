@@ -25,14 +25,14 @@ public struct CouponItem: Equatable, Swift.Identifiable {
 struct DiscountMenu: View {
     var coupons: [CouponItem] = []
     @Binding var selection: CouponItem?
-
+    
     @State var title: String = Asset.localizedString(forKey: "Snabble.addDiscount")
     
     var body: some View {
         Menu(title) {
             ForEach(coupons, id: \.id) { item in
                 Button(item.coupon.name, action: { useCoupon(item) })
-           }
+            }
         }
         .disabled(coupons.isEmpty)
     }
@@ -89,19 +89,19 @@ struct ScannerQuantityView: View {
     let canEdit: Bool
     
     @State private var quantityString: String = "0"
-
+    
     enum FocusedField: Hashable {
-      case quantity
+        case quantity
     }
     @FocusState var focusedField: FocusedField?
-
+    
     var body: some View {
         HStack {
             Spacer()
             QuantityMinusButton(quantity: $quantity)
                 .disabled(!(quantity > 1))
             
-            TextField("Quantity", text: $quantityString)
+            TextField(Asset.localizedString(forKey: "Snabble.Shoppingcart.Accessibility.quantity"), text: $quantityString)
                 .font(.title3)
                 .padding(.horizontal)
                 .multilineTextAlignment(.center)
@@ -112,10 +112,10 @@ struct ScannerQuantityView: View {
                 )
                 .disabled(!canEdit)
                 .focused($focusedField, equals: .quantity)
-
+            
             QuantityPlusButton(quantity: $quantity)
                 .disabled(!(quantity < ShoppingCart.maxAmount))
-
+            
             Spacer()
         }
         .task {
@@ -144,10 +144,10 @@ struct ScannerCartItemView: View {
     let scannedItem: BarcodeManager.ScannedItem
     let onAction: (_: CartItem?) -> Void
     let alreadyInCart: Bool
-
+    
     @State private var cartItem: CartItem
     @State private var quantity: Int
-
+    
     @State private var disableCheckout: Bool = true
     @State private var strikePrice: String?
     @State private var price: String?
@@ -160,16 +160,16 @@ struct ScannerCartItemView: View {
         self.model = model
         self.scannedItem = scannedItem
         self.onAction = onAction
-
+        
         let result = model.cartItem(for: scannedItem)
         var cartItem = result.cartItem
         
         self.alreadyInCart = result.alreadyInCart
-
+        
         cartItem.setQuantity(cartItem.quantity > 0 ? cartItem.quantity : 1)
         self._cartItem = State(initialValue: cartItem)
         self._quantity = State(initialValue: cartItem.quantity)
-
+        
         self.price = model.priceString(for: cartItem)
         self.strikePrice = model.strikePrice(for: scannedItem)
     }
@@ -212,13 +212,15 @@ struct ScannerCartItemView: View {
                         self.price = model.priceString(for: self.cartItem)
                     }
                     .padding(.top)
-
+                
                 let title = alreadyInCart ? Asset.localizedString(forKey: "Snabble.Scanner.updateCart") : Asset.localizedString(forKey: "Snabble.Scanner.addToCart")
                 
                 PrimaryButtonView(title: title, disabled: $disableCheckout, onAction: {
-                    onAction(self.cartItem)
                     dismiss()
-               })
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                        onAction(self.cartItem)
+                    }
+                })
                 .padding()
             }
             .task {
@@ -258,14 +260,14 @@ struct ScannedItemEditorView: View {
                     onAction: { cartItem in
                         self.updateCartItem(cartItem)
                     })
-           } else {
+            } else {
                 Text("No scanned item!")
                     .font(.title)
                     .foregroundStyle(.secondary)
             }
         }
         .padding(.bottom, (keyboardHeight > 0 ? keyboardHeight + 80 : 150))
-   }
+    }
     func updateCartItem(_ cartItem: CartItem?) {
         if let cartItem {
             model.updateCartItem(cartItem)
