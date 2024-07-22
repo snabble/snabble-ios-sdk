@@ -60,7 +60,7 @@ struct ActionItem: Swift.Identifiable, Equatable {
     static func == (lhs: ActionItem, rhs: ActionItem) -> Bool {
         lhs.id == rhs.id
     }
-
+    
     var id: String {
         domain + ":" + type.description
     }
@@ -90,7 +90,7 @@ public final class ActionManager: ObservableObject {
     @Published var isPresented: Bool = false
     
     private var subscriptions = Set<AnyCancellable>()
-
+    
     public init() {
         actionPublisher
             .receive(on: RunLoop.main)
@@ -146,7 +146,7 @@ public struct ActionModifier: ViewModifier {
             ErrorText(reason: "No alertSheet to be displayed.")
         }
     }
-
+    
     private func handleAction(_ newState: ActionType) {
         actionState = newState
         
