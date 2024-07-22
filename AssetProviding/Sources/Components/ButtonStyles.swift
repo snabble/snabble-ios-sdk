@@ -37,3 +37,19 @@ public struct BorderedButtonStyle: ButtonStyle {
             )
     }
 }
+
+public struct SecondaryButtonStyle: ButtonStyle {
+    var disabled: Bool
+    
+    public init(disabled: Bool = false) {
+        self.disabled = disabled
+    }
+
+    public func makeBody(configuration: Configuration) -> some View {
+        configuration.label
+            .padding([.top, .bottom], 15)
+            .padding([.leading, .trailing], 20)
+            .foregroundColor(Color("AccentColor"))
+            .disabled(disabled)
+    }
+}
