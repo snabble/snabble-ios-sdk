@@ -66,7 +66,7 @@ struct BarcodeSearchView: View {
     @State private var searchText = ""
     @State private var showSearch: Bool = false
     @State private var products = [SnabbleCore.Product]()
-
+    
     @SwiftUI.Environment(\.dismiss) var dismiss
     
     @ViewBuilder
@@ -103,7 +103,7 @@ struct BarcodeSearchView: View {
             }
         }
     }
-
+    
     public var body: some View {
         NavigationStack {
             content
@@ -125,7 +125,7 @@ struct BarcodeSearchView: View {
             showSearch = true
         }
     }
-
+    
     var searchResults: [SnabbleCore.Product] {
         guard !searchText.isEmpty else {
             return []
@@ -140,10 +140,10 @@ struct BarcodeSearchView: View {
             return code1.code < code2.code
         }
     }
-
+    
     private func removeDuplicates(_ products: [Product]) -> [Product] {
         var skusAdded = [String: Bool]()
-
+        
         return products.filter {
             skusAdded.updateValue(true, forKey: $0.sku) == nil
         }

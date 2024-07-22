@@ -24,7 +24,12 @@ struct PullOverView<Content>: View where Content: View {
     }
     
     public var body: some View {
-        ModifiedContent(content: self.content(), modifier: PullView(minHeight: $minHeight, paddingTop: paddingTop, onExpand: onExpand, onCollapse: onCollapse))
+        ModifiedContent(content: self.content(), 
+                        modifier: PullView(minHeight: $minHeight,
+                                           paddingTop: paddingTop,
+                                           onExpand: onExpand,
+                                           onCollapse: onCollapse)
+        )
     }
 }
 

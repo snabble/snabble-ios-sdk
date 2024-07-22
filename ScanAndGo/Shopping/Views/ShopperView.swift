@@ -17,13 +17,14 @@ public struct ShopperView: View {
     @State private var showError: Bool = false
     @State private var showEditor: Bool = false
     @State private var showDialog: Bool = false
+    @State private var minHeight: CGFloat = 0
     
     public init(model: Shopper) {
         self.model = model
     }
-
+    
     public var body: some View {
-        ShoppingScannerView(model: model)
+        ShoppingScannerView(model: model, minHeight: $minHeight)
             .animation(.easeInOut, value: model.scannedItem)
             .navigationDestination(isPresented: $showDialog) {
                 model.navigationDestination(isPresented: $showDialog)
@@ -82,7 +83,7 @@ public struct ShopperView: View {
                     model.controller = nil
                     model.startScanner()
                 }
-             }
+            }
             .onChange(of: showEditor) {
                 if !showEditor {
                     model.scannedItem = nil

@@ -26,7 +26,7 @@ extension Shopper: PaymentMethodManagerDelegate {
             self.sendAction(.alert(self.alert(alertController)))
         }
     }
-
+    
     private func acceptPayment(method: RawPaymentMethod?, detail: PaymentMethodDetail?) -> Bool {
         !(method?.dataRequired == true && detail == nil)
     }
@@ -38,7 +38,7 @@ extension Shopper: PaymentMethodManagerDelegate {
         }
         let method = item.method
         let detail = item.methodDetail
-
+        
         guard !restrictedPayments.contains(method) else {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 self.sendAction(.alert(
@@ -59,7 +59,7 @@ extension Shopper: PaymentMethodManagerDelegate {
         }
         // if the selected method is missing its detail data, immediately open the edit VC for the method
         if detail == nil,
-            let controller = method.editViewController(with: project.id, self) {
+           let controller = method.editViewController(with: project.id, self) {
             self.controller = controller
         } else if method == .applePay && !ApplePay.canMakePayments(with: project.id) {
             ApplePay.openPaymentSetup()
@@ -74,7 +74,7 @@ extension Shopper: PaymentMethodManagerDelegate {
         
         let method = payment?.method
         let detail = payment?.detail
-
+        
         // Payment is already configured
         if method?.dataRequired == true && detail != nil {
             selectedPayment = payment

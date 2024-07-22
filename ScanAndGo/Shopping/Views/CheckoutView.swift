@@ -14,7 +14,7 @@ import SnabbleUI
 
 struct CheckoutView: View {
     @ObservedObject var model: Shopper
-
+    
     @State private var disableCheckout: Bool = true
     
     @State private var countString: String = ""
@@ -64,7 +64,7 @@ struct CheckoutView: View {
             update()
         }
     }
-
+    
     private func update() {
         countString = model.numberOfItemsInCart
         totalString = model.totalPriceString

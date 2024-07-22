@@ -16,7 +16,7 @@ import SnabbleAssetProviding
 struct ScannerOverlay: View {
     @Binding var offset: CGFloat
     @State var overlay: SwiftUI.Image = Asset.image(named: "SnabbleSDK/barcode-overlay")!
-
+    
     var body: some View {
         VStack {
             Spacer()
@@ -30,11 +30,11 @@ struct ScannerOverlay: View {
 struct ShoppingScannerView: View {
     @SwiftUI.Environment(\.safeAreaInsets) var insets
     @ObservedObject var model: Shopper
-
+    @Binding var minHeight: CGFloat
+    
     @State private var topMargin: CGFloat = ScannerCartView.TopMargin
-    @State private var minHeight: CGFloat = 0
     @State private var showHud: Bool = false
-
+    
     var body: some View {
         ZStack(alignment: .top) {
             BarcodeScannerView(manager: model.barcodeManager)
@@ -59,7 +59,6 @@ struct ShoppingScannerView: View {
                 withAnimation {
                     topMargin += 60
                 }
-
             }
         }
         .onReceive(model.$scanMessage) { scanMessage in

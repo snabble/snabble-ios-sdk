@@ -16,26 +16,19 @@ struct ScannerCartView: View {
     static let BarHeight = CGFloat(74)
     static let VisibleRowHeight = CGFloat(80)
     static let TopMargin = CGFloat(20)
-
+    
     @ObservedObject var model: Shopper
     @Binding var minHeight: CGFloat
     
     @State private var compactMode: Bool = true
-
-    @State var cancellables = Set<AnyCancellable>()
-
+    
     init(model: Shopper,
          minHeight: Binding<CGFloat>
     ) {
         self.model = model
         self._minHeight = minHeight
-        
-        NotificationCenter.default.publisher(for: .snabbleCartUpdated)
-            .receive(on: RunLoop.main)
-            .sink(receiveValue: { _ in
-            })
-            .store(in: &cancellables)
     }
+    
     var body: some View {
         VStack(spacing: 0) {
             CheckoutView(model: model)
@@ -51,12 +44,12 @@ struct ScannerCartView: View {
             update()
         }
     }
-
+    
     func update() {
         let count = model.barcodeManager.shoppingCart.numberOfItems
         let avg = Self.VisibleRowHeight
-
+        
         // swiftlint:disable:next empty_count
         minHeight = Self.BarHeight + (count == 0 ? 0 : (count > 1 ? avg + avg / 2 : avg))
-   }
+    }
 }

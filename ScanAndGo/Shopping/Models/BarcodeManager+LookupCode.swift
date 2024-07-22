@@ -45,13 +45,13 @@ extension BarcodeManager {
     private func scannedUnknown(messageText: String, code: String) {
         self.logger.debug("scanned unknown code \(code)")
         self.tapticFeedback.notificationOccurred(.error)
-
+        
         self.processingDelegate?.scanMessage = ScanMessage(messageText)
         self.processingDelegate?.track(.scanUnknown(code))
     }
-
+    
     func handleScannedCode(_ scannedCode: String, withFormat format: ScanFormat?, withTemplate template: String? = nil) {
-       
+        
         self.barcodeDetector.pauseScanning()
         self.processingDelegate?.processing = true
         
@@ -77,36 +77,36 @@ extension BarcodeManager {
                 self.processingDelegate?.scanMessage = ScanMessage(msg)
                 return
             }
-
+            
             let product = scannedProduct.product
             let embeddedData = scannedProduct.embeddedData
-
+            
             // check for sale stop / notForSale
             if self.isSaleProhibited(of: product, scannedCode: scannedCode) {
                 return
             }
-
+            
             // handle scanning the shelf code of a pre-weighed product (no data or 0 encoded in the EAN)
             if product.type == .preWeighed && (embeddedData == nil || embeddedData == 0) {
                 let msg = Asset.localizedString(forKey: "Snabble.Scanner.scannedShelfCode")
                 self.scannedUnknown(messageText: msg, code: scannedCode)
                 return
             }
-
+            
             self.tapticFeedback.notificationOccurred(.success)
-
+            
             self.processingDelegate?.track(.scanProduct(scannedProduct.transmissionCode ?? scannedCode))
             
             let item = ScannedItem(scannedProduct: scannedProduct, code: scannedCode, type: product.type)
             self.processingDelegate?.scannedItem = item
             self.logger.debug("scannedItem: \(item)")
-
+            
             if !product.bundles.isEmpty || scannedProduct.priceOverride == nil {
                 self.collectBundles(for: item)
             }
         }
     }
-
+    
     private func showScanLookupError(_ error: ProductLookupError, forCode scannedCode: String) {
         let errorMsg: String
         switch error {
@@ -114,31 +114,31 @@ extension BarcodeManager {
         case .networkError: errorMsg = Asset.localizedString(forKey: "Snabble.Scanner.networkError")
         case .serverError: errorMsg = Asset.localizedString(forKey: "Snabble.Scanner.serverError")
         }
-
+        
         self.scannedUnknown(messageText: errorMsg, code: scannedCode)
     }
-
+    
     private func isSaleProhibited(of product: Product, scannedCode: String) -> Bool {
         // check for sale stop
         if product.saleStop {
             self.showSaleStop()
             return true
         }
-
+        
         // check for not-for-sale
         if product.notForSale {
             self.showNotForSale(for: product, withCode: scannedCode)
             return true
         }
-
+        
         return false
     }
-
+    
     private func showSaleStop() {
         self.tapticFeedback.notificationOccurred(.error)
         self.processingDelegate?.errorMessage = Asset.localizedString(forKey: "Snabble.SaleStop.ErrorMsg.scan")
     }
-
+    
     private func showNotForSale(for product: Product, withCode scannedCode: String) {
         self.tapticFeedback.notificationOccurred(.error)
         if let message = self.scannerDelegate?.scanMessage(for: self.project, self.shop, product) {
@@ -147,7 +147,7 @@ extension BarcodeManager {
             self.scannedUnknown(messageText: Asset.localizedString(forKey: "Snabble.NotForSale.ErrorMsg.scan"), code: scannedCode)
         }
     }
-
+    
     private func collectBundles(for item: ScannedItem) {
         let product = item.scannedProduct.product
         
@@ -167,7 +167,7 @@ extension BarcodeManager {
         }
         self.processingDelegate?.bundles = bundles
     }
-
+    
     private func lookupCode(_ code: String,
                             withFormat format: ScanFormat?,
                             withTemplate template: String?,
@@ -176,23 +176,23 @@ extension BarcodeManager {
         if let template = template {
             return self.lookupProduct(for: code, withTemplate: template, priceOverride: nil, completion: completion)
         }
-
+        
         // check override codes first
         let project = self.project
         if let match = CodeMatcher.matchOverride(code, project.priceOverrideCodes, project.id) {
             return self.productForOverrideCode(for: match, completion: completion)
         }
-
+        
         // then, check our regular templates
         let matches = CodeMatcher.match(code, project.id)
         guard !matches.isEmpty else {
             return completion(.failure(.notFound))
         }
-
+        
         let lookupCodes = matches.map { $0.lookupCode }
         let templates = matches.map { $0.template.id }
         let codes = Array(zip(lookupCodes, templates))
-
+        
         self.productProvider.productBy(codes: codes, shopId: self.shop.id) { result in
             switch result {
             case .success(let lookupResult):
@@ -200,7 +200,7 @@ extension BarcodeManager {
                     completion(.failure(.notFound))
                     return
                 }
-
+                
                 let scannedCode = lookupResult.transmissionCode ?? code
                 var newResult = ScannedProduct(lookupResult.product,
                                                parseResult.lookupCode,
@@ -211,7 +211,7 @@ extension BarcodeManager {
                                                encodingUnit: lookupResult.encodingUnit,
                                                referencePriceOverride: parseResult.referencePrice,
                                                specifiedQuantity: lookupResult.specifiedQuantity)
-
+                
                 if let decimalData = parseResult.embeddedDecimal {
                     var encodingUnit = lookupResult.product.encodingUnit
                     var embeddedData: Int?
@@ -230,7 +230,7 @@ extension BarcodeManager {
                             Log.warn("unspecified conversion for embedded data: \(decimalData.value) \(enc)")
                         }
                     }
-
+                    
                     newResult = ScannedProduct(lookupResult.product, parseResult.lookupCode, scannedCode,
                                                templateId: lookupResult.templateId,
                                                transmissionTemplateId: lookupResult.transmissionTemplateId,
@@ -239,19 +239,19 @@ extension BarcodeManager {
                                                referencePriceOverride: newResult.referencePriceOverride,
                                                specifiedQuantity: lookupResult.specifiedQuantity)
                 }
-
+                
                 completion(.product(newResult))
             case .failure(let error):
                 if error == .notFound {
                     if let gs1 = self.checkValidGS1(for: code) {
                         return self.productForGS1(gs1: gs1, originalCode: code, completion: completion)
                     }
-
+                    
                     // is this a valid coupon?
                     if let coupon = self.checkValidCoupon(for: code) {
                         return completion(.coupon(coupon, code))
                     }
-
+                    
                     return completion(.failure(.notFound))
                 } else {
                     let event = AppEvent(scannedCode: code, codes: codes, project: project)
@@ -261,11 +261,11 @@ extension BarcodeManager {
             }
         }
     }
-
+    
     private func checkValidCoupon(for scannedCode: String) -> Coupon? {
         let project = self.project
         let validCoupons = project.printedCoupons
-
+        
         for coupon in validCoupons {
             for code in coupon.codes ?? [] {
                 let result = CodeMatcher.match(scannedCode, project.id)
@@ -274,10 +274,10 @@ extension BarcodeManager {
                 }
             }
         }
-
+        
         return nil
     }
-
+    
     private func checkValidGS1(for code: String) -> GS1Code? {
         let gs1 = GS1Code(code)
         if gs1.gtin != nil {
@@ -285,14 +285,14 @@ extension BarcodeManager {
         }
         return nil
     }
-
+    
     private func productForGS1(gs1: GS1Code,
                                originalCode: String,
                                completion: @escaping (ScannerLookup) -> Void ) {
         guard let gtin = gs1.gtin else {
             return completion(.failure(.notFound))
         }
-
+        
         let codes = [(gtin, CodeTemplate.defaultName)]
         self.productProvider.productBy(codes: codes, shopId: self.shop.id) { result in
             switch result {
@@ -317,20 +317,20 @@ extension BarcodeManager {
             }
         }
     }
-
+    
     private func productForOverrideCode(for match: OverrideLookup, completion: @escaping (ScannerLookup) -> Void ) {
         let code = match.lookupCode
-
+        
         if let template = match.lookupTemplate {
             return self.lookupProduct(for: code, withTemplate: template, priceOverride: match.embeddedData, completion: completion)
         }
-
+        
         let matches = CodeMatcher.match(code, self.project.id)
-
+        
         guard !matches.isEmpty else {
             return completion(.failure(.notFound))
         }
-
+        
         let lookupCodes = matches.map { $0.lookupCode }
         let templates = matches.map { $0.template.id }
         let codes = Array(zip(lookupCodes, templates))
@@ -350,7 +350,7 @@ extension BarcodeManager {
             }
         }
     }
-
+    
     private func lookupProduct(for code: String, withTemplate template: String, priceOverride: Int?, completion: @escaping (ScannerLookup) -> Void ) {
         let codes = [(code, template)]
         self.productProvider.productBy(codes: codes, shopId: self.shop.id) { result in

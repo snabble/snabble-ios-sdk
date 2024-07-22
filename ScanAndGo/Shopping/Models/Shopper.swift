@@ -39,18 +39,18 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
     
     @Published public var paymentManager: PaymentMethodManager
     @Published public var selectedPayment: Payment?
-
+    
     let logger = Logger(subsystem: "ScanAndGo", category: "Shopper")
     
     private var subscriptions = Set<AnyCancellable>()
     public var restrictedPayments: [RawPaymentMethod] = []
-        
+    
     public init(shop: Shop, detector: InternalBarcodeDetector = .init(detectorArea: .rectangle)) {
         let shoppingCart = Snabble.shared.shoppingCartManager.shoppingCart(for: shop)
         let barcodeManager = BarcodeManager(shop: shop,
-                                             shoppingCart: shoppingCart,
-                                             detector: detector)
-
+                                            shoppingCart: shoppingCart,
+                                            detector: detector)
+        
         self.barcodeManager = barcodeManager
         self.cartModel = ShoppingCartViewModel(shoppingCart: shoppingCart)
         self.paymentManager = PaymentMethodManager(shoppingCart: shoppingCart)
@@ -80,7 +80,7 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
             }
         }
     }
-
+    
     /// To begin a scanning session set `scanningActivated` to `true`
     @Published public var scanningActivated: Bool = false {
         didSet {
@@ -118,20 +118,20 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
         }
     }
     @Published public var bundles: [BarcodeManager.ScannedItem] = []
-
+    
     /// `ScanMessage` message received from `BarcodeProcessing
     @Published public var scanMessage: ScanMessage?
-
+    
     /// Error message received from `BarcodeProcessing`
     @Published public var errorMessage: String? 
-
+    
     @Published public var flashlight: Bool = false {
         didSet {
             barcodeManager.barcodeDetector.setTorch(flashlight)
         }
     }
     @Published public var controller: UIViewController?
-
+    
     public func reset() {
         self.errorMessage = nil
         self.scanMessage = nil
@@ -150,7 +150,7 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
         self.reset()
         barcodeManager.barcodeDetector.start()
     }
-
+    
     @MainActor
     public func stopScanner() {
         barcodeManager.barcodeDetector.stop()
@@ -194,7 +194,7 @@ extension Shopper: ShoppingCartDelegate {
     }
 }
 
- extension Shopper: MessageDelegate {
+extension Shopper: MessageDelegate {
     public func showInfoMessage(_ message: String) {
         logger.debug("showInfoMessage: \(message)")
         sendAction(.toast(Toast(text: message)))
@@ -204,4 +204,4 @@ extension Shopper: ShoppingCartDelegate {
         logger.debug("showWarningMessage: \(message)")
         sendAction(.toast(Toast(text: message, style: .warning)))
     }
- }
+}

@@ -26,7 +26,7 @@ extension ShoppingCart {
             templateId: scannedProduct.templateId ?? CodeTemplate.defaultName,
             transmissionTemplateId: scannedProduct.transmissionTemplateId,
             lookupCode: scannedProduct.lookupCode)
-
+        
         return CartItem(1, product, scannedCode, self.customerCard, project.roundingMode)
     }
 }
@@ -59,7 +59,7 @@ extension Shopper {
     public func updateCartItem(_ cartItem: CartItem) {
         let shop = barcodeManager.shop
         let shoppingCart = barcodeManager.shoppingCart
-
+        
         // deprecated depositReturnVoucher deleted
         let cartQuantity = shoppingCart.quantity(of: cartItem)
         if cartQuantity == 0 || !cartItem.canMerge {
@@ -95,10 +95,10 @@ extension Shopper {
         let formatter = PriceFormatter(barcodeManager.project)
         return formatter.format(total)
     }
-
+    
     public var totalPrice: Int? {
         let backendCartInfo = barcodeManager.shoppingCart.backendCartInfo
-
+        
         let nilPrice: Bool
         if let items = backendCartInfo?.lineItems {
             let productsNoPrice = items.filter { $0.type == .default && $0.totalPrice == nil }
@@ -106,7 +106,7 @@ extension Shopper {
         } else {
             nilPrice = false
         }
-
+        
         let cartTotal = barcodeManager.project.displayNetPrice ? backendCartInfo?.netPrice : backendCartInfo?.totalPrice
         let totalPrice = nilPrice ? nil : (cartTotal ?? barcodeManager.shoppingCart.total)
         

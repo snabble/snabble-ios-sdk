@@ -38,7 +38,7 @@ extension Shopper {
     public func priceString(for item: CartItem) -> String {
         let formattedPrice = item.priceDisplay(priceFormatter)
         let quantityDisplay = item.quantityDisplay()
-        let showQuantity = item.quantity != 0 || item.product.deposit != nil
+        let showQuantity = item.effectiveQuantity > 1 || item.product.deposit != nil
         return (showQuantity ? quantityDisplay + " " : "") + formattedPrice
     }
     

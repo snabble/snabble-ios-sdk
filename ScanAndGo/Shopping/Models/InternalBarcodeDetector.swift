@@ -32,7 +32,7 @@ extension InternalBarcodeDetector.State: CustomStringConvertible {
         case .batterySaving:
             "battery saving"
         }
-
+        
     }
 }
 
@@ -41,13 +41,13 @@ open class InternalBarcodeDetector: NSObject, ObservableObject {
     public static var batterySaverKey: String { "io.snabble.sdk.batterySaver" }
     
     let logger = Logger(subsystem: "ScanAndGo", category: "InternalBarcodeDetector")
-
+    
     /// the scan formats that should be detected, must be set before `scannerWillAppear()` is called.
     open var scanFormats: [ScanFormat] = []
-
+    
     /// the expected width of a "standard" barcode, must be set before `scannerWillAppear()` is called.
     public var expectedBarcodeWidth: Int?
-
+    
     @Published public var torchOn = false
     @Published public var message: String?
     @Published var scannedBarcode: BarcodeResult?
@@ -68,9 +68,9 @@ open class InternalBarcodeDetector: NSObject, ObservableObject {
     
     public var previewLayer: AVCaptureVideoPreviewLayer?
     public var permissionGranted = false // Flag for permission
-
+    
     public let sessionQueue: DispatchQueue
-
+    
     public weak var batterySaverTimer: Timer?
     public var scanDebounce: TimeInterval = 3
     public var detectorArea: BarcodeDetectorArea
@@ -81,16 +81,16 @@ open class InternalBarcodeDetector: NSObject, ObservableObject {
     public var captureSession: AVCaptureSession
     
     private let metadataOutput: AVCaptureMetadataOutput
-
+    
     private let outputQueue: DispatchQueue
     private let videoDataOutput: AVCaptureVideoDataOutput
     
     public weak var bufferDelegate: BarcodeBufferDelegate?
     public weak var cameraDelegate: BarcodeCameraDelegate?
-
+    
     public init(detectorArea: BarcodeDetectorArea) {
         self.detectorArea = detectorArea
-
+        
         self.sessionQueue = DispatchQueue(label: "io.snabble.scannerQueue", qos: .userInitiated)
         
         captureSession = AVCaptureSession()
@@ -102,9 +102,9 @@ open class InternalBarcodeDetector: NSObject, ObservableObject {
         videoDataOutput.alwaysDiscardsLateVideoFrames = true
         
         outputQueue = DispatchQueue(label: "outputQueue", qos: .background)
-
+        
         super.init()
-
+        
         metadataOutput.setMetadataObjectsDelegate(self, queue: outputQueue)
         videoDataOutput.setSampleBufferDelegate(self, queue: outputQueue)
     }
@@ -114,7 +114,7 @@ open class InternalBarcodeDetector: NSObject, ObservableObject {
     }
     
     open func setup() {
-
+        
         guard
             self.camera == nil,
             let camera = self.initializeCamera(),
@@ -123,7 +123,7 @@ open class InternalBarcodeDetector: NSObject, ObservableObject {
         else {
             return
         }
-
+        
         self.camera = camera
         self.input = videoInput
         self.captureSession.addInput(videoInput)
@@ -138,19 +138,19 @@ open class InternalBarcodeDetector: NSObject, ObservableObject {
         if captureSession.canAddOutput(videoDataOutput) {
             captureSession.addOutput(videoDataOutput)
         }
-
+        
         let previewLayer = AVCaptureVideoPreviewLayer(session: captureSession)
         previewLayer.videoGravity = .resizeAspectFill
         previewLayer.frame = .zero
-
+        
         self.previewLayer = previewLayer
-
+        
         if #available(iOS 15, *) {
             self.setRecommendedZoomFactor()
         }
         self.state = .ready
     }
-
+    
     open func start() {
         startForegroundBackgroundObserver()
         resumeScanning()
@@ -166,7 +166,7 @@ open class InternalBarcodeDetector: NSObject, ObservableObject {
         center.addObserver(self, selector: #selector(self.stopBatterySaverTimer), name: UIApplication.didEnterBackgroundNotification, object: nil)
         center.addObserver(self, selector: #selector(self.startBatterySaverTimer), name: UIApplication.willEnterForegroundNotification, object: nil)
     }
-
+    
     public func stopForegroundBackgroundObserver() {
         let center = NotificationCenter.default
         center.removeObserver(self, name: UIApplication.didEnterBackgroundNotification, object: nil)
@@ -177,31 +177,31 @@ open class InternalBarcodeDetector: NSObject, ObservableObject {
         guard UserDefaults.standard.bool(forKey: Self.batterySaverKey) else {
             return
         }
-
+        
         batterySaverTimer?.invalidate()
         batterySaverTimer = Timer.scheduledTimer(withTimeInterval: Self.batterySaverTimeout, repeats: false) { [weak self] _ in
             self?.batterySaverTimerFired()
         }
     }
-
+    
     @objc public func stopBatterySaverTimer() {
         self.batterySaverTimer?.invalidate()
     }
-
+    
     private func batterySaverTimerFired() {
-       // self.pauseScanning()
+        // self.pauseScanning()
         self.state = .batterySaving
     }
-
+    
     /// instructs the detector to (re)start capturing video frames and detect barcodes
-   open func pauseScanning() {
+    open func pauseScanning() {
         self.sessionQueue.async {
             self.captureSession.stopRunning()
         }
         self.stopBatterySaverTimer()
         self.state = .pausing
     }
-
+    
     /// instructs the detector to stop capturing video frames and detect barcodes
     open func resumeScanning() {
         self.sessionQueue.async {
@@ -210,7 +210,7 @@ open class InternalBarcodeDetector: NSObject, ObservableObject {
         self.startBatterySaverTimer()
         self.state = .scanning
     }
-
+    
     open func setTorch(_ switchedOn: Bool) {
         try? camera?.lockForConfiguration()
         defer { camera?.unlockForConfiguration() }
@@ -228,7 +228,7 @@ open class InternalBarcodeDetector: NSObject, ObservableObject {
             }
         }
     }
-
+    
     // MARK: - private implementation
     private func checkPermission() {
         switch AVCaptureDevice.authorizationStatus(for: .video) {
@@ -257,7 +257,7 @@ open class InternalBarcodeDetector: NSObject, ObservableObject {
             logger.debug("no camera found")
             return nil
         }
-
+        
         // camera found, are we allowed to access it?
         // self.requestCameraPermission()
         checkPermission()
@@ -266,7 +266,7 @@ open class InternalBarcodeDetector: NSObject, ObservableObject {
         do {
             try camera.lockForConfiguration()
             defer { camera.unlockForConfiguration() }
-
+            
             if camera.isAutoFocusRangeRestrictionSupported {
                 camera.autoFocusRangeRestriction = .near
             }
@@ -278,16 +278,16 @@ open class InternalBarcodeDetector: NSObject, ObservableObject {
             }
             // swiftlint:disable:next no_empty_block
         } catch {}
-
+        
         return camera
     }
-
+    
     @available(iOS 15, *)
     private func setRecommendedZoomFactor() {
         guard let videoInput = self.input else {
             return
         }
-
+        
         let zoomFactor = RecommendedZoom.factor(for: videoInput, codeWidth: expectedBarcodeWidth)
         do {
             try videoInput.device.lockForConfiguration()
@@ -320,7 +320,7 @@ extension InternalBarcodeDetector: AVCaptureMetadataOutputObjectsDelegate {
         else {
             return
         }
-
+        
         let result = BarcodeResult(code: code, format: format)
         handleBarCodeResult(result)
     }
