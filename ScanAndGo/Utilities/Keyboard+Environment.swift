@@ -25,8 +25,8 @@ struct KeyboardHeightEnvironmentValue: ViewModifier {
     func body(content: Content) -> some View {
         content
             .environment(\.keyboardHeight, keyboardHeight)
-            /// Approximation of Apple's keyboard animation
-            /// source: https://forums.developer.apple.com/forums/thread/48088
+        /// Approximation of Apple's keyboard animation
+        /// source: https://forums.developer.apple.com/forums/thread/48088
             .animation(.interpolatingSpring(mass: 3, stiffness: 1000, damping: 500, initialVelocity: 0), value: keyboardHeight)
             .background {
                 GeometryReader { keyboardProxy in
