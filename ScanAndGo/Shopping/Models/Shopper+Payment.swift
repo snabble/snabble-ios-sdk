@@ -31,6 +31,14 @@ extension Shopper: PaymentMethodManagerDelegate {
         !(method?.dataRequired == true && detail == nil)
     }
     
+    func verifyPayment(_ payment: Payment?) {
+        guard let payment = paymentManager.selectedPayment, !restrictedPayments.contains(payment.method) else {
+            hasValidPayment = false
+            return
+        }
+        hasValidPayment = acceptPayment(method: payment.method, detail: payment.detail)
+    }
+    
     public func paymentMethodManager(didSelectItem item: SnabbleUI.PaymentMethodItem) {
         logger.debug("didSelectItem: \(item.title)")
         guard item.selectable else {

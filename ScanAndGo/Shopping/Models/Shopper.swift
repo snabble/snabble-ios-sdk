@@ -43,14 +43,6 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
     
     public var restrictedPayments: [RawPaymentMethod] = []
     
-    private func verifyPayment(_ payment: Payment?) {
-        guard let payment = paymentManager.selectedPayment, !restrictedPayments.contains(payment.method) else {
-            hasValidPayment = false
-            return
-        }
-        hasValidPayment = true
-    }
-    
     subscript(dynamicMember member: String) -> UIImage? {
         if member == "paymentIcon", hasValidPayment  {
             return paymentManager.selectedPayment?.method.icon
