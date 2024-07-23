@@ -24,13 +24,13 @@ extension Shopper {
     }
     
     func startCheckout() {
-        guard let paymentMethod = self.selectedPayment?.method else {
+        guard let paymentMethod = self.paymentManager.selectedPayment?.method else {
             logger.debug("selectedPayment method is nil")
             sendAction(.alertSheet(paymentManager))
             return
         }
         
-        let paymentDetail = self.selectedPayment?.detail
+        let paymentDetail = self.paymentManager.selectedPayment?.detail
         let shoppingCart = barcodeManager.shoppingCart
         
         if  paymentDetail == nil {
@@ -46,7 +46,7 @@ extension Shopper {
                 // force any required info to be re-requested on the next attempt
                 shoppingCart.resetInformationData() // requiredInformationData = []
                 
-                let detail = self.selectedPayment?.detail
+                let detail = self.paymentManager.selectedPayment?.detail
                 self.gotoPayment(paymentMethod, detail, info, shoppingCart) { didStart in
                     if !didStart {
                         self.startScanner()

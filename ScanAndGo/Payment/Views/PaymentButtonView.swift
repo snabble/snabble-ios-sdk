@@ -20,17 +20,19 @@ struct PaymentButtonView: View {
             onAction()
         }, label: {
             HStack {
-                Spacer(minLength: 2)
-                if let icon = model.selectedPayment?.method.icon {
+                if let icon = model.paymentIcon {
+                    Spacer(minLength: 2)
                     SwiftUI.Image(uiImage: icon)
                         .animation(.smooth, value: icon)
+                        .padding(.vertical, 8)
                 } else {
-                    Text("")
+                    Text(Asset.localizedString(forKey: "Snabble.Shoppingcart.BuyProducts.selectPaymentMethod"))
+                        .padding(.vertical, 8)
+                    Spacer()
                 }
                 Spacer(minLength: 2)
                 Image(systemName: "chevron.down")
             }
-            .frame(width: 88, height: 38)
             .contentShape(Rectangle())
         })
         .buttonStyle(BorderedButtonStyle())

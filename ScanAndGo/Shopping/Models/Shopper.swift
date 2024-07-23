@@ -29,6 +29,7 @@ public protocol ShoppingProvider: AnyObject {
     var shopper: Shopper { get }
 }
 
+@dynamicMemberLookup
 public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
     public static func == (lhs: Shopper, rhs: Shopper) -> Bool {
         lhs.barcodeManager.shop == rhs.barcodeManager.shop
@@ -38,12 +39,27 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
     @ObservedObject public var cartModel: ShoppingCartViewModel
     
     @Published public var paymentManager: PaymentMethodManager
-    @Published public var selectedPayment: Payment?
+    @Published public var hasValidPayment: Bool = false
     
-    let logger = Logger(subsystem: "ScanAndGo", category: "Shopper")
-    
-    private var subscriptions = Set<AnyCancellable>()
     public var restrictedPayments: [RawPaymentMethod] = []
+    
+    private func verifyPayment(_ payment: Payment?) {
+        guard let payment = paymentManager.selectedPayment, !restrictedPayments.contains(payment.method) else {
+            hasValidPayment = false
+            return
+        }
+        hasValidPayment = true
+    }
+    
+    subscript(dynamicMember member: String) -> UIImage? {
+        if member == "paymentIcon", hasValidPayment  {
+            return paymentManager.selectedPayment?.method.icon
+        }
+        return nil
+    }
+
+    let logger = Logger(subsystem: "ScanAndGo", category: "Shopper")
+    private var subscriptions = Set<AnyCancellable>()
     
     public init(shop: Shop, detector: InternalBarcodeDetector = .init(detectorArea: .rectangle)) {
         let shoppingCart = Snabble.shared.shoppingCartManager.shoppingCart(for: shop)
@@ -59,7 +75,13 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
         self.barcodeManager.processingDelegate = self
         
         self.paymentManager.delegate = self
-        self.selectedPayment = self.paymentManager.selectedPayment
+        
+        self.paymentManager.$selectedPayment
+            .receive(on: RunLoop.main)
+            .sink { [unowned self] payment in
+                self.verifyPayment(payment)
+            }
+            .store(in: &subscriptions)
         
         ActionManager.shared.$actionState
             .receive(on: RunLoop.main)
@@ -123,7 +145,7 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
     @Published public var scanMessage: ScanMessage?
     
     /// Error message received from `BarcodeProcessing`
-    @Published public var errorMessage: String? 
+    @Published public var errorMessage: String?
     
     @Published public var flashlight: Bool = false {
         didSet {

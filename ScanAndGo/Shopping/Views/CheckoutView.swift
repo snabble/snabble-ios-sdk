@@ -44,13 +44,23 @@ struct CheckoutView: View {
                         .fontWeight(.bold)
                 }
                 HStack(spacing: 16) {
-                    PaymentButtonView(model: model, onAction: {
-                        model.sendAction(.alertSheet(model.paymentManager))
-                    })
-                    PrimaryButtonView(title: Asset.localizedString(forKey: "Snabble.Shoppingcart.BuyProducts.now"),
-                                      disabled: $disableCheckout, onAction: {
-                        model.startCheckout()
-                    })
+                    if model.hasValidPayment {
+                        PaymentButtonView(model: model, onAction: {
+                            model.sendAction(.alertSheet(model.paymentManager))
+                        })
+                        .frame(width: 88, height: 38)
+                        if model.paymentManager.selectedPayment != nil {
+                            PrimaryButtonView(title: Asset.localizedString(forKey: "Snabble.Shoppingcart.BuyProducts.now"),
+                                              disabled: $disableCheckout, onAction: {
+                                model.startCheckout()
+                            })
+                        }
+                    } else {
+                        PaymentButtonView(model: model, onAction: {
+                            model.sendAction(.alertSheet(model.paymentManager))
+                        })
+                        .frame(minWidth: 88, maxWidth: .infinity)
+                    }
                 }
             }
             .padding([.leading, .trailing], 16)
