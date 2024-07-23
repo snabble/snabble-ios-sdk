@@ -45,6 +45,7 @@ extension Shopper: PaymentMethodManagerDelegate {
                     Alert(title: Text("Entschuldigung"),
                           message: Text("Diese Zahlungsmethode ist zur Zeit nicht verfügbar."))
                 ))
+                self.paymentManager.selectedPayment = nil
             }
             return
         }
@@ -54,31 +55,17 @@ extension Shopper: PaymentMethodManagerDelegate {
             return
         }
         
-        if detail != nil, let payment = paymentManager.selectedPayment {
-            selectedPayment = payment
-        }
         // if the selected method is missing its detail data, immediately open the edit VC for the method
         if detail == nil,
            let controller = method.editViewController(with: project.id, self) {
             self.controller = controller
         } else if method == .applePay && !ApplePay.canMakePayments(with: project.id) {
             ApplePay.openPaymentSetup()
-        } else if acceptPayment(method: method, detail: detail), let payment = paymentManager.selectedPayment {
-            selectedPayment = payment
         }
     }
     
     public func paymentMethodManager(didSelectPayment payment: SnabbleCore.Payment?) {
         logger.debug("didSelectPayment: \(payment.debugDescription)")
-        let payment = paymentManager.selectedPayment
-        
-        let method = payment?.method
-        let detail = payment?.detail
-        
-        // Payment is already configured
-        if method?.dataRequired == true && detail != nil {
-            selectedPayment = payment
-        }
     }
 }
 
