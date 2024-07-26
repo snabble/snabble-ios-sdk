@@ -1,6 +1,6 @@
 //
 //  ShoppingModel+Product.swift
-//  ScanAndGo
+//  SnabbleScanAndGo
 //
 //  Created by Uwe Tilemann on 23.06.24.
 //

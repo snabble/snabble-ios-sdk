@@ -1,6 +1,6 @@
 //
 //  ShoppingModel+Payment.swift
-//  ScanAndGo
+//  SnabbleScanAndGo
 //
 //  Created by Uwe Tilemann on 23.06.24.
 //
@@ -11,6 +11,12 @@ import SwiftUI
 import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleUI
+
+extension Payment: Equatable {
+    public static func == (lhs: Payment, rhs: Payment) -> Bool {
+        return lhs.id == rhs.id
+    }
+}
 
 extension Shopper {
     var project: Project {

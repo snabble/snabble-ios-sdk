@@ -1,6 +1,6 @@
 //
 //  BarcodeScannerView.swift
-//  ScanAndGo
+//  SnabbleScanAndGo
 //
 //  Created by Uwe Tilemann on 14.06.24.
 //

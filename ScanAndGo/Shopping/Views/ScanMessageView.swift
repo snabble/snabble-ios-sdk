@@ -1,6 +1,6 @@
 //
 //  ScanMessageView.swift
-//  ScanAndGo
+//  SnabbleScanAndGo
 //
 //  Created by Uwe Tilemann on 16.06.24.
 //

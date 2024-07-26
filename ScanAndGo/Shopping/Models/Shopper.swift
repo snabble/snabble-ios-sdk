@@ -1,6 +1,6 @@
 //
-//  ShoppingModel.swift
-//  ScanAndGo
+//  Shopper.swift
+//  SnabbleScanAndGo
 //
 //  Created by Uwe Tilemann on 24.06.24.
 //
@@ -29,21 +29,52 @@ public protocol ShoppingProvider: AnyObject {
     var shopper: Shopper { get }
 }
 
+/// Manages a shopping session in a shop and coordinates the shopping cart.
+///
+/// The `Shopper` class is responsible for handling the shopping experience in a specific shop. It
+/// manages the shopping cart, payment methods, and coordinates with the `BarcodeManager` to handle
+/// barcode scanning and product identification.
+///
+/// The class conforms to `ObservableObject` to support SwiftUI views and implements the
+/// `BarcodeProcessing` and `Equatable` protocols. It handles actions such as starting and stopping
+/// the barcode scanner, processing scanned items, and managing payment methods.
+///
+/// Example usage:
+/// ```swift
+/// let shop = Shop(...)
+/// let shopper = Shopper(shop: shop)
+/// shopper.startScanner()
+/// ```
 @dynamicMemberLookup
 public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
     public static func == (lhs: Shopper, rhs: Shopper) -> Bool {
         lhs.barcodeManager.shop == rhs.barcodeManager.shop
     }
     
+    /// Manages the barcode scanning process.
+    /// The `barcodeManager` is responsible for handling scanned barcodes, managing the scanner state, and processing scanned items.
     @ObservedObject public var barcodeManager: BarcodeManager
+    
+    /// Manages the shopping cart.
+    /// The `cartModel` handles the items in the shopping cart, including adding, removing, and updating items.
     @ObservedObject public var cartModel: ShoppingCartViewModel
     
+    /// Manages the available payment methods.
+    /// The `paymentManager` keeps track of available and selected payment methods for the current shopping session.
     @Published public var paymentManager: PaymentMethodManager
+    
+    /// Indicates whether the shopper has a valid payment method.
+    /// This property is set to `true` when a valid payment method is selected, and `false` otherwise.
     @Published public var hasValidPayment: Bool = false
     
+    /// A list of payment methods that are restricted for the shopper.
     public var restrictedPayments: [RawPaymentMethod] = []
     
-    subscript(dynamicMember member: String) -> UIImage? {
+    /// Provides a dynamic member lookup for retrieving payment icons.
+    ///
+    /// - Parameter member: The member name to lookup.
+    /// - Returns: The payment icon if available, otherwise nil.
+   subscript(dynamicMember member: String) -> UIImage? {
         if member == "paymentIcon", hasValidPayment  {
             return paymentManager.selectedPayment?.method.icon
         }
@@ -53,6 +84,11 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
     let logger = Logger(subsystem: "ScanAndGo", category: "Shopper")
     private var subscriptions = Set<AnyCancellable>()
     
+    /// Initializes a new Shopper with the specified shop and barcode detector.
+    ///
+    /// - Parameters:
+    ///   - shop: The shop for the Shopper.
+    ///   - detector: The barcode detector used for scanning.
     public init(shop: Shop, detector: InternalBarcodeDetector = .init(detectorArea: .rectangle)) {
         let shoppingCart = Snabble.shared.shoppingCartManager.shoppingCart(for: shop)
         let barcodeManager = BarcodeManager(shop: shop,
@@ -83,6 +119,9 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
             .store(in: &subscriptions)
     }
     
+    /// Handles actions based on the new state.
+    ///
+    /// - Parameter newState: The new action state.
     private func handleAction(_ newState: ActionType) {
         if case .idle = newState {
             startScanner()
@@ -95,7 +134,7 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
         }
     }
     
-    /// To begin a scanning session set `scanningActivated` to `true`
+    /// Indicates whether scanning is activated.
     @Published public var scanningActivated: Bool = false {
         didSet {
             logger.debug("scanningActivated \(self.scanningActivated)")
@@ -107,7 +146,7 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
         }
     }
     
-    /// stored in UserDefaults
+    /// Indicates whether scanning is paused. Stored in UserDefaults.
     @Published public var scanningPaused: Bool = UserDefaults.standard.scanningDisabled {
         didSet {
             logger.debug("scanningDisabled \(self.scanningPaused)")
@@ -119,10 +158,10 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
             UserDefaults.standard.setScanningDisabled(scanningPaused)
         }
     }
-    /// While fetching data `processing` this is `true`
+    /// Indicates whether the Shopper is currently processing.
     @Published public var processing: Bool = false
     
-    /// Publishing the `scannedItem` that was recognized by `barcodeManager`
+    /// The scanned item recognized by the BarcodeManager.
     @Published public var scannedItem: BarcodeManager.ScannedItem? {
         didSet {
             if scannedItem != nil {
@@ -131,12 +170,13 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
             }
         }
     }
+    /// A list of scanned items.
     @Published public var bundles: [BarcodeManager.ScannedItem] = []
     
-    /// `ScanMessage` message received from `BarcodeProcessing
+    /// The scan message received from BarcodeProcessing.
     @Published public var scanMessage: ScanMessage?
     
-    /// Error message received from `BarcodeProcessing`
+    /// The error message received from BarcodeProcessing.
     @Published public var errorMessage: String?
     
     @Published public var flashlight: Bool = false {
@@ -146,16 +186,19 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
     }
     @Published public var controller: UIViewController?
     
+    /// Resets the scan data.
     public func reset() {
         self.errorMessage = nil
         self.scanMessage = nil
         self.scannedItem = nil
         self.bundles = []
     }
+    /// Indicates whether the scanner is ready to scan.
     public var readyToScan: Bool {
         scanningActivated && !scanningPaused
     }
     
+    /// Starts the barcode scanner.
     @MainActor
     public func startScanner() {
         guard readyToScan, barcodeManager.barcodeDetector.state != .scanning else {
@@ -165,6 +208,7 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
         barcodeManager.barcodeDetector.start()
     }
     
+    /// Stops the barcode scanner.
     @MainActor
     public func stopScanner() {
         barcodeManager.barcodeDetector.stop()

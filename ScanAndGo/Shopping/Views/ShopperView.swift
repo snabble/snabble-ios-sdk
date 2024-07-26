@@ -1,6 +1,6 @@
 //
-//  ShoppingManagerView.swift
-//  ScanAndGo
+//  ShopperView.swift
+//  SnabbleScanAndGo
 //
 //  Created by Uwe Tilemann on 21.06.24.
 //
@@ -9,6 +9,7 @@ import SwiftUI
 
 import SnabbleAssetProviding
 
+/// A view that manages the shopping session for a user, integrating with the Shopper model to handle barcode scanning, displaying scan messages, and error handling.
 public struct ShopperView: View {
     @ObservedObject public var model: Shopper
     @AppStorage(UserDefaults.scanningDisabledKey) var expanded: Bool = false

@@ -1,6 +1,6 @@
 //
 //  ShoppingManager+LookupCode.swift
-//  ScanAndGo
+//  SnabbleScanAndGo
 //
 //  Created by Uwe Tilemann on 16.06.24.
 //
@@ -50,6 +50,11 @@ extension BarcodeManager {
         self.processingDelegate?.track(.scanUnknown(code))
     }
     
+    /// Handles the scanned barcode and looks up the corresponding product.
+    ///
+    /// - Parameters:
+    ///   - code: The scanned barcode.
+    ///   - format: The format of the scanned barcode.
     func handleScannedCode(_ scannedCode: String, withFormat format: ScanFormat?, withTemplate template: String? = nil) {
         
         self.barcodeDetector.pauseScanning()

@@ -1,6 +1,6 @@
 //
 //  PullOverView.swift
-//  ScanAndGo
+//  SnabbleScanAndGo
 //
 //  Created by Uwe Tilemann on 09.06.24.
 //

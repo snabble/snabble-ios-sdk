@@ -1,6 +1,6 @@
 //
 //  PaymentButtonView.swift
-//  ScanAndGo
+//  SnabbleScanAndGo
 //
 //  Created by Uwe Tilemann on 08.09.23.
 //
