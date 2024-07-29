@@ -248,7 +248,7 @@ extension Shopper: ShoppingCartDelegate {
         }
     
     public func gotoScanner() {
-        logger.debug("**: gotoScanner()")
+        logger.debug("no implementation: gotoScanner()")
     }
 }
 
