@@ -11,6 +11,7 @@ import Combine
 import SnabbleUI
 import SnabbleAssetProviding
 
+/// Represents different types of actions that can be triggered in the application.
 public enum ActionType: Equatable {
     /// Nothing to display
     case idle
@@ -22,7 +23,7 @@ public enum ActionType: Equatable {
     case sheet(any View)
     /// Shows the given associated `SheetProviding`
     case alertSheet(SheetProviding)
-    /// Shows the given associated `AlertProviding`
+    /// Shows the given associated `Alert`
     case alert(Alert)
     
     public static func == (lhs: ActionType, rhs: ActionType) -> Bool {
@@ -56,6 +57,7 @@ extension ActionType: CustomStringConvertible {
     }
 }
 
+/// Represents an action item with a type and domain.
 struct ActionItem: Swift.Identifiable, Equatable {
     static func == (lhs: ActionItem, rhs: ActionItem) -> Bool {
         lhs.id == rhs.id
@@ -75,18 +77,30 @@ struct ActionItem: Swift.Identifiable, Equatable {
     }
 }
 
+/// Manages the state and handling of actions within the application.
+///
+/// The `ActionManager` is a singleton class responsible for managing the different types of actions that can be triggered
+/// throughout the application. It publishes action states and provides a mechanism for views to observe and respond to these
+/// states.
 public final class ActionManager: ObservableObject {
     public static let shared = ActionManager()
     
     let logger = Logger(subsystem: "ScanAndGo", category: "ActionManager")
     public let actionPublisher = PassthroughSubject<ActionType, Never>()
     
-    @Published var actionState: ActionType = .idle {
+    /// The current state of the action being handled.
+    /// Updates to this property will trigger corresponding UI changes in subscribed views.
+   @Published var actionState: ActionType = .idle {
         didSet {
             logger.debug("handleAction: \(oldValue) -> \(self.actionState)")
         }
     }
+    /// The currently active action item.
+    /// This property holds the details of the current action, including its type and domain.
     @Published var currentAction: ActionItem?
+
+    /// Indicates whether an action is currently presented.
+    /// This property helps in managing the presentation state of different actions.
     @Published var isPresented: Bool = false
     
     private var subscriptions = Set<AnyCancellable>()
@@ -102,12 +116,16 @@ public final class ActionManager: ObservableObject {
     private func handleAction(_ newState: ActionType) {
         self.actionState = newState
     }
+    
+    /// Sends a new action state to be handled.
+    /// - Parameter actionState: The new action state to be handled.
     public func send(_ actionState: ActionType) {
         currentAction = ActionItem(type: actionState)
         actionPublisher.send(actionState)
     }
 }
 
+/// A view modifier that observes the `ActionManager` and modifies the view based on the current action state.
 public struct ActionModifier: ViewModifier {
     @State var actionState: ActionType = .idle
     
@@ -232,6 +250,7 @@ public struct ActionModifier: ViewModifier {
 }
 
 extension View {
+    /// A view modifier that applies the `ActionModifier` to the view.
     public func actionState() -> some View {
         self.modifier(ActionModifier())
     }

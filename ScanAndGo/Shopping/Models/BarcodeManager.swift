@@ -1,6 +1,6 @@
 //
 //  BarcodeManager.swift
-//  ScanAndGo
+//  SnabbleScanAndGo
 //
 //  Created by Uwe Tilemann on 13.06.24.
 //
@@ -13,6 +13,7 @@ import SnabbleAssetProviding
 import SnabbleUI
 import Combine
 
+/// Protocol for processing scanned barcodes.
 public protocol BarcodeProcessing: AnyObject, AnalyticsDelegate {
     var processing: Bool { get set }
     var scannedItem: BarcodeManager.ScannedItem? { get set }
@@ -21,6 +22,20 @@ public protocol BarcodeProcessing: AnyObject, AnalyticsDelegate {
     var errorMessage: String? { get set }
 }
 
+/// Manages barcode scanning and processing for a shopping session.
+///
+/// The `BarcodeManager` class is responsible for handling barcode scanning using the device's camera.
+/// It uses an `InternalBarcodeDetector` to detect barcodes and processes them to identify products.
+/// Upon successful barcode detection, it communicates with the `Shopper` class to update the shopping cart.
+/// It also handles various messages such as product not found, age restrictions, and errors.
+///
+/// Example usage:
+/// ```swift
+/// let shop = Shop(...)
+/// let shoppingCart = ShoppingCart(...)
+/// let detector = InternalBarcodeDetector(...)
+/// let barcodeManager = BarcodeManager(shop: shop, shoppingCart: shoppingCart, detector: detector)
+/// ```
 public final class BarcodeManager: ObservableObject {
     let shop: Shop
     let shoppingCart: ShoppingCart
@@ -28,6 +43,7 @@ public final class BarcodeManager: ObservableObject {
     let productProvider: ProductProviding
     let logger = Logger(subsystem: "ScanAndGo", category: "ShoppingManager")
     
+    /// Represents a scanned item.
     public struct ScannedItem: Equatable {
         public static func == (lhs: BarcodeManager.ScannedItem, rhs: BarcodeManager.ScannedItem) -> Bool {
             lhs.code == rhs.code &&
@@ -37,9 +53,11 @@ public final class BarcodeManager: ObservableObject {
         let code: String
         let type: ProductType
         
+        /// The product corresponding to the scanned item.
         public var product: Product {
             scannedProduct.product
         }
+        /// The name of the product.
         public var productName: String {
             product.name
         }
@@ -53,6 +71,12 @@ public final class BarcodeManager: ObservableObject {
     
     private var subscriptions = Set<AnyCancellable>()
     
+    /// Initializes a new BarcodeManager with the specified shop, shopping cart, and barcode detector.
+    ///
+    /// - Parameters:
+    ///   - shop: The shop for the BarcodeManager.
+    ///   - shoppingCart: The shopping cart associated with the shop.
+    ///   - detector: The barcode detector used for scanning.
     public init(shop: Shop,
                 shoppingCart: ShoppingCart,
                 detector: InternalBarcodeDetector

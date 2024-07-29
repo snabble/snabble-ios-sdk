@@ -1,6 +1,6 @@
 //
 //  CheckoutView.swift
-//  ScanAndGo
+//  SnabbleScanAndGo
 //
 //  Created by Uwe Tilemann on 18.06.24.
 //
