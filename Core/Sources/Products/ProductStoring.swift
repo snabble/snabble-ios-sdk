@@ -72,6 +72,6 @@ public extension ProductStoring {
     func setup(completion: @escaping (ProductStoreAvailability) -> Void ) {
         self.setup(update: .always, forceFullDownload: false, completion: completion)
     }
-    // swiftlint:disable:next no_empty_block
+    
     func removeDatabase() { }
 }
