@@ -23,6 +23,5 @@ public struct UIViewPreview<View>: UIViewRepresentable where View: UIView {
         view
     }
 
-    // swiftlint:disable:next no_empty_block
     public func updateUIView(_ view: UIView, context: Context) {}
 }

@@ -40,8 +40,7 @@ open class BaseCheckViewModel: ObservableObject, CheckViewModel {
         let model = CheckModel(shop: shop, shoppingCart: shoppingCart, checkoutProcess: checkoutProcess, paymentDelegate: paymentDelegate)
         self.init(checkModel: model)
     }
-    
-    // swiftlint:disable:next no_empty_block
+
     func updateCodeImage() {
     }
 
