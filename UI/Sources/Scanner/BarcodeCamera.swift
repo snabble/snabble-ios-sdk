@@ -208,7 +208,6 @@ open class BarcodeCamera: BarcodeDetector {
             if camera.isLowLightBoostSupported {
                 camera.automaticallyEnablesLowLightBoostWhenAvailable = true
             }
-            // swiftlint:disable:next no_empty_block
         } catch {}
 
         return camera
