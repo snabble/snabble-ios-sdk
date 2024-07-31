@@ -188,17 +188,7 @@ public struct ActionModifier: ViewModifier {
             alertPresented = true
         }
     }
-    
-    private var subscriptions = Set<AnyCancellable>()
-    
-    init() {
-        ActionManager.shared.actionPublisher
-            .receive(on: RunLoop.main)
-            .sink(receiveValue: { _ in
-            })
-            .store(in: &subscriptions)
-    }
-    
+        
     @ViewBuilder
     public func body(content: Content) -> some View {
         content
