@@ -1,4 +1,4 @@
-"Home.Grab.Purchase.placeholder" = "Zur Zeit verarbeiten wir viele Einkäufe.\nHier findest du bald deinen neuen Kassenbon.";
+"Home.Grab.Purchase.placeholder" = "Bitte berücksichtige, dass die Erstellung des Kassenbonseinige Zeit in Anspruch nehmen kann.";
 "Receipts.title" = "Kassenbons";
 "Snabble.AgeVerification.Failed.message" = "Einige Artikel in deinem Warenkorb unterliegen einer Altersbeschränkung, du darfst sie leider nicht kaufen.";
 "Snabble.AgeVerification.Failed.title" = "Du bist nicht alt genug";
@@ -373,7 +373,6 @@
 "Snabble.Shoppingcart.coupons" = "Gutscheine";
 "Snabble.Shoppingcart.deposit" = "Pfand";
 "Snabble.Shoppingcart.discounts" = "Rabatt";
-"Snabble.Shoppingcart.giveaway" = "Kostenloses Geschenk";
 "Snabble.Shoppingcart.howToPay" = "Wie möchtest du bezahlen?";
 "Snabble.Shoppingcart.includesDeposit" = "inkl. Pfand";
 "Snabble.Shoppingcart.noPaymentData" = "Jetzt hinzufügen";

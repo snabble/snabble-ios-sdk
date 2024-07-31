@@ -1,4 +1,4 @@
-"Home.Grab.Purchase.placeholder" = "We are currently processing many purchases.\nYou will soon find your new receipt here.";
+"Home.Grab.Purchase.placeholder" = "Please note that it may take some time to create the receipt.";
 "Receipts.title" = "Receipts";
 "Snabble.AgeVerification.Failed.message" = "Pre niektoré produkty v tvojom košíku platí vekový limit a tieto žiaľ nemôžeš kúpiť.";
 "Snabble.AgeVerification.Failed.title" = "Nespĺňaš vekový limit";
@@ -29,7 +29,7 @@
 "Snabble.Coupon.activate" = "Aktivovať";
 "Snabble.Coupon.activated" = "Aktivovaný";
 "Snabble.Coupon.countdown" = "Platnosť kupónu končí o %@ minút";
-"Snabble.Coupon.deactivate" = "Deactivate";
+"Snabble.Coupon.deactivate" = "Deaktivácia";
 "Snabble.Coupon.expired" = "Platnosť tohto kupónu už skončila.";
 "Snabble.Coupon.explanation" = "Tento kupón je teraz pre teba aktivovaný. Ak chceš využiť kupón, naskenuj výrobok v obchode a pridaj ho do nákupného košíka.";
 "Snabble.Coupon.notUsable" = "The conditions of the coupon are not yet met.";
@@ -373,7 +373,6 @@
 "Snabble.Shoppingcart.coupons" = "Poukážky";
 "Snabble.Shoppingcart.deposit" = "Záloha";
 "Snabble.Shoppingcart.discounts" = "Rabat";
-"Snabble.Shoppingcart.giveaway" = "Darček zadarmo";
 "Snabble.Shoppingcart.howToPay" = "Ako chceš zaplatiť?";
 "Snabble.Shoppingcart.includesDeposit" = "vrátane zálohy";
 "Snabble.Shoppingcart.noPaymentData" = "Pridať teraz";

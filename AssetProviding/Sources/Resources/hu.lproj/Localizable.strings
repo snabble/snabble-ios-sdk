@@ -1,4 +1,4 @@
-"Home.Grab.Purchase.placeholder" = "We are currently processing many purchases.\nYou will soon find your new receipt here.";
+"Home.Grab.Purchase.placeholder" = "Please note that it may take some time to create the receipt.";
 "Receipts.title" = "Receipts";
 "Snabble.AgeVerification.Failed.message" = "A kosárban olyan termékek is vannak, amelyek életkori korlátozás alá esnek. Ezeket sajnos nem veheted meg.";
 "Snabble.AgeVerification.Failed.title" = "Nem vagy elég idős";
@@ -373,7 +373,6 @@
 "Snabble.Shoppingcart.coupons" = "Kuponok";
 "Snabble.Shoppingcart.deposit" = "Betétdíj";
 "Snabble.Shoppingcart.discounts" = "Engedmény";
-"Snabble.Shoppingcart.giveaway" = "Ingyenes ajándék";
 "Snabble.Shoppingcart.howToPay" = "Hogyan szeretnél fizetni?";
 "Snabble.Shoppingcart.includesDeposit" = "betétdíjjal együtt";
 "Snabble.Shoppingcart.noPaymentData" = "Hozzáadás most";
