@@ -1,4 +1,4 @@
-"Home.Grab.Purchase.placeholder" = "We are currently processing many purchases.\nYou will soon find your new receipt here.";
+"Home.Grab.Purchase.placeholder" = "Please note that it may take some time to create the receipt.";
 "Receipts.title" = "Receipts";
 "Snabble.AgeVerification.Failed.message" = "Alcuni articoli nel tuo carrello sono soggetti a una limitazione di età e purtroppo non puoi acquistarli.";
 "Snabble.AgeVerification.Failed.title" = "Non hai ancora l’età consentita";
@@ -29,7 +29,7 @@
 "Snabble.Coupon.activate" = "Attivare";
 "Snabble.Coupon.activated" = "Attivato";
 "Snabble.Coupon.countdown" = "Il coupon scade tra %@ minuti";
-"Snabble.Coupon.deactivate" = "Deactivate";
+"Snabble.Coupon.deactivate" = "Disattivare";
 "Snabble.Coupon.expired" = "Questo coupon è già scaduto";
 "Snabble.Coupon.explanation" = "Ora il tuo coupon è attivato. Scansiona il prodotto nello shop e inseriscilo nel carrello per usufruire dei vantaggi del coupon.";
 "Snabble.Coupon.notUsable" = "The conditions of the coupon are not yet met.";
@@ -373,7 +373,6 @@
 "Snabble.Shoppingcart.coupons" = "Buoni";
 "Snabble.Shoppingcart.deposit" = "Deposito";
 "Snabble.Shoppingcart.discounts" = "Sconto";
-"Snabble.Shoppingcart.giveaway" = "Regalo gratuito";
 "Snabble.Shoppingcart.howToPay" = "Come vuoi pagare?";
 "Snabble.Shoppingcart.includesDeposit" = "incl. deposito";
 "Snabble.Shoppingcart.noPaymentData" = "Aggiungi adesso";
