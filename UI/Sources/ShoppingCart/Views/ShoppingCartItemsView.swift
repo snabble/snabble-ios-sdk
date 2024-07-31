@@ -35,10 +35,12 @@ extension ShoppingCartViewModel {
         } else if case .discount(let int) = item {
             DiscountItemView(amount: int, description: totalDiscountDescription, showImages: showImages)
                 .deleteDisabled(true)
-        } else if case .coupon(let cartCoupon, let lineItem) = item {
+        } else if case .coupon(_, let lineItem) = item {
             if let lineItem = lineItem, lineItem.redeemed == false {
-                let itemModel = CouponCartItemModel(cartCoupon: cartCoupon, for: lineItem)
-                CouponItemView(itemModel: itemModel, showImages: showImages)
+                // CouponCartItems are currenly not redeemed
+                // see: https://snabble.atlassian.net/browse/APPS-1688
+//                let itemModel = CouponCartItemModel(cartCoupon: cartCoupon, for: lineItem)
+//                CouponItemView(itemModel: itemModel, showImages: showImages)
             }
         }
     }
