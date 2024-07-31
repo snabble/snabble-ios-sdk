@@ -1,4 +1,4 @@
-"Home.Grab.Purchase.placeholder" = "We are currently processing many purchases.\nYou will soon find your new receipt here.";
+"Home.Grab.Purchase.placeholder" = "Please note that it may take some time to create the receipt.";
 "Receipts.title" = "Receipts";
 "Snabble.AgeVerification.Failed.message" = "Some products in your cart have an age restriction, unfortunately you can't purchase them.";
 "Snabble.AgeVerification.Failed.title" = "Age restriction";
@@ -373,7 +373,6 @@
 "Snabble.Shoppingcart.coupons" = "Coupons";
 "Snabble.Shoppingcart.deposit" = "Deposit";
 "Snabble.Shoppingcart.discounts" = "Discounts";
-"Snabble.Shoppingcart.giveaway" = "Free gift";
 "Snabble.Shoppingcart.howToPay" = "How would you like to pay?";
 "Snabble.Shoppingcart.includesDeposit" = "incl. deposit";
 "Snabble.Shoppingcart.noPaymentData" = "Add now";

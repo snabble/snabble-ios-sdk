@@ -161,6 +161,7 @@ public struct CheckoutInfo: Decodable {
         public let couponID: String?
         public let discountID: String?
         public let discountRuleID: String?
+        public let discountType: String?
         public let redeemed: Bool?
 
         /// price pre-multiplied with units, if present
