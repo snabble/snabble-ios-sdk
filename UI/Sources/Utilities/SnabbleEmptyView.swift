@@ -9,11 +9,13 @@ import SwiftUI
 import SnabbleAssetProviding
 
 public struct SnabbleEmptyView: View {
-    public let message: String
+    public let title: String
+    public let subtitle: String?
     public let image: Image
     
-    public init(message: String, image: Image) {
-        self.message = message
+    public init(title: String, subtitle: String? = nil, image: Image) {
+        self.title = title
+        self.subtitle = subtitle
         self.image = image
     }
 
@@ -25,10 +27,18 @@ public struct SnabbleEmptyView: View {
                 .frame(width: 72)
                 .foregroundColor(.accentColor)
             
-            Text(message)
+            Text(title)
                 .multilineTextAlignment(.center)
                 .lineLimit(2)
                 .padding([.leading, .trailing], 48)
+            if let subtitle {
+                Text(subtitle)
+                    .foregroundColor(.secondary)
+                    .font(.caption)
+                    .fontWeight(.semibold)
+                    .multilineTextAlignment(.center)
+                    .padding([.leading, .trailing], 48)
+            }
         }
         .padding()
     }
@@ -37,7 +47,7 @@ public struct SnabbleEmptyView: View {
 public class ReceiptsEmptyViewController: UIHostingController<SnabbleEmptyView> {
     public init() {
         super.init(rootView: SnabbleEmptyView(
-            message: Asset.localizedString(forKey: "Snabble.Receipts.noReceipts"),
+            title: Asset.localizedString(forKey: "Snabble.Receipts.noReceipts"),
             image: Image(systemName: "scroll")))
     }
         
@@ -49,7 +59,7 @@ public class ReceiptsEmptyViewController: UIHostingController<SnabbleEmptyView> 
 public class PaymentEmptyViewController: UIHostingController<SnabbleEmptyView> {
     public init() {
         super.init(rootView: SnabbleEmptyView(
-            message: Asset.localizedString(forKey: "Snabble.Payment.EmptyState.message"),
+            title: Asset.localizedString(forKey: "Snabble.Payment.EmptyState.message"),
             image: Image(systemName: "creditcard")))
     }
         

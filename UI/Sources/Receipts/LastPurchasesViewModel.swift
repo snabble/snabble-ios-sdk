@@ -34,32 +34,6 @@ private extension Order {
     }
 }
 
-extension UserDefaults {
-    private var key: String {
-        "io.snabble.sdk.grabandgo.timeIntervals"
-    }
-    
-    func grabAndGoTimeIntervals() -> [TimeInterval] {
-        object(forKey: key) as? [TimeInterval] ?? []
-    }
-    
-    public func addGrabAndGoTimeInterval(_ timeInterval: TimeInterval) {
-        var intervals = grabAndGoTimeIntervals()
-        intervals.append(timeInterval)
-        setValue(intervals, forKey: key)
-    }
-    
-    public func removeOldestGrabAndGoInterval() {
-        var intervals = grabAndGoTimeIntervals()
-        intervals.removeFirst()
-        setValue(intervals, forKey: key)
-    }
-    
-    public func clearGrabAndGoIntervals() {
-        setValue(nil, forKey: key)
-    }
-}
-
 private extension UserDefaults {
     private var receiptKey: String {
         "io.snabble.sdk.lastReceiptCount"
@@ -122,13 +96,6 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
     
     @Published public var numberOfUnloaded: Int = 0
     @Published var state: LoadingState<[PurchaseProviding]> = .idle
-    @Published var awaitingReceipts: Bool = false {
-        didSet {
-            if !awaitingReceipts {
-                userDefaults.clearGrabAndGoIntervals()
-            }
-        }
-    }
 
     private var cancellables = Set<AnyCancellable>()
     private var imageCache: [Identifier<Project>: SwiftUI.Image] = [:]
@@ -163,13 +130,7 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
                     
                     if orders.isEmpty {
                         userDefaults.setReceiptCount(0)
-
-                        awaitingReceipts(for: orders)
-                        if awaitingReceipts {
-                            self.state = .loaded([])
-                        } else {
-                            self.state = .empty
-                        }
+                        self.state = .empty
                     } else {
                         self.state = .loaded(orders)
                         
@@ -183,45 +144,12 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
                             userDefaults.setReceiptCount(orders.count)
                             numberOfUnloaded = orders.count
                         }
-                        awaitingReceipts(for: orders)
                     }
                 } catch {
                     self.state = .empty
                 }
             }
         }
-    }
-    
-    func awaitingReceipts(for orders: [Order]) {
-        let intervals = userDefaults.grabAndGoTimeIntervals()
-        
-        guard !intervals.isEmpty else {
-            return awaitingReceipts = false
-        }
-        
-        guard intervals.last! + 86_400 >= Date().timeIntervalSince1970 else {
-            userDefaults.clearGrabAndGoIntervals()
-            awaitingReceipts = false
-            return
-        }
-        if orders.isEmpty {
-            awaitingReceipts = true
-            return
-        }
-        
-        let latestGrabAndGoTimeintervals = orders
-            .filter {
-                $0.isGrabAndGo
-            }
-            .map {
-                $0.date.timeIntervalSince1970
-            }
-            .filter {
-                intervals.first! < $0
-            }
-            .sorted()
-        
-        awaitingReceipts = latestGrabAndGoTimeintervals.count < intervals.count
     }
 }
 
