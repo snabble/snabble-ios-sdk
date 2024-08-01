@@ -113,12 +113,12 @@ public struct ReceiptsListScreen: View {
     }
 
     public var body: some View {
-
         AsyncContentView(source: viewModel, content: { output in
             VStack {
                 List {
-                    if viewModel.awaitingReceipts {
-                        Text(Asset.localizedString(forKey: "Home.Grab.Purchase.placeholder"))
+                    let localizedString = Asset.localizedString(forKey: "Snabble.Receipts.placeholder")
+                    if localizedString != "Snabble.Receipts.placeholder" {
+                        Text(localizedString)
                             .foregroundColor(.secondary)
                             .font(.caption)
                             .fontWeight(.semibold)
