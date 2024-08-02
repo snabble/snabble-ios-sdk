@@ -123,7 +123,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         ViewProviderStore.register(view: {
             SnabbleEmptyView(
-                message: Asset.localizedString(forKey: "Snabble.Receipts.noReceipts"),
+                title: Asset.localizedString(forKey: "Snabble.Receipts.noReceipts"),
                 image: Image(systemName: "scroll"))
         }, for: .receiptsEmpty)
     }
