@@ -14,7 +14,7 @@ public struct SnabbleEmptyView: View {
     public let image: Image
     public let imageWidth: CGFloat
     
-	public init(title: String, subtitle: String? = nil, image: Image, imageWidth: CGFloat = 200) {
+	public init(title: String, subtitle: String? = nil, image: Image, imageWidth: CGFloat = 72) {
         self.title = title
         self.subtitle = subtitle
         self.image = image
