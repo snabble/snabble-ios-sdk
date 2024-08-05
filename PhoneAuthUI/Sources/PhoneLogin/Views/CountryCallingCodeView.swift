@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SnabbleAssetProviding
 import SnabblePhoneAuth
 
 extension SnabblePhoneAuth.Country {
@@ -66,8 +67,7 @@ private struct CountryCallingCodeListView: View {
                         }
                 }
                 .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
-                // phrase.com: Resources exceeded – You have exceeded the resources for your current plan.
-                .navigationTitle("Wähle deinen Ländercode")
+                .navigationTitle(Asset.localizedString(forKey: "Snabble.Account.Country.selection"))
                 .navigationBarTitleDisplayMode(.inline)
             }
             .onAppear {
