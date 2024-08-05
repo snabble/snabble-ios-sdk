@@ -10,6 +10,7 @@
 "Snabble.Account.Code.requestNewCode" = "Neuen Code anfordern";
 "Snabble.Account.Code.textFieldLabel" = "Code";
 "Snabble.Account.Code.title" = "Code eingeben";
+"Snabble.Account.Country.selection" = "Wähle deinen Ländercode";
 "Snabble.Account.Delete.Dialog.cancel" = "Abbrechen";
 "Snabble.Account.Delete.Dialog.continue" = "Löschen";
 "Snabble.Account.Delete.Dialog.message" = "Möchtest du dein Konto wirklich löschen? Bitte beachte, dass du nach Löschung deines Kontos keinen Zugang mehr zu deinen Daten hast.";
