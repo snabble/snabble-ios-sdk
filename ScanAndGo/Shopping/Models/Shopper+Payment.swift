@@ -56,8 +56,8 @@ extension Shopper: PaymentMethodManagerDelegate {
         guard !restrictedPayments.contains(method) else {
             DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
                 self.sendAction(.alert(
-                    Alert(title: Text("Entschuldigung"),
-                          message: Text("Diese Zahlungsmethode ist zur Zeit nicht verfügbar."))
+                    Alert(title: Text(Asset.localizedString(forKey: "Snabble.Payment.Unavailable.title")),
+                          message: Text(Asset.localizedString(forKey: "Snabble.Payment.Unavailable.message")))
                 ))
                 self.paymentManager.selectedPayment = nil
             }

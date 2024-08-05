@@ -155,6 +155,8 @@
 "Snabble.Payment.SEPA.title" = "SEPA inkaso";
 "Snabble.Payment.SEPA.validIBAN" = "Platný IBAN";
 "Snabble.Payment.Twint.error" = "Pri spracovaní tvojho účtu TWINT sa vyskytla chyba";
+"Snabble.Payment.Unavailable.message" = "This payment method is currently not available.";
+"Snabble.Payment.Unavailable.title" = "Sorry";
 "Snabble.Payment.aborted" = "Platobný proces bol prerušený";
 "Snabble.Payment.add" = "Pridať spôsob platby";
 "Snabble.Payment.addPaymentOrigin" = "Chceš preniesť informácie o platbe do aplikácie?";

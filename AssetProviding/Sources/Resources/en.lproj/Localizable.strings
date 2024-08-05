@@ -155,6 +155,8 @@
 "Snabble.Payment.SEPA.title" = "SEPA direct debit";
 "Snabble.Payment.SEPA.validIBAN" = "Valid IBAN";
 "Snabble.Payment.Twint.error" = "There was an error processing your TWINT account";
+"Snabble.Payment.Unavailable.message" = "This payment method is currently not available.";
+"Snabble.Payment.Unavailable.title" = "Sorry";
 "Snabble.Payment.aborted" = "Payment process was cancelled";
 "Snabble.Payment.add" = "Add payment method";
 "Snabble.Payment.addPaymentOrigin" = "Transfer payment credentials to the app?";
