@@ -58,7 +58,7 @@ struct CountryButtonView: View {
                         Text(state.label)
                             .frame(maxWidth: .infinity)
                     } else {
-                        Text("Account.UserDetails.stateSelect")
+                        Text("Snabble.Account.UserDetails.stateSelect")
                             .frame(maxWidth: .infinity)
                     }
                 }
@@ -132,7 +132,7 @@ private struct CountryListView: View {
                     }
                 }
                 .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
-                .navigationTitle("Account.UserDetails.Country.title")
+                .navigationTitle("Snabble.Account.UserDetails.Country.title")
                 .navigationBarTitleDisplayMode(.inline)
             }
             .onAppear {

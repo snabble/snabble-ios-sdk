@@ -12,9 +12,9 @@ extension PhoneAuthViewKind {
     var codeButtonTitle: String {
         switch self {
         case .initial:
-            "Account.Code.buttonLabel"
+            "Snabble.Account.Code.buttonLabel"
         case .management:
-            "Account.UserDetails.Change.buttonLabel"
+            "Snabble.Account.UserDetails.Change.buttonLabel"
         }
     }
 }
@@ -43,10 +43,10 @@ struct CodeView: View {
     var body: some View {
         VStack(spacing: 16) {
             VStack(spacing: 24) {
-                Text(Asset.localizedString(forKey: "Account.Code.description", arguments: phoneNumber))
+                Text(Asset.localizedString(forKey: "Snabble.Account.Code.description", arguments: phoneNumber))
                     .multilineTextAlignment(.center)
                     .minimumScaleFactor(0.5)
-                TextField(Asset.localizedString(forKey: "Code.input"), text: $otp)
+                TextField(Asset.localizedString(forKey: "Snabble.Account.Code.input"), text: $otp)
                     .keyboardType(.decimalPad)
                     .multilineTextAlignment(.center)
                     .focused($focusedField, equals: .code)
@@ -72,7 +72,7 @@ struct CodeView: View {
             .disabled(!isEnabled)
             
             LockedButtonView(
-                title: Asset.localizedString(forKey: "Account.Code.requestNewCode"),
+                title: Asset.localizedString(forKey: "Snabble.Account.Code.requestNewCode"),
                 action: {
                     rerequestCode(phoneNumber)
                 })
@@ -87,6 +87,6 @@ struct CodeView: View {
         .onAppear {
             focusedField = .code
         }
-        .navigationTitle(Asset.localizedString(forKey: "Account.Code.title"))
+        .navigationTitle(Asset.localizedString(forKey: "Snabble.Account.Code.title"))
     }
 }

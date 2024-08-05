@@ -21,27 +21,27 @@ public struct UserScreen: View {
         var title: String {
             switch self {
             case .initial:
-                "Account.UserDetails.title"
+                "Snabble.Account.UserDetails.title"
             case .management:
-                "Account.UserDetails.Change.title"
+                "Snabble.Account.UserDetails.Change.title"
             }
         }
         
         var message: String {
             switch self {
             case .initial:
-                "Account.UserDetails.description"
+                "Snabble.Account.UserDetails.description"
             case .management:
-                "Account.UserDetails.Change.description"
+                "Snabble.Account.UserDetails.Change.description"
             }
         }
         
         var buttonTitle: String {
             switch self {
             case .initial:
-                "Account.UserDetails.buttonLabel"
+                "Snabble.Account.UserDetails.buttonLabel"
             case .management:
-                "Account.UserDetails.Change.buttonLabel"
+                "Snabble.Account.UserDetails.Change.buttonLabel"
             }
         }
     }
@@ -156,7 +156,7 @@ public struct UserScreen: View {
                         ForEach(fields, id: \.id) { field in
                             switch field {
                             case .firstName:
-                                TextField("Account.UserDetails.firstName", text: $firstName)
+                                TextField("Snabble.Account.UserDetails.firstName", text: $firstName)
                                     .focused($focusField, equals: .firstName)
                                     .textContentType(.givenName)
                                     .keyboardType(.default)
@@ -169,7 +169,7 @@ public struct UserScreen: View {
                                     }
                                     .disabled(isLoading)
                             case .lastName:
-                                TextField("Account.UserDetails.lastName", text: $lastName)
+                                TextField("Snabble.Account.UserDetails.lastName", text: $lastName)
                                     .focused($focusField, equals: .lastName)
                                     .textContentType(.familyName)
                                     .keyboardType(.default)
@@ -182,7 +182,7 @@ public struct UserScreen: View {
                                     }
                                     .disabled(isLoading)
                             case .email:
-                                TextField("Account.UserDetails.email", text: $email)
+                                TextField("Snabble.Account.UserDetails.email", text: $email)
                                     .focused($focusField, equals: .email)
                                     .textContentType(.emailAddress)
                                     .keyboardType(.emailAddress)
@@ -196,7 +196,7 @@ public struct UserScreen: View {
                                     }
                                     .disabled(isLoading)
                             case .dateOfBirth:
-                                DatePicker("Account.UserDetails.dateOfBirth", 
+                                DatePicker("Snabble.Account.UserDetails.dateOfBirth",
                                            selection: $dateOfBirth,
                                            in: ...Self.sixteenYearAgo,
                                            displayedComponents: .date)
@@ -210,7 +210,7 @@ public struct UserScreen: View {
                                 }
                                 .disabled(isLoading)
                             case .street:
-                                TextField("Account.UserDetails.street", text: $street)
+                                TextField("Snabble.Account.UserDetails.street", text: $street)
                                     .focused($focusField, equals: .street)
                                     .textContentType(.streetAddressLine1)
                                     .keyboardType(.default)
@@ -223,7 +223,7 @@ public struct UserScreen: View {
                                     }
                                     .disabled(isLoading)
                             case .zip:
-                                TextField("Account.UserDetails.zip", text: $zip)
+                                TextField("Snabble.Account.UserDetails.zip", text: $zip)
                                     .focused($focusField, equals: .zip)
                                     .textContentType(.postalCode)
                                     .keyboardType(.numberPad)
@@ -236,7 +236,7 @@ public struct UserScreen: View {
                                     }
                                     .disabled(isLoading)
                             case .city:
-                                TextField("Account.UserDetails.city", text: $city)
+                                TextField("Snabble.Account.UserDetails.city", text: $city)
                                     .focused($focusField, equals: .city)
                                     .textContentType(.addressCity)
                                     .keyboardType(.default)

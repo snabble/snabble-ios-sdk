@@ -131,19 +131,19 @@ public struct PhoneAuthScreen<Header: View, Footer: View>: View {
     
     private func messageFor(error: Error) -> String {
         guard case let HTTPError.invalid(_, clientError) = error, let clientError else {
-            return Asset.localizedString(forKey: "Account.genericError")
+            return Asset.localizedString(forKey: "Snabble.Account.genericError")
         }
         let message: String
         switch clientError.type {
         case "invalid_input":
-            message = "Account.SignIn.error"
+            message = "Snabble.Account.SignIn.error"
         case "invalid_otp":
-            message = "Account.Code.error"
+            message = "Snabble.Account.Code.error"
         default:
             if clientError.validationErrors?.first(where: { $0.field == "phoneNumber" }) != nil {
-                message = "Account.SignIn.error"
+                message = "Snabble.Account.SignIn.error"
             } else {
-                message = "Account.genericError"
+                message = "Snabble.Account.genericError"
             }
         }
         return Asset.localizedString(forKey: message)

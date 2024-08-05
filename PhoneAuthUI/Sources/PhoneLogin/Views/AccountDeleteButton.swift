@@ -28,7 +28,7 @@ public struct AccountDeleteButton: View {
     
     public var body: some View {
         VStack {
-            SecondaryButtonView(title: Asset.localizedString(forKey: "Account.Delete.buttonLabel"),
+            SecondaryButtonView(title: Asset.localizedString(forKey: "Snabble.Account.Delete.buttonLabel"),
                                 disabled: Binding(get: { isLoading }, set: { _ in }),
                                 onAction: {
                 showDeleteConfirmation = true
@@ -46,9 +46,9 @@ public struct AccountDeleteButton: View {
             }
         }
         .alert(isPresented: $showDeleteConfirmation) {
-            Alert(title: Text(keyed: "Account.Delete.Dialog.title"),
-                  message: Text(keyed: "Account.Delete.Dialog.message"),
-                  primaryButton: .destructive(Text(keyed: "Account.Delete.Dialog.continue")) {
+            Alert(title: Text(keyed: "Snabble.Account.Delete.Dialog.title"),
+                  message: Text(keyed: "Snabble.Account.Delete.Dialog.message"),
+                  primaryButton: .destructive(Text(keyed: "Snabble.Account.Delete.Dialog.continue")) {
                 delete()
             },
                   secondaryButton: .cancel())
@@ -67,7 +67,7 @@ public struct AccountDeleteButton: View {
                     onSuccess()
                 }
             } catch {
-                errorMessage = Asset.localizedString(forKey: "Account.Delete.error")
+                errorMessage = Asset.localizedString(forKey: "Snabble.Account.Delete.error")
             }
             isLoading = false
         }

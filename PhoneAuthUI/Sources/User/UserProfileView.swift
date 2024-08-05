@@ -26,7 +26,7 @@ private extension SnabbleNetwork.User {
 
 struct UserFallBackView: View {
     var body: some View {
-        Text(Asset.localizedString(forKey: "Account.Info.fallback")).header()
+        Text(Asset.localizedString(forKey: "Snabble.Account.Info.fallback")).header()
     }
 }
 
@@ -43,8 +43,8 @@ struct UserNotLoggedInView<Teaser: View>: View {
 
     var body: some View {
         VStack(spacing: 24) {
-            Text(Asset.localizedString(forKey: "Settings.notSignedIn")).header()
-            PrimaryButtonView(title: Asset.localizedString(forKey: "Account.SignIn.title")) {
+            Text(Asset.localizedString(forKey: "Snabble.Account.notSignedIn")).header()
+            PrimaryButtonView(title: Asset.localizedString(forKey: "Snabble.Account.SignIn.title")) {
                 showSignin = true
             }
         }
@@ -94,7 +94,7 @@ public struct UserProfileView<Teaser: View, Login: View, Fallback: View>: View {
                                 .truncationMode(.middle)
                                 .lineLimit(1)
                         } else {
-                            Text(Asset.localizedString(forKey: "Account.Info.fallback")).header()
+                            Text(Asset.localizedString(forKey: "Snabble.Account.Info.fallback")).header()
                                 .frame(maxWidth: .infinity)
                                 .multilineTextAlignment(.center)
                         }

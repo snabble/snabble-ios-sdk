@@ -13,27 +13,27 @@ private extension PhoneAuthViewKind {
     var message: String {
         switch self {
         case .initial:
-            "Account.SignIn.description"
+            "Snabble.Account.SignIn.description"
         case .management:
-            "Account.ChangePhoneNumber.description"
+            "Snabble.Account.ChangePhoneNumber.description"
         }
     }
     
     var buttonTitle: String {
         switch self {
         case .initial:
-            "Account.SignIn.buttonLabel"
+            "Snabble.Account.SignIn.buttonLabel"
         case .management:
-            "Account.ChangePhoneNumber.buttonLabel"
+            "Snabble.Account.ChangePhoneNumber.buttonLabel"
         }
     }
     
     var title: String {
         switch self {
         case .initial:
-            "Account.SignIn.title"
+            "Snabble.Account.SignIn.title"
         case .management:
-            "Account.ChangePhoneNumber.title"
+            "Snabble.Account.ChangePhoneNumber.title"
         }
     }
 }
@@ -119,7 +119,7 @@ struct NumberView<Header: View, Footer: View>: View {
                             .background(.quaternary)
                             .clipShape(RoundedRectangle(cornerRadius: 6))
                         
-                        TextField(Asset.localizedString(forKey: "PhoneNumber.input"), text: $number)
+                        TextField(Asset.localizedString(forKey: "Snabble.Account.PhoneNumber.input"), text: $number)
                             .keyboardType(.phonePad)
                             .focused($focusedField, equals: .phoneNumber)
                             .submitLabel(.continue)
@@ -143,7 +143,7 @@ struct NumberView<Header: View, Footer: View>: View {
                 }
                 
                 VStack(spacing: 8) {
-                    Text(Asset.localizedString(forKey: "Account.SignIn.hint"))
+                    Text(Asset.localizedString(forKey: "Snabble.Account.SignIn.hint"))
                     if !footerMessage.isEmpty {
                         Text(footerMessage)
                             .foregroundColor(.red)
