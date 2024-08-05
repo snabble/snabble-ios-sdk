@@ -10,26 +10,39 @@ import SnabbleNetwork
 import SnabbleUser
 
 public extension UserDefaults {
-    // if the hosting app uses https://github.com/sindresorhus/Defaults there is a restriction:
-    // `The key name must be ASCII, not start with @, and cannot contain a dot (.).`
-    var isSignedInKey: String {
+    private static var isSignedInKey: String {
         "io-snabble-sdk-network-user-isSignedIn"
     }
+
     func isUserSignedIn() -> Bool {
-        return bool(forKey: isSignedInKey)
+        bool(forKey: Self.isSignedInKey)
     }
+
     func setUserSignedIn(_ signedIn: Bool) {
-        setValue(signedIn, forKey: isSignedInKey)
+        setValue(signedIn, forKey: Self.isSignedInKey)
     }
 }
 
 extension SnabbleNetwork.User {
-    func update(withDetails details: SnabbleNetwork.User.Details) {
-        print("TODO: SnabbleNetwork.User update(withDetails:)")
-//        UserDefaults.standard.setUser(.init(user: self, details: details))
+    private static var userKey: String {
+        "io-snabble-sdk-network-user"
     }
+    
+    private static var current: Self? {
+        UserDefaults.standard.value(forKey: Self.userKey) as? SnabbleNetwork.User
+    }
+    
+    private static func delete() {
+        UserDefaults.standard.setValue(nil, forKey: Self.userKey)
+    }
+    
+    func update(withDetails details: SnabbleNetwork.User.Details) {
+        let user = SnabbleNetwork.User(user: self, details: details)
+        UserDefaults.standard.setValue(user, forKey: Self.userKey)
+    }
+
     func update(withConsent consent: SnabbleNetwork.User.Consent) {
-        print("TODO: SnabbleNetwork.User update(withConsent:)")
-//        UserDefaults.standard.setUser(.init(user: self, consent: consent))
+        let user = SnabbleNetwork.User(user: self, consent: consent)
+        UserDefaults.standard.setValue(user, forKey: Self.userKey)
     }
 }
