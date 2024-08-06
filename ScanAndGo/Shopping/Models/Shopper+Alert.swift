@@ -11,12 +11,13 @@ import SnabbleCore
 import SnabbleUI
 
 extension Shopper {
-    func alert(_ controller: UIAlertController?) -> Alert {
-        if let controller {
-            Alert(title: Text(controller.title ?? "no title"),
-                  message: Text(controller.message ?? "No message available!"))
+    func alert(_ controller: UIAlertController) -> Alert {
+        if let message = controller.message {
+            return Alert(title: Text(controller.title ?? "no title"),
+                         message: Text(message)
+            )
         } else {
-            Alert(title: Text("No Alert Controller"))
+            return Alert(title: Text(controller.title ?? "no title"))
         }
     }
 }
