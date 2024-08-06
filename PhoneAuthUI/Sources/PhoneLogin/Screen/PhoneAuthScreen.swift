@@ -139,14 +139,18 @@ public struct PhoneAuthScreen<Header: View, Footer: View>: View {
             message = "Snabble.Account.SignIn.error"
         case "invalid_otp":
             message = "Snabble.Account.Code.error"
-        default:
-            if clientError.validationErrors?.first(where: { $0.field == "phoneNumber" }) != nil {
+        case "validation_error":
+            if clientError.validations?.first(where: { $0.field == "phoneNumber" }) != nil {
                 message = "Snabble.Account.SignIn.error"
             } else {
                 message = "Snabble.Account.genericError"
             }
+        default:
+            message = "Snabble.Account.genericError"
+            
         }
         return Asset.localizedString(forKey: message)
+        
    }
     
     private func sendPhoneNumber(_ phoneNumber: String) {
