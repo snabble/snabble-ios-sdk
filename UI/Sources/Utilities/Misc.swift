@@ -132,16 +132,7 @@ extension UIImage {
 }
 
 extension UIApplication {
-    var mainKeyWindow: UIWindow? {
-        connectedScenes
-            .compactMap { $0 as? UIWindowScene}
-            .flatMap { $0.windows }
-            .first { $0.isKeyWindow }
-    }
-}
-
-extension UIApplication {
-    class func topViewController(_ base: UIViewController? = UIApplication.shared.mainKeyWindow?.rootViewController) -> UIViewController? {
+    class func topViewController(_ base: UIViewController? = UIApplication.shared.sceneKeyWindow?.rootViewController) -> UIViewController? {
         if let nav = base as? UINavigationController {
             return topViewController(nav.visibleViewController)
         }

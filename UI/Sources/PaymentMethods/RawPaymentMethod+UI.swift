@@ -49,7 +49,7 @@ extension RawPaymentMethod {
         return Asset.image(named: "SnabbleSDK/payment/" + self.imageName)
     }
 
-    func editViewController(with projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
+    public func editViewController(with projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
         switch self {
         case .deDirectDebit:
             return sepaEditViewController(projectId, analyticsDelegate)

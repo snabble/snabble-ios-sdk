@@ -131,7 +131,7 @@ public struct ShopMapView: View {
             return MKCoordinateRegion.region(for: shop)
         }
     }
-
+    
     @ViewBuilder
     var mapView: some View {
         if mode == .shop {

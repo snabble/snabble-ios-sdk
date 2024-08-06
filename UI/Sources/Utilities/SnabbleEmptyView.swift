@@ -12,11 +12,13 @@ public struct SnabbleEmptyView: View {
     public let title: String
     public let subtitle: String?
     public let image: Image
+    public let imageWidth: CGFloat
     
-    public init(title: String, subtitle: String? = nil, image: Image) {
+	public init(title: String, subtitle: String? = nil, image: Image, imageWidth: CGFloat = 72) {
         self.title = title
         self.subtitle = subtitle
         self.image = image
+        self.imageWidth = imageWidth
     }
 
     public var body: some View {
@@ -24,7 +26,7 @@ public struct SnabbleEmptyView: View {
             image
                 .resizable()
                 .scaledToFit()
-                .frame(width: 72)
+                .frame(width: imageWidth)
                 .foregroundColor(.accentColor)
             
             Text(title)
@@ -48,7 +50,7 @@ public class ReceiptsEmptyViewController: UIHostingController<SnabbleEmptyView> 
     public init() {
         super.init(rootView: SnabbleEmptyView(
             title: Asset.localizedString(forKey: "Snabble.Receipts.noReceipts"),
-            image: Image(systemName: "scroll")))
+            image: SwiftUI.Image.image(named: "scroll", systemName: "scroll")))
     }
         
     @MainActor required dynamic public init?(coder aDecoder: NSCoder) {
@@ -60,9 +62,10 @@ public class PaymentEmptyViewController: UIHostingController<SnabbleEmptyView> {
     public init() {
         super.init(rootView: SnabbleEmptyView(
             title: Asset.localizedString(forKey: "Snabble.Payment.EmptyState.message"),
-            image: Image(systemName: "creditcard")))
+            image: SwiftUI.Image.image(named: "creditcard", systemName: "creditcart"))
+        )
     }
-        
+    
     @MainActor required dynamic public init?(coder aDecoder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }

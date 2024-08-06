@@ -14,7 +14,6 @@ public struct ViewProvider {
         case successCheckout
         case receiptsEmpty
         case paymentsEmpty
-        case phoneBenefits
     }
     private let key: ViewProvider.Name
 
