@@ -131,18 +131,10 @@ public struct ShopMapView: View {
             return MKCoordinateRegion.region(for: shop)
         }
     }
-//    @State var selectedRegion: MapFeature?
     
     @ViewBuilder
     var mapView: some View {
         if mode == .shop {
-//            Map(selection: $selectedRegion) {
-//                UserAnnotation(anchor: UnitPoint())
-//                Annotation(self.shopLocation.shop.name, coordinate: self.shopLocation.shop.location.coordinate, anchor: UnitPoint(x: 0.5, y: 1)) {
-//                    ShopAnnotationView(shopLocation: self.shopLocation)
-//                        .shadow(color: .gray, radius: 3, x: 2, y: 2)
-//                }
-//            }
             Map(coordinateRegion: .init(get: { region }, set: { _ in }),
             interactionModes: .all,
             showsUserLocation: true,
