@@ -202,7 +202,10 @@ let package = Package(
         ),
         .target(
             name: "SnabbleUser",
-            dependencies: ["KeychainAccess"],
+            dependencies: [
+                "KeychainAccess",
+                "SnabbleAssetProviding"
+            ],
             path: "User/Sources"
         )
     ]
