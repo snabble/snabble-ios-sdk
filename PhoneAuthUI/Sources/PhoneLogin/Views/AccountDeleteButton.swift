@@ -8,7 +8,6 @@
 import SwiftUI
 
 import SnabbleNetwork
-//import SnabblePhoneAuth
 import SnabbleAssetProviding
 
 public struct AccountDeleteButton: View {
