@@ -82,6 +82,7 @@ public struct WebView: View {
 public struct HTMLView: View {
     let string: String
     @State private var refreshURL: Bool = false
+
     public init(string: String) {
         self.string = string
     }

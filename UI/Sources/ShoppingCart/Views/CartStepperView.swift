@@ -9,13 +9,19 @@ import SwiftUI
 import SnabbleCore
 
 struct BorderedButtonStyle: ButtonStyle {
-    
+    let radius: CGFloat
+
+    init(radius: CGFloat = 6) {
+        self.radius = radius
+    }
+
     func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .padding(4)
-            .background(Color.secondarySystemBackground)
+            .padding(radius)
+            .background(.regularMaterial)
+            .clipShape(RoundedRectangle(cornerRadius: radius))
             .overlay(
-                RoundedRectangle(cornerRadius: 6)
+                RoundedRectangle(cornerRadius: radius)
                     .stroke(Color.gray, lineWidth: 0.5)
                 )
     }
@@ -50,7 +56,7 @@ struct CartStepperView: View {
                 minusImage
             }
             .buttonStyle(BorderedButtonStyle())
-            
+
             Text("\(itemModel.quantity)")
                 .font(.footnote)
                 .fontWeight(.bold)
@@ -64,7 +70,6 @@ struct CartStepperView: View {
                 plusImage
             }
             .buttonStyle(BorderedButtonStyle())
-
         }
     }
     func plus() {

@@ -95,13 +95,13 @@ public struct InvoiceLoginView: View {
                     footerView
                 })
         }
-        .onChange(of: username) { string in
+        .onChange(of: username) { _, string in
             loginModel.username = string
         }
-        .onChange(of: password) { string in
+        .onChange(of: password) { _, string in
             loginModel.password = string
         }
-        .onChange(of: loginModel.isValid) { isValid in
+        .onChange(of: loginModel.isValid) { _, isValid in
             if model.isWaiting {
                 canLogin = false
             } else {
@@ -172,7 +172,7 @@ public struct InvoiceView: View {
 
     public var body: some View {
         content
-            .onChange(of: loginModel.isLoggedIn) { loggedIn in
+            .onChange(of: loginModel.isLoggedIn) { _, loggedIn in
                 if loggedIn, loginModel.loginInfo != nil {
                     loginModel.actionPublisher.send(["action": LoginViewModel.Action.save.rawValue])
                 }

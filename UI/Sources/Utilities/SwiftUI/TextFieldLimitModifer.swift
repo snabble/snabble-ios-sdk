@@ -13,11 +13,12 @@ struct TextFieldLimitModifer: ViewModifier {
     var length: Int?
 
     func body(content: Content) -> some View {
-        content.onChange(of: $value.wrappedValue) {
-            if let length {
-                value = String($0.prefix(length))
+        content
+            .onChange(of: $value.wrappedValue) { _, newValue in
+                if let length {
+                    value = String(newValue.prefix(length))
+                }
             }
-        }
     }
 }
 

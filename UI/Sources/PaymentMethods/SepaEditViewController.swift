@@ -211,14 +211,15 @@ public final class SepaEditViewController: UIViewController {
             self.ibanNumberField.isEnabled = false
 
             self.hintLabel.text = Asset.localizedString(forKey: "Snabble.SEPA.scoTransferHint")
-        } else {
-            self.nameField.becomeFirstResponder()
         }
     }
 
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
+        if nameField.isEnabled {
+            self.nameField.becomeFirstResponder()
+        }
         self.analyticsDelegate?.track(.viewPaymentMethodDetail)
     }
 

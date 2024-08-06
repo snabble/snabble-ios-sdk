@@ -1,4 +1,4 @@
-// swift-tools-version: 5.7
+// swift-tools-version: 5.9
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -7,12 +7,12 @@ let package = Package(
     name: "Snabble",
     defaultLocalization: "en",
     platforms: [
-        .iOS(.v15)
+        .iOS(.v17)
     ],
     products: [
         .library(
             name: "Snabble",
-            targets: ["SnabbleAssetProviding", "SnabbleCore", "SnabbleUI"]
+            targets: ["SnabbleAssetProviding", "SnabbleCore", "SnabbleUI", "SnabblePhoneAuthUI", "SnabbleScanAndGo"]
         ),
         .library(
             name: "SnabbleAssetProviding",
@@ -42,7 +42,15 @@ let package = Package(
             name: "SnabblePhoneAuth",
             targets: ["SnabblePhoneAuth"]
         ),
-        .library(name: "SnabbleUser",
+        .library(
+            name: "SnabblePhoneAuthUI",
+            targets: ["SnabblePhoneAuthUI"]
+        ),
+        .library(
+            name: "SnabbleScanAndGo",
+            targets: ["SnabbleScanAndGo"]
+        ),
+       .library(name: "SnabbleUser",
                  targets: ["SnabbleUser"])
     ],
     dependencies: [
@@ -115,7 +123,7 @@ let package = Package(
                 "DeviceKit",
                 "Pulley",
                 "WCAG-Colors",
-                "SnabbleUser"
+                "SnabbleUser",
             ],
             path: "UI/Sources",
             resources: [
@@ -201,9 +209,39 @@ let package = Package(
             ]
         ),
         .target(
+            name: "SnabblePhoneAuthUI",
+            dependencies: [
+                "SnabblePhoneAuth",
+                "SnabbleCore",
+                "SnabbleUI",
+            ],
+            path: "PhoneAuthUI/Sources",
+            resources: [
+                .process("Resources")
+            ]
+        ),
+        .testTarget(
+            name: "SnabblePhoneAuthUITests",
+            dependencies: [
+                "SnabblePhoneAuthUI",
+                "SnabbleAssetProviding",
+            ],
+            path: "PhoneAuthUI/Tests"
+        ),
+        .target(
             name: "SnabbleUser",
             dependencies: ["KeychainAccess"],
             path: "User/Sources"
-        )
+        ),
+        .target(
+            name: "SnabbleScanAndGo",
+            dependencies: [
+                "SnabbleCore",
+                "SnabbleAssetProviding",
+                "SnabbleUI",
+            ],
+            path: "ScanAndGo"
+        ),
+
     ]
 )

@@ -21,11 +21,14 @@ public struct SecondaryButtonView: View {
     
     public var body: some View {
         Button(action: {
-            onAction()
+            withAnimation {
+                onAction()
+            }
         }) {
             Text(title)
                 .fontWeight(.bold)
         }
+        .buttonStyle(SecondaryButtonStyle(disabled: disabled))
         .disabled(disabled)
         .opacity(disabled ? 0.5 : 1.0)
     }

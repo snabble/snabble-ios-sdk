@@ -11,6 +11,7 @@ public struct Header: ViewModifier {
     public func body(content: Content) -> some View {
         content
             .font(font)
+            .foregroundColor(.accentColor)
             .multilineTextAlignment(.center)
             .fixedSize(horizontal: false, vertical: true)
 
