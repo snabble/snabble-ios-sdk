@@ -12,9 +12,6 @@ extension NetworkManager {
     }
     
     public static var shared: NetworkManager = {
-        let networkManager = NetworkManager()
-        // delegate must be set from outside
-        // networkManager.delegate = UIApplication.shared.sceneDelegate
-        return networkManager
+        return NetworkManager()
     }()
 }
