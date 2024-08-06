@@ -43,7 +43,7 @@ let package = Package(
             targets: ["SnabblePhoneAuth"]
         ),
         .library(name: "SnabbleUser",
-                 targets: ["SnabbleUser"])
+                 targets: ["SnabbleAssetProviding", "SnabbleUser"])
     ],
     dependencies: [
         .package(url: "https://github.com/lachlanbell/SwiftOTP", from: "3.0.2"),
