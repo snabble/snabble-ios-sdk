@@ -4,11 +4,8 @@
 //
 //  Created by Uwe Tilemann on 02.08.24.
 //
-import Foundation
-
 import SwiftUI
 
-// import SnabbleCore
 import SnabbleAssetProviding
 
 public enum UserField: String, CaseIterable, Swift.Identifiable, Hashable {
