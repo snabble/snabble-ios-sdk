@@ -9,19 +9,25 @@ import Foundation
 
 public struct Country: Decodable, Equatable {
     public static var all: [Country] = loadJSON("countries")
-    public static var germany: Country = Country(code: "DE")
+    public static var germany: Country = Country(code: "DE", numeric: "276")
     
     public let code: String
     public let states: [State]?
+    public let numeric: String?
     
-    init(code: String, states: [State]? = nil) {
+    init(code: String, states: [State]? = nil, numeric: String? = nil) {
         self.code = code
         self.states = states
+        self.numeric = numeric
     }
     
     public struct State: Decodable, Equatable {
         public let code: String
-        public let label: String
+        public let name: String
+
+        var label: String {
+            name
+        }
     }
     
     public var flagSymbol: String? {
