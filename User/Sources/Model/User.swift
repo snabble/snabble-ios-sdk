@@ -12,27 +12,47 @@ public struct User: Codable {
     public var lastname: String?
     public var email: String?
     public var phone: String?
+    public var dateOfBirth: Date?
     public var street: String?
     public var zip: String?
     public var city: String?
     public var country: String?
     public var state: String?
     
-    public init(firstname: String?, lastname: String?, email: String?, phone: String?, street: String?, zip: String?, city: String?, country: String?, state: String?) {
+    public init(firstname: String?,
+                lastname: String?,
+                email: String?,
+                phone: String?,
+                dateOfBirth: Date?,
+                street: String?,
+                zip: String?,
+                city: String?,
+                country: String?,
+                state: String?) {
         self.firstname = firstname
         self.lastname = lastname
         self.email = email
         self.phone = phone
+        self.dateOfBirth = dateOfBirth
         self.street = street
         self.zip = zip
         self.city = city
         self.country = country
         self.state = state
     }
+
     public init() {
-        self.init(firstname: nil, lastname: nil, email: nil, phone: nil, street: nil, zip: nil, city: nil, country: nil, state: nil)
+        self.init(firstname: nil,
+                  lastname: nil,
+                  email: nil,
+                  phone: nil,
+                  dateOfBirth: nil,
+                  street: nil,
+                  zip: nil,
+                  city: nil,
+                  country: nil,
+                  state: nil)
     }
-    
 }
 
 extension User {

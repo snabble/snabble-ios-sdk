@@ -6,9 +6,7 @@
 //
 
 import SwiftUI
-
 import SnabbleAssetProviding
-// import SnabblePhoneAuthUI
 
 extension UserField {
     public func next(in array: [UserField]) -> UserField? {
@@ -65,8 +63,7 @@ struct UserView: View {
     
     @FocusState private var focusField: UserField?
     
-    init(user: User = .init(),
-         fields: [UserField] = UserField.allCases,
+    init(fields: [UserField] = UserField.allCases,
          required: [UserField] = UserField.allCases,
          onAction: @escaping (_: User) -> Void) {
         self.fields = fields
@@ -215,25 +212,6 @@ struct UserView: View {
                                 }
                         }
                     }
-//                    HStack {
-//                        Spacer()
-//                        Button(action: {
-//                            let user = User(firstname: firstName,
-//                                            lastname: lastName,
-//                                            email: email,
-//                                            phone: phone,
-//                                            street: street,
-//                                            zip: zip,
-//                                            city: city,
-//                                            country: country,
-//                                            state: state)
-//                            onAction(user)
-//                        }) {
-//                            Text("Weiter")
-//                        }
-//                        .disabled(!isButtonEnabled || disabled)
-//                        Spacer()
-//                    }
                     PrimaryButtonView(
                         title: Asset.localizedString(forKey: "Snabble.UserView.next"),
                         disabled: Binding(get: { !isButtonEnabled || disabled }, set: { _ in }),
@@ -242,6 +220,7 @@ struct UserView: View {
                                             lastname: lastName,
                                             email: email,
                                             phone: phone,
+                                            dateOfBirth: dateOfBirth,
                                             street: street,
                                             zip: zip,
                                             city: city,
