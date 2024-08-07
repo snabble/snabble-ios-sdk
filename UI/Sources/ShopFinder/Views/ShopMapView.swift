@@ -51,21 +51,23 @@ public struct ShopMapView: View {
     
     @State private var mode: Mode = .shop {
         didSet {
-            switch mode {
-            case .user:
-                position = .userLocation(fallback: .region(.region(for: shop)))
-            case .shop:
-                position = .region(.region(for: shop))
-            }
+            updatePosition(forMode: mode)
         }
     }
     
     @State private var showingAlert: Bool = false
     @State private var showingDetails: Bool = false
     
-    var initialBounds: MapCameraBounds = .init(minimumDistance: 2000, maximumDistance: 2000)
-    
     @State private var position: MapCameraPosition = .automatic
+    
+    private func updatePosition(forMode mode: Mode) {
+        switch mode {
+        case .user:
+            position = .userLocation(fallback: .region(.region(for: shop)))
+        case .shop:
+            position = .region(.region(for: shop))
+        }
+    }
     
     @ViewBuilder
     var shopAnnotation: some View {
@@ -84,7 +86,7 @@ public struct ShopMapView: View {
     
     @ViewBuilder
     var mapView: some View {
-        Map(position: $position, bounds: initialBounds) {
+        Map(position: $position) {
             Annotation("", coordinate: shop.location.coordinate, anchor: .bottom) {
                 VStack(spacing: -2) {
                     HStack {
@@ -128,20 +130,8 @@ public struct ShopMapView: View {
             UserAnnotation()
         }
         .task {
-            switch mode {
-            case .user:
-                position = .userLocation(fallback: .region(.region(for: shop)))
-            case .shop:
-                position = .region(.region(for: shop))
-            }
+            updatePosition(forMode: mode)
         }
-        .onMapCameraChange {
-            print("onMapCameraChange")
-        }
-        .onChange(of: position) {
-            print(position)
-        }
-        .mapStyle(.standard)
     }
 
     @ViewBuilder
