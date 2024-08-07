@@ -8,6 +8,7 @@ import UIKit
 import WebKit
 import SnabbleCore
 import SnabbleAssetProviding
+import SnabbleUser
 
 // sample data for testing:
 //
