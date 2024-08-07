@@ -51,7 +51,7 @@ let package = Package(
             targets: ["SnabbleScanAndGo"]
         ),
        .library(name: "SnabbleUser",
-                 targets: ["SnabbleUser"])
+                 targets: ["SnabbleUser", "SnabbleAssetProviding"])
     ],
     dependencies: [
         .package(url: "https://github.com/lachlanbell/SwiftOTP", from: "3.0.2"),
@@ -232,7 +232,7 @@ let package = Package(
             name: "SnabbleUser",
             dependencies: [
                 "KeychainAccess",
-                "SnabbleAssetProviding"
+                "SnabbleAssetProviding",
             ],
             path: "User/Sources"
         ),
