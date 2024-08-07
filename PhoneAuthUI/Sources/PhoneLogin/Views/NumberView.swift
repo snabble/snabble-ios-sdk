@@ -56,9 +56,9 @@ private struct LabelWithImageAccent: View {
 
 struct NumberView<Header: View, Footer: View>: View {
     let kind: PhoneAuthViewKind
-    let countries: [SnabblePhoneAuth.Country] = SnabblePhoneAuth.Country.all
+    let countries: [CallingCode] = CallingCode.all
     
-    @State var country: SnabblePhoneAuth.Country = .germany
+    @State var country: CallingCode = .germany
     @State var number: String = ""
     
     @Binding var showProgress: Bool
