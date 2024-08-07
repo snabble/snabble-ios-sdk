@@ -66,7 +66,7 @@ public struct CountryButtonView: View {
                         Text(state.label)
                             .frame(maxWidth: .infinity)
                     } else {
-                        Text("Snabble.Account.UserDetails.stateSelect")
+                        Text(Asset.localizedString(forKey: "Snabble.User.Country.title"))
                             .frame(maxWidth: .infinity)
                     }
                 }
@@ -140,7 +140,7 @@ private struct CountryListView: View {
                     }
                 }
                 .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
-                .navigationTitle("Snabble.Account.UserDetails.Country.title")
+                .navigationTitle(Asset.localizedString(forKey: "Snabble.User.Country.title"))
                 .navigationBarTitleDisplayMode(.inline)
             }
             .onAppear {
