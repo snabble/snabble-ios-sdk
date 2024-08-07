@@ -7,13 +7,14 @@
 
 import SwiftUI
 import SnabblePhoneAuth
+import SnabbleUser
 
 class PhoneAuthScreenViewModel {
     let phoneAuth: PhoneAuth
     
     private(set) var appUser: AppUser?
     
-    init(configuration: Configuration) {
+    init(configuration: SnabblePhoneAuth.Configuration) {
         phoneAuth = PhoneAuth(configuration: configuration)
         
         phoneAuth.delegate = self
@@ -26,13 +27,13 @@ extension PhoneAuthScreenViewModel: PhoneAuthDataSource {
         Configuration.projectId
     }
     
-    func appUserId(forConfiguration configuration: SnabblePhoneAuth.Configuration) -> SnabblePhoneAuth.AppUser? {
+    func appUserId(forConfiguration configuration: SnabblePhoneAuth.Configuration) -> SnabbleUser.AppUser? {
         appUser
     }
 }
 
 extension PhoneAuthScreenViewModel: PhoneAuthDelegate {
-    func phoneAuth(_ phoneAuth: SnabblePhoneAuth.PhoneAuth, didReceiveAppUser appUser: SnabblePhoneAuth.AppUser) {
+    func phoneAuth(_ phoneAuth: SnabblePhoneAuth.PhoneAuth, didReceiveAppUser appUser: SnabbleUser.AppUser) {
         self.appUser = appUser
     }
 }
@@ -55,7 +56,7 @@ struct PhoneAuthScreen: View {
     
     @State private var showOTPInput: Bool = false
     
-    init(configuration: Configuration) {
+    init(configuration: SnabblePhoneAuth.Configuration) {
         viewModel = PhoneAuthScreenViewModel(
             configuration: configuration
         )
