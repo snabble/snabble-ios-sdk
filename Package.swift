@@ -195,18 +195,12 @@ let package = Package(
                 "SnabbleNetwork",
                 "SnabbleUser"
             ],
-            path: "PhoneAuth/Sources",
-            resources: [
-                .process("Resources")
-            ]
+            path: "PhoneAuth/Sources"
         ),
         .testTarget(
             name: "SnabblePhoneAuthTests",
             dependencies: ["SnabblePhoneAuth"],
-            path: "PhoneAuth/Tests",
-            resources: [
-                .process("Resources")
-            ]
+            path: "PhoneAuth/Tests"
         ),
         .target(
             name: "SnabblePhoneAuthUI",
@@ -215,10 +209,7 @@ let package = Package(
                 "SnabbleCore",
                 "SnabbleUI",
             ],
-            path: "PhoneAuthUI/Sources",
-            resources: [
-                .process("Resources")
-            ]
+            path: "PhoneAuthUI/Sources"
         ),
         .testTarget(
             name: "SnabblePhoneAuthUITests",
