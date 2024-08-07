@@ -40,12 +40,9 @@ struct UserTextFieldView: View {
 }
 
 public struct UserView: View {
-    @Binding var user: User
-    var fields: [UserField]
-    let required: [UserField]
+    @ObservedObject var model: UserModel
     
-//    let onAction: (User) -> Void
-    
+    @State private var fullName: String = ""
     @State private var firstName: String = ""
     @State private var lastName: String = ""
     @State private var email: String = ""
@@ -59,26 +56,20 @@ public struct UserView: View {
     
     @State private var countrySelection: Country = Country.germany
     @State private var stateSelection: Country.State?
-
+    
     @State private var disabled: Bool = false
     
     @FocusState private var focusField: UserField?
     
-    public init(user: Binding<User>,
-                fields: [UserField] = UserField.allCases,
-                required: [UserField] = UserField.allCases
-                //                onAction: @escaping (_: User) -> Void)
-    ) {
-        self._user = user
-        self.fields = fields
-        self.required = required
-//        self.onAction = onAction
+    public init(model: UserModel) {
+        self.model = model
         
         self._dateOfBirth = State(initialValue: Self.sixteenYearAgo)
+        self._country = State(initialValue: Country.germany.code)
     }
     
     func isRequired(_ field: UserField) -> Bool {
-        fields.contains(field) && required.contains(field)
+        model.fields.contains(field) && model.required.contains(field)
     }
     
     private var isButtonEnabled: Bool {
@@ -86,6 +77,9 @@ public struct UserView: View {
             return false
         }
         if isRequired(.lastName), lastName.isEmpty {
+            return false
+        }
+        if isRequired(.fullName), fullName.isEmpty {
             return false
         }
         if isRequired(.email), email.isEmpty {
@@ -115,124 +109,132 @@ public struct UserView: View {
         let sixteenYears: TimeInterval = 504_910_816
         return Date(timeIntervalSinceNow: -sixteenYears)
     }
-
+    
     public var body: some View {
-        NavigationView {
-            ScrollView(.vertical) {
-                VStack(spacing: 16) {
-                    VStack(spacing: 8) {
-                        if fields.contains(.firstName) && fields.contains(.lastName) {
-                            HStack {
-                                UserTextFieldView(userField: .firstName, text: $firstName, disabled: $disabled)
-                                    .focused($focusField, equals: .firstName)
-                                    .onSubmit {
-                                        focusField = .firstName.next(in: fields)
-                                    }
-                                UserTextFieldView(userField: .lastName, text: $lastName, disabled: $disabled)
-                                    .focused($focusField, equals: .lastName)
-                                    .onSubmit {
-                                        focusField = .lastName.next(in: fields)
-                                    }
-                            }
-                        } else if fields.contains(.lastName) {
+        ScrollView(.vertical) {
+            VStack(spacing: 16) {
+                VStack(spacing: 8) {
+                    if model.fields.contains(.firstName) && model.fields.contains(.lastName) {
+                        HStack {
+                            UserTextFieldView(userField: .firstName, text: $firstName, disabled: $disabled)
+                                .focused($focusField, equals: .firstName)
+                                .onSubmit {
+                                    focusField = .firstName.next(in: model.fields)
+                                }
                             UserTextFieldView(userField: .lastName, text: $lastName, disabled: $disabled)
                                 .focused($focusField, equals: .lastName)
                                 .onSubmit {
-                                    focusField = .lastName.next(in: fields)
+                                    focusField = .lastName.next(in: model.fields)
                                 }
                         }
-                        if fields.contains(.email) {
-                            UserTextFieldView(userField: .email, text: $email, disabled: $disabled)
-                                .focused($focusField, equals: .email)
-                                .onSubmit {
-                                    focusField = .email.next(in: fields)
-                                }
-                        }
-                        if fields.contains(.phone) {
-                            UserTextFieldView(userField: .phone, text: $phone, disabled: $disabled)
-                                .focused($focusField, equals: .phone)
-                                .onSubmit {
-                                    focusField = .phone.next(in: fields)
-                                }
-                        }
-                        if fields.contains(.dateOfBirth) {
-                            DatePicker(UserField.dateOfBirth.prompt,
-                                       selection: $dateOfBirth,
-                                       in: ...Self.sixteenYearAgo,
-                                       displayedComponents: .date)
-                            .datePickerStyle(.compact)
-                            .focused($focusField, equals: .dateOfBirth)
-                            .padding(12)
-                            .background(.quaternary)
-                            .clipShape(RoundedRectangle(cornerRadius: 6))
+                    } else if model.fields.contains(.lastName) {
+                        UserTextFieldView(userField: .lastName, text: $lastName, disabled: $disabled)
+                            .focused($focusField, equals: .lastName)
                             .onSubmit {
-                                focusField = .dateOfBirth.next(in: fields)
+                                focusField = .lastName.next(in: model.fields)
                             }
-                            .disabled(disabled)
-                        }
+                    } else if model.fields.contains(.fullName) {
+                        UserTextFieldView(userField: .fullName, text: $fullName, disabled: $disabled)
+                            .focused($focusField, equals: .fullName)
+                            .onSubmit {
+                                focusField = .fullName.next(in: model.fields)
+                            }
+                   }
+                    if model.fields.contains(.email) {
+                        UserTextFieldView(userField: .email, text: $email, disabled: $disabled)
+                            .focused($focusField, equals: .email)
+                            .onSubmit {
+                                focusField = .email.next(in: model.fields)
+                            }
                     }
-                    VStack(spacing: 8) {
-                        if fields.contains(.street) {
-                            UserTextFieldView(userField: .street, text: $street, disabled: $disabled)
-                                .focused($focusField, equals: .street)
+                    if model.fields.contains(.phone) {
+                        UserTextFieldView(userField: .phone, text: $phone, disabled: $disabled)
+                            .focused($focusField, equals: .phone)
+                            .onSubmit {
+                                focusField = .phone.next(in: model.fields)
+                            }
+                    }
+                    if model.fields.contains(.dateOfBirth) {
+                        DatePicker(Asset.localizedString(forKey: UserField.dateOfBirth.prompt),
+                                   selection: $dateOfBirth,
+                                   in: ...Self.sixteenYearAgo,
+                                   displayedComponents: .date)
+                        .datePickerStyle(.compact)
+                        .focused($focusField, equals: .dateOfBirth)
+                        .padding(12)
+                        .background(.quaternary)
+                        .clipShape(RoundedRectangle(cornerRadius: 6))
+                        .onSubmit {
+                            focusField = .dateOfBirth.next(in: model.fields)
+                        }
+                        .disabled(disabled)
+                    }
+                }
+                VStack(spacing: 8) {
+                    if model.fields.contains(.street) {
+                        UserTextFieldView(userField: .street, text: $street, disabled: $disabled)
+                            .focused($focusField, equals: .street)
+                            .onSubmit {
+                                focusField = .street.next(in: model.fields)
+                            }
+                    }
+                    if model.fields.contains(.zip) && model.fields.contains(.city) {
+                        HStack {
+                            UserTextFieldView(userField: .zip, text: $zip, disabled: $disabled)
+                                .frame(width: 120)
+                                .focused($focusField, equals: .zip)
                                 .onSubmit {
-                                    focusField = .street.next(in: fields)
+                                    focusField = .zip.next(in: model.fields)
+                                }
+                            UserTextFieldView(userField: .city, text: $city, disabled: $disabled)
+                                .focused($focusField, equals: .city)
+                                .onSubmit {
+                                    focusField = .city.next(in: model.fields)
                                 }
                         }
-                        if fields.contains(.zip) && fields.contains(.city) {
-                            HStack {
-                                UserTextFieldView(userField: .zip, text: $zip, disabled: $disabled)
-                                    .frame(width: 120)
-                                    .focused($focusField, equals: .zip)
-                                    .onSubmit {
-                                        focusField = .zip.next(in: fields)
-                                    }
-                                UserTextFieldView(userField: .city, text: $city, disabled: $disabled)
-                                    .focused($focusField, equals: .city)
-                                    .onSubmit {
-                                        focusField = .city.next(in: fields)
-                                    }
-                            }
-                        }
-                        if fields.contains(.country) || fields.contains(.state) {
-                            CountryButtonView(
-                                countries: Country.all,
-                                selectedCountry: $countrySelection,
-                                selectedState: $stateSelection
-                            )
-                            .onChange(of: stateSelection) {
-                                state = stateSelection?.name ?? ""
-                            }
-                            .focused($focusField, equals: .country)
-                            .disabled(disabled)
-                        }
                     }
-                    PrimaryButtonView(
-                        title: Asset.localizedString(forKey: "Snabble.UserView.next"),
-                        disabled: Binding(get: { !isButtonEnabled || disabled }, set: { _ in }),
-                        onAction: {
-                            let user = User(firstname: firstName,
-                                            lastname: lastName,
-                                            email: email,
-                                            phone: phone,
-                                            dateOfBirth: dateOfBirth,
-                                            street: street,
-                                            zip: zip,
-                                            city: city,
-                                            country: country,
-                                            state: state)
-                            self.user = user
-                        })
+                    if model.fields.contains(.country) || model.fields.contains(.state) {
+                        CountryButtonView(
+                            countries: Country.all,
+                            selectedCountry: $countrySelection,
+                            selectedState: $stateSelection
+                        )
+                        .onChange(of: countrySelection) {
+                            country = countrySelection.code
+                        }
+                        .onChange(of: stateSelection) {
+                            state = stateSelection?.name ?? ""
+                        }
+                        .focused($focusField, equals: .country)
+                        .disabled(disabled)
+                    }
                 }
-                Spacer()
+                PrimaryButtonView(
+                    title: Asset.localizedString(forKey: "Snabble.UserView.next"),
+                    disabled: Binding(get: { !isButtonEnabled || disabled }, set: { _ in }),
+                    onAction: {
+                        
+                        var user = User()
+                        user.fullName = isRequired(.fullName) ? fullName : nil
+                        user.firstname = isRequired(.firstName) ? firstName : nil
+                        user.lastname = isRequired(.lastName) ? lastName : nil
+                        user.email = isRequired(.email) ? email : nil
+                        user.phone = isRequired(.phone) ? phone : nil
+                        user.dateOfBirth = isRequired(.dateOfBirth) ? dateOfBirth : nil
+                        
+                        user.address = User.Address(street: isRequired(.street) ? street : nil,
+                                                    zip: isRequired(.zip) ? zip : nil,
+                                                    city: isRequired(.city) ? city : nil,
+                                                    country: isRequired(.country) ? country : nil,
+                                                    state: isRequired(.state) && !state.isEmpty ? state : nil)
+                        
+                        self.model.user = user
+                    })
             }
-            .padding()
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationTitle(Asset.localizedString(forKey: "Snabble.UserView.title"))
+            Spacer()
         }
+        .padding()
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(Asset.localizedString(forKey: "Snabble.UserView.title"))
     }
-}
-
-#Preview {
-    UserView(user: .constant(.init()))
 }
