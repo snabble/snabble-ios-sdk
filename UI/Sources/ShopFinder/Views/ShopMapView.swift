@@ -113,6 +113,9 @@ public struct ShopMapView: View {
                     .padding(.trailing, 8)
                     .background(Color.systemBackground)
                     .cornerRadius(8)
+                    .onTapGesture {
+                        showingDetails.toggle()
+                    }
                     
                     Image(systemName: "arrowtriangle.down.fill")
                         .foregroundColor(.systemBackground)
