@@ -8,6 +8,7 @@
 import SwiftUI
 
 import SnabbleAssetProviding
+// import SnabblePhoneAuthUI
 
 extension UserField {
     public func next(in array: [UserField]) -> UserField? {
@@ -56,14 +57,18 @@ struct UserView: View {
     @State private var city: String = ""
     @State private var country: String = ""
     @State private var state: String = ""
-
-    @State private var user = User()
     
+    @State private var countrySelection: Country = Country.germany
+    @State private var stateSelection: Country.State?
+
     @State private var disabled: Bool = false
     
     @FocusState private var focusField: UserField?
     
-    init(fields: [UserField] = UserField.allCases, required: [UserField] = UserField.allCases, onAction: @escaping (_: User) -> Void) {
+    init(user: User = .init(),
+         fields: [UserField] = UserField.allCases,
+         required: [UserField] = UserField.allCases,
+         onAction: @escaping (_: User) -> Void) {
         self.fields = fields
         self.required = required
         self.onAction = onAction
@@ -194,13 +199,13 @@ struct UserView: View {
                                     focusField = .country.next(in: fields)
                                 }
                             
-                            //                CountryButtonView(
-                            //                    countries: Country.all,
-                            //                    selectedCountry: $countrySelection,
-                            //                    selectedState: $stateSelection
-                            //                )
-                            //                .focused($focusField, equals: .country)
-                            //                .disabled(disabled)
+                                            CountryButtonView(
+                                                countries: Country.all,
+                                                selectedCountry: $countrySelection,
+                                                selectedState: $stateSelection
+                                            )
+                                            .focused($focusField, equals: .country)
+                                            .disabled(disabled)
                         }
                         if fields.contains(.state) {
                             UserTextFieldView(userField: .state, text: $country, disabled: $disabled)
