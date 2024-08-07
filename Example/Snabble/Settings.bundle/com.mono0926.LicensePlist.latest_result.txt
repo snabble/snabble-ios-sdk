@@ -4,7 +4,7 @@ name: SwiftLint, nameSpecified: , owner: realm, version: main, source: https://g
 
 name: DeviceKit, nameSpecified: DeviceKit, owner: devicekit, version: 5.4.0, source: https://github.com/devicekit/DeviceKit
 
-name: GRDB.swift, nameSpecified: GRDB.swift, owner: groue, version: 6.29.0, source: https://github.com/groue/GRDB.swift
+name: GRDB.swift, nameSpecified: GRDB.swift, owner: groue, version: 6.29.1, source: https://github.com/groue/GRDB.swift
 
 name: ios-sdk, nameSpecified: Datatrans, owner: datatrans, version: 3.6.3, source: https://github.com/datatrans/ios-sdk
 
