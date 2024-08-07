@@ -24,7 +24,7 @@ public enum UserField: String, CaseIterable, Swift.Identifiable, Hashable {
 }
 
 extension UserField {
-    public var prompt: LocalizedStringKey {
+    public var prompt: String {
         switch self {
         case .firstName:
             "Snabble.User.firstName"
