@@ -28,7 +28,7 @@ struct UserTextFieldView: View {
     @Binding var disabled: Bool
     
     var body: some View {
-        TextField(userField.prompt, text: $text)
+        TextField(Asset.localizedString(forKey: userField.prompt), text: $text)
             .textContentType(userField.contentType)
             .keyboardType(userField.keyboardType)
             .submitLabel(.continue)
@@ -39,11 +39,12 @@ struct UserTextFieldView: View {
     }
 }
 
-struct UserView: View {
+public struct UserView: View {
+    @Binding var user: User
     var fields: [UserField]
     let required: [UserField]
     
-    let onAction: (User) -> Void
+//    let onAction: (User) -> Void
     
     @State private var firstName: String = ""
     @State private var lastName: String = ""
@@ -63,14 +64,18 @@ struct UserView: View {
     
     @FocusState private var focusField: UserField?
     
-    init(fields: [UserField] = UserField.allCases,
-         required: [UserField] = UserField.allCases,
-         onAction: @escaping (_: User) -> Void) {
+    public init(user: Binding<User>,
+                fields: [UserField] = UserField.allCases,
+                required: [UserField] = UserField.allCases
+                //                onAction: @escaping (_: User) -> Void)
+    ) {
+        self._user = user
         self.fields = fields
         self.required = required
-        self.onAction = onAction
+//        self.onAction = onAction
+        
         self._dateOfBirth = State(initialValue: Self.sixteenYearAgo)
-   }
+    }
     
     func isRequired(_ field: UserField) -> Bool {
         fields.contains(field) && required.contains(field)
@@ -111,7 +116,7 @@ struct UserView: View {
         return Date(timeIntervalSinceNow: -sixteenYears)
     }
 
-    var body: some View {
+    public var body: some View {
         NavigationView {
             ScrollView(.vertical) {
                 VStack(spacing: 16) {
@@ -189,27 +194,17 @@ struct UserView: View {
                                     }
                             }
                         }
-                        if fields.contains(.country) {
-                            UserTextFieldView(userField: .country, text: $country, disabled: $disabled)
-                                .focused($focusField, equals: .country)
-                                .onSubmit {
-                                    focusField = .country.next(in: fields)
-                                }
-                            
-                                            CountryButtonView(
-                                                countries: Country.all,
-                                                selectedCountry: $countrySelection,
-                                                selectedState: $stateSelection
-                                            )
-                                            .focused($focusField, equals: .country)
-                                            .disabled(disabled)
-                        }
-                        if fields.contains(.state) {
-                            UserTextFieldView(userField: .state, text: $country, disabled: $disabled)
-                                .focused($focusField, equals: .state)
-                                .onSubmit {
-                                    focusField = .state.next(in: fields)
-                                }
+                        if fields.contains(.country) || fields.contains(.state) {
+                            CountryButtonView(
+                                countries: Country.all,
+                                selectedCountry: $countrySelection,
+                                selectedState: $stateSelection
+                            )
+                            .onChange(of: stateSelection) {
+                                state = stateSelection?.name ?? ""
+                            }
+                            .focused($focusField, equals: .country)
+                            .disabled(disabled)
                         }
                     }
                     PrimaryButtonView(
@@ -226,7 +221,7 @@ struct UserView: View {
                                             city: city,
                                             country: country,
                                             state: state)
-                            onAction(user)
+                            self.user = user
                         })
                 }
                 Spacer()
@@ -239,7 +234,5 @@ struct UserView: View {
 }
 
 #Preview {
-    UserView { user in
-        print("User:", user)
-    }
+    UserView(user: .constant(.init()))
 }
