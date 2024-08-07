@@ -62,7 +62,7 @@ public class PaymentEmptyViewController: UIHostingController<SnabbleEmptyView> {
     public init() {
         super.init(rootView: SnabbleEmptyView(
             title: Asset.localizedString(forKey: "Snabble.Payment.EmptyState.message"),
-            image: SwiftUI.Image.image(named: "creditcard", systemName: "creditcart"))
+            image: SwiftUI.Image.image(named: "creditcard", systemName: "creditcard"))
         )
     }
     
