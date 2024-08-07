@@ -18,7 +18,17 @@ import SnabbleUser
 //
 // see https://stripe.com/docs/testing
 
-public final class TeleCashCreditCardAddViewController: UIViewController {
+extension TeleCashCreditCardAddViewController: UserFieldProviding {
+    public var defaultUserFields: [UserField] {
+        UserField.fullNameFields.fieldsWithout([.state, .dateOfBirth])
+    }
+    public var requiredUserFields: [UserField] {
+        UserField.fullNameFields.fieldsWithout([.state, .dateOfBirth])
+    }
+}
+
+public final class TeleCashCreditCardAddViewController: UIViewController, UserValidation {
+    
     private weak var explanationLabel: UILabel?
     private weak var webView: WKWebView?
     private weak var activityIndicatorView: UIActivityIndicatorView?
@@ -27,6 +37,18 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
     private var projectId: Identifier<Project>
 
     private weak var analyticsDelegate: AnalyticsDelegate?
+    
+    public var user: SnabbleUser.User?
+    
+    public func hasValidUser(user: SnabbleUser.User) -> Bool {
+        if let fullName = user.fullName, !fullName.isEmpty {
+            return true
+        }
+        if let firstname = user.firstname, !firstname.isEmpty {
+            return true
+        }
+        return false
+    }
 
     public init(brand: CreditCardBrand?, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) {
         self.brand = brand
@@ -238,6 +260,15 @@ extension TeleCashCreditCardAddViewController: WKScriptMessageHandler {
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: jsonObject)
             let preAuthInfo = try JSONDecoder().decode(PreAuthInfo.self, from: jsonData)
+            if let user {
+                let encoder = JSONEncoder()
+                do {
+                    let jsonData = try encoder.encode(user)
+                    print(jsonData.printAsJSON())
+                } catch {
+                    print("Error while encoding user:", user, "Error:", error)
+                }
+            }
             explanationLabel?.text = threeDSecureHint(for: projectId, preAuthInfo: preAuthInfo)
         } catch {
             explanationLabel?.text = threeDSecureHint(for: projectId, preAuthInfo: .mock)

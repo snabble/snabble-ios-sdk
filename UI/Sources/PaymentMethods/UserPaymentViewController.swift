@@ -11,10 +11,17 @@ import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleUser
 
+public protocol UserValidation: UIViewController {
+    var user: SnabbleUser.User? { get set }
+    func hasValidUser(user: SnabbleUser.User) -> Bool
+}
+
+public typealias UserInputConformance = UserValidation & UserFieldProviding
+
 public final class UserPaymentViewController: UIViewController {
-    private(set) weak var paymentViewController: UIViewController?
+    private(set) var paymentViewController: UserInputConformance?
     
-    public init(paymentViewController: UIViewController) {
+    public init(paymentViewController: UserInputConformance) {
         self.paymentViewController = paymentViewController
         
         super.init(nibName: nil, bundle: nil)
@@ -27,9 +34,13 @@ public final class UserPaymentViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
         
-        let userVC = UserViewController(user: .init())
+        let userVC = UserViewController(user: .init(),
+                                        fields: self.paymentViewController?.defaultUserFields ?? UserField.allCases,
+                                        required: self.paymentViewController?.requiredUserFields ?? UserField.allCases)
         userVC.delegate = self
         add(userVC)
+        
+        self.title = userVC.title
     }
 
     private func add(_ child: UIViewController) {
@@ -44,10 +55,12 @@ public final class UserPaymentViewController: UIViewController {
 extension UserPaymentViewController: UserViewProxy {
     public func userInfoAvailable(user: SnabbleUser.User) {
         guard let paymentViewController else {
-            print("no paymentViewController to show for user", user)
             return
         }
-        print("UserPaymentViewController User: ", user)
+        guard paymentViewController.hasValidUser(user: user) else {
+            return
+        }
+        paymentViewController.user = user
         self.navigationController?.pushViewController(paymentViewController, animated: true)
     }
 }
