@@ -9,8 +9,11 @@ import SwiftUI
 
 import SnabbleUser
 
+open class TeleCashUserViewController: UIHostingController<TeleCashUserView> {
+}
+
 struct TeleCashUserView: View {
-    let userFields = UserField.fieldsWithout([.firstName, .state, .dateOfBirth])
+    let userFields = UserField.fieldsWithout([.state, .dateOfBirth])
     
     var body: some View {
         UserView(fields: userFields) { user in
