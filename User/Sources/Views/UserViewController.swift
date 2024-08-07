@@ -8,11 +8,21 @@
 import SwiftUI
 import Combine
 
-class UserObservable: ObservableObject {
-    @Published var user: User
+import SnabbleAssetProviding
+
+public protocol UserProviding: AnyObject {
+    var user: User { get set }
+}
+
+public final class UserModel: ObservableObject, UserProviding {
+    @Published public var user: User
+    public let fields: [UserField]
+    public let required: [UserField]
     
-    init(user: User) {
+    public init(user: User, fields: [UserField] = UserField.allCases, required: [UserField] = UserField.allCases) {
         self.user = user
+        self.fields = fields
+        self.required = required
     }
 }
 
@@ -21,21 +31,22 @@ public protocol UserViewProxy: AnyObject {
 }
 
 public class UserViewController: UIHostingController<UserView> {
-    var userObserver: UserObservable
     
     public weak var delegate: UserViewProxy?
+    
+    public var model: UserModel {
+        rootView.model
+    }
     
     public init(user: User = .init(),
                 fields: [UserField] = UserField.allCases,
                 required: [UserField] = UserField.allCases
     ) {
-        let observer = UserObservable(user: user)
-        self.userObserver = observer
+        let model = UserModel(user: user, fields: fields, required: required)
         
-        let userView = UserView(user: Binding(get: { observer.user }, set: { _ = $0 }),
-                                fields: fields,
-                                required: required)
+        let userView = UserView(model: model)
         super.init(rootView: userView)
+        self.title = Asset.localizedString(forKey: "Snabble.UserView.title")
     }
     
     @objc required dynamic init?(coder aDecoder: NSCoder) {
@@ -45,7 +56,7 @@ public class UserViewController: UIHostingController<UserView> {
     public override func viewDidLoad() {
         super.viewDidLoad()
         
-        userObserver.$user
+        model.$user
             .sink { updatedUser in
                 self.delegate?.userInfoAvailable(user: updatedUser)
             }
