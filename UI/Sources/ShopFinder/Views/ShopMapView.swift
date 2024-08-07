@@ -114,11 +114,14 @@ public struct ShopMapView: View {
                     
                     Image(systemName: "arrowtriangle.down.fill")
                         .foregroundColor(.systemBackground)
+                    
+                    Spacer(minLength: 16)
                 }
                 .compositingGroup()
                 .opacity(showingDetails ? 1 : 0)
-                .offset(y: -12)
             }
+            .annotationTitles(.hidden)
+            .annotationSubtitles(.hidden)
             Annotation(shop.name, coordinate: shop.location.coordinate) {
                 shopAnnotation
             }
