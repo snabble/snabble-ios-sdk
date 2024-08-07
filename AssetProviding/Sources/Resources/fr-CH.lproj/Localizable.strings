@@ -1,3 +1,4 @@
+"Account.UserDetails.stateSelect" = "Pick one";
 "Receipts.title" = "Receipts";
 "Snabble.Account.ChangePhoneNumber.Code.buttonLabel" = "Save";
 "Snabble.Account.ChangePhoneNumber.buttonLabel" = "Continue";
@@ -425,14 +426,17 @@
 "Snabble.Taxation.pleaseChoose" = "Merci de choisir";
 "Snabble.Textfield.HidePassword.Accessibility" = "Hide password";
 "Snabble.Textfield.ShowPassword.Accessibility" = "Show password";
+"Snabble.User.Country.title" = "Select a Country";
 "Snabble.User.city" = "City";
 "Snabble.User.country" = "Country";
 "Snabble.User.dateOfBirth" = "Date of Birth";
 "Snabble.User.email" = "E-Mail";
 "Snabble.User.firstName" = "First Name";
+"Snabble.User.fullName" = "Full Name";
 "Snabble.User.lastName" = "Last Name";
 "Snabble.User.phone" = "Phonenummber";
 "Snabble.User.state" = "State";
+"Snabble.User.stateSelect" = "Pick one";
 "Snabble.User.street" = "Street";
 "Snabble.User.zip" = "ZIP";
 "Snabble.UserView.next" = "Next";
