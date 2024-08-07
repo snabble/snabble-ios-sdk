@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SnabbleAssetProviding
 
 struct CodeView: View {
     @Binding var phoneNumber: String
