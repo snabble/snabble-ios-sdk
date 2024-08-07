@@ -8,9 +8,15 @@ import SwiftUI
 
 import SnabbleAssetProviding
 
+public protocol UserFieldProviding {
+    var defaultUserFields: [UserField] { get }
+    var requiredUserFields: [UserField] { get }
+}
+
 public enum UserField: String, CaseIterable, Swift.Identifiable, Hashable {
     public var id: Self { self }
     
+    case fullName
     case firstName
     case lastName
     case email
@@ -24,8 +30,15 @@ public enum UserField: String, CaseIterable, Swift.Identifiable, Hashable {
 }
 
 extension UserField {
+    public static var fullNameFields: [UserField] { UserField.allCases.fieldsWithout([.firstName, .lastName]) }
+    public static var defaultFields: [UserField] { UserField.allCases.fieldsWithout([.fullName]) }
+}
+
+extension UserField {
     public var prompt: String {
         switch self {
+        case .fullName:
+            "Snabble.User.fullName"
         case .firstName:
             "Snabble.User.firstName"
         case .lastName:
@@ -51,6 +64,8 @@ extension UserField {
 
     public var contentType: UITextContentType? {
         switch self {
+        case .fullName:
+            return .name
         case .firstName:
             return .givenName
         case .lastName:
@@ -80,7 +95,7 @@ extension UserField {
     
     public var keyboardType: UIKeyboardType {
         switch self {
-        case .firstName, .lastName, .dateOfBirth, .street, .city, .country, .state:
+        case .fullName, .firstName, .lastName, .dateOfBirth, .street, .city, .country, .state:
                 .default
         case .email:
                 .emailAddress
@@ -92,8 +107,8 @@ extension UserField {
     }
 }
 
-extension UserField {
-    public static func fieldsWithout(_ unwanted: [UserField]) -> [UserField] {
-        UserField.allCases.filter { !unwanted.contains($0) }
+extension Array where Element == UserField {
+    public func fieldsWithout(_ unwanted: [UserField]) -> [UserField] {
+        self.filter { !unwanted.contains($0) }
     }
 }
