@@ -57,7 +57,7 @@ public struct ShopView: View {
     public var body: some View {
         ScrollView(.vertical) {
             VStack(spacing: 20) {
-                ShopMapView(shop: shop, userLocation: viewModel.locationManager.location)
+                ShopMapView(shop: shop, showNavigationControl: true)
                     .frame(minHeight: 300)
 
                 VStack(spacing: 0) {

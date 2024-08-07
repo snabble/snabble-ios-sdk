@@ -11,12 +11,6 @@ import MapKit
 import Contacts
 import SnabbleAssetProviding
 
-struct ShopLocation: Swift.Identifiable {
-    var id = UUID()
-    
-    let shop: ShopProviding
-}
-
 extension View {
     func navigateToShopAlert(isPresented: Binding<Bool>, shop: ShopProviding) -> some View {
         self.alert(isPresented: isPresented) {
@@ -41,70 +35,8 @@ extension View {
     }
 }
 
-public struct ShopAnnotationView: View {
-    var shopLocation: ShopLocation
-    @State private var showTitle = true
-    @State private var showingAlert = false
-    @Environment(\.colorScheme) var colorScheme: ColorScheme
-    
-    @ViewBuilder
-    var mapMarker: some View {
-        if let image: SwiftUI.Image = Asset.image(named: "Snabble.Shop.Detail.mapPin" ) {
-            image
-        } else {
-            Image(systemName: "mappin.and.ellipse")
-                .foregroundColor(.accent())
-                .font(.title)
-        }
-    }
-
-    public var body: some View {
-        VStack {
-            VStack(spacing: -2) {
-                HStack {
-                    Button(action: {
-                        showingAlert.toggle()
-                    }) {
-                        Image(systemName: "car.fill")
-                            .resizable()
-                            .scaledToFit()
-                            .frame(width: 24, height: 24)
-                            .padding(8)
-                            .background(Color.accent())
-                            .foregroundColor(.onAccent())
-                            .cornerRadius(4)
-                    }
-                    .navigateToShopAlert(isPresented: $showingAlert, shop: shopLocation.shop)
-
-                    VStack(alignment: .leading, spacing: 0) {
-                        AddressView(provider: shopLocation.shop)
-                    }
-                    .foregroundColor(.primary)
-                }
-                .padding([.leading, .top, .bottom], 4)
-                .padding(.trailing, 8)
-                .background(Color.systemBackground)
-                .cornerRadius(8)
-                
-                Image(systemName: "arrowtriangle.down.fill")
-                    .foregroundColor(.systemBackground)
-            }
-            .compositingGroup()
-            .opacity(showTitle ? 0 : 1)
-
-            mapMarker
-        }
-        .onTapGesture {
-            withAnimation(.easeInOut) {
-                showTitle.toggle()
-            }
-        }
-    }
-}
-
 public struct ShopMapView: View {
     let shop: ShopProviding
-    let userLocation: CLLocation?
     let showNavigationControl: Bool
 
     enum Mode {
@@ -112,51 +44,96 @@ public struct ShopMapView: View {
         case user
     }
 
-    public init(shop: ShopProviding, userLocation: CLLocation? = nil, showNavigationControl: Bool = false) {
+    public init(shop: ShopProviding, showNavigationControl: Bool = false) {
         self.shop = shop
-        self.userLocation = userLocation
         self.showNavigationControl = showNavigationControl
-        self.shopLocation = ShopLocation(shop: shop)
     }
     
-    @State private var mode: Mode = .shop
-    @State private var showingAlert: Bool = false
-    let shopLocation: ShopLocation
+    @State private var mode: Mode = .shop {
+        didSet {
+            updatePosition(forMode: mode)
+        }
+    }
     
-    private var region: MKCoordinateRegion {
+    @State private var showingAlert: Bool = false
+    @State private var showingDetails: Bool = false
+    
+    @State private var position: MapCameraPosition = .automatic
+    
+    private func updatePosition(forMode mode: Mode) {
         switch mode {
         case .user:
-            return userLocation?.region ?? MKCoordinateRegion.region(for: shop)
+            position = .userLocation(fallback: .region(.region(for: shop)))
         case .shop:
-            return MKCoordinateRegion.region(for: shop)
+            position = .region(.region(for: shop))
+        }
+    }
+    
+    @ViewBuilder
+    var shopAnnotation: some View {
+        Group {
+            if let image: SwiftUI.Image = Asset.image(named: "Snabble.Shop.Detail.mapPin" ) {
+                image
+            } else {
+                Image(systemName: "mappin.and.ellipse")
+                    .foregroundColor(.accent())
+                    .font(.title)
+            }
+        }.onTapGesture {
+            showingDetails.toggle()
         }
     }
     
     @ViewBuilder
     var mapView: some View {
-        if mode == .shop {
-            Map(coordinateRegion: .init(get: { region }, set: { _ in }),
-            interactionModes: .all,
-            showsUserLocation: true,
-                userTrackingMode: .constant(.none),
-                annotationItems: [self.shopLocation]) { place in
-                MapAnnotation(coordinate: place.shop.location.coordinate, anchorPoint: CGPoint(x: 0.5, y: 1)) {
-                    ShopAnnotationView(shopLocation: place)
-                        .shadow(color: .gray, radius: 3, x: 2, y: 2)
-                }
-            }
-        } else {
-            Map(coordinateRegion: .init(get: { region }, set: { _ in }),
-            interactionModes: .all,
-            showsUserLocation: true,
-            userTrackingMode: .constant(.follow),
-                annotationItems: [self.shopLocation]) { place in
-                MapAnnotation(coordinate: place.shop.location.coordinate, anchorPoint: CGPoint(x: 0.5, y: 1)) {
-                    ShopAnnotationView(shopLocation: place)
-                        .shadow(color: .gray, radius: 3, x: 2, y: 2)
-                }
-            }
+        Map(position: $position) {
+            Annotation("", coordinate: shop.location.coordinate, anchor: .bottom) {
+                VStack(spacing: -2) {
+                    HStack {
+                        Button(action: {
+                            showingAlert.toggle()
+                        }) {
+                            Image(systemName: "car.fill")
+                                .resizable()
+                                .scaledToFit()
+                                .frame(width: 24, height: 24)
+                                .padding(8)
+                                .background(Color.accent())
+                                .foregroundColor(.onAccent())
+                                .cornerRadius(4)
+                        }
+                        .navigateToShopAlert(isPresented: $showingAlert, shop: shop)
 
+                        VStack(alignment: .leading, spacing: 0) {
+                            AddressView(provider: shop)
+                        }
+                        .foregroundColor(.primary)
+                    }
+                    .padding([.leading, .top, .bottom], 4)
+                    .padding(.trailing, 8)
+                    .background(Color.systemBackground)
+                    .cornerRadius(8)
+                    .onTapGesture {
+                        showingDetails.toggle()
+                    }
+                    
+                    Image(systemName: "arrowtriangle.down.fill")
+                        .foregroundColor(.systemBackground)
+                    
+                    Spacer(minLength: 16)
+                }
+                .compositingGroup()
+                .opacity(showingDetails ? 1 : 0)
+            }
+            .annotationTitles(.hidden)
+            .annotationSubtitles(.hidden)
+            Annotation(shop.name, coordinate: shop.location.coordinate) {
+                shopAnnotation
+            }
+            UserAnnotation()
+        }
+        .task {
+            updatePosition(forMode: mode)
         }
     }
 
@@ -178,8 +155,6 @@ public struct ShopMapView: View {
             }) {
                 Image(systemName: mode == .user ? "location.fill" : "location")
             }
-            .opacity(userLocation?.region == nil ? 0.5 : 1.0)
-            .disabled(userLocation?.region == nil)
 
             if showNavigationControl {
                 Button(action: {
@@ -204,12 +179,6 @@ public struct ShopMapView: View {
                 .padding()
                 .zIndex(1)
         }
-    }
-}
-
-private extension CLLocation {
-    var region: MKCoordinateRegion? {
-        MKCoordinateRegion(center: coordinate, latitudinalMeters: 2000, longitudinalMeters: 2000)
     }
 }
 
