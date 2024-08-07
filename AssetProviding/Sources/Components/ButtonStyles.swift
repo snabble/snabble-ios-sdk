@@ -18,7 +18,7 @@ public struct AccentButtonStyle: ButtonStyle {
         configuration.label
             .padding([.top, .bottom], 15)
             .padding([.leading, .trailing], 20)
-            .background(Color("AccentColor"))
+            .background(Color.accent())
             .foregroundColor(.white.opacity(disabled ? 0.5 : 1.0))
             .disabled(disabled)
             .clipShape(RoundedRectangle(cornerRadius: 10))
@@ -49,7 +49,7 @@ public struct SecondaryButtonStyle: ButtonStyle {
         configuration.label
             .padding([.top, .bottom], 15)
             .padding([.leading, .trailing], 20)
-            .foregroundColor(Color("AccentColor"))
+            .foregroundColor(.accent())
             .disabled(disabled)
     }
 }
