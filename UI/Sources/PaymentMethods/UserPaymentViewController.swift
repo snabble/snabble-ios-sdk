@@ -12,8 +12,7 @@ import SnabbleAssetProviding
 import SnabbleUser
 
 public protocol UserValidation: UIViewController {
-    var user: SnabbleUser.User? { get set }
-    func hasValidUser(user: SnabbleUser.User) -> Bool
+    func acceptUser(user: SnabbleUser.User) -> Bool
 }
 
 public typealias UserInputConformance = UserValidation & UserFieldProviding
@@ -57,10 +56,9 @@ extension UserPaymentViewController: UserViewProxy {
         guard let paymentViewController else {
             return
         }
-        guard paymentViewController.hasValidUser(user: user) else {
+        guard paymentViewController.acceptUser(user: user) else {
             return
         }
-        paymentViewController.user = user
         self.navigationController?.pushViewController(paymentViewController, animated: true)
     }
 }
