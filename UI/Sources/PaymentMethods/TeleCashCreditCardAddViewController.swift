@@ -18,6 +18,20 @@ import SnabbleUser
 //
 // see https://stripe.com/docs/testing
 
+private struct TeleCashAuthorizationResult: Decodable {
+    let links: AuthLinks
+
+    struct AuthLinks: Decodable {
+        let _self: Link
+        let tokenizationForm: Link
+
+        enum CodingKeys: String, CodingKey {
+            case _self = "self"
+            case tokenizationForm
+        }
+    }
+}
+
 extension TeleCashCreditCardAddViewController: UserFieldProviding {
     public var defaultUserFields: [UserField] {
         UserField.fullNameFields.fieldsWithout([.state, .dateOfBirth])
@@ -134,6 +148,10 @@ public final class TeleCashCreditCardAddViewController: UIViewController, UserVa
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
+        loadForm()
+    }
+    
+    private func loadForm() {
         analyticsDelegate?.track(.viewPaymentMethodDetail)
 
         guard
@@ -144,15 +162,37 @@ public final class TeleCashCreditCardAddViewController: UIViewController, UserVa
         else {
             return showError()
         }
-        loadForm(withProjectId: project.id, forCreditCardBrand: brand)
-    }
+        if let user = user, let tokenization = descriptor.links?.tokenization {
+            let url = "\(Snabble.shared.environment.apiURLString)\(tokenization.href)"
 
+            project.request(.post, url, body: user) { request in
+                guard let request = request else {
+                    return
+                }
+                project.perform(request) { [self] (result: Result<TeleCashAuthorizationResult, SnabbleError>) in
+                    switch result {
+                    case .success(let authResult):
+                        let formURL = "\(Snabble.shared.environment.apiURLString)\(authResult.links.tokenizationForm.href)"
+                        loadForm(url: formURL, forCreditCardBrand: brand)
+
+                    case .failure(let error):
+                        print(error)
+                        return showError()
+                    }
+                }
+            }
+        } else {
+            let url = "\(Snabble.shared.environment.apiURLString)/\(projectId)/telecash/form"
+            loadForm(url: url, forCreditCardBrand: brand)
+        }
+    }
+    
     private func goBack() {
         navigationController?.popViewController(animated: true)
     }
 
-    private func loadForm(withProjectId projectId: Identifier<Project>, forCreditCardBrand creditCardBrand: CreditCardBrand) {
-        var urlComponents = URLComponents(string: "\(Snabble.shared.environment.apiURLString)/\(projectId)/telecash/form")
+    private func loadForm(url: String, forCreditCardBrand creditCardBrand: CreditCardBrand) {
+        var urlComponents = URLComponents(string: url)
         urlComponents?.queryItems = [
             .init(name: "platform", value: "ios"),
             .init(name: "paymentMethod", value: creditCardBrand.rawValue)
@@ -260,15 +300,6 @@ extension TeleCashCreditCardAddViewController: WKScriptMessageHandler {
         do {
             let jsonData = try JSONSerialization.data(withJSONObject: jsonObject)
             let preAuthInfo = try JSONDecoder().decode(PreAuthInfo.self, from: jsonData)
-            if let user {
-                let encoder = JSONEncoder()
-                do {
-                    let jsonData = try encoder.encode(user)
-                    print(jsonData.printAsJSON())
-                } catch {
-                    print("Error while encoding user:", user, "Error:", error)
-                }
-            }
             explanationLabel?.text = threeDSecureHint(for: projectId, preAuthInfo: preAuthInfo)
         } catch {
             explanationLabel?.text = threeDSecureHint(for: projectId, preAuthInfo: .mock)
