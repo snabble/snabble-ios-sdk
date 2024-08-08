@@ -42,6 +42,19 @@ struct UserTextFieldView: View {
 public struct UserView: View {
     @ObservedObject var model: UserModel
     
+#if DEBUG
+    @State private var fullName: String = "Foo Bar"
+    @State private var firstName: String = ""
+    @State private var lastName: String = ""
+    @State private var email: String = "foo@bar.com"
+    @State private var phone: String = "+49 177 8765432"
+    @State private var dateOfBirth: Date
+    @State private var street: String = "Mainroad 55"
+    @State private var zip: String = "12345"
+    @State private var city: String = "Jupiter"
+    @State private var country: String = ""
+    @State private var state: String = ""
+#else
     @State private var fullName: String = ""
     @State private var firstName: String = ""
     @State private var lastName: String = ""
@@ -53,7 +66,7 @@ public struct UserView: View {
     @State private var city: String = ""
     @State private var country: String = ""
     @State private var state: String = ""
-    
+#endif
     @State private var countrySelection: Country = Country.germany
     @State private var stateSelection: Country.State?
     
