@@ -432,7 +432,6 @@
 "Snabble.User.dateOfBirth" = "Geburtsdatum";
 "Snabble.User.email" = "Email";
 "Snabble.User.firstName" = "Vorname";
-"Snabble.User.fullName" = "Vor- und Nachname";
 "Snabble.User.lastName" = "Nachname";
 "Snabble.User.phone" = "Telefon";
 "Snabble.User.state" = "Staat";
