@@ -37,25 +37,11 @@ public protocol PrefillData {
 }
 
 extension SnabbleUser.User: PrefillData {
-    public var street: String? {
-        address.street
-    }
-    
-    public var zip: String? {
-        address.zip
-    }
-    
-    public var city: String? {
-        address.city
-    }
-    
-    public var country: String? {
-        address.country
-    }
-    
-    public var state: String? {
-        address.state
-    }
+    public var street: String? { address?.street }
+    public var zip: String? { address?.zip }
+    public var city: String? { address?.city }
+    public var country: String? { address?.country }
+    public var state: String? { address?.state }
 }
 
 public final class PayoneCreditCardEditViewController: UIViewController {
