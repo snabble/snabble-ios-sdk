@@ -15,7 +15,10 @@ public struct User: Codable {
     public var phone: String?
     public var dateOfBirth: Date?
     public var address: Address
-        
+    
+    enum CodingKeys: String, CodingKey {
+        case fullName = "name", firstname, lastname, email, phone = "phoneNumber", dateOfBirth, address
+    }
     public struct Address: Codable {
         public var street: String?
         public var zip: String?
@@ -23,7 +26,9 @@ public struct User: Codable {
         public var country: String?
         public var state: String?
     }
-    
+}
+
+extension User {
     public init(firstname: String?,
                 lastname: String?,
                 email: String?,
