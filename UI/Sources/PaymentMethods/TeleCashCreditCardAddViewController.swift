@@ -34,14 +34,54 @@ private struct TeleCashAuthorizationResult: Decodable {
 
 extension TeleCashCreditCardAddViewController: UserFieldProviding {
     public var defaultUserFields: [UserField] {
-        UserField.fullNameFields.fieldsWithout([.state, .dateOfBirth])
+        UserField.allCases.fieldsWithout([.state, .dateOfBirth])
     }
     public var requiredUserFields: [UserField] {
-        UserField.fullNameFields.fieldsWithout([.state, .dateOfBirth])
+        UserField.allCases.fieldsWithout([.state, .dateOfBirth])
     }
 }
 
-public final class TeleCashCreditCardAddViewController: UIViewController, UserValidation {
+struct TeleCashUser: Codable {
+    let name: String?
+    let email: String?
+    let phoneNumber: String?
+    let address: Address?
+    
+    public struct Address: Codable {
+        public var street: String?
+        public var zip: String?
+        public var city: String?
+        public var country: String?
+        public var state: String?
+    }
+}
+
+extension TeleCashUser {
+    static func user(from user: SnabbleUser.User) -> TeleCashUser {
+        let address = TeleCashUser.Address(street: user.street,
+                                           zip: user.zip,
+                                           city: user.city,
+                                           country: user.country,
+                                           state: user.state)
+        return TeleCashUser(name: user.fullName,
+                                 email: user.email,
+                                 phoneNumber: user.phoneNumber,
+                                 address: address)
+    }
+}
+
+extension TeleCashCreditCardAddViewController: UserValidation {
+    public func acceptUser(user: SnabbleUser.User) -> Bool {
+        // Simple validation here, as all required fields are filled in the form.
+        guard let firstname = user.firstname, !firstname.isEmpty else {
+            return false
+        }
+        self.user = TeleCashUser.user(from: user)
+        return true
+    }
+}
+
+public final class TeleCashCreditCardAddViewController: UIViewController {
     
     private weak var explanationLabel: UILabel?
     private weak var webView: WKWebView?
@@ -52,18 +92,8 @@ public final class TeleCashCreditCardAddViewController: UIViewController, UserVa
 
     private weak var analyticsDelegate: AnalyticsDelegate?
     
-    public var user: SnabbleUser.User?
+    var user: TeleCashUser?
     
-    public func hasValidUser(user: SnabbleUser.User) -> Bool {
-        if let fullName = user.fullName, !fullName.isEmpty {
-            return true
-        }
-        if let firstname = user.firstname, !firstname.isEmpty {
-            return true
-        }
-        return false
-    }
-
     public init(brand: CreditCardBrand?, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) {
         self.brand = brand
         self.analyticsDelegate = analyticsDelegate
@@ -165,6 +195,11 @@ public final class TeleCashCreditCardAddViewController: UIViewController, UserVa
         if let user = user, let tokenization = descriptor.links?.tokenization {
             let url = "\(Snabble.shared.environment.apiURLString)\(tokenization.href)"
 
+#if DEBUG
+            if let data = try? JSONEncoder().encode(user) {
+                data.printAsJSON()
+            }
+#endif
             project.request(.post, url, body: user) { request in
                 guard let request = request else {
                     return
