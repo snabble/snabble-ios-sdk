@@ -24,6 +24,8 @@ public final class DatatransAliasViewController: UIViewController {
     private var transaction: Datatrans.Transaction?
     private let detail: PaymentMethodDetail?
 
+    var user: DatatransUser?
+
     private var customLabel: UILabel {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -320,6 +322,7 @@ extension DatatransAliasViewController {
     private struct TokenInput: Encodable {
         let paymentMethod: String
         let language: String
+        let cardOwner: DatatransUser?
     }
 
     private struct TokenResponse: Decodable {
@@ -338,7 +341,7 @@ extension DatatransAliasViewController {
         }
 
         let language = Locale.current.language.languageCode?.identifier ?? "en"
-        let tokenInput = TokenInput(paymentMethod: method.rawValue, language: language)
+        let tokenInput = TokenInput(paymentMethod: method.rawValue, language: language, cardOwner: user)
 
         project.request(.post, url, body: tokenInput, timeout: 2) { request in
             guard let request = request else {
