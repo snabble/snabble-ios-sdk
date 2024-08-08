@@ -112,11 +112,7 @@ extension RawPaymentMethod {
 
         if descriptor.acceptedOriginTypes?.contains(.ipgHostedDataID) == true {
             let controller = TeleCashCreditCardAddViewController(brand: CreditCardBrand.forMethod(self), projectId, analyticsDelegate)
-            if let userValidation = controller as? UserInputConformance {
-                return UserPaymentViewController(paymentViewController: userValidation)
-            } else {
-                return controller
-            }
+            return UserPaymentViewController(paymentViewController: controller)
         } else if descriptor.acceptedOriginTypes?.contains(.payonePseudoCardPAN) == true {
             return PayoneCreditCardEditViewController(brand: CreditCardBrand.forMethod(self), projectId, analyticsDelegate)
         } else if descriptor.acceptedOriginTypes?.contains(.datatransCreditCardAlias) == true {
