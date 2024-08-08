@@ -19,7 +19,7 @@ public struct AccentButtonStyle: ButtonStyle {
             .padding([.top, .bottom], 15)
             .padding([.leading, .trailing], 20)
             .background(Color.accent())
-            .foregroundColor(.white.opacity(disabled ? 0.5 : 1.0))
+            .foregroundColor(Color.onAccent().opacity(disabled ? 0.5 : 1.0))
             .disabled(disabled)
             .clipShape(RoundedRectangle(cornerRadius: 10))
     }
