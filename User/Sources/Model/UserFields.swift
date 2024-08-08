@@ -53,33 +53,29 @@ extension UserField {
             "Snabble.User.state"
         }
     }
-
+    
     public var contentType: UITextContentType? {
         switch self {
         case .firstName:
-            return .givenName
+                .givenName
         case .lastName:
-            return .familyName
+                .familyName
         case .email:
-            return .emailAddress
+                .emailAddress
         case .phone:
-            return .telephoneNumber
+                .telephoneNumber
         case .dateOfBirth:
-            if #available(iOS 17.0, *) {
-                return .birthdateDay
-            } else {
-                return nil
-            }
+                .birthdateDay
         case .street:
-            return .streetAddressLine1
+                .streetAddressLine1
         case .zip:
-            return .postalCode
+                .postalCode
         case .city:
-            return .addressCity
+                .addressCity
         case .country:
-            return .countryName
+                .countryName
         case .state:
-            return .addressState
+                .addressState
         }
     }
     
