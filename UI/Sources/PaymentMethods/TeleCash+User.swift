@@ -5,10 +5,7 @@
 //  Created by Uwe Tilemann on 08.08.24.
 //
 
-//import UIKit
-//import WebKit
 import SnabbleCore
-//import SnabbleAssetProviding
 import SnabbleUser
 
 extension TeleCashCreditCardAddViewController: UserFieldProviding {
