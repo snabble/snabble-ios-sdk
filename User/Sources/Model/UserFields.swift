@@ -16,7 +16,6 @@ public protocol UserFieldProviding {
 public enum UserField: String, CaseIterable, Swift.Identifiable, Hashable {
     public var id: Self { self }
     
-    case fullName
     case firstName
     case lastName
     case email
@@ -30,15 +29,8 @@ public enum UserField: String, CaseIterable, Swift.Identifiable, Hashable {
 }
 
 extension UserField {
-    public static var fullNameFields: [UserField] { UserField.allCases.fieldsWithout([.firstName, .lastName]) }
-    public static var defaultFields: [UserField] { UserField.allCases.fieldsWithout([.fullName]) }
-}
-
-extension UserField {
     public var prompt: String {
         switch self {
-        case .fullName:
-            "Snabble.User.fullName"
         case .firstName:
             "Snabble.User.firstName"
         case .lastName:
@@ -64,8 +56,6 @@ extension UserField {
 
     public var contentType: UITextContentType? {
         switch self {
-        case .fullName:
-            return .name
         case .firstName:
             return .givenName
         case .lastName:
@@ -95,7 +85,7 @@ extension UserField {
     
     public var keyboardType: UIKeyboardType {
         switch self {
-        case .fullName, .firstName, .lastName, .dateOfBirth, .street, .city, .country, .state:
+        case .firstName, .lastName, .dateOfBirth, .street, .city, .country, .state:
                 .default
         case .email:
                 .emailAddress
