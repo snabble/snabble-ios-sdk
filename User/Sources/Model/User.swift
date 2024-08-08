@@ -8,16 +8,16 @@
 import Foundation
 
 public struct User: Codable {
-    public var fullName: String?
     public var firstname: String?
     public var lastname: String?
     public var email: String?
-    public var phone: String?
+    public var phone: Phone?
     public var dateOfBirth: Date?
-    public var address: Address
+    public var address: Address?
     
-    enum CodingKeys: String, CodingKey {
-        case fullName = "name", firstname, lastname, email, phone = "phoneNumber", dateOfBirth, address
+    public struct Phone: Codable {
+        public var code: UInt?
+        public var number: String?
     }
     public struct Address: Codable {
         public var street: String?
@@ -26,27 +26,11 @@ public struct User: Codable {
         public var country: String?
         public var state: String?
     }
-}
-
-extension User {
-    public init(firstname: String?,
-                lastname: String?,
-                email: String?,
-                phone: String?,
-                dateOfBirth: Date?,
-                street: String?,
-                zip: String?,
-                city: String?,
-                country: String?,
-                state: String?) {        
-        let address = Address(street: street, zip: zip, city: city, country: country, state: state)
-        self.init(firstname: firstname, lastname: lastname, email: email, phone: phone, dateOfBirth: dateOfBirth, address: address)
-    }
     
     public init(firstname: String?,
                 lastname: String?,
                 email: String?,
-                phone: String?,
+                phone: Phone?,
                 dateOfBirth: Date?,
                 address: Address) {
         self.firstname = firstname
@@ -57,33 +41,23 @@ extension User {
         
         self.address = address
     }
+}
 
-    public init(fullName: String?,
+extension User {
+    public init(firstname: String?,
+                lastname: String?,
                 email: String?,
-                phone: String?,
+                phone: Phone?,
                 dateOfBirth: Date?,
                 street: String?,
                 zip: String?,
                 city: String?,
                 country: String?,
-                state: String?) {
+                state: String?) {        
         let address = Address(street: street, zip: zip, city: city, country: country, state: state)
-
-        self.init(fullName: fullName, email: email, phone: phone, dateOfBirth: dateOfBirth, address: address)
+        self.init(firstname: firstname, lastname: lastname, email: email, phone: phone, dateOfBirth: dateOfBirth, address: address)
     }
-
-    public init(fullName: String?,
-                email: String?,
-                phone: String?,
-                dateOfBirth: Date?,
-                address: User.Address) {
-        self.fullName = fullName
-        self.email = email
-        self.phone = phone
-        self.dateOfBirth = dateOfBirth
-        self.address = address
-    }
-
+    
     public init() {
         self.init(firstname: nil,
                   lastname: nil,
@@ -95,6 +69,28 @@ extension User {
                   city: nil,
                   country: nil,
                   state: nil)
+    }
+}
+
+extension User {
+    public var fullName: String? {
+        guard let firstname else {
+            return lastname
+        }
+        guard let lastname else {
+            return firstname
+        }
+        return firstname + " " + lastname
+    }
+
+    public var phoneNumber: String? {
+        guard let phone, let number = phone.number else {
+            return nil
+        }
+        guard let code = phone.code else {
+            return number
+        }
+        return "+\(code)\(number)"
     }
 }
 
