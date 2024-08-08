@@ -43,11 +43,10 @@ public struct UserView: View {
     @ObservedObject var model: UserModel
     
 #if DEBUG
-    @State private var fullName: String = "Foo Bar"
-    @State private var firstName: String = ""
-    @State private var lastName: String = ""
+    @State private var firstName: String = "Foo"
+    @State private var lastName: String = "Bar"
     @State private var email: String = "foo@bar.com"
-    @State private var phone: String = "+49 177 8765432"
+    @State private var phoneNumber: String = "177 8765432"
     @State private var dateOfBirth: Date
     @State private var street: String = "Mainroad 55"
     @State private var zip: String = "12345"
@@ -55,11 +54,10 @@ public struct UserView: View {
     @State private var country: String = ""
     @State private var state: String = ""
 #else
-    @State private var fullName: String = ""
     @State private var firstName: String = ""
     @State private var lastName: String = ""
     @State private var email: String = ""
-    @State private var phone: String = ""
+    @State private var phoneNumber: String = ""
     @State private var dateOfBirth: Date
     @State private var street: String = ""
     @State private var zip: String = ""
@@ -69,7 +67,10 @@ public struct UserView: View {
 #endif
     @State private var countrySelection: Country = Country.germany
     @State private var stateSelection: Country.State?
-    
+
+    let callingCodes: [CallingCode] = CallingCode.all
+    @State var callingCode: CallingCode = CallingCode.germany
+
     @State private var disabled: Bool = false
     
     @FocusState private var focusField: UserField?
@@ -90,9 +91,6 @@ public struct UserView: View {
             return false
         }
         if isRequired(.lastName), lastName.isEmpty {
-            return false
-        }
-        if isRequired(.fullName), fullName.isEmpty {
             return false
         }
         if isRequired(.email), email.isEmpty {
@@ -146,13 +144,7 @@ public struct UserView: View {
                             .onSubmit {
                                 focusField = .lastName.next(in: model.fields)
                             }
-                    } else if model.fields.contains(.fullName) {
-                        UserTextFieldView(userField: .fullName, text: $fullName, disabled: $disabled)
-                            .focused($focusField, equals: .fullName)
-                            .onSubmit {
-                                focusField = .fullName.next(in: model.fields)
-                            }
-                   }
+                    }
                     if model.fields.contains(.email) {
                         UserTextFieldView(userField: .email, text: $email, disabled: $disabled)
                             .focused($focusField, equals: .email)
@@ -161,11 +153,18 @@ public struct UserView: View {
                             }
                     }
                     if model.fields.contains(.phone) {
-                        UserTextFieldView(userField: .phone, text: $phone, disabled: $disabled)
-                            .focused($focusField, equals: .phone)
-                            .onSubmit {
-                                focusField = .phone.next(in: model.fields)
-                            }
+                        HStack {
+                            CountryCallingCodeView(countries: callingCodes, selectedCountry: $callingCode)
+                                .padding(12)
+                                .background(.quaternary)
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                            
+                            UserTextFieldView(userField: .phone, text: $phoneNumber, disabled: $disabled)
+                                .focused($focusField, equals: .phone)
+                                .onSubmit {
+                                    focusField = .phone.next(in: model.fields)
+                                }
+                        }
                     }
                     if model.fields.contains(.dateOfBirth) {
                         DatePicker(Asset.localizedString(forKey: UserField.dateOfBirth.prompt),
@@ -226,13 +225,13 @@ public struct UserView: View {
                     title: Asset.localizedString(forKey: "Snabble.UserView.next"),
                     disabled: Binding(get: { !isButtonEnabled || disabled }, set: { _ in }),
                     onAction: {
+                        let userPhone = User.Phone(code: callingCode.callingCode, number: phoneNumber)
                         
                         var user = User()
-                        user.fullName = isRequired(.fullName) ? fullName : nil
                         user.firstname = isRequired(.firstName) ? firstName : nil
                         user.lastname = isRequired(.lastName) ? lastName : nil
                         user.email = isRequired(.email) ? email : nil
-                        user.phone = isRequired(.phone) ? phone : nil
+                        user.phone = isRequired(.phone) ? userPhone : nil
                         user.dateOfBirth = isRequired(.dateOfBirth) ? dateOfBirth : nil
                         
                         user.address = User.Address(street: isRequired(.street) ? street : nil,
@@ -240,7 +239,6 @@ public struct UserView: View {
                                                     city: isRequired(.city) ? city : nil,
                                                     country: isRequired(.country) ? country : nil,
                                                     state: isRequired(.state) && !state.isEmpty ? state : nil)
-                        
                         self.model.user = user
                     })
             }
