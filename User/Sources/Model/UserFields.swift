@@ -93,6 +93,12 @@ extension UserField {
     }
 }
 
+extension UserField {
+    public static func fieldsWithout(_ unwanted: [UserField]) -> [UserField] {
+        Self.allCases.fieldsWithout(unwanted)
+    }
+}
+
 extension Array where Element == UserField {
     public func fieldsWithout(_ unwanted: [UserField]) -> [UserField] {
         self.filter { !unwanted.contains($0) }
