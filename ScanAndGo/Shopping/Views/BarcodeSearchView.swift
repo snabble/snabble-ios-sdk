@@ -23,15 +23,13 @@ struct BarcodeSearchRowView: View {
         return codeEntry.code
     }
     var body: some View {
-        HStack {
-            VStack(alignment: .leading) {
-                Text(codeString)
-                Text(product.name)
-                    .font(.caption)
-            }
-            Spacer()
+        VStack(alignment: .leading) {
+            Text(codeString)
+            Text(product.name)
+                .font(.caption)
         }
-        .contentShape(Rectangle())
+        .padding(.horizontal)
+        .containerRelativeFrame(.horizontal, alignment: .leading)
         .task {
             update()
         }
