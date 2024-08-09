@@ -23,16 +23,16 @@ public extension UserDefaults {
     }
 }
 
-extension SnabbleNetwork.User {
-    private static var userKey: String {
+public extension SnabbleNetwork.User {
+    static var userKey: String {
         "io-snabble-sdk-network-user"
     }
     
-    private static var current: Self? {
+    static var current: Self? {
         UserDefaults.standard.value(forKey: Self.userKey) as? SnabbleNetwork.User
     }
     
-    private static func delete() {
+    static func delete() {
         UserDefaults.standard.setValue(nil, forKey: Self.userKey)
     }
     
