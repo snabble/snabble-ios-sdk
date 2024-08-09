@@ -174,7 +174,19 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
     }
     
     private func goBack() {
-        navigationController?.popViewController(animated: true)
+        if
+            let viewControllers = navigationController?.viewControllers,
+            let viewController = viewControllers.first(where: { viewController in
+                viewController is UserPaymentViewController
+            }),
+            let firstIndex = viewControllers.firstIndex(of: viewController),
+            firstIndex > viewControllers.startIndex {
+            let vcIndex = viewControllers.index(before: firstIndex)
+            let viewController = viewControllers[vcIndex]
+            navigationController?.popToViewController(viewController, animated: true)
+        } else {
+            navigationController?.popToRootViewController(animated: true)
+        }
     }
 
     private func loadForm(url: String, forCreditCardBrand creditCardBrand: CreditCardBrand) {
