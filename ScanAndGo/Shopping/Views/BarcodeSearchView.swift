@@ -28,6 +28,8 @@ struct BarcodeSearchRowView: View {
             Text(product.name)
                 .font(.caption)
         }
+        .padding(.horizontal)
+        .containerRelativeFrame(.horizontal, alignment: .leading)
         .contentShape(Rectangle())
         .task {
             update()
@@ -88,7 +90,6 @@ struct BarcodeSearchView: View {
             List(searchResults, selection: $selection) { value in
                 BarcodeSearchRowView(product: value, searchText: $searchText)
                     .id(value.id)
-                    .contentShape(Rectangle())
                     .onTapGesture {
                         selection = value
                     }
