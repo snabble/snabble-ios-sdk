@@ -10,7 +10,7 @@ import SnabbleNetwork
 import SnabbleUser
 
 public extension UserDefaults {
-    private static var isSignedInKey: String {
+    static var isSignedInKey: String {
         "io-snabble-sdk-network-user-isSignedIn"
     }
 
