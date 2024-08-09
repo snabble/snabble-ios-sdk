@@ -30,6 +30,7 @@ struct BarcodeSearchRowView: View {
         }
         .padding(.horizontal)
         .containerRelativeFrame(.horizontal, alignment: .leading)
+        .contentShape(Rectangle())
         .task {
             update()
         }
