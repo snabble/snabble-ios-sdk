@@ -23,10 +23,13 @@ struct BarcodeSearchRowView: View {
         return codeEntry.code
     }
     var body: some View {
-        VStack(alignment: .leading) {
-            Text(codeString)
-            Text(product.name)
-                .font(.caption)
+        HStack {
+            VStack(alignment: .leading) {
+                Text(codeString)
+                Text(product.name)
+                    .font(.caption)
+            }
+            Spacer()
         }
         .contentShape(Rectangle())
         .task {
@@ -88,7 +91,6 @@ struct BarcodeSearchView: View {
             List(searchResults, selection: $selection) { value in
                 BarcodeSearchRowView(product: value, searchText: $searchText)
                     .id(value.id)
-                    .contentShape(Rectangle())
                     .onTapGesture {
                         selection = value
                     }
