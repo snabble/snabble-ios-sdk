@@ -31,7 +31,7 @@ extension UIColor {
     }
 
     public static func accent(in domain: Any? = Asset.domain) -> UIColor {
-        Asset.color(named: "accent", domain: domain) ?? UIColor(red: 0, green: 119.0 / 255.0, blue: 187.0 / 255.0, alpha: 1)
+        return Asset.color(named: "accent", domain: domain) ?? Asset.color(named: "AccentColor", domain: domain) ?? UIColor(red: 0, green: 119.0 / 255.0, blue: 187.0 / 255.0, alpha: 1)
     }
 
     public static func onAccent(in domain: Any? = Asset.domain) -> UIColor {

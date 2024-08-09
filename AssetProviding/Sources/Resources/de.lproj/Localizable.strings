@@ -1,3 +1,4 @@
+"Account.UserDetails.stateSelect" = "Bitte wählen";
 "Receipts.title" = "Kassenbons";
 "Snabble.Account.ChangePhoneNumber.Code.buttonLabel" = "Speichern";
 "Snabble.Account.ChangePhoneNumber.buttonLabel" = "Weiter";
@@ -113,6 +114,7 @@
 "Snabble.Payment.CancelError.title" = "Abbrechen nicht möglich";
 "Snabble.Payment.CreditCard.error" = "Bei der Verarbeitung deiner Kreditkarte ist ein Fehler aufgetreten";
 "Snabble.Payment.CreditCard.expireDate" = "Läuft ab: %@";
+"Snabble.Payment.CustomerInfo.country" = "Land";
 "Snabble.Payment.Delete.message" = "Möchtest Du diese Zahlungsmethode wirklich entfernen?";
 "Snabble.Payment.EmptyState.add" = "Zahlungsmethode hinzufügen";
 "Snabble.Payment.EmptyState.message" = "Noch keine Zahlungsmethode hinterlegt.";
@@ -233,7 +235,7 @@
 "Snabble.Payone.expireYear" = "Ablaufjahr (JJJJ)";
 "Snabble.Payone.incompleteForm" = "Bitte fülle das Formular vollständig aus.";
 "Snabble.Payone.lastname" = "Nachname";
-"Snabble.Payone.state" = "Bundesland";
+"Snabble.Payone.state" = "Staat";
 "Snabble.Payone.stateHint" = "Bitte Staat auswählen";
 "Snabble.Payone.street" = "Straße inkl. Hausnummer";
 "Snabble.Payone.zip" = "Postleitzahl";
@@ -424,6 +426,20 @@
 "Snabble.Taxation.pleaseChoose" = "Bitte wählen";
 "Snabble.Textfield.HidePassword.Accessibility" = "Passwort verbergen";
 "Snabble.Textfield.ShowPassword.Accessibility" = "Passwort anzeigen";
+"Snabble.User.Country.title" = "Land wählen";
+"Snabble.User.city" = "Stadt";
+"Snabble.User.country" = "Land";
+"Snabble.User.dateOfBirth" = "Geburtsdatum";
+"Snabble.User.email" = "Email";
+"Snabble.User.firstName" = "Vorname";
+"Snabble.User.lastName" = "Nachname";
+"Snabble.User.phone" = "Telefon";
+"Snabble.User.state" = "Staat";
+"Snabble.User.stateSelect" = "Auswählen";
+"Snabble.User.street" = "Straße inkl. Hausnummer";
+"Snabble.User.zip" = "Postleitzahl";
+"Snabble.UserView.next" = "Weiter";
+"Snabble.UserView.title" = "Nutzerinformationen";
 "Snabble.Violations.couponAlreadyVoided" = "Ein Coupon wurde bereits eingelöst und wird aus dem Warenkorb entfernt";
 "Snabble.Violations.couponCurrentlyNotValid" = "Ein Coupon ist aktuell ungültig und wird aus dem Warenkorb entfernt";
 "Snabble.Violations.couponInvalid" = "Ein Coupon ist ungültig und wird aus dem Warenkorb entfernt";

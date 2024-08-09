@@ -6,26 +6,31 @@
 //
 
 import Foundation
-import SnabbleAssetProviding
 
-struct Country: Decodable, Equatable {
+public struct Country: Decodable, Equatable {
     public static var all: [Country] = loadJSON("countries")
-    public static var germany: Country = Country(code: "DE")
+    public static var germany: Country = Country(code: "DE", numeric: "276")
     
-    let code: String
-    let states: [State]?
+    public let code: String
+    public let states: [State]?
+    public let numeric: String?
     
-    init(code: String, states: [State]? = nil) {
+    init(code: String, states: [State]? = nil, numeric: String? = nil) {
         self.code = code
         self.states = states
+        self.numeric = numeric
     }
     
-    struct State: Decodable, Equatable {
-        let code: String
-        let label: String
+    public struct State: Decodable, Equatable {
+        public let code: String
+        public let name: String
+
+        var label: String {
+            name
+        }
     }
     
-    var flagSymbol: String? {
+    public var flagSymbol: String? {
         code.flagSymbol
     }
 }
@@ -55,24 +60,24 @@ extension Country.State: Hashable {
 }
 
 extension Country {
-    var name: String {
+    public var name: String {
         Locale.current.localizedString(forRegionCode: code) ?? "n/a"
     }
 }
 
 extension Array where Element == Country {    
-    func country(forCode code: String) -> Element? {
+    public func country(forCode code: String) -> Element? {
         first(where: { $0.code.lowercased() == code.lowercased()})
     }
 }
 
 extension Array where Element == Country.State {
-    func state(forCode code: String) -> Element? {
+    public func state(forCode code: String) -> Element? {
         first(where: { $0.code.lowercased() == code.lowercased()})
     }
 }
 
-private extension String {
+extension String {
     var flagSymbol: String? {
         let base: UInt32 = 127397
         var result = ""

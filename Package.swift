@@ -51,7 +51,7 @@ let package = Package(
             targets: ["SnabbleScanAndGo"]
         ),
        .library(name: "SnabbleUser",
-                 targets: ["SnabbleUser"])
+                 targets: ["SnabbleUser", "SnabbleAssetProviding"])
     ],
     dependencies: [
         .package(url: "https://github.com/lachlanbell/SwiftOTP", from: "3.0.2"),
@@ -195,18 +195,12 @@ let package = Package(
                 "SnabbleNetwork",
                 "SnabbleUser"
             ],
-            path: "PhoneAuth/Sources",
-            resources: [
-                .process("Resources")
-            ]
+            path: "PhoneAuth/Sources"
         ),
         .testTarget(
             name: "SnabblePhoneAuthTests",
             dependencies: ["SnabblePhoneAuth"],
-            path: "PhoneAuth/Tests",
-            resources: [
-                .process("Resources")
-            ]
+            path: "PhoneAuth/Tests"
         ),
         .target(
             name: "SnabblePhoneAuthUI",
@@ -215,10 +209,7 @@ let package = Package(
                 "SnabbleCore",
                 "SnabbleUI",
             ],
-            path: "PhoneAuthUI/Sources",
-            resources: [
-                .process("Resources")
-            ]
+            path: "PhoneAuthUI/Sources"
         ),
         .testTarget(
             name: "SnabblePhoneAuthUITests",
@@ -230,7 +221,10 @@ let package = Package(
         ),
         .target(
             name: "SnabbleUser",
-            dependencies: ["KeychainAccess"],
+            dependencies: [
+                "KeychainAccess",
+                "SnabbleAssetProviding",
+            ],
             path: "User/Sources"
         ),
         .target(

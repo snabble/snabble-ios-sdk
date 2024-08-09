@@ -1,3 +1,4 @@
+"Account.UserDetails.stateSelect" = "Pick one";
 "Receipts.title" = "Receipts";
 "Snabble.Account.ChangePhoneNumber.Code.buttonLabel" = "Save";
 "Snabble.Account.ChangePhoneNumber.buttonLabel" = "Continue";
@@ -113,6 +114,7 @@
 "Snabble.Payment.CancelError.title" = "Impossible d’annuler";
 "Snabble.Payment.CreditCard.error" = "Une erreur s’est produite lors du traitement de ta carte de crédit";
 "Snabble.Payment.CreditCard.expireDate" = "Expire : %@";
+"Snabble.Payment.CustomerInfo.country" = "Country";
 "Snabble.Payment.Delete.message" = "Veux-tu vraiment supprimer ce mode de paiement ?";
 "Snabble.Payment.EmptyState.add" = "Ajouter une procédure de paiement";
 "Snabble.Payment.EmptyState.message" = "Aucune procédure de paiement n’a encore été enregistrée.";
@@ -424,6 +426,20 @@
 "Snabble.Taxation.pleaseChoose" = "Merci de choisir";
 "Snabble.Textfield.HidePassword.Accessibility" = "Hide password";
 "Snabble.Textfield.ShowPassword.Accessibility" = "Show password";
+"Snabble.User.Country.title" = "Select a Country";
+"Snabble.User.city" = "City";
+"Snabble.User.country" = "Country";
+"Snabble.User.dateOfBirth" = "Date of Birth";
+"Snabble.User.email" = "E-Mail";
+"Snabble.User.firstName" = "First Name";
+"Snabble.User.lastName" = "Last Name";
+"Snabble.User.phone" = "Phonenummber";
+"Snabble.User.state" = "State";
+"Snabble.User.stateSelect" = "Pick one";
+"Snabble.User.street" = "Street";
+"Snabble.User.zip" = "ZIP";
+"Snabble.UserView.next" = "Next";
+"Snabble.UserView.title" = "User";
 "Snabble.Violations.couponAlreadyVoided" = "A coupon is already redeemed and will be removed from cart";
 "Snabble.Violations.couponCurrentlyNotValid" = "A coupon is currently not valid and will be removed from cart";
 "Snabble.Violations.couponInvalid" = "A coupon is invalid and will be removed from cart";

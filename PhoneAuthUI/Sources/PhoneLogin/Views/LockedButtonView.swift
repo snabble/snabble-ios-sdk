@@ -64,7 +64,7 @@ private struct LockedButtonStyle: ButtonStyle {
         configuration.label
             .padding([.top, .bottom], 10)
             .background(background)
-            .foregroundColor(Color("AccentColor").opacity(!isEnabled ? 0.5 : 1.0))
+            .foregroundColor(.accent().opacity(!isEnabled ? 0.5 : 1.0))
             .disabled(!isEnabled)
             .clipShape(Capsule())
     }

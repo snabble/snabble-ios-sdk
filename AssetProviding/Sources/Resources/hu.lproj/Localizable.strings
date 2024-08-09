@@ -1,3 +1,4 @@
+"Account.UserDetails.stateSelect" = "Pick one";
 "Receipts.title" = "Receipts";
 "Snabble.Account.ChangePhoneNumber.Code.buttonLabel" = "Save";
 "Snabble.Account.ChangePhoneNumber.buttonLabel" = "Continue";
@@ -113,6 +114,7 @@
 "Snabble.Payment.CancelError.title" = "A megszakítás nem lehetséges";
 "Snabble.Payment.CreditCard.error" = "A hitelkártyád feldolgozása során hiba történt";
 "Snabble.Payment.CreditCard.expireDate" = "Lejár: %@";
+"Snabble.Payment.CustomerInfo.country" = "Country";
 "Snabble.Payment.Delete.message" = "Tényleg elmented ezt a fizetési módot?";
 "Snabble.Payment.EmptyState.add" = "Fizetési mód hozzáadása";
 "Snabble.Payment.EmptyState.message" = "Még nem állítottál be fizetési módot.";
@@ -424,6 +426,20 @@
 "Snabble.Taxation.pleaseChoose" = "Kérlek, válassz";
 "Snabble.Textfield.HidePassword.Accessibility" = "Hide password";
 "Snabble.Textfield.ShowPassword.Accessibility" = "Show password";
+"Snabble.User.Country.title" = "Select a Country";
+"Snabble.User.city" = "City";
+"Snabble.User.country" = "Country";
+"Snabble.User.dateOfBirth" = "Date of Birth";
+"Snabble.User.email" = "E-Mail";
+"Snabble.User.firstName" = "First Name";
+"Snabble.User.lastName" = "Last Name";
+"Snabble.User.phone" = "Phonenummber";
+"Snabble.User.state" = "State";
+"Snabble.User.stateSelect" = "Pick one";
+"Snabble.User.street" = "Street";
+"Snabble.User.zip" = "ZIP";
+"Snabble.UserView.next" = "Next";
+"Snabble.UserView.title" = "User";
 "Snabble.Violations.couponAlreadyVoided" = "Egy kupon már beváltásra került, és eltávolítottuk a kosárból";
 "Snabble.Violations.couponCurrentlyNotValid" = "Egy kupon pillanatnyilag nem érvényes, és eltávolítottuk a kosárból";
 "Snabble.Violations.couponInvalid" = "Egy kupon nem érvényes, és eltávolítottuk a kosárból";

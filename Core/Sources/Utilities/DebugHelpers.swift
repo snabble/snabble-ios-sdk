@@ -8,7 +8,7 @@
 import Foundation
 
 extension Data {
-    func printAsJSON() {
+    public func printAsJSON() {
         if let theJSONData = try? JSONSerialization.jsonObject(with: self, options: []) as? NSDictionary {
             var swiftDict: [String: Any] = [:]
             for key in theJSONData.allKeys {
@@ -25,7 +25,8 @@ extension Data {
 extension Dictionary {
     func printAsJSON() {
         if let theJSONData = try? JSONSerialization.data(withJSONObject: self, options: .prettyPrinted),
-            let theJSONText = String(data: theJSONData, encoding: String.Encoding.ascii) {
+           // swiftlint:disable:next non_optional_string_data_conversion
+           let theJSONText = String(data: theJSONData, encoding: .utf8) {
             print("\(theJSONText)")
         }
     }

@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SnabblePhoneAuth
+import SnabbleAssetProviding
 
 private struct LabelWithImageAccent: View {
     /// The title which will be passed to the title attribute of the Label View.
@@ -25,9 +26,9 @@ private struct LabelWithImageAccent: View {
 }
 
 struct NumberView: View {
-    let countries: [Country] = Country.all
+    let countries: [CallingCode] = CallingCode.all
     
-    @State var country: Country = Country.germany
+    @State var country: CallingCode = CallingCode.germany
     @State var number: String = ""
     
     @Binding var showProgress: Bool
@@ -57,7 +58,7 @@ struct NumberView: View {
             
             VStack(spacing: 16) {
                 HStack {
-                    CountryCallingCodeButtonView(countries: countries, selectedCountry: $country)
+                    CountryCallingCodeView(countries: countries, selectedCountry: $country)
                         .padding(12)
                         .background(.quaternary)
                         .clipShape(RoundedRectangle(cornerRadius: 6))

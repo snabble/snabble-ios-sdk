@@ -8,6 +8,7 @@ import UIKit
 import WebKit
 import SnabbleCore
 import SnabbleAssetProviding
+import SnabbleUser
 
 // sample data for testing:
 //
@@ -17,7 +18,22 @@ import SnabbleAssetProviding
 //
 // see https://stripe.com/docs/testing
 
+struct TeleCashAuthorizationResult: Decodable {
+    let links: AuthLinks
+
+    struct AuthLinks: Decodable {
+        let _self: Link
+        let tokenizationForm: Link
+
+        enum CodingKeys: String, CodingKey {
+            case _self = "self"
+            case tokenizationForm
+        }
+    }
+}
+
 public final class TeleCashCreditCardAddViewController: UIViewController {
+    
     private weak var explanationLabel: UILabel?
     private weak var webView: WKWebView?
     private weak var activityIndicatorView: UIActivityIndicatorView?
@@ -26,7 +42,9 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
     private var projectId: Identifier<Project>
 
     private weak var analyticsDelegate: AnalyticsDelegate?
-
+    
+    var user: TeleCashUser?
+    
     public init(brand: CreditCardBrand?, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) {
         self.brand = brand
         self.analyticsDelegate = analyticsDelegate
@@ -111,6 +129,10 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
+        loadForm()
+    }
+    
+    private func loadForm() {
         analyticsDelegate?.track(.viewPaymentMethodDetail)
 
         guard
@@ -121,15 +143,54 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
         else {
             return showError()
         }
-        loadForm(withProjectId: project.id, forCreditCardBrand: brand)
-    }
+        if let user = user, let tokenization = descriptor.links?.tokenization {
+            let url = "\(Snabble.shared.environment.apiURLString)\(tokenization.href)"
 
+#if DEBUG
+            if let data = try? JSONEncoder().encode(user) {
+                data.printAsJSON()
+            }
+#endif
+            project.request(.post, url, body: user) { request in
+                guard let request = request else {
+                    return
+                }
+                project.perform(request) { [self] (result: Result<TeleCashAuthorizationResult, SnabbleError>) in
+                    switch result {
+                    case .success(let authResult):
+                        let formURL = "\(Snabble.shared.environment.apiURLString)\(authResult.links.tokenizationForm.href)"
+                        loadForm(url: formURL, forCreditCardBrand: brand)
+
+                    case .failure(let error):
+                        print(error)
+                        return showError()
+                    }
+                }
+            }
+        } else {
+            let url = "\(Snabble.shared.environment.apiURLString)/\(projectId)/telecash/form"
+            loadForm(url: url, forCreditCardBrand: brand)
+        }
+    }
+    
     private func goBack() {
-        navigationController?.popViewController(animated: true)
+        if
+            let viewControllers = navigationController?.viewControllers,
+            let viewController = viewControllers.first(where: { viewController in
+                viewController is UserPaymentViewController
+            }),
+            let firstIndex = viewControllers.firstIndex(of: viewController),
+            firstIndex > viewControllers.startIndex {
+            let vcIndex = viewControllers.index(before: firstIndex)
+            let viewController = viewControllers[vcIndex]
+            navigationController?.popToViewController(viewController, animated: true)
+        } else {
+            navigationController?.popToRootViewController(animated: true)
+        }
     }
 
-    private func loadForm(withProjectId projectId: Identifier<Project>, forCreditCardBrand creditCardBrand: CreditCardBrand) {
-        var urlComponents = URLComponents(string: "\(Snabble.shared.environment.apiURLString)/\(projectId)/telecash/form")
+    private func loadForm(url: String, forCreditCardBrand creditCardBrand: CreditCardBrand) {
+        var urlComponents = URLComponents(string: url)
         urlComponents?.queryItems = [
             .init(name: "platform", value: "ios"),
             .init(name: "paymentMethod", value: creditCardBrand.rawValue)

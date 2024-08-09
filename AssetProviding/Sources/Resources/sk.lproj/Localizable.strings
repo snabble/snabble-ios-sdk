@@ -1,3 +1,4 @@
+"Account.UserDetails.stateSelect" = "Pick one";
 "Receipts.title" = "Receipts";
 "Snabble.Account.ChangePhoneNumber.Code.buttonLabel" = "Save";
 "Snabble.Account.ChangePhoneNumber.buttonLabel" = "Continue";
@@ -113,6 +114,7 @@
 "Snabble.Payment.CancelError.title" = "Prerušenie nie je možné";
 "Snabble.Payment.CreditCard.error" = "Pri spracovaní tvojej platobnej karty sa vyskytla chyba";
 "Snabble.Payment.CreditCard.expireDate" = "Platnosť do: %@";
+"Snabble.Payment.CustomerInfo.country" = "Country";
 "Snabble.Payment.Delete.message" = "Naozaj chceš odstrániť tento spôsob platby?";
 "Snabble.Payment.EmptyState.add" = "Pridať spôsob platby";
 "Snabble.Payment.EmptyState.message" = "Ešte nie je uložený žiadny spôsob platby.";
@@ -424,6 +426,20 @@
 "Snabble.Taxation.pleaseChoose" = "Vyber niektorú možnosť";
 "Snabble.Textfield.HidePassword.Accessibility" = "Hide password";
 "Snabble.Textfield.ShowPassword.Accessibility" = "Show password";
+"Snabble.User.Country.title" = "Select a Country";
+"Snabble.User.city" = "City";
+"Snabble.User.country" = "Country";
+"Snabble.User.dateOfBirth" = "Date of Birth";
+"Snabble.User.email" = "E-Mail";
+"Snabble.User.firstName" = "First Name";
+"Snabble.User.lastName" = "Last Name";
+"Snabble.User.phone" = "Phonenummber";
+"Snabble.User.state" = "State";
+"Snabble.User.stateSelect" = "Pick one";
+"Snabble.User.street" = "Street";
+"Snabble.User.zip" = "ZIP";
+"Snabble.UserView.next" = "Next";
+"Snabble.UserView.title" = "User";
 "Snabble.Violations.couponAlreadyVoided" = "Jeden kupón už bol uplatnený a bude odstránený z nákupného koša";
 "Snabble.Violations.couponCurrentlyNotValid" = "Jeden kupón je momentálne neplatný a bude odstránený z nákupného koša";
 "Snabble.Violations.couponInvalid" = "Jeden kupón je neplatný a bude odstránený z nákupného koša";

@@ -25,17 +25,25 @@ extension View {
 
 }
 
-struct CountryButtonView: View {
-    var countries: [Country]
+public struct CountryButtonView: View {
+    public var countries: [Country]
     
-    @Binding var selectedCountry: Country
-    @Binding var selectedState: Country.State?
+    @Binding public var selectedCountry: Country
+    @Binding public var selectedState: Country.State?
         
     @State private var showStateButton = false
     @State private var showCountryMenu = false
     @State private var showStateMenu = false
     
-    var body: some View {
+    public init(countries: [Country], 
+                selectedCountry: Binding<Country>,
+                selectedState: Binding<Country.State?>) {
+        self.countries = countries
+        self._selectedCountry = selectedCountry
+        self._selectedState = selectedState
+    }
+    
+    public var body: some View {
         HStack(spacing: 12) {
             Button(action: {
                 showCountryMenu = true
@@ -58,7 +66,7 @@ struct CountryButtonView: View {
                         Text(state.label)
                             .frame(maxWidth: .infinity)
                     } else {
-                        Text("Snabble.Account.UserDetails.stateSelect")
+                        Text(Asset.localizedString(forKey: "Snabble.User.Country.title"))
                             .frame(maxWidth: .infinity)
                     }
                 }
@@ -132,7 +140,7 @@ private struct CountryListView: View {
                     }
                 }
                 .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
-                .navigationTitle("Snabble.Account.UserDetails.Country.title")
+                .navigationTitle(Asset.localizedString(forKey: "Snabble.User.Country.title"))
                 .navigationBarTitleDisplayMode(.inline)
             }
             .onAppear {

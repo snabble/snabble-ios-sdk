@@ -6,44 +6,37 @@
 //
 
 import SwiftUI
-import SnabblePhoneAuth
 
-extension Country {
-    var name: String {
-        Locale.current.localizedString(forRegionCode: code) ?? "n/a"
-    }
-}
-
-struct CountryCallingCodeButtonView: View {
-    var countries: [Country]
-    @Binding var selectedCountry: Country
-        
+public struct CountryCallingCodeView: View {
+    var countries: [CallingCode]
+    @Binding var selectedCountry: CallingCode
     @State private var selection: String?
+    
     @State private var showMenu = false
     
-    var body: some View {
-        Button(action: {
-            showMenu = true
-        }) {
-            HStack {
+    public init(countries: [CallingCode], selectedCountry: Binding<CallingCode>) {
+        self.countries = countries
+        self._selectedCountry = selectedCountry
+    }
+    public var body: some View {
+        HStack {
+            Button(action: {
+                showMenu = true
+            }) {
                 if let flag = selectedCountry.flagSymbol {
                     Text(flag)
                 }
                 Text("+\(selectedCountry.callingCode)")
             }
+            .foregroundColor(.primary)
         }
-        .foregroundColor(.primary)
-
         .sheet(isPresented: $showMenu, onDismiss: {}) {
             CountryCallingCodeListView(countries: countries, selection: $selection)
         }
-        .onChange(of: selection) { value in
-            if let value, let country = countries.country(forCode: value) {
+        .onChange(of: selection) { _, value in
+            if let value, let country = countries.callingCode(forCode: value) {
                 selectedCountry = country
-           }
-        }
-        .onChange(of: selectedCountry) { _ in
-            selection = selectedCountry.id
+            }
         }
         .onAppear {
             selection = selectedCountry.id
@@ -52,16 +45,16 @@ struct CountryCallingCodeButtonView: View {
 }
 
 private struct CountryCallingCodeListView: View {
-    let countries: [Country]
+    let countries: [CallingCode]
     @Binding var selection: String?
     @State private var searchText = ""
-
+    
     @Environment(\.dismiss) var dismiss
     
     public var body: some View {
         ScrollViewReader { proxy in
             NavigationStack {
-                List(searchResults.sorted(by: { $0.name < $1.name }), selection: $selection) { value in
+                List(searchResults, selection: $selection) { value in
                     CountryCallingCodeRow(country: value)
                         .id(value.id)
                         .onTapGesture {
@@ -70,16 +63,15 @@ private struct CountryCallingCodeListView: View {
                         }
                 }
                 .searchable(text: $searchText, placement: .navigationBarDrawer(displayMode: .always))
-                .navigationTitle("Choose your country")
+                .navigationTitle(Asset.localizedString(forKey: "Snabble.Account.Country.selection"))
                 .navigationBarTitleDisplayMode(.inline)
             }
-            
             .onAppear {
                 proxy.scrollTo(selection, anchor: .center)
             }
         }
     }
-    var searchResults: [Country] {
+    var searchResults: [CallingCode] {
         if searchText.isEmpty {
             return countries.sorted(by: { $0.name < $1.name })
         } else {
@@ -89,7 +81,7 @@ private struct CountryCallingCodeListView: View {
 }
 
 private struct CountryCallingCodeRow: View {
-    let country: Country
+    let country: CallingCode
 
     public var body: some View {
         HStack {
@@ -103,6 +95,9 @@ private struct CountryCallingCodeRow: View {
                     .foregroundColor(.secondary)
                     .font(.footnote)
             }
+            Spacer()
         }
+        // enables a tap on clear background but requires Spacer() above
+        .contentShape(Rectangle())
     }
 }

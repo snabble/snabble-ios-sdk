@@ -7,7 +7,6 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		7603BBA82B9F5B65000B220A /* CountryCallingCodeButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7603BBA72B9F5B65000B220A /* CountryCallingCodeButtonView.swift */; };
 		7691BA9B2976C3F400477EDD /* PhoneLoginApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7691BA9A2976C3F400477EDD /* PhoneLoginApp.swift */; };
 		7691BA9F2976C3F500477EDD /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7691BA9E2976C3F500477EDD /* Assets.xcassets */; };
 		7691BAA32976C3F500477EDD /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7691BAA22976C3F500477EDD /* Preview Assets.xcassets */; };
@@ -19,7 +18,6 @@
 		E1E982732B7B9B6700BB995E /* CodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E9826E2B7B9B6600BB995E /* CodeView.swift */; };
 		E1E982742B7B9B6700BB995E /* NumberView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E9826F2B7B9B6600BB995E /* NumberView.swift */; };
 		E1E982752B7B9B6700BB995E /* LockedButtonView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E982702B7B9B6700BB995E /* LockedButtonView.swift */; };
-		E1E982782B7B9B6E00BB995E /* ButtonStyles.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1E982772B7B9B6E00BB995E /* ButtonStyles.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -33,7 +31,6 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		7603BBA72B9F5B65000B220A /* CountryCallingCodeButtonView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CountryCallingCodeButtonView.swift; sourceTree = "<group>"; };
 		768915E12A0129C100C4799A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
 		7691BA972976C3F400477EDD /* PhoneLogin.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = PhoneLogin.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7691BA9A2976C3F400477EDD /* PhoneLoginApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PhoneLoginApp.swift; sourceTree = "<group>"; };
@@ -50,7 +47,6 @@
 		E1E9826E2B7B9B6600BB995E /* CodeView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = CodeView.swift; sourceTree = "<group>"; };
 		E1E9826F2B7B9B6600BB995E /* NumberView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = NumberView.swift; sourceTree = "<group>"; };
 		E1E982702B7B9B6700BB995E /* LockedButtonView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LockedButtonView.swift; sourceTree = "<group>"; };
-		E1E982772B7B9B6E00BB995E /* ButtonStyles.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ButtonStyles.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -75,9 +71,7 @@
 		763438EC2A01079B00C99AD5 /* Views */ = {
 			isa = PBXGroup;
 			children = (
-				E1E982772B7B9B6E00BB995E /* ButtonStyles.swift */,
 				E1E9826E2B7B9B6600BB995E /* CodeView.swift */,
-				7603BBA72B9F5B65000B220A /* CountryCallingCodeButtonView.swift */,
 				E1E982702B7B9B6700BB995E /* LockedButtonView.swift */,
 				E1E9826F2B7B9B6600BB995E /* NumberView.swift */,
 				E1E9826D2B7B9B6600BB995E /* ProgressButtonView.swift */,
@@ -284,11 +278,9 @@
 				76A9F7202A09272200C162B1 /* SnabbleConfig.swift in Sources */,
 				76A9F7242A0A56DA00C162B1 /* PhoneAuthScreen.swift in Sources */,
 				E1E982752B7B9B6700BB995E /* LockedButtonView.swift in Sources */,
-				E1E982782B7B9B6E00BB995E /* ButtonStyles.swift in Sources */,
 				7691BA9B2976C3F400477EDD /* PhoneLoginApp.swift in Sources */,
 				E1E982732B7B9B6700BB995E /* CodeView.swift in Sources */,
 				E1E982722B7B9B6700BB995E /* ProgressButtonView.swift in Sources */,
-				7603BBA82B9F5B65000B220A /* CountryCallingCodeButtonView.swift in Sources */,
 				E1E982742B7B9B6700BB995E /* NumberView.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -454,7 +446,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
@@ -496,7 +488,7 @@
 				"INFOPLIST_KEY_UIStatusBarStyle[sdk=iphonesimulator*]" = UIStatusBarStyleDefault;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = "@executable_path/Frameworks";
 				"LD_RUNPATH_SEARCH_PATHS[sdk=macosx*]" = "@executable_path/../Frameworks";
 				MACOSX_DEPLOYMENT_TARGET = 13.1;
