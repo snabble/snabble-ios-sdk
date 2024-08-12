@@ -138,11 +138,11 @@ struct ScannerQuantityView: View {
 }
 
 struct ScannerCartItemView: View {
-    @SwiftUI.Environment(\.dismiss) var dismiss
     @ObservedObject var model: Shopper
     
     let scannedItem: BarcodeManager.ScannedItem
-    let onAction: (_: CartItem?) -> Void
+    let onDismiss: () -> Void
+    let onAdd: (_ cartItem: CartItem) -> Void
     let alreadyInCart: Bool
     
     @State private var cartItem: CartItem
@@ -155,11 +155,13 @@ struct ScannerCartItemView: View {
     
     init(model: Shopper,
          scannedItem: BarcodeManager.ScannedItem,
-         onAction: @escaping (_: CartItem?) -> Void
+         onDismiss: @escaping () -> Void,
+         onAdd: @escaping (_ cartItem: CartItem) -> Void
     ) {
         self.model = model
         self.scannedItem = scannedItem
-        self.onAction = onAction
+        self.onAdd = onAdd
+        self.onDismiss = onDismiss
         
         let result = model.cartItem(for: scannedItem)
         var cartItem = result.cartItem
@@ -178,8 +180,7 @@ struct ScannerCartItemView: View {
         VStack {
             VStack(spacing: 6) {
                 Button(action: {
-                    onAction(nil)
-                    dismiss()
+                    onDismiss()
                 }) {
                     SwiftUI.Image(systemName: "xmark")
                         .font(.title2)
@@ -216,10 +217,7 @@ struct ScannerCartItemView: View {
                 let title = alreadyInCart ? Asset.localizedString(forKey: "Snabble.Scanner.updateCart") : Asset.localizedString(forKey: "Snabble.Scanner.addToCart")
                 
                 PrimaryButtonView(title: title, disabled: $disableCheckout, onAction: {
-                    dismiss()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                        onAction(self.cartItem)
-                    }
+                    onAdd(cartItem)
                 })
                 .padding()
             }
@@ -248,7 +246,7 @@ struct ScannerCartItemView: View {
 struct ScannedItemEditorView: View {
     @SwiftUI.Environment(\.keyboardHeight) var keyboardHeight
     @ObservedObject var model: Shopper
-    @Binding var isPresented: Bool
+    var onDismiss: () -> Void
     
     var body: some View {
         VStack {
@@ -257,23 +255,17 @@ struct ScannedItemEditorView: View {
                 ScannerCartItemView(
                     model: model,
                     scannedItem: scannedItem,
-                    onAction: { cartItem in
-                        self.updateCartItem(cartItem)
+                    onDismiss: onDismiss,
+                    onAdd: { cartItem in
+                        updateCartItem(cartItem)
                     })
-            } else {
-                Text("No scanned item!")
-                    .font(.title)
-                    .foregroundStyle(.secondary)
             }
         }
         .padding(.bottom, (keyboardHeight > 0 ? keyboardHeight + 80 : 150))
     }
-    func updateCartItem(_ cartItem: CartItem?) {
-        if let cartItem {
-            model.updateCartItem(cartItem)
-        }
-        withAnimation {
-            isPresented = false
-        }
+    
+    private func updateCartItem(_ cartItem: CartItem) {
+        model.updateCartItem(cartItem)
+        onDismiss()
     }
 }
