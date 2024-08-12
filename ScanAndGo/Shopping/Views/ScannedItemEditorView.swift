@@ -257,14 +257,14 @@ struct ScannedItemEditorView: View {
                     scannedItem: scannedItem,
                     onDismiss: onDismiss,
                     onAdd: { cartItem in
-                        self.updateCartItem(cartItem)
+                        updateCartItem(cartItem)
                     })
             }
         }
         .padding(.bottom, (keyboardHeight > 0 ? keyboardHeight + 80 : 150))
     }
     
-    func updateCartItem(_ cartItem: CartItem) {
+    private func updateCartItem(_ cartItem: CartItem) {
         model.updateCartItem(cartItem)
         onDismiss()
     }
