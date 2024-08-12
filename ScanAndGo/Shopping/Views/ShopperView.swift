@@ -38,7 +38,9 @@ public struct ShopperView: View {
                 Text(model.errorMessage ?? "No errorMessage! This should not happen! 😳")
             }
             .dialog(isPresented: $showEditor) {
-                ScannedItemEditorView(model: model, isPresented: $showEditor)
+                ScannedItemEditorView(model: model) {
+                    showEditor = false
+                }
             }
             .keyboardHeightEnvironmentValue()
             .sheet(isPresented: $showSearch) {

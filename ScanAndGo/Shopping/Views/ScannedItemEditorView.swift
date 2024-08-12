@@ -246,7 +246,7 @@ struct ScannerCartItemView: View {
 struct ScannedItemEditorView: View {
     @SwiftUI.Environment(\.keyboardHeight) var keyboardHeight
     @ObservedObject var model: Shopper
-    @Binding var isPresented: Bool
+    var onDismiss: () -> Void
     
     var body: some View {
         VStack {
@@ -255,9 +255,7 @@ struct ScannedItemEditorView: View {
                 ScannerCartItemView(
                     model: model,
                     scannedItem: scannedItem,
-                    onDismiss: {
-                        dismiss()
-                    },
+                    onDismiss: onDismiss,
                     onAdd: { cartItem in
                         self.updateCartItem(cartItem)
                     })
@@ -268,12 +266,6 @@ struct ScannedItemEditorView: View {
     
     func updateCartItem(_ cartItem: CartItem) {
         model.updateCartItem(cartItem)
-        dismiss()
-    }
-    
-    func dismiss() {
-        withAnimation {
-            isPresented = false
-        }
+        onDismiss()
     }
 }
