@@ -139,10 +139,26 @@ extension CheckViewModelProviding where Self: UIViewController {
     }
     
     public func checkoutAborted(process: SnabbleCore.CheckoutProcess) {
-        if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
+        // Hack for VR-iOS to navigate to ShoppingView
+        if Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String == "de.vr.quartier",
+           let viewController = navigationController?.viewControllers.safelyAccessElement(at: 1){
+            navigationController?.popToViewController(viewController, animated: true)
+        }
+        // Hack ended
+        else if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController }) {
             self.navigationController?.popToViewController(cartVC, animated: true)
         } else {
             self.navigationController?.popToRootViewController(animated: true)
         }
     }
+}
+
+private extension Array {
+    func safelyAccessElement(at index: Int) -> Element? {
+        guard indices.contains(index) else {
+            return nil
+        }
+        return self[index]
+    }
+
 }
