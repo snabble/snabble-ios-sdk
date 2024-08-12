@@ -121,7 +121,7 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
             return state = .empty
         }
 
-        state = .idle
+        state = .loading
 
         OrderList.load(project) { [weak self] result in
             if let self = self {
@@ -146,7 +146,7 @@ public class PurchasesViewModel: ObservableObject, LoadableObject {
                         }
                     }
                 } catch {
-                    self.state = .empty
+                    self.state = .failed(error)
                 }
             }
         }
