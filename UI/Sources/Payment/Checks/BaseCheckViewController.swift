@@ -141,7 +141,7 @@ extension CheckViewModelProviding where Self: UIViewController {
     public func checkoutAborted(process: SnabbleCore.CheckoutProcess) {
         // Hack for VR-iOS to navigate to ShoppingView
         if Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String == "de.vr.quartier",
-           let viewController = navigationController?.viewControllers.safelyAccessElement(at: 1){
+           let viewController = navigationController?.viewControllers.safelyAccessElement(at: 1) {
             navigationController?.popToViewController(viewController, animated: true)
         }
         // Hack ended
