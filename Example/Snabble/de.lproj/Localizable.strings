@@ -25,6 +25,8 @@
 "Profile.settings" = "Einstellungen";
 "Profile.showOnboarding" = "Zeige Onboarding";
 "Profile.terms" = "Nutzungsbedingungen";
+"Snabble.Error.defaultMessage" = "Leider ist etwas schief gelaufen!\nBitte versuche es erneut.";
+"Snabble.Error.retry" = "Erneut versuchen";
 "home" = "Start";
 "profile" = "Profil";
 "receipts" = "Kassenbons";

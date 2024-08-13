@@ -25,6 +25,8 @@
 "Profile.settings" = "Settings";
 "Profile.showOnboarding" = "Show Onboarding";
 "Profile.terms" = "Terms";
+"Snabble.Error.defaultMessage" = "Sorry, something went wrong!\nPlease try again.";
+"Snabble.Error.retry" = "Try again";
 "home" = "Start";
 "profile" = "Profile";
 "receipts" = "Receipts";
