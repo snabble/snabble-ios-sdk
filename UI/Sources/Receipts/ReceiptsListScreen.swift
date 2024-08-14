@@ -116,16 +116,6 @@ public struct ReceiptsListScreen: View {
         AsyncContentView(source: viewModel, content: { output in
             VStack {
                 List {
-                    let localizedString = Asset.localizedString(forKey: "Snabble.Receipts.placeholder")
-                    if localizedString != "Snabble.Receipts.placeholder" {
-                        Text(localizedString)
-                            .foregroundColor(.secondary)
-                            .font(.caption)
-                            .fontWeight(.semibold)
-                            .multilineTextAlignment(.center)
-                            .frame(maxWidth: .infinity, alignment: .center)
-                            .padding([.vertical], 4)
-                    }
                     ForEach(output, id: \.id) { provider in
                         ReceiptsItemView(provider: provider, image: viewModel.imageFor(projectId: provider.projectId))
                             .contentShape(Rectangle())
