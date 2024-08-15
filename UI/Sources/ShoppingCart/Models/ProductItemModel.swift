@@ -107,9 +107,9 @@ extension ProductItemModel: ShoppingCartItemPricing {
         guard let deposit = depositTotal else {
             return nil
         }
-        let depositName = lineItems.first(where: { $0.type == .deposit })?.name
+        let depositName = Asset.localizedString(forKey: "Snabble.Shoppingcart.deposit")
         
-        return formatter.format(regularPrice - deposit) + " + " + formatter.format(deposit) + " " + (depositName ?? "")
+        return formatter.format(regularPrice - deposit) + " + " + formatter.format(deposit) + " " + depositName
     }
     
     var regularPriceString: String {
