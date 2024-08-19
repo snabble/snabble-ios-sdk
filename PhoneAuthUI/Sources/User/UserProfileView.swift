@@ -57,7 +57,7 @@ struct UserNotLoggedInView<Teaser: View>: View {
 
 public struct UserProfileView<Teaser: View, Login: View, Fallback: View>: View {
     let phoneAuth: PhoneAuth
-    @Binding public var user: SnabbleNetwork.User?
+    @Binding public var user: SnabbleUser.User?
     
     private var teaser: (() -> Teaser)?
     private var login: (() -> Login)?
@@ -67,7 +67,7 @@ public struct UserProfileView<Teaser: View, Login: View, Fallback: View>: View {
     @State private var changePhoneNumber = false
     
     public init(phoneAuth: PhoneAuth,
-                user: Binding<SnabbleNetwork.User?>,
+                user: Binding<SnabbleUser.User?>,
                 teaser: (() -> Teaser)?,
                 login: (() -> Login)?,
                 fallback: (() -> Fallback)?
@@ -98,16 +98,16 @@ public struct UserProfileView<Teaser: View, Login: View, Fallback: View>: View {
                                 .frame(maxWidth: .infinity)
                                 .multilineTextAlignment(.center)
                         }
-                        if let details = user.details {
+                        if let address = user.address {
                             ZStack(alignment: .trailing) {
                                 VStack {
-                                    if let street = details.street {
+                                    if let street = address.street {
                                         Text(street)
                                     }
-                                    if let zip = details.zip, let city = details.city {
+                                    if let zip = address.zip, let city = address.city {
                                         Text(zip + " " + city)
                                     }
-                                    if let email = details.email {
+                                    if let email = user.email {
                                         Text(email)
                                     }
                                 }
@@ -174,10 +174,10 @@ public struct UserProfileView<Teaser: View, Login: View, Fallback: View>: View {
 }
 
 extension UserProfileView {
-    public init(phoneAuth: PhoneAuth, user: Binding<SnabbleNetwork.User?>) where Teaser == Never, Login == Never, Fallback == Never {
+    public init(phoneAuth: PhoneAuth, user: Binding<SnabbleUser.User?>) where Teaser == Never, Login == Never, Fallback == Never {
         self.init(phoneAuth: phoneAuth, user: user, teaser: nil, login: nil, fallback: nil )
     }
-    public init(phoneAuth: PhoneAuth, user: Binding<SnabbleNetwork.User?>, fallback: (() -> Fallback)?) where Teaser == Never, Login == Never {
+    public init(phoneAuth: PhoneAuth, user: Binding<SnabbleUser.User?>, fallback: (() -> Fallback)?) where Teaser == Never, Login == Never {
         self.init(phoneAuth: phoneAuth, user: user, teaser: nil, login: nil, fallback: fallback)
     }
 }
