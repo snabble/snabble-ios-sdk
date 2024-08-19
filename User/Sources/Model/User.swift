@@ -165,7 +165,7 @@ extension User {
 
     public var phoneNumber: String? {
         guard let phone, let number = phone.number else {
-            return nil
+            return metadata?.phoneNumber
         }
         guard let code = phone.code else {
             return number
