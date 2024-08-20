@@ -156,7 +156,7 @@ public struct UserScreen: View {
                         ForEach(fields, id: \.id) { field in
                             switch field {
                             case .firstName:
-                                TextField("Snabble.Account.UserDetails.firstName", text: $firstName)
+                                TextField(Asset.localizedString(forKey: "Snabble.Account.UserDetails.firstName"), text: $firstName)
                                     .focused($focusField, equals: .firstName)
                                     .textContentType(.givenName)
                                     .keyboardType(.default)
@@ -169,7 +169,7 @@ public struct UserScreen: View {
                                     }
                                     .disabled(isLoading)
                             case .lastName:
-                                TextField("Snabble.Account.UserDetails.lastName", text: $lastName)
+                                TextField(Asset.localizedString(forKey: "Snabble.Account.UserDetails.lastName"), text: $lastName)
                                     .focused($focusField, equals: .lastName)
                                     .textContentType(.familyName)
                                     .keyboardType(.default)
@@ -182,7 +182,7 @@ public struct UserScreen: View {
                                     }
                                     .disabled(isLoading)
                             case .email:
-                                TextField("Snabble.Account.UserDetails.email", text: $email)
+                                TextField(Asset.localizedString(forKey: "Snabble.Account.UserDetails.email"), text: $email)
                                     .focused($focusField, equals: .email)
                                     .textContentType(.emailAddress)
                                     .keyboardType(.emailAddress)
@@ -196,7 +196,7 @@ public struct UserScreen: View {
                                     }
                                     .disabled(isLoading)
                             case .dateOfBirth:
-                                DatePicker("Snabble.Account.UserDetails.dateOfBirth",
+                                DatePicker(Asset.localizedString(forKey: "Snabble.Account.UserDetails.dateOfBirth"),
                                            selection: $dateOfBirth,
                                            in: ...Self.sixteenYearAgo,
                                            displayedComponents: .date)
@@ -210,7 +210,7 @@ public struct UserScreen: View {
                                 }
                                 .disabled(isLoading)
                             case .street:
-                                TextField("Snabble.Account.UserDetails.street", text: $street)
+                                TextField(Asset.localizedString(forKey: "Snabble.Account.UserDetails.street"), text: $street)
                                     .focused($focusField, equals: .street)
                                     .textContentType(.streetAddressLine1)
                                     .keyboardType(.default)
@@ -223,7 +223,7 @@ public struct UserScreen: View {
                                     }
                                     .disabled(isLoading)
                             case .zip:
-                                TextField("Snabble.Account.UserDetails.zip", text: $zip)
+                                TextField(Asset.localizedString(forKey: "Snabble.Account.UserDetails.zip"), text: $zip)
                                     .focused($focusField, equals: .zip)
                                     .textContentType(.postalCode)
                                     .keyboardType(.numberPad)
@@ -236,7 +236,7 @@ public struct UserScreen: View {
                                     }
                                     .disabled(isLoading)
                             case .city:
-                                TextField("Snabble.Account.UserDetails.city", text: $city)
+                                TextField(Asset.localizedString(forKey: "Snabble.Account.UserDetails.city"), text: $city)
                                     .focused($focusField, equals: .city)
                                     .textContentType(.addressCity)
                                     .keyboardType(.default)
