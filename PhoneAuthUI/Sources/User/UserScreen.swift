@@ -63,7 +63,7 @@ public struct UserScreen: View {
         return formatter
     }()
     
-    public init(networkManager: NetworkManager = .shared, user: SnabbleUser.User, kind: Kind) {
+    public init(networkManager: NetworkManager, user: SnabbleUser.User, kind: Kind) {
         self.networkManager = networkManager
         self.user = .init(user: user)
         self.kind = kind
@@ -394,7 +394,7 @@ extension Array where Element == SnabbleNetwork.User.Field {
 }
 
 class UserScreenViewController: UIHostingController<UserScreen> {
-    init(networkManager: NetworkManager = .shared, user: SnabbleUser.User) {
+    init(networkManager: NetworkManager, user: SnabbleUser.User) {
         super.init(rootView: UserScreen(networkManager: networkManager, user: user, kind: .initial))
     }
     

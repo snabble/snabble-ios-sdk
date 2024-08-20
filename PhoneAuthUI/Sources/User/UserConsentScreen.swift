@@ -70,7 +70,7 @@ public struct UserConsentScreen: View {
     @State var urlResource: URL?
     @State var opacityValue: Double = 0
     
-    public init(networkManager: NetworkManager = .shared, user: SnabbleNetwork.User) {
+    public init(networkManager: NetworkManager, user: SnabbleNetwork.User) {
         self.networkManager = networkManager
         self.user = user
     }
@@ -140,7 +140,7 @@ public protocol UserConsentViewControllerDelegate: AnyObject {
 public final class UserConsentViewController: UIHostingController<UserConsentScreen> {
     weak var delegate: UserConsentViewControllerDelegate?
     
-    init(networkManager: NetworkManager = .shared, user: SnabbleNetwork.User) {
+    init(networkManager: NetworkManager, user: SnabbleNetwork.User) {
         super.init(rootView: UserConsentScreen(networkManager: networkManager, user: user))
         self.modalPresentationStyle = .overFullScreen
     }
