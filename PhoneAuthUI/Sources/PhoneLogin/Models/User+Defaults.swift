@@ -8,6 +8,7 @@
 import Foundation
 import SnabbleNetwork
 import SnabbleUser
+import SnabbleCore
 
 public extension UserDefaults {
     static var isSignedInKey: String {
@@ -23,26 +24,18 @@ public extension UserDefaults {
     }
 }
 
-public extension SnabbleNetwork.User {
-    static var userKey: String {
-        "io-snabble-sdk-network-user"
-    }
-    
-    static var current: Self? {
-        UserDefaults.standard.value(forKey: Self.userKey) as? SnabbleNetwork.User
-    }
-    
+public extension SnabbleNetwork.User {    
     static func delete() {
-        UserDefaults.standard.setValue(nil, forKey: Self.userKey)
+        Snabble.shared.user = nil
     }
     
     func update(withDetails details: SnabbleNetwork.User.Details) {
-        let user = SnabbleNetwork.User(user: self, details: details)
-        UserDefaults.standard.setValue(user, forKey: Self.userKey)
+        let user = SnabbleNetwork.User(user: self, details: details).toSnabbleUser()
+        Snabble.shared.user = user
     }
 
     func update(withConsent consent: SnabbleNetwork.User.Consent) {
-        let user = SnabbleNetwork.User(user: self, consent: consent)
-        UserDefaults.standard.setValue(user, forKey: Self.userKey)
+        let user = SnabbleNetwork.User(user: self, consent: consent).toSnabbleUser()
+        Snabble.shared.user = user
     }
 }
