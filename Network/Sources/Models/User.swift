@@ -210,7 +210,7 @@ private extension SnabbleUser.User {
 }
 
 private extension String {
-    func toDate(withFormat format: String = "yyyy-MM-dd")-> Date? {
+    func toDate(withFormat format: String = "yyyy-MM-dd") -> Date? {
         let dateFormatter = DateFormatter()
         dateFormatter.calendar = Calendar(identifier: .gregorian)
         dateFormatter.dateFormat = format
