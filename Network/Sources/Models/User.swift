@@ -160,7 +160,10 @@ public extension SnabbleNetwork.User {
     func toSnabbleUser() -> SnabbleUser.User {
         return SnabbleUser.User(
             id: id,
-            metadata: .init(phoneNumber: phoneNumber, fields: fields?.toSnabbleField(), consent: consent?.toSnabbleConsent()),
+            metadata: .init(
+                phoneNumber: phoneNumber,
+                fields: fields?.toSnabbleField(),
+                consent: consent?.toSnabbleConsent()),
             firstname: details?.firstName,
             lastname: details?.lastName,
             email: details?.email,
