@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SnabbleUser
 
 public struct User: Codable, Identifiable {
     public let id: String
@@ -71,6 +72,10 @@ public struct User: Codable, Identifiable {
             case id
             case isRequired = "required"
         }
+        
+        public func toSnabbleField() -> SnabbleUser.User.Field {
+            SnabbleUser.User.Field(id: id, isRequired: isRequired)
+        }
     }
     
     public struct Consent: Codable, Equatable {
@@ -113,16 +118,20 @@ public struct User: Codable, Identifiable {
         public static func == (lhs: Self, rhs: Self) -> Bool {
             lhs.version == rhs.version
         }
+        
+        public func toSnabbleConsent() -> SnabbleUser.User.Consent {
+            SnabbleUser.User.Consent(major: major, minor: minor)
+        }
     }
 }
 
-extension User: Equatable {
+extension SnabbleNetwork.User: Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.id == rhs.id
     }
 }
 
-extension User {
+extension SnabbleNetwork.User {
     public init(user: User, details: User.Details) {
         self.id = user.id
         self.phoneNumber = user.phoneNumber
@@ -136,5 +145,87 @@ extension User {
         self.details = user.details
         self.fields = user.fields
         self.consent = consent
+    }
+    
+    public init(user: SnabbleUser.User) {
+        self.id = user.id
+        self.phoneNumber = user.metadata?.phoneNumber
+        self.details = user.toUserDetails()
+        self.fields = user.toUserFields()
+        self.consent = user.toUserConsent()
+    }
+}
+
+public extension SnabbleNetwork.User {
+    func toSnabbleUser() -> SnabbleUser.User {
+        return SnabbleUser.User(
+            id: id,
+            metadata: .init(
+                phoneNumber: phoneNumber,
+                fields: fields?.toSnabbleField(),
+                consent: consent?.toSnabbleConsent()),
+            firstname: details?.firstName,
+            lastname: details?.lastName,
+            email: details?.email,
+            phone: nil,
+            dateOfBirth: details?.dateOfBirth?.toDate(),
+            street: details?.street,
+            zip: details?.zip,
+            city: details?.city,
+            country: details?.country,
+            state: details?.state
+        )
+    }
+}
+
+private extension Array where Element == User.Field {
+    func toSnabbleField() -> [SnabbleUser.User.Field] {
+        map { $0.toSnabbleField() }
+    }
+}
+
+private extension SnabbleUser.User {
+    func toUserDetails() -> SnabbleNetwork.User.Details {
+        return SnabbleNetwork.User.Details(
+            firstName: firstname,
+            lastName: lastname,
+            email: email,
+            dateOfBirth: dateOfBirth?.toString(),
+            street: address?.street,
+            zip: address?.zip,
+            city: address?.city,
+            country: address?.country,
+            state: address?.state
+        )
+    }
+    
+    func toUserFields() -> [SnabbleNetwork.User.Field]? {
+        metadata?.fields?.map { .init(id: $0.id, isRequired: $0.isRequired) }
+    }
+    
+    func toUserConsent() -> SnabbleNetwork.User.Consent? {
+        guard let consent = metadata?.consent else {
+            return nil
+        }
+        return .init(major: consent.major, minor: consent.minor)
+    }
+    
+}
+
+private extension String {
+    func toDate(withFormat format: String = "yyyy-MM-dd") -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.calendar = Calendar(identifier: .gregorian)
+        dateFormatter.dateFormat = format
+        return dateFormatter.date(from: self)
+    }
+}
+
+private extension Date {
+    func toString(withFormat format: String = "yyyy-MM-dd") -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.calendar = Calendar(identifier: .gregorian)
+        dateFormatter.dateFormat = format
+        return dateFormatter.string(from: self)
     }
 }
