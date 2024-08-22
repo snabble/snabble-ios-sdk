@@ -117,6 +117,12 @@ public struct User: Codable {
         }
 }
 
+extension SnabbleUser.User: Equatable {
+    public static func == (lhs: SnabbleUser.User, rhs: SnabbleUser.User) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
 extension User {
     public init(
         id: String,
