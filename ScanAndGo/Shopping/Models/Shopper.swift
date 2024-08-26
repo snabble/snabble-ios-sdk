@@ -215,6 +215,12 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
     }
 }
 
+extension Shopper: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(barcodeManager.shop.id)
+    }
+}
+
 extension Shopper: AnalyticsDelegate {
     public func track(_ event: SnabbleCore.AnalyticsEvent) {
         self.logger.debug("**TODO** track event.")
