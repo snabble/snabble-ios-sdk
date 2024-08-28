@@ -44,6 +44,7 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
     private weak var analyticsDelegate: AnalyticsDelegate?
     
     var user: TeleCashUser?
+    var deletePreAuthUrl: String?
     
     public init(brand: CreditCardBrand?, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) {
         self.brand = brand
@@ -158,6 +159,7 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
                 project.perform(request) { [self] (result: Result<TeleCashAuthorizationResult, SnabbleError>) in
                     switch result {
                     case .success(let authResult):
+                        deletePreAuthUrl = "\(Snabble.shared.environment.apiURLString)\(authResult.links._self.href)"
                         let formURL = "\(Snabble.shared.environment.apiURLString)\(authResult.links.tokenizationForm.href)"
                         loadForm(url: formURL, forCreditCardBrand: brand)
 
@@ -266,6 +268,7 @@ extension TeleCashCreditCardAddViewController: WKScriptMessageHandler {
             if let ccData = TeleCashCreditCardData(connectGatewayReponse, projectId, certificate: cert.data) {
                 let detail = PaymentMethodDetail(ccData)
                 PaymentMethodDetails.save(detail)
+                deletePreAuth()
                 self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
                 goBack()
             } else {
@@ -301,6 +304,22 @@ extension TeleCashCreditCardAddViewController: WKScriptMessageHandler {
             explanationLabel?.text = threeDSecureHint(for: projectId, preAuthInfo: preAuthInfo)
         } catch {
             explanationLabel?.text = threeDSecureHint(for: projectId, preAuthInfo: .mock)
+        }
+    }
+
+    private func deletePreAuth() {
+        guard let project = Snabble.shared.project(for: projectId),
+              let url = deletePreAuthUrl else {
+            return
+        }
+                
+        project.request(.delete, url, timeout: 3) { request in
+            guard let request = request else {
+                return
+            }
+            project.perform(request) { (_: Result<TeleCashAuthorizationResult, SnabbleError>) in
+                // fire&forget
+            }
         }
     }
 }
