@@ -57,7 +57,8 @@ private struct LabelWithImageAccent: View {
 }
 
 struct NumberView<Header: View, Footer: View>: View {
-    var networkManager: NetworkManager? = nil
+    @SwiftUI.Environment(NetworkManager.self) var networkManager: NetworkManager
+    
     let kind: PhoneAuthViewKind
     let countries: [CallingCode] = CallingCode.all
     
@@ -153,10 +154,8 @@ struct NumberView<Header: View, Footer: View>: View {
                 .font(.footnote)
                 .multilineTextAlignment(.center)
                 
-                if kind == .management {
-                    if let footer {
-                        footer()
-                    }
+                if let footer {
+                    footer()
                 }
                 Spacer(minLength: 0)
             }
@@ -170,16 +169,19 @@ struct NumberView<Header: View, Footer: View>: View {
     
     private func submit() {
         Task {
+            showProgress = true
             let phoneNumber = try? await startAuthorization(phoneNumber: "+\(country.callingCode)\(number)")
             callback(phoneNumber)
+            showProgress = false
         }
         
     }
     
     private func useContinuation<Value, Response>(endpoint: Endpoint<Response>, receiveValue: @escaping (Response, CheckedContinuation<Value, any Error>) -> Void) async throws -> Value {
+        
         return try await withCheckedThrowingContinuation { continuation in
             var cancellable: AnyCancellable?
-            cancellable = networkManager!.publisher(for: endpoint)
+            cancellable = networkManager.publisher(for: endpoint)
                 .mapHTTPErrorIfPossible()
                 .receive(on: RunLoop.main)
                 .sink { completion in

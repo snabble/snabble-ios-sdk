@@ -8,6 +8,7 @@
 import Combine
 import Foundation
 import SnabbleUser
+import SwiftUI
 
 public protocol NetworkManagerDelegate: AnyObject {
     func networkManager(_ networkManager: NetworkManager, appUserForConfiguration configuration: Configuration) -> SnabbleUser.AppUser?
@@ -16,7 +17,7 @@ public protocol NetworkManagerDelegate: AnyObject {
     func networkManager(_ networkManager: NetworkManager, projectIdForConfiguration configuration: Configuration) -> String?
 }
 
-public class NetworkManager {
+@Observable public class NetworkManager {
     public let configuration: Configuration
     private let authenticator: Authenticator
     public weak var delegate: NetworkManagerDelegate?

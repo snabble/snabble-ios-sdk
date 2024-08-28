@@ -114,10 +114,11 @@ public struct PhoneAuthScreen<Header: View, Footer: View>: View {
     
     public var body: some View {
         numberView
-        .navigationBarTitleDisplayMode(.inline)
-        .navigationDestination(isPresented: $showOTPInput, destination: {
-            codeView
-        })
+//            .navigationBarTitleDisplayMode(.inline)
+//            .navigationDestination(isPresented: $showOTPInput, destination: {
+//                codeView
+//            })
+            .environment(viewModel.phoneAuth.networkManager)
     }
     
     private func startLoading() {
