@@ -6,10 +6,13 @@
 //
 
 import SwiftUI
+import Combine
+
+import SnabbleCore
+import SnabbleNetwork
 import SnabblePhoneAuth
 import SnabbleAssetProviding
-import Combine
-import SnabbleNetwork
+
 
 private extension PhoneAuthViewKind {
     var message: String {
@@ -66,7 +69,7 @@ struct NumberView<Header: View, Footer: View>: View {
     @State var number: String = ""
     
     @State var showProgress: Bool = false
-    @State var footerMessage: String = ""
+    @State var errorMessage: String = ""
 
     private let header: (() -> Header)?
     private let footer: (() -> Footer)?
@@ -146,8 +149,8 @@ struct NumberView<Header: View, Footer: View>: View {
                 
                 VStack(spacing: 8) {
                     Text(Asset.localizedString(forKey: "Snabble.Account.SignIn.hint"))
-                    if !footerMessage.isEmpty {
-                        Text(footerMessage)
+                    if !errorMessage.isEmpty {
+                        Text(errorMessage)
                             .foregroundColor(.red)
                     }
                 }
@@ -167,11 +170,34 @@ struct NumberView<Header: View, Footer: View>: View {
         .navigationTitle(Asset.localizedString(forKey: kind.title))
     }
     
+    private func messageFor(error: Swift.Error) -> String {
+        guard case let SnabbleNetwork.HTTPError.invalid(_, clientError) = error, let clientError else {
+            return Asset.localizedString(forKey: "Snabble.Account.genericError")
+        }
+        let message: String
+        switch clientError.type {
+        case "validation_error":
+            if clientError.validations?.first(where: { $0.field == "phoneNumber" }) != nil {
+                message = "Snabble.Account.SignIn.error"
+            } else {
+                message = "Snabble.Account.genericError"
+            }
+        default:
+            message = "Snabble.Account.genericError"
+            
+        }
+        return Asset.localizedString(forKey: message)
+   }
+    
     private func submit() {
         Task {
-            showProgress = true
-            let phoneNumber = try? await startAuthorization(phoneNumber: "+\(country.callingCode)\(number)")
-            callback(phoneNumber)
+            do {
+                showProgress = true
+                let phoneNumber = try await startAuthorization(phoneNumber: "+\(country.callingCode)\(number)")
+                callback(phoneNumber)
+            } catch {
+                errorMessage = messageFor(error: error)
+            }
             showProgress = false
         }
         

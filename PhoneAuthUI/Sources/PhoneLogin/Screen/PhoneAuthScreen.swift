@@ -147,7 +147,6 @@ public struct PhoneAuthScreen<Header: View, Footer: View>: View {
             
         }
         return Asset.localizedString(forKey: message)
-        
    }
     
     private func sendPhoneNumber(_ phoneNumber: String) {
