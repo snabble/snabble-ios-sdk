@@ -129,8 +129,12 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
 
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-
         loadForm()
+    }
+    
+    public override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        deletePreAuth()
     }
     
     private func loadForm() {
@@ -268,7 +272,6 @@ extension TeleCashCreditCardAddViewController: WKScriptMessageHandler {
             if let ccData = TeleCashCreditCardData(connectGatewayReponse, projectId, certificate: cert.data) {
                 let detail = PaymentMethodDetail(ccData)
                 PaymentMethodDetails.save(detail)
-                deletePreAuth()
                 self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
                 goBack()
             } else {
@@ -313,7 +316,7 @@ extension TeleCashCreditCardAddViewController: WKScriptMessageHandler {
             return
         }
                 
-        project.request(.delete, url, timeout: 3) { request in
+        project.request(.delete, url, timeout: 20) { request in
             guard let request = request else {
                 return
             }
