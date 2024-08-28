@@ -115,7 +115,7 @@ extension PhoneAuth: PhoneAuthProviding {
 }
 
 extension Publisher {
-    func mapHTTPErrorIfPossible() -> AnyPublisher<Self.Output, Error> {
+    public func mapHTTPErrorIfPossible() -> AnyPublisher<Self.Output, Error> {
         mapError {
             guard let error = $0 as? SnabbleNetwork.HTTPError else {
                 return $0

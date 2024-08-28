@@ -8,6 +8,8 @@
 import SwiftUI
 import SnabblePhoneAuth
 import SnabbleAssetProviding
+import Combine
+import SnabbleNetwork
 
 private extension PhoneAuthViewKind {
     var message: String {
@@ -55,19 +57,20 @@ private struct LabelWithImageAccent: View {
 }
 
 struct NumberView<Header: View, Footer: View>: View {
+    var networkManager: NetworkManager? = nil
     let kind: PhoneAuthViewKind
     let countries: [CallingCode] = CallingCode.all
     
     @State var country: CallingCode = .germany
     @State var number: String = ""
     
-    @Binding var showProgress: Bool
-    @Binding var footerMessage: String
+    @State var showProgress: Bool = false
+    @State var footerMessage: String = ""
 
     private let header: (() -> Header)?
     private let footer: (() -> Footer)?
 
-    var callback: (_ phoneNumber: String) -> Void
+    var callback: (_ phoneNumber: String?) -> Void
     
     private enum Field: Hashable {
         case phoneNumber
@@ -78,19 +81,17 @@ struct NumberView<Header: View, Footer: View>: View {
     private var isEnabled: Bool {
         number.count > 3 && !showProgress
     }
+    
     public init(kind: PhoneAuthViewKind,
-                showProgress: Binding<Bool>,
-                footerMessage: Binding<String>,
                 header: (() -> Header)?,
                 footer: (() -> Footer)?,
-                callback: @escaping (_: String) -> Void) {
+                callback: @escaping (_: String?) -> Void) {
         self.kind = kind
-        self._showProgress = showProgress
-        self._footerMessage = footerMessage
         self.header = header
         self.footer = footer
         self.callback = callback
     }
+    
     var body: some View {
         ScrollView {
             VStack(spacing: 8) {
@@ -168,42 +169,65 @@ struct NumberView<Header: View, Footer: View>: View {
     }
     
     private func submit() {
-        callback("+\(country.callingCode)\(number)")
+        Task {
+            let phoneNumber = try? await startAuthorization(phoneNumber: "+\(country.callingCode)\(number)")
+            callback(phoneNumber)
+        }
+        
+    }
+    
+    private func useContinuation<Value, Response>(endpoint: Endpoint<Response>, receiveValue: @escaping (Response, CheckedContinuation<Value, any Error>) -> Void) async throws -> Value {
+        return try await withCheckedThrowingContinuation { continuation in
+            var cancellable: AnyCancellable?
+            cancellable = networkManager!.publisher(for: endpoint)
+                .mapHTTPErrorIfPossible()
+                .receive(on: RunLoop.main)
+                .sink { completion in
+                    switch completion {
+                    case .finished:
+                        break
+                    case let .failure(error):
+                        continuation.resume(throwing: error)
+                    }
+                    cancellable?.cancel()
+
+                } receiveValue: { response in
+                    receiveValue(response, continuation)
+                }
+        }
+    }
+    
+    private func startAuthorization(phoneNumber: String) async throws -> String {
+        let endpoint = Endpoints.Phone.auth(
+            phoneNumber: phoneNumber
+        )
+
+        return try await useContinuation(endpoint: endpoint) { _, continuation in
+            continuation.resume(with: .success(phoneNumber))
+        }
     }
 }
 
 extension NumberView {
-    public init(kind: PhoneAuthViewKind, 
-                showProgress: Binding<Bool>,
-                footerMessage: Binding<String>,
-                callback: @escaping (_: String) -> Void) where Footer == Never, Header == Never {
+    public init(kind: PhoneAuthViewKind,
+                callback: @escaping (_: String?) -> Void) where Footer == Never, Header == Never {
         self.init(kind: kind,
-                  showProgress: showProgress,
-                  footerMessage: footerMessage,
                   header: nil,
                   footer: nil,
                   callback: callback)
     }
     public init(kind: PhoneAuthViewKind,
-                showProgress: Binding<Bool>,
-                footerMessage: Binding<String>,
                 header: (() -> Header)?,
-                callback: @escaping (_: String) -> Void) where Footer == Never {
+                callback: @escaping (_: String?) -> Void) where Footer == Never {
         self.init(kind: kind,
-                  showProgress: showProgress,
-                  footerMessage: footerMessage,
                   header: header,
                   footer: nil,
                   callback: callback)
     }
     public init(kind: PhoneAuthViewKind,
-                showProgress: Binding<Bool>,
-                footerMessage: Binding<String>,
                 footer: (() -> Footer)?,
-                callback: @escaping (_: String) -> Void) where Header == Never {
+                callback: @escaping (_: String?) -> Void) where Header == Never {
         self.init(kind: kind,
-                  showProgress: showProgress,
-                  footerMessage: footerMessage,
                   header: nil,
                   footer: footer,
                   callback: callback)

@@ -89,12 +89,10 @@ public struct PhoneAuthScreen<Header: View, Footer: View>: View {
     var numberView: some View {
         NumberView(
             kind: viewKind,
-            showProgress: $showProgress,
-            footerMessage: $errorMessage,
             header: header,
             footer: footer
         ) { phoneNumber in
-            sendPhoneNumber(phoneNumber)
+            print(phoneNumber)
         }
     }
     
@@ -115,13 +113,11 @@ public struct PhoneAuthScreen<Header: View, Footer: View>: View {
     }
     
     public var body: some View {
-        NavigationStack {
-            numberView
-            .navigationBarTitleDisplayMode(.inline)
-            .navigationDestination(isPresented: $showOTPInput, destination: {
-                codeView
-            })
-        }
+        numberView
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationDestination(isPresented: $showOTPInput, destination: {
+            codeView
+        })
     }
     
     private func startLoading() {
