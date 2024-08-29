@@ -188,7 +188,7 @@ public struct NumberView<Header: View, Footer: View>: View {
         Task {
             do {
                 showProgress = true
-                let phoneNumber = try await startAuthorization(phoneNumber: "+\(country.callingCode)\(number)")
+                let phoneNumber = try await networkManager.startAuthorization(phoneNumber: "+\(country.callingCode)\(number)")
                 callback(phoneNumber)
             } catch {
                 errorMessage = messageFor(error: error)
@@ -196,38 +196,6 @@ public struct NumberView<Header: View, Footer: View>: View {
             showProgress = false
         }
         
-    }
-    
-    private func useContinuation<Value, Response>(endpoint: Endpoint<Response>, receiveValue: @escaping (Response, CheckedContinuation<Value, any Error>) -> Void) async throws -> Value {
-        
-        return try await withCheckedThrowingContinuation { continuation in
-            var cancellable: AnyCancellable?
-            cancellable = networkManager.publisher(for: endpoint)
-                .mapHTTPErrorIfPossible()
-                .receive(on: RunLoop.main)
-                .sink { completion in
-                    switch completion {
-                    case .finished:
-                        break
-                    case let .failure(error):
-                        continuation.resume(throwing: error)
-                    }
-                    cancellable?.cancel()
-
-                } receiveValue: { response in
-                    receiveValue(response, continuation)
-                }
-        }
-    }
-    
-    private func startAuthorization(phoneNumber: String) async throws -> String {
-        let endpoint = Endpoints.Phone.auth(
-            phoneNumber: phoneNumber
-        )
-
-        return try await useContinuation(endpoint: endpoint) { _, continuation in
-            continuation.resume(with: .success(phoneNumber))
-        }
     }
 }
 

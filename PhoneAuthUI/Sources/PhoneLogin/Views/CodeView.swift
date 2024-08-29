@@ -108,65 +108,11 @@ public struct CodeView: View {
         .navigationTitle(Asset.localizedString(forKey: "Snabble.Account.Code.title"))
     }
     
-    private func useContinuation<Value, Response>(endpoint: Endpoint<Response>, receiveValue: @escaping (Response, CheckedContinuation<Value, any Error>) -> Void) async throws -> Value {
-        return try await withCheckedThrowingContinuation { continuation in
-            var cancellable: AnyCancellable?
-            cancellable = networkManager.publisher(for: endpoint)
-                .mapHTTPErrorIfPossible()
-                .receive(on: RunLoop.main)
-                .sink { completion in
-                    switch completion {
-                    case .finished:
-                        break
-                    case let .failure(error):
-                        continuation.resume(throwing: error)
-                    }
-                    cancellable?.cancel()
-
-                } receiveValue: { response in
-                    receiveValue(response, continuation)
-                }
-        }
-    }
-    
-    @discardableResult
-    private func startAuthorization(phoneNumber: String) async throws -> String {
-        let endpoint = Endpoints.Phone.auth(
-            phoneNumber: phoneNumber
-        )
-
-        return try await useContinuation(endpoint: endpoint) { _, continuation in
-            continuation.resume(with: .success(phoneNumber))
-        }
-    }
-    
-    private func signIn(phoneNumber: String, OTP: String) async throws -> SnabbleUser.AppUser? {
-        let endpoint = Endpoints.Phone.signIn(
-            phoneNumber: phoneNumber,
-            OTP: OTP
-        )
-
-        return try await useContinuation(endpoint: endpoint) { response, continuation in
-            continuation.resume(with: .success(response))
-        }
-    }
-    
-    private func changePhoneNumber(phoneNumber: String, OTP: String) async throws -> SnabbleUser.AppUser? {
-        let endpoint = Endpoints.Phone.changePhoneNumber(
-            phoneNumber: phoneNumber,
-            OTP: OTP
-        )
-
-        return try await useContinuation(endpoint: endpoint) { response, continuation in
-            continuation.resume(with: .success(response))
-        }
-    }
-    
     private func resendPhoneNumber(_ phoneNumber: String) {
         Task {
             do {
                 showProgress = true
-                try await startAuthorization(phoneNumber: phoneNumber)
+                try await networkManager.startAuthorization(phoneNumber: phoneNumber)
             } catch {
                 errorMessage = messageFor(error: error)
             }
@@ -182,9 +128,9 @@ public struct CodeView: View {
                 let appUser: AppUser?
                 switch kind {
                 case .initial:
-                    appUser = try await signIn(phoneNumber: phoneNumber, OTP: OTP)
+                    appUser = try await networkManager.signIn(phoneNumber: phoneNumber, OTP: OTP)
                 case .management:
-                    appUser = try await changePhoneNumber(phoneNumber: phoneNumber, OTP: OTP)
+                    appUser = try await networkManager.changePhoneNumber(phoneNumber: phoneNumber, OTP: OTP)
                 }
                 onCompletion(appUser)
                 DispatchQueue.main.sync {
@@ -204,10 +150,16 @@ public struct CodeView: View {
         }
         let message: String
         switch clientError.type {
+        case "invalid_input":
+            message = "Snabble.Account.SignIn.error"
         case "invalid_otp":
             message = "Snabble.Account.Code.error"
         case "validation_error":
-            message = "Snabble.Account.SignIn.error"
+            if clientError.validations?.first(where: { $0.field == "phoneNumber" }) != nil {
+                message = "Snabble.Account.SignIn.error"
+            } else {
+                message = "Snabble.Account.genericError"
+            }
         default:
             message = "Snabble.Account.genericError"
             

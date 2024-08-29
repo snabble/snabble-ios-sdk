@@ -32,12 +32,10 @@ struct UserFallBackView: View {
 
 struct UserNotLoggedInView<Teaser: View>: View {
     @State private var showSignin: Bool = false
-    let phoneAuth: PhoneAuth
 
     let teaser: (() -> Teaser)?
     
-    public init(phoneAuth: PhoneAuth, teaser: (() -> Teaser)?) {
-        self.phoneAuth = phoneAuth
+    public init(teaser: (() -> Teaser)?) {
         self.teaser = teaser
     }
 
@@ -50,13 +48,14 @@ struct UserNotLoggedInView<Teaser: View>: View {
         }
         .padding(.horizontal)
         .sheet(isPresented: $showSignin) {
-            PhoneAuthScreen(phoneAuth: phoneAuth, kind: .initial, header: teaser)
+            print("show sign-up")
+            return Color(.red)
+            //PhoneAuthScreen(phoneAuth: phoneAuth, kind: .initial, header: teaser)
         }
     }
 }
 
 public struct UserProfileView<Teaser: View, Login: View, Fallback: View>: View {
-    let phoneAuth: PhoneAuth
     @Binding public var user: SnabbleUser.User?
     
     private var teaser: (() -> Teaser)?
@@ -66,13 +65,12 @@ public struct UserProfileView<Teaser: View, Login: View, Fallback: View>: View {
     @State private var editUser = false
     @State private var changePhoneNumber = false
     
-    public init(phoneAuth: PhoneAuth,
-                user: Binding<SnabbleUser.User?>,
+    public init(user: Binding<SnabbleUser.User?>,
                 teaser: (() -> Teaser)?,
                 login: (() -> Login)?,
                 fallback: (() -> Fallback)?
     ) {
-        self.phoneAuth = phoneAuth
+//        self.phoneAuth = phoneAuth
         self._user = user
         
         self.teaser = teaser
@@ -140,10 +138,13 @@ public struct UserProfileView<Teaser: View, Login: View, Fallback: View>: View {
                         }
                     }
                     .sheet(isPresented: $editUser) {
-                        UserScreen(networkManager: phoneAuth.networkManager, user: user, kind: .management)
+                        Color(.green)
+//                        UserScreen(networkManager: phoneAuth.networkManager, user: user, kind: .management)
                     }
                     .sheet(isPresented: $changePhoneNumber) {
-                        PhoneAuthScreen(phoneAuth: phoneAuth, kind: .management)
+                        print("show changePhoneNumber")
+                        return Color(.red)
+                        //PhoneAuthScreen(phoneAuth: phoneAuth, kind: .management)
                     }
                 }
             }
@@ -164,7 +165,7 @@ public struct UserProfileView<Teaser: View, Login: View, Fallback: View>: View {
         if UserDefaults.standard.isUserSignedIn() {
             logginView
         } else {
-            UserNotLoggedInView(phoneAuth: phoneAuth, teaser: teaser)
+            UserNotLoggedInView(teaser: teaser)
         }
     }
     
@@ -174,10 +175,10 @@ public struct UserProfileView<Teaser: View, Login: View, Fallback: View>: View {
 }
 
 extension UserProfileView {
-    public init(phoneAuth: PhoneAuth, user: Binding<SnabbleUser.User?>) where Teaser == Never, Login == Never, Fallback == Never {
-        self.init(phoneAuth: phoneAuth, user: user, teaser: nil, login: nil, fallback: nil )
+    public init(user: Binding<SnabbleUser.User?>) where Teaser == Never, Login == Never, Fallback == Never {
+        self.init(user: user, teaser: nil, login: nil, fallback: nil )
     }
-    public init(phoneAuth: PhoneAuth, user: Binding<SnabbleUser.User?>, fallback: (() -> Fallback)?) where Teaser == Never, Login == Never {
-        self.init(phoneAuth: phoneAuth, user: user, teaser: nil, login: nil, fallback: fallback)
+    public init(user: Binding<SnabbleUser.User?>, fallback: (() -> Fallback)?) where Teaser == Never, Login == Never {
+        self.init(user: user, teaser: nil, login: nil, fallback: fallback)
     }
 }
