@@ -22,7 +22,9 @@ final class PaymentMethodSelector {
 
     private(set) var methodTap: UITapGestureRecognizer!
 
-    private(set) var selectedPayment: Payment?
+    var selectedPayment: Payment? {
+        paymentManager.selectedPayment
+    }
 
     private var shoppingCart: ShoppingCart
     weak var delegate: PaymentMethodSelectorDelegate?
@@ -45,7 +47,6 @@ final class PaymentMethodSelector {
 
         self.paymentManager = PaymentMethodManager(shoppingCart: cart)
         self.paymentManager.delegate = self
-        self.selectedPayment = self.paymentManager.selectedPayment
         
         self.methodSelectionView?.isHidden = !self.paymentManager.hasMethodsToSelect
 
@@ -80,9 +81,7 @@ final class PaymentMethodSelector {
 }
 
 extension PaymentMethodSelector: PaymentMethodManagerDelegate {
-    func paymentMethodManager(didSelectPayment: Payment?) {
-        let payment = paymentManager.selectedPayment
-        
+    func paymentMethodManager(didSelectPayment payment: Payment?) {
         let method = payment?.method
         let detail = payment?.detail
 
