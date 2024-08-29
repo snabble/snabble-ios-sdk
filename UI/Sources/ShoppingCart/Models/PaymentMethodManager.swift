@@ -264,7 +264,7 @@ public final class PaymentMethodManager: ObservableObject {
     @Published public var hasMethodsToSelect: Bool = true
     
     let shoppingCart: ShoppingCart?
-    let details: [PaymentMethodDetail]
+    var details: [PaymentMethodDetail]
     
     private var project: Project {
         SnabbleCI.project
@@ -286,10 +286,16 @@ public final class PaymentMethodManager: ObservableObject {
             guard let detail = notification.userInfo?["detail"] as? PaymentMethodDetail else {
                 return
             }
+            self?.details = PaymentMethodDetails.read().filter { detail in
+                SnabbleCI.project.paymentMethods.available.contains { $0 == detail.rawMethod }
+            }
             self?.selectMethodIfValid(detail)
         }
         
         _ = nc.addObserver(forName: .snabblePaymentMethodDeleted, object: nil, queue: OperationQueue.main) { [weak self] _ in
+            self?.details = PaymentMethodDetails.read().filter { detail in
+                SnabbleCI.project.paymentMethods.available.contains { $0 == detail.rawMethod }
+            }
             self?.selectMethodIfValid()
         }
     }
