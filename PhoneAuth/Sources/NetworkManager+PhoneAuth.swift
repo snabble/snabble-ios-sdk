@@ -17,45 +17,12 @@ public protocol PhoneAuthProviding {
     func delete(phoneNumber: String) async throws
 }
 
-//public protocol PhoneAuthDelegate: AnyObject {
-//    func phoneAuth(_ phoneAuth: PhoneAuth, didReceiveAppUser: SnabbleUser.AppUser)
-//}
-//
-//public protocol PhoneAuthDataSource: AnyObject {
-//    func appUserId(forConfiguration configuration: Configuration) -> SnabbleUser.AppUser?
-//    func projectId(forConfiguration configuration: Configuration) -> String?
-//}
-
-//public class PhoneAuth {
-//    public weak var delegate: PhoneAuthDelegate?
-//    public weak var dataSource: PhoneAuthDataSource?
-//
-//    public let networkManager: NetworkManager
-//
-//    public var configuration: Configuration {
-//        networkManager.configuration.fromDTO()
-//    }
-//    
-//    public init(networkManager: NetworkManager, urlSession: URLSession = .shared) {
-//        self.networkManager = networkManager
-//    }
-//    
-//    public init(configuration: Configuration, urlSession: URLSession = .shared) {
-//        self.networkManager = NetworkManager(
-//            configuration: configuration.toDTO(),
-//            urlSession: urlSession
-//        )
-//        self.networkManager.delegate = self
-//    }
-//}
-
 extension NetworkManager: PhoneAuthProviding {
 
     private func useContinuation<Value, Response>(endpoint: Endpoint<Response>, receiveValue: @escaping (Response, CheckedContinuation<Value, any Error>) -> Void) async throws -> Value {
         return try await withCheckedThrowingContinuation { continuation in
             var cancellable: AnyCancellable?
             cancellable = publisher(for: endpoint)
-                .mapHTTPErrorIfPossible()
                 .receive(on: RunLoop.main)
                 .sink { completion in
                     switch completion {
@@ -115,29 +82,3 @@ extension NetworkManager: PhoneAuthProviding {
         }
     }
 }
-
-extension Publisher {
-    public func mapHTTPErrorIfPossible() -> AnyPublisher<Self.Output, Error> {
-        mapError {
-            guard let error = $0 as? SnabbleNetwork.HTTPError else {
-                return $0
-            }
-            return error.fromDTO()
-        }
-        .eraseToAnyPublisher()
-    }
-}
-
-//extension PhoneAuth: NetworkManagerDelegate {
-//    public func networkManager(_ networkManager: SnabbleNetwork.NetworkManager, appUserForConfiguration configuration: SnabbleNetwork.Configuration) -> SnabbleUser.AppUser? {
-//        dataSource?.appUserId(forConfiguration: configuration.fromDTO())
-//    }
-//
-//    public func networkManager(_ networkManager: SnabbleNetwork.NetworkManager, appUserUpdated appUser: SnabbleUser.AppUser) {
-//        delegate?.phoneAuth(self, didReceiveAppUser: appUser)
-//    }
-//
-//    public func networkManager(_ networkManager: SnabbleNetwork.NetworkManager, projectIdForConfiguration configuration: SnabbleNetwork.Configuration) -> String? {
-//        dataSource?.projectId(forConfiguration: configuration.fromDTO())
-//    }
-//}

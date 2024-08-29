@@ -11,18 +11,17 @@ import SnabbleNetwork
 import SnabbleAssetProviding
 
 public struct AccountDeleteButton: View {
-    @SwiftUI.Environment(\.dismiss) var dismiss
-
     @State private var showDeleteConfirmation = false
+    
     @State private var isLoading: Bool = false
     @State private var errorMessage: String?
     
     let networkManager: NetworkManager
-    let onSuccess: () -> Void
+    let onCompletion: () -> Void
     
-    public init(networkManager: NetworkManager, onSuccess: @escaping () -> Void) {
+    public init(networkManager: NetworkManager, onCompletion: @escaping () -> Void) {
         self.networkManager = networkManager
-        self.onSuccess = onSuccess
+        self.onCompletion = onCompletion
     }
     
     public var body: some View {
@@ -61,10 +60,7 @@ public struct AccountDeleteButton: View {
                 errorMessage = nil
                 
                 try await networkManager.publisher(for: Endpoints.User.erase())
-                DispatchQueue.main.async {
-                    dismiss()
-                    onSuccess()
-                }
+                onCompletion()
             } catch {
                 errorMessage = Asset.localizedString(forKey: "Snabble.Account.Delete.error")
             }
