@@ -14,7 +14,7 @@ import SnabblePhoneAuth
 import SnabbleAssetProviding
 
 
-private extension PhoneAuthViewKind {
+private extension NumberViewKind {
     var message: String {
         switch self {
         case .initial:
@@ -59,10 +59,15 @@ private struct LabelWithImageAccent: View {
     }
 }
 
-struct NumberView<Header: View, Footer: View>: View {
+public enum NumberViewKind {
+    case initial
+    case management
+}
+
+public struct NumberView<Header: View, Footer: View>: View {
     @SwiftUI.Environment(NetworkManager.self) var networkManager: NetworkManager
     
-    let kind: PhoneAuthViewKind
+    let kind: NumberViewKind
     let countries: [CallingCode] = CallingCode.all
     
     @State var country: CallingCode = .germany
@@ -86,7 +91,7 @@ struct NumberView<Header: View, Footer: View>: View {
         number.count > 3 && !showProgress
     }
     
-    public init(kind: PhoneAuthViewKind,
+    public init(kind: NumberViewKind = .initial,
                 header: (() -> Header)?,
                 footer: (() -> Footer)?,
                 callback: @escaping (_: String?) -> Void) {
@@ -96,18 +101,12 @@ struct NumberView<Header: View, Footer: View>: View {
         self.callback = callback
     }
     
-    var body: some View {
+    public var body: some View {
         ScrollView {
             VStack(spacing: 8) {
                 VStack(spacing: 16) {
-                    if kind == .initial {
-                        if let header {
-                            header()
-                        } else {
-                            Text(Asset.localizedString(forKey: kind.message))
-                                .multilineTextAlignment(.center)
-                                .fixedSize(horizontal: false, vertical: true)
-                        }
+                    if let header {
+                        header()
                     } else {
                         Text(Asset.localizedString(forKey: kind.message))
                             .multilineTextAlignment(.center)
@@ -177,11 +176,7 @@ struct NumberView<Header: View, Footer: View>: View {
         let message: String
         switch clientError.type {
         case "validation_error":
-            if clientError.validations?.first(where: { $0.field == "phoneNumber" }) != nil {
-                message = "Snabble.Account.SignIn.error"
-            } else {
-                message = "Snabble.Account.genericError"
-            }
+            message = "Snabble.Account.SignIn.error"
         default:
             message = "Snabble.Account.genericError"
             
@@ -237,14 +232,14 @@ struct NumberView<Header: View, Footer: View>: View {
 }
 
 extension NumberView {
-    public init(kind: PhoneAuthViewKind,
+    public init(kind: NumberViewKind = .initial,
                 callback: @escaping (_: String?) -> Void) where Footer == Never, Header == Never {
         self.init(kind: kind,
                   header: nil,
                   footer: nil,
                   callback: callback)
     }
-    public init(kind: PhoneAuthViewKind,
+    public init(kind: NumberViewKind = .initial,
                 header: (() -> Header)?,
                 callback: @escaping (_: String?) -> Void) where Footer == Never {
         self.init(kind: kind,
@@ -252,7 +247,7 @@ extension NumberView {
                   footer: nil,
                   callback: callback)
     }
-    public init(kind: PhoneAuthViewKind,
+    public init(kind: NumberViewKind = .initial,
                 footer: (() -> Footer)?,
                 callback: @escaping (_: String?) -> Void) where Header == Never {
         self.init(kind: kind,

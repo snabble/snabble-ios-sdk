@@ -88,7 +88,7 @@ public struct PhoneAuthScreen<Header: View, Footer: View>: View {
     @ViewBuilder
     var numberView: some View {
         NumberView(
-            kind: viewKind,
+            kind: .management,
             header: header,
             footer: footer
         ) { phoneNumber in
@@ -98,18 +98,17 @@ public struct PhoneAuthScreen<Header: View, Footer: View>: View {
     
     @ViewBuilder
     var codeView: some View {
-        CodeView(
-            kind: viewKind,
-            phoneNumber: $phoneNumber,
-            showProgress: $showProgress,
-            footerMessage: $errorMessage,
-            verifyCode: { code, phoneNumber in
-                sendOTP(code, phoneNumber: phoneNumber)
-            },
-            rerequestCode: { phoneNumber in
-                sendPhoneNumber(phoneNumber)
-            }
-        )
+        Color(.red)
+//        CodeView(
+//            kind: .management,
+//            phoneNumber: $phoneNumber,
+//            verifyCode: { code, phoneNumber in
+//                sendOTP(code, phoneNumber: phoneNumber)
+//            },
+//            rerequestCode: { phoneNumber in
+//                sendPhoneNumber(phoneNumber)
+//            }
+//        )
     }
     
     public var body: some View {
