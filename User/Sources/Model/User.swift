@@ -280,8 +280,8 @@ extension User {
         
         func toDTO() -> UserDTO.Details {
             UserDTO.Details.init(
-                firstName: firstName,
-                lastName: lastName,
+                firstname: firstName,
+                lastname: lastName,
                 email: email,
                 dateOfBirth: dateOfBirth,
                 street: street,
