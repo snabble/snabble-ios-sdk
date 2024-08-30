@@ -6,7 +6,8 @@
 //
 
 import XCTest
-@testable import SnabbleNetwork
+import SnabbleNetwork
+@testable import SnabbleUser
 
 final class UserEndpointTests: XCTestCase {
 
@@ -32,8 +33,8 @@ final class UserEndpointTests: XCTestCase {
     }
 
     func testUpdate() throws {
-        let details = User.Details(firstName: "Foo", 
-                                   lastName: "Bar",
+        let details = User.Details(firstname: "Foo",
+                                   lastname: "Bar",
                                    email: "foo@bar.com",
                                    dateOfBirth: "1970-01-01",
                                    street: "123 Main Street",
