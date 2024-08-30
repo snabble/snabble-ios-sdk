@@ -49,26 +49,6 @@ struct UserDTO: Codable, Identifiable {
         public let city: String?
         public let country: String?
         public let state: String?
-
-        init(firstName: String?,
-                    lastName: String?,
-                    email: String?,
-                    dateOfBirth: String?,
-                    street: String?,
-                    zip: String?,
-                    city: String?,
-                    country: String?,
-                    state: String?) {
-            self.firstName = firstName
-            self.lastName = lastName
-            self.email = email
-            self.dateOfBirth = dateOfBirth
-            self.street = street
-            self.zip = zip
-            self.city = city
-            self.country = country
-            self.state = state
-        }
     }
     
     struct Field: Codable, Identifiable, Equatable {
@@ -78,11 +58,6 @@ struct UserDTO: Codable, Identifiable {
         enum CodingKeys: String, CodingKey {
             case id
             case isRequired = "required"
-        }
-        
-        init(id: String, isRequired: Bool) {
-            self.id = id
-            self.isRequired = isRequired
         }
     }
     

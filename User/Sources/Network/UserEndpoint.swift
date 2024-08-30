@@ -16,7 +16,7 @@ extension Endpoints {
                 method: .get(nil),
                 parse: { data in
                     let userDto = try Endpoints.jsonDecoder.decode(UserDTO.self, from: data)
-                    return SnabbleUser.User.init(user: userDto)
+                    return .fromDTO(userDto)
                 }
             )
         }

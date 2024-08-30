@@ -10,7 +10,6 @@ import SwiftUI
 
 import SnabbleNetwork
 import SnabbleAssetProviding
-//import SnabbleUI
 
 struct ClearBackgroundView: UIViewRepresentable {
     func makeUIView(context: Context) -> UIView {

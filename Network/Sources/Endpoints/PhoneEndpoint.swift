@@ -6,7 +6,6 @@
 //
 
 import Foundation
-//import SnabbleUser
 
 extension Endpoints {
     public enum Phone {

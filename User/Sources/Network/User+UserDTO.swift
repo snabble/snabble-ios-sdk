@@ -8,7 +8,7 @@
 import Foundation
 
 extension SnabbleUser.User {
-    init(user: UserDTO) {
+    static func fromDTO(_ user: UserDTO) -> Self {
         self.init(
             id: user.id,
             metadata: .init(

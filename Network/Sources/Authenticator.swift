@@ -8,7 +8,6 @@
 import Foundation
 import Dispatch
 import Combine
-//import SnabbleUser
 
 protocol AuthenticatorDelegate: AnyObject {
     func authenticator(_ authenticator: Authenticator, appUserForConfiguration configuration: Configuration) -> AppUserDTO?
