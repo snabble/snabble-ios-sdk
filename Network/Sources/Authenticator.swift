@@ -8,11 +8,11 @@
 import Foundation
 import Dispatch
 import Combine
-import SnabbleUser
+//import SnabbleUser
 
 protocol AuthenticatorDelegate: AnyObject {
-    func authenticator(_ authenticator: Authenticator, appUserForConfiguration configuration: Configuration) -> SnabbleUser.AppUser?
-    func authenticator(_ authenticator: Authenticator, appUserUpdated appUser: SnabbleUser.AppUser)
+    func authenticator(_ authenticator: Authenticator, appUserForConfiguration configuration: Configuration) -> AppUser?
+    func authenticator(_ authenticator: Authenticator, appUserUpdated appUser: AppUser)
 
     func authenticator(_ authenticator: Authenticator, projectIdForConfiguration configuration: Configuration) -> String?
 }
@@ -37,7 +37,7 @@ class Authenticator {
         self.urlSession = urlSession
     }
 
-    func updateAppUser(_ appUser: SnabbleUser.AppUser) {
+    func updateAppUser(_ appUser: AppUser) {
         invalidateToken()
         delegate?.authenticator(self, appUserUpdated: appUser)
     }
@@ -46,7 +46,7 @@ class Authenticator {
         token = nil
     }
 
-    private func validateAppUser(withConfiguration configuration: Configuration) -> AnyPublisher<SnabbleUser.AppUser, Swift.Error> {
+    private func validateAppUser(withConfiguration configuration: Configuration) -> AnyPublisher<AppUser, Swift.Error> {
         // scenario 1: app instance is registered
         if let appUser = delegate?.authenticator(self, appUserForConfiguration: configuration) {
             return Just(appUser)

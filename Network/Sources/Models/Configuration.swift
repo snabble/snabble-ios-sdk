@@ -6,9 +6,8 @@
 //
 
 import Foundation
-import SnabbleUser
 
-public struct Configuration: SnabbleUser.Configuration {
+public struct Configuration: Equatable, Hashable {
     public let appId: String
     public let appSecret: String
     public let domain: Domain
@@ -25,5 +24,3 @@ public struct Configuration: SnabbleUser.Configuration {
         domain.name
     }
 }
-
-extension Configuration: Equatable {}

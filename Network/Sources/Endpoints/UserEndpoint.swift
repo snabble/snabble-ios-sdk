@@ -28,8 +28,8 @@ extension Endpoints {
                 }
             )
         }
+        
         public static func update(consent: SnabbleNetwork.User.Consent) -> Endpoint<Void> {
-            
             return .init(
                 path: "/apps/users/me/consents",
                 method: .post(try? Endpoints.jsonEncoder.encode(consent)),

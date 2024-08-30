@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SnabbleNetwork
 
 public struct User: Codable {
     public let id: String
@@ -92,6 +93,10 @@ public struct User: Codable {
         
         public static func == (lhs: Self, rhs: Self) -> Bool {
             lhs.version == rhs.version
+        }
+        
+        public func toNetwork() -> SnabbleNetwork.User.Consent {
+            SnabbleNetwork.User.Consent.init(major: major, minor: minor)
         }
     }
     

@@ -58,7 +58,8 @@ extension NetworkManager: PhoneAuthProviding {
         )
 
         return try await useContinuation(endpoint: endpoint) { response, continuation in
-            continuation.resume(with: .success(response))
+            let appUser: SnabbleUser.AppUser? = SnabbleUser.AppUser(appUser: response)
+            continuation.resume(with: .success(appUser))
         }
     }
 
@@ -70,7 +71,8 @@ extension NetworkManager: PhoneAuthProviding {
         )
 
         return try await useContinuation(endpoint: endpoint) { response, continuation in
-            continuation.resume(with: .success(response))
+            let appUser: SnabbleUser.AppUser? = .init(appUser: response)
+            continuation.resume(with: .success(appUser))
         }
     }
 

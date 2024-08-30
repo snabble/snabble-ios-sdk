@@ -32,7 +32,7 @@ public enum CodeViewKind {
 public struct CodeView: View {
     @SwiftUI.Environment(NetworkManager.self) var networkManager
     
-    public init(kind: CodeViewKind, phoneNumber: String, onCompletion: @escaping (_: AppUser?) -> Void) {
+    public init(kind: CodeViewKind, phoneNumber: String, onCompletion: @escaping (_: SnabbleUser.AppUser?) -> Void) {
         self.kind = kind
         self.phoneNumber = phoneNumber
         self.onCompletion = onCompletion
@@ -46,7 +46,7 @@ public struct CodeView: View {
     @State var showProgress: Bool = false
     @State var errorMessage: String = ""
     
-    public var onCompletion: (_ appUser: AppUser?) -> Void
+    public var onCompletion: (_ appUser: SnabbleUser.AppUser?) -> Void
     
     private var isEnabled: Bool {
         otp.count == 6
@@ -125,7 +125,7 @@ public struct CodeView: View {
         Task {
             do {
                 showProgress = true
-                let appUser: AppUser?
+                let appUser: SnabbleUser.AppUser?
                 switch kind {
                 case .initial:
                     appUser = try await networkManager.signIn(phoneNumber: phoneNumber, OTP: OTP)

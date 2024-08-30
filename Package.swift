@@ -70,7 +70,7 @@ let package = Package(
     targets: [
         .target(
             name: "SnabbleNetwork",
-            dependencies: ["SwiftOTP", "SnabbleUser"],
+            dependencies: ["SwiftOTP"],
             path: "Network/Sources"
         ),
         .testTarget(
@@ -224,6 +224,7 @@ let package = Package(
             dependencies: [
                 "KeychainAccess",
                 "SnabbleAssetProviding",
+                "SnabbleNetwork"
             ],
             path: "User/Sources"
         ),

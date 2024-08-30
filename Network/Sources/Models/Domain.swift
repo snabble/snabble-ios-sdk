@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SnabbleUser
 
 public enum Domain: String {
     case testing

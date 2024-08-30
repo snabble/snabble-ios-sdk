@@ -30,12 +30,12 @@ public extension SnabbleNetwork.User {
     }
     
     func update(withDetails details: SnabbleNetwork.User.Details) {
-        let user = SnabbleNetwork.User(user: self, details: details).toSnabbleUser()
-        Snabble.shared.user = user
+        let networkUser = SnabbleNetwork.User(user: self, details: details)
+        Snabble.shared.user = .init(user: networkUser)
     }
 
     func update(withConsent consent: SnabbleNetwork.User.Consent) {
-        let user = SnabbleNetwork.User(user: self, consent: consent).toSnabbleUser()
-        Snabble.shared.user = user
+        let networkUser = SnabbleNetwork.User(user: self, consent: consent)
+        Snabble.shared.user = .init(user: networkUser)
     }
 }
