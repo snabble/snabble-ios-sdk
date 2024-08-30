@@ -1,47 +1,14 @@
 //
-//  User+SnabbleNetwork.swift
+//  User+UserDTO.swift
 //
 //
 //  Created by Andreas Osberghaus on 2024-08-30.
 //
 
 import Foundation
-import SnabbleNetwork
 
-extension SnabbleNetwork.User {
-    public init(user: SnabbleNetwork.User, details: SnabbleNetwork.User.Details) {
-        self.init(
-            id: user.id,
-            phoneNumber: user.phoneNumber,
-            details: details,
-            fields: user.fields,
-            consent: user.consent
-        )
-    }
-    
-    public init(user: SnabbleNetwork.User, consent: SnabbleNetwork.User.Consent) {
-        self.init(
-            id: user.id,
-            phoneNumber: user.phoneNumber,
-            details: user.details,
-            fields: user.fields,
-            consent: consent
-        )
-    }
-    
-    public init(user: SnabbleUser.User) {
-        self.init(
-            id: user.id,
-            phoneNumber: user.metadata?.phoneNumber,
-            details: user.toNetworkDetails(),
-            fields: user.toNetworkFields(),
-            consent: user.toNetworkConsent()
-        )
-    }
-}
-
-public extension SnabbleUser.User {
-    init(user: SnabbleNetwork.User) {
+extension SnabbleUser.User {
+    init(user: UserDTO) {
         self.init(
             id: user.id,
             metadata: .init(
@@ -61,15 +28,15 @@ public extension SnabbleUser.User {
     }
 }
 
-private extension Array where Element == SnabbleNetwork.User.Field {
+private extension Array where Element == UserDTO.Field {
     func toSnabbleField() -> [SnabbleUser.User.Field] {
         map { SnabbleUser.User.Field(field: $0) }
     }
 }
 
 private extension SnabbleUser.User {
-    func toNetworkDetails() -> SnabbleNetwork.User.Details {
-        return SnabbleNetwork.User.Details(
+    func toDtoDetails() -> UserDTO.Details {
+        return UserDTO.Details(
             firstName: firstname,
             lastName: lastname,
             email: email,
@@ -82,11 +49,11 @@ private extension SnabbleUser.User {
         )
     }
     
-    func toNetworkFields() -> [SnabbleNetwork.User.Field]? {
+    func toDtoFields() -> [UserDTO.Field]? {
         metadata?.fields?.map { .init(id: $0.id, isRequired: $0.isRequired) }
     }
     
-    func toNetworkConsent() -> SnabbleNetwork.User.Consent? {
+    func toDtoConsent() -> UserDTO.Consent? {
         guard let consent = metadata?.consent else {
             return nil
         }
@@ -113,40 +80,40 @@ private extension Date {
     }
 }
 
-extension SnabbleUser.User.Consent {
-    init?(consent: SnabbleNetwork.User.Consent?) {
+private extension SnabbleUser.User.Consent {
+    init?(consent: UserDTO.Consent?) {
         guard let consent else { return nil }
         self.init(major: consent.major, minor: consent.minor)
     }
 }
 
-extension SnabbleNetwork.User.Consent {
+private extension UserDTO.Consent {
     init?(consent: SnabbleUser.User.Consent?) {
         guard let consent else { return nil }
         self.init(major: consent.major, minor: consent.minor)
     }
 }
 
-extension SnabbleNetwork.User.Field {
+private extension UserDTO.Field {
     init(field: SnabbleUser.User.Field) {
         self.init(id: field.id, isRequired: field.isRequired)
     }
 }
 
-extension SnabbleNetwork.User.Consent {
+private extension UserDTO.Consent {
     init(consent: SnabbleUser.User.Consent) {
         self.init(major: consent.major, minor: consent.minor)
     }
 }
 
-extension SnabbleUser.User.Field {
-    init(field: SnabbleNetwork.User.Field) {
+private extension SnabbleUser.User.Field {
+    init(field: UserDTO.Field) {
         self.init(id: field.id, isRequired: field.isRequired)
     }
 }
 
-extension SnabbleUser.User.Consent {
-    init(consent: SnabbleNetwork.User.Consent) {
+private extension SnabbleUser.User.Consent {
+    init(consent: UserDTO.Consent) {
         self.init(major: consent.major, minor: consent.minor)
     }
 }

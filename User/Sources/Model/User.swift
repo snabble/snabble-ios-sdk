@@ -30,6 +30,14 @@ public struct User: Codable {
         public var city: String?
         public var country: String?
         public var state: String?
+        
+        init(street: String? = nil, zip: String? = nil, city: String? = nil, country: String? = nil, state: String? = nil) {
+            self.street = street
+            self.zip = zip
+            self.city = city
+            self.country = country
+            self.state = state
+        }
     }
     
     public struct Metadata: Codable {
@@ -95,8 +103,8 @@ public struct User: Codable {
             lhs.version == rhs.version
         }
         
-        public func toNetwork() -> SnabbleNetwork.User.Consent {
-            SnabbleNetwork.User.Consent.init(major: major, minor: minor)
+        func toDTO() -> UserDTO.Consent {
+            UserDTO.Consent.init(major: major, minor: minor)
         }
     }
     
@@ -116,10 +124,34 @@ public struct User: Codable {
             self.email = email
             self.phone = phone
             self.dateOfBirth = dateOfBirth
-
             self.address = address
-            
         }
+    
+    public init(user: User, details: User.Details) {
+        self.id = user.id
+        self.metadata = user.metadata
+        self.firstname = details.firstName
+        self.lastname = details.lastName
+        self.email = details.email
+        self.phone = user.phone
+        self.dateOfBirth = details.dateOfBirth?.toDate()
+        self.address = details.toAddress()
+    }
+    
+    public init(user: User, consent: User.Consent) {
+        self.id = user.id
+        self.metadata = .init(
+            phoneNumber: user.metadata?.phoneNumber,
+            fields: user.metadata?.fields,
+            consent: consent
+        )
+        self.firstname = user.firstname
+        self.lastname = user.lastname
+        self.email = user.email
+        self.phone = user.phone
+        self.dateOfBirth = user.dateOfBirth
+        self.address = user.address
+    }
 }
 
 extension SnabbleUser.User: Equatable {
@@ -207,5 +239,75 @@ extension User {
         } catch {
             UserDefaults.standard.set(nil, forKey: userKey(forConfig: config))
         }
+    }
+}
+
+extension User {
+    public struct Details: Codable, Equatable {
+        public let firstName: String?
+        public let lastName: String?
+        public let email: String?
+        public let dateOfBirth: String?
+        public let street: String?
+        public let zip: String?
+        public let city: String?
+        public let country: String?
+        public let state: String?
+
+        public init(firstName: String?,
+                    lastName: String?,
+                    email: String?,
+                    dateOfBirth: String?,
+                    street: String?,
+                    zip: String?,
+                    city: String?,
+                    country: String?,
+                    state: String?) {
+            self.firstName = firstName
+            self.lastName = lastName
+            self.email = email
+            self.dateOfBirth = dateOfBirth
+            self.street = street
+            self.zip = zip
+            self.city = city
+            self.country = country
+            self.state = state
+        }
+        
+        func toAddress() -> User.Address {
+            .init(street: street, zip: zip, city: city, country: country, state: state)
+        }
+        
+        func toDTO() -> UserDTO.Details {
+            UserDTO.Details.init(
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                dateOfBirth: dateOfBirth,
+                street: street,
+                zip: zip,
+                city: city,
+                country: country,
+                state: state
+            )
+        }
+    }
+}
+
+private extension String {
+    func toDate(withFormat format: String = "yyyy-MM-dd") -> Date? {
+        let dateFormatter = DateFormatter()
+        dateFormatter.calendar = Calendar(identifier: .gregorian)
+        dateFormatter.dateFormat = format
+        return dateFormatter.date(from: self)
+    }
+}
+
+private extension Date {
+    func toString(withFormat format: String = "yyyy-MM-dd") -> String {
+        let dateFormatter = DateFormatter()
+        dateFormatter.calendar = Calendar(identifier: .gregorian)
+        dateFormatter.dateFormat = format
+        return dateFormatter.string(from: self)
     }
 }

@@ -1,5 +1,5 @@
 //
-//  AppUser.swift
+//  AppUserDTO.swift
 //
 //
 //  Created by Andreas Osberghaus on 2024-08-30.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct AppUser: Codable {
+public struct AppUserDTO: Codable {
     public let id: String
     public let secret: String
     

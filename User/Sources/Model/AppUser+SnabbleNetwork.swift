@@ -9,15 +9,11 @@ import Foundation
 import SnabbleNetwork
 
 public extension SnabbleUser.AppUser {
-    init?(appUser: SnabbleNetwork.AppUser?) {
-        guard let appUser else { return nil }
-        self.init(id: appUser.id, secret: appUser.secret)
+    func toDTO() -> SnabbleNetwork.AppUserDTO {
+        SnabbleNetwork.AppUserDTO(id: id, secret: secret)
     }
-}
-
-public extension SnabbleNetwork.AppUser {
-    init?(appUser: SnabbleUser.AppUser?) {
-        guard let appUser else { return nil }
-        self.init(id: appUser.id, secret: appUser.secret)
+    
+    static func fromDTO(_ appUser: SnabbleNetwork.AppUserDTO) -> Self {
+        .init(id: appUser.id, secret: appUser.secret)
     }
 }

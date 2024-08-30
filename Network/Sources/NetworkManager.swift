@@ -10,8 +10,8 @@ import Foundation
 import SwiftUI
 
 public protocol NetworkManagerDelegate: AnyObject {
-    func networkManager(_ networkManager: NetworkManager, appUserForConfiguration configuration: Configuration) -> AppUser?
-    func networkManager(_ networkManager: NetworkManager, appUserUpdated appUser: AppUser)
+    func networkManager(_ networkManager: NetworkManager, appUserForConfiguration configuration: Configuration) -> AppUserDTO?
+    func networkManager(_ networkManager: NetworkManager, appUserUpdated appUser: AppUserDTO)
 
     func networkManager(_ networkManager: NetworkManager, projectIdForConfiguration configuration: Configuration) -> String?
 }
@@ -52,7 +52,7 @@ public protocol NetworkManagerDelegate: AnyObject {
                 self?.authenticator.invalidateToken()
             })
             .handleEvents(receiveOutput: { [weak self] response in
-                if let appUser = response as? AppUser {
+                if let appUser = response as? AppUserDTO {
                     self?.authenticator.updateAppUser(appUser)
                 }
             })
@@ -80,11 +80,11 @@ public protocol NetworkManagerDelegate: AnyObject {
 }
 
 extension NetworkManager: AuthenticatorDelegate {
-    func authenticator(_ authenticator: Authenticator, appUserUpdated appUser: AppUser) {
+    func authenticator(_ authenticator: Authenticator, appUserUpdated appUser: AppUserDTO) {
         delegate?.networkManager(self, appUserUpdated: appUser)
     }
     
-    func authenticator(_ authenticator: Authenticator, appUserForConfiguration configuration: Configuration) -> AppUser? {
+    func authenticator(_ authenticator: Authenticator, appUserForConfiguration configuration: Configuration) -> AppUserDTO? {
         delegate?.networkManager(self, appUserForConfiguration: configuration)
     }
     

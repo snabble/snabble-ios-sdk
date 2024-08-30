@@ -42,5 +42,5 @@ extension Endpoints {
 }
 
 struct UsersResponse: Codable {
-    let appUser: AppUser
+    let appUser: AppUserDTO
 }

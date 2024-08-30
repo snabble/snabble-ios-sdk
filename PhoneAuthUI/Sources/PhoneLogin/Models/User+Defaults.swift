@@ -1,12 +1,11 @@
 //
 //  User+Defaults.swift
-//  teo
+//  PhoneAuth
 //
 //  Created by Uwe Tilemann on 13.03.24.
 //
 
 import Foundation
-import SnabbleNetwork
 import SnabbleUser
 import SnabbleCore
 
@@ -24,18 +23,18 @@ public extension UserDefaults {
     }
 }
 
-public extension SnabbleNetwork.User {    
+public extension SnabbleUser.User {
     static func delete() {
         Snabble.shared.user = nil
     }
     
-    func update(withDetails details: SnabbleNetwork.User.Details) {
-        let networkUser = SnabbleNetwork.User(user: self, details: details)
-        Snabble.shared.user = .init(user: networkUser)
+    func update(withDetails details: User.Details) {
+        let user = SnabbleUser.User(user: self, details: details)
+        Snabble.shared.user = user
     }
 
-    func update(withConsent consent: SnabbleNetwork.User.Consent) {
-        let networkUser = SnabbleNetwork.User(user: self, consent: consent)
-        Snabble.shared.user = .init(user: networkUser)
+    func update(withConsent consent: User.Consent) {
+        let user = SnabbleUser.User(user: self, consent: consent)
+        Snabble.shared.user = user
     }
 }

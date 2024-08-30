@@ -50,7 +50,7 @@ public struct UserScreen: View {
     let kind: Kind
     
     let networkManager: NetworkManager
-    let user: SnabbleNetwork.User
+    let user: SnabbleUser.User
     
     private static var sixteenYearAgo: Date {
         let sixteenYears: TimeInterval = 504_910_816
@@ -65,27 +65,26 @@ public struct UserScreen: View {
     
     public init(networkManager: NetworkManager, user: SnabbleUser.User, kind: Kind) {
         self.networkManager = networkManager
-        self.user = .init(user: user)
+        self.user = user
         self.kind = kind
         
-        _firstName = State(initialValue: self.user.details?.firstName ?? "")
-        _lastName = State(initialValue: self.user.details?.lastName ?? "")
-        _email = State(initialValue: self.user.details?.email ?? "")
-        if let dateOfBirth = self.user.details?.dateOfBirth,
-           let date = Self.dateFormatter.date(from: dateOfBirth) { // yyyy-MM-dd
-            _dateOfBirth = State(initialValue: date)
+        _firstName = State(initialValue: self.user.firstname ?? "")
+        _lastName = State(initialValue: self.user.lastname ?? "")
+        _email = State(initialValue: self.user.email ?? "")
+        if let dateOfBirth = self.user.dateOfBirth {
+            _dateOfBirth = State(initialValue: dateOfBirth)
         } else {
             _dateOfBirth = State(initialValue: Self.sixteenYearAgo)
         }
-        _street = State(initialValue: self.user.details?.street ?? "")
-        _zip = State(initialValue: self.user.details?.zip ?? "")
-        _city = State(initialValue: self.user.details?.city ?? "")
-        _country = State(initialValue: self.user.details?.country ?? "")
-        _state = State(initialValue: self.user.details?.state ?? "")
+        _street = State(initialValue: self.user.address?.street ?? "")
+        _zip = State(initialValue: self.user.address?.zip ?? "")
+        _city = State(initialValue: self.user.address?.city ?? "")
+        _country = State(initialValue: self.user.address?.country ?? "")
+        _state = State(initialValue: self.user.address?.state ?? "")
    }
     
     var fields: [Field] {
-        user.fields?.toFields() ?? []
+        user.metadata?.fields?.toFields() ?? []
     }
     
     enum Field: String, Swift.Identifiable, Hashable {
@@ -294,18 +293,18 @@ public struct UserScreen: View {
                     Spacer()
                 }
                 .onAppear {
-                    if let countryCode = user.details?.country,
+                    if let countryCode = user.address?.country,
                        let country = Country.all.country(forCode: countryCode) {
                         countrySelection = country
                         
-                        if let stateCode = user.details?.state,
+                        if let stateCode = user.address?.state,
                            let state = country.states?.state(forCode: stateCode) {
                             stateSelection = state
                         }
                     }
                 }
                 .onChange(of: countrySelection) { _, country in
-                    if user.details?.country != country.code {
+                    if user.address?.country != country.code {
                         stateSelection = nil
                     }
                 }
@@ -337,15 +336,17 @@ public struct UserScreen: View {
                         country: String,
                         state: String) {
         Task {
-            let details = SnabbleNetwork.User.Details(firstName: firstName,
-                                                      lastName: lastName,
-                                                      email: email,
-                                                      dateOfBirth: Self.dateFormatter.string(from: dateOfBirth),
-                                                      street: street,
-                                                      zip: zip,
-                                                      city: city,
-                                                      country: country,
-                                                      state: state)
+            
+            let details = User.Details(
+                firstName: firstName,
+                lastName: lastName,
+                email: email,
+                dateOfBirth: Self.dateFormatter.string(from: dateOfBirth),
+                street: street,
+                zip: zip,
+                city: city,
+                country: country,
+                state: state)
             let endpoint = Endpoints.User.update(details: details)
             do {
                 isLoading = true
@@ -362,11 +363,11 @@ public struct UserScreen: View {
     }
     
     private func isRequired(_ field: Field) -> Bool {
-        return user.fields?.first(where: { $0.id == field.rawValue })?.isRequired ?? false
+        return user.metadata?.fields?.first(where: { $0.id == field.rawValue })?.isRequired ?? false
     }
 }
 
-extension Array where Element == SnabbleNetwork.User.Field {
+extension Array where Element == SnabbleUser.User.Field {
     func toFields() -> [UserScreen.Field] {
         compactMap { element in
             switch element.id {

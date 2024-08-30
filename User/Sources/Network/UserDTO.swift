@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct User: Codable, Identifiable {
+struct UserDTO: Codable, Identifiable {
     public let id: String
     public let phoneNumber: String?
     public let details: Details?
@@ -22,7 +22,7 @@ public struct User: Codable, Identifiable {
         case consent = "currentConsent"
     }
     
-    public init(from decoder: Decoder) throws {
+    init(from decoder: Decoder) throws {
         let container: KeyedDecodingContainer<CodingKeys> = try decoder.container(keyedBy: CodingKeys.self)
         self.id = try container.decode(String.self, forKey: .id)
         self.phoneNumber = try container.decodeIfPresent(String.self, forKey: .phoneNumber)
@@ -31,7 +31,7 @@ public struct User: Codable, Identifiable {
         self.consent = try container.decodeIfPresent(Consent.self, forKey: .consent)
     }
     
-    public init(id: String, phoneNumber: String?, details: Details?, fields: [Field]?, consent: Consent?) {
+    init(id: String, phoneNumber: String?, details: Details?, fields: [Field]?, consent: Consent?) {
         self.id = id
         self.phoneNumber = phoneNumber
         self.details = details
@@ -39,7 +39,7 @@ public struct User: Codable, Identifiable {
         self.consent = consent
     }
     
-    public struct Details: Codable, Equatable {
+    struct Details: Codable, Equatable {
         public let firstName: String?
         public let lastName: String?
         public let email: String?
@@ -50,7 +50,7 @@ public struct User: Codable, Identifiable {
         public let country: String?
         public let state: String?
 
-        public init(firstName: String?,
+        init(firstName: String?,
                     lastName: String?,
                     email: String?,
                     dateOfBirth: String?,
@@ -71,7 +71,7 @@ public struct User: Codable, Identifiable {
         }
     }
     
-    public struct Field: Codable, Identifiable, Equatable {
+    struct Field: Codable, Identifiable, Equatable {
         public let id: String
         public let isRequired: Bool
         
@@ -80,13 +80,13 @@ public struct User: Codable, Identifiable {
             case isRequired = "required"
         }
         
-        public init(id: String, isRequired: Bool) {
+        init(id: String, isRequired: Bool) {
             self.id = id
             self.isRequired = isRequired
         }
     }
     
-    public struct Consent: Codable, Equatable {
+    struct Consent: Codable, Equatable {
         public let major: Int
         public let minor: Int
         
@@ -100,7 +100,7 @@ public struct User: Codable, Identifiable {
         
         /// Consent initialiser with version string
         /// - Parameter version: The format must be "x.x" or "x"
-        public init(version: String) {
+        init(version: String) {
             let components: [Int] = version
                 .components(separatedBy: ".")
                 .map { Int($0) ?? 0 }
@@ -108,28 +108,28 @@ public struct User: Codable, Identifiable {
             self.minor = components.last ?? 0
         }
         
-        public init(major: Int, minor: Int = 0) {
+        init(major: Int, minor: Int = 0) {
             self.major = major
             self.minor = minor
         }
         
-        public init(from decoder: any Decoder) throws {
+        init(from decoder: any Decoder) throws {
             let container: KeyedDecodingContainer<CodingKeys> = try decoder.container(keyedBy: CodingKeys.self)
             self.init(version: try container.decode(String.self, forKey: .version))
         }
         
-        public func encode(to encoder: any Encoder) throws {
+        func encode(to encoder: any Encoder) throws {
             var container = encoder.container(keyedBy: CodingKeys.self)
             try container.encode(version, forKey: .version)
         }
         
-        public static func == (lhs: Self, rhs: Self) -> Bool {
+        static func == (lhs: Self, rhs: Self) -> Bool {
             lhs.version == rhs.version
         }
     }
 }
 
-extension SnabbleNetwork.User: Equatable {
+extension UserDTO: Equatable {
     public static func == (lhs: Self, rhs: Self) -> Bool {
         lhs.id == rhs.id
     }

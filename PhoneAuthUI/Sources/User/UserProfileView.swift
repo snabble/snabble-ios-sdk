@@ -13,16 +13,16 @@ import SnabblePhoneAuth
 import SnabbleAssetProviding
 import SnabbleUser
 
-private extension SnabbleNetwork.User {
-    var fullName: String? {
-        guard let details else {
-            return nil
-        }
-        let fullName = "\(details.firstName ?? "") \(details.lastName ?? "")"
-        
-        return fullName.count > 1 ? fullName : nil
-    }
-}
+//private extension SnabbleUser.User {
+//    var fullName: String? {
+//        guard let firstname, let lastname else {
+//            return nil
+//        }
+//        let fullName = "\(firstName ?? "") \(lastName ?? "")"
+//        
+//        return fullName.count > 1 ? fullName : nil
+//    }
+//}
 
 struct UserFallBackView: View {
     var body: some View {

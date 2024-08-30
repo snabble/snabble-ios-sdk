@@ -127,7 +127,7 @@ public struct UserConsentScreen: View {
 
     private func update() {
         Task {
-            let endpoint = Endpoints.User.update(consent: .init(consent: userConsent))
+            let endpoint = Endpoints.User.update(consent: userConsent)
             try? await networkManager.publisher(for: endpoint)
             onCompletion(userConsent)
         }
