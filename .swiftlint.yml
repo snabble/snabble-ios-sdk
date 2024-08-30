@@ -17,6 +17,7 @@ excluded:
   - Datatrans/Tests
   - Pay/Tests
   - PhoneAuth/Tests
+  - User/Tests
 
 disabled_rules:
   - todo
