@@ -8,7 +8,6 @@
 import SwiftUI
 import Combine
 
-import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleUser
 import SnabbleNetwork
@@ -133,10 +132,6 @@ public struct CodeView: View {
                     appUser = try await networkManager.changePhoneNumber(phoneNumber: phoneNumber, OTP: OTP)
                 }
                 onCompletion(appUser)
-//                DispatchQueue.main.sync {
-//                    UserDefaults.standard.setUserSignedIn(true)
-//                    
-//                }
             } catch {
                 errorMessage = messageFor(error: error)
             }

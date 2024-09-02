@@ -8,11 +8,8 @@
 import SwiftUI
 import Combine
 
-import SnabbleCore
 import SnabbleNetwork
-import SnabblePhoneAuth
 import SnabbleAssetProviding
-
 
 private extension NumberViewKind {
     var message: String {
