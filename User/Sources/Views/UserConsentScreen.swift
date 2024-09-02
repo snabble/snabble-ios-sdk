@@ -94,14 +94,11 @@ public struct UserConsentScreen: View {
                     .fontWeight(.bold)
                 
                 attributedText
-                    .onOpenURL(perform: { url in
-                        print(url)
-                    })
 //                    .handle(with: $urlResource)
-//                    .sheet(item: $urlResource) { url in
+//                    .sheet(item: $urlResource) { _ in
 //                        Color(.red) // WARNING: Show URL!
-////                        print("show \(url.relativePath)")
-////                        WebView(url: url)
+//                        print("show \(url.relativePath)")
+//                        WebView(url: url)
 //                    }
                 PrimaryButtonView(title: Asset.localizedString(forKey: "Consent.accept")) {
                     update()
