@@ -57,7 +57,7 @@ extension DatatransAliasViewController: UserFieldProviding {
 extension DatatransAliasViewController: UserValidation {
     public func acceptUser(user: SnabbleUser.User) -> Bool {
         // Simple validation here, as all required fields are filled in the form.
-        guard let firstname = user.firstname, !firstname.isEmpty else {
+        guard let firstName = user.firstName, !firstName.isEmpty else {
             return false
         }
         self.user = DatatransUser.user(from: user)
