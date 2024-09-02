@@ -43,8 +43,8 @@ public struct UserView: View {
     @ObservedObject var model: UserModel
     
 #if DEBUG
-    @State private var firstname: String = "Foo"
-    @State private var lastname: String = "Bar"
+    @State private var firstName: String = "Foo"
+    @State private var lastName: String = "Bar"
     @State private var email: String = "foo@bar.com"
     @State private var phoneNumber: String = "177 8765432"
     @State private var dateOfBirth: Date
@@ -54,8 +54,8 @@ public struct UserView: View {
     @State private var country: String = ""
     @State private var state: String = ""
 #else
-    @State private var firstname: String = ""
-    @State private var lastname: String = ""
+    @State private var firstName: String = ""
+    @State private var lastName: String = ""
     @State private var email: String = ""
     @State private var phoneNumber: String = ""
     @State private var dateOfBirth: Date
@@ -87,10 +87,10 @@ public struct UserView: View {
     }
     
     private var isButtonEnabled: Bool {
-        if isRequired(.firstName), firstname.isEmpty {
+        if isRequired(.firstName), firstName.isEmpty {
             return false
         }
-        if isRequired(.lastName), lastname.isEmpty {
+        if isRequired(.lastName), lastName.isEmpty {
             return false
         }
         if isRequired(.email), email.isEmpty {
@@ -127,19 +127,19 @@ public struct UserView: View {
                 VStack(spacing: 8) {
                     if model.fields.contains(.firstName) && model.fields.contains(.lastName) {
                         HStack {
-                            UserTextFieldView(userField: .firstName, text: $firstname, disabled: $disabled)
+                            UserTextFieldView(userField: .firstName, text: $firstName, disabled: $disabled)
                                 .focused($focusField, equals: .firstName)
                                 .onSubmit {
                                     focusField = .firstName.next(in: model.fields)
                                 }
-                            UserTextFieldView(userField: .lastName, text: $lastname, disabled: $disabled)
+                            UserTextFieldView(userField: .lastName, text: $lastName, disabled: $disabled)
                                 .focused($focusField, equals: .lastName)
                                 .onSubmit {
                                     focusField = .lastName.next(in: model.fields)
                                 }
                         }
                     } else if model.fields.contains(.lastName) {
-                        UserTextFieldView(userField: .lastName, text: $lastname, disabled: $disabled)
+                        UserTextFieldView(userField: .lastName, text: $lastName, disabled: $disabled)
                             .focused($focusField, equals: .lastName)
                             .onSubmit {
                                 focusField = .lastName.next(in: model.fields)
@@ -228,8 +228,8 @@ public struct UserView: View {
                         let userPhone = User.Phone(code: callingCode.callingCode, number: phoneNumber)
                         
                         var user = User()
-                        user.firstname = isRequired(.firstName) ? firstname : nil
-                        user.lastname = isRequired(.lastName) ? lastname : nil
+                        user.firstName = isRequired(.firstName) ? firstName : nil
+                        user.lastName = isRequired(.lastName) ? lastName : nil
                         user.email = isRequired(.email) ? email : nil
                         user.phone = isRequired(.phone) ? userPhone : nil
                         user.dateOfBirth = isRequired(.dateOfBirth) ? dateOfBirth : nil

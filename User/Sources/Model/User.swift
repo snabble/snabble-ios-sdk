@@ -13,8 +13,8 @@ public struct User: Codable {
     
     public let metadata: Metadata?
     
-    public var firstname: String?
-    public var lastname: String?
+    public var firstName: String?
+    public var lastName: String?
     public var email: String?
     public var phone: Phone?
     public var dateOfBirth: Date?
@@ -111,16 +111,16 @@ public struct User: Codable {
     public init(
         id: String,
         metadata: Metadata?,
-        firstname: String?,
-        lastname: String?,
+        firstName: String?,
+        lastName: String?,
         email: String?,
         phone: Phone?,
         dateOfBirth: Date?,
         address: Address) {
             self.id = id
             self.metadata = metadata
-            self.firstname = firstname
-            self.lastname = lastname
+            self.firstName = firstName
+            self.lastName = lastName
             self.email = email
             self.phone = phone
             self.dateOfBirth = dateOfBirth
@@ -130,8 +130,8 @@ public struct User: Codable {
     public init(user: User, details: User.Details) {
         self.id = user.id
         self.metadata = user.metadata
-        self.firstname = details.firstName
-        self.lastname = details.lastName
+        self.firstName = details.firstName
+        self.lastName = details.lastName
         self.email = details.email
         self.phone = user.phone
         self.dateOfBirth = details.dateOfBirth?.toDate()
@@ -145,8 +145,8 @@ public struct User: Codable {
             fields: user.metadata?.fields,
             consent: consent
         )
-        self.firstname = user.firstname
-        self.lastname = user.lastname
+        self.firstName = user.firstName
+        self.lastName = user.lastName
         self.email = user.email
         self.phone = user.phone
         self.dateOfBirth = user.dateOfBirth
@@ -164,8 +164,8 @@ extension User {
     public init(
         id: String,
         metadata: Metadata?,
-        firstname: String?,
-        lastname: String?,
+        firstName: String?,
+        lastName: String?,
         email: String?,
         phone: Phone?,
         dateOfBirth: Date?,
@@ -175,15 +175,15 @@ extension User {
         country: String?,
         state: String?) {
             let address = Address(street: street, zip: zip, city: city, country: country, state: state)
-            self.init(id: id, metadata: metadata, firstname: firstname, lastname: lastname, email: email, phone: phone, dateOfBirth: dateOfBirth, address: address)
+            self.init(id: id, metadata: metadata, firstName: firstName, lastName: lastName, email: email, phone: phone, dateOfBirth: dateOfBirth, address: address)
     }
     
     public init() {
         self.init(
             id: UUID().uuidString,
             metadata: nil,
-            firstname: nil,
-            lastname: nil,
+            firstName: nil,
+            lastName: nil,
             email: nil,
             phone: nil,
             dateOfBirth: nil,
@@ -197,13 +197,13 @@ extension User {
 
 extension User {
     public var fullName: String? {
-        guard let firstname else {
-            return lastname
+        guard let firstName else {
+            return lastName
         }
-        guard let lastname else {
-            return firstname
+        guard let lastName else {
+            return firstName
         }
-        return firstname + " " + lastname
+        return firstName + " " + lastName
     }
 
     public var phoneNumber: String? {
@@ -280,8 +280,8 @@ extension User {
         
         func toDTO() -> UserDTO.Details {
             UserDTO.Details.init(
-                firstname: firstName,
-                lastname: lastName,
+                firstName: firstName,
+                lastName: lastName,
                 email: email,
                 dateOfBirth: dateOfBirth,
                 street: street,

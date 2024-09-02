@@ -1,5 +1,5 @@
 //
-//  AccountDeleteButton.swift
+//  UserDeleteButton.swift
 //  
 //
 //  Created by Uwe Tilemann on 08.06.24.
@@ -10,7 +10,7 @@ import SwiftUI
 import SnabbleNetwork
 import SnabbleAssetProviding
 
-public struct AccountDeleteButton: View {
+public struct UserDeleteButton: View {
     @State private var showDeleteConfirmation = false
     
     @State private var isLoading: Bool = false

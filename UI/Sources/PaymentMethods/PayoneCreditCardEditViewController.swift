@@ -27,7 +27,7 @@ import SnabbleUser
 //
 
 public protocol PrefillData {
-    var lastname: String? { get }
+    var lastName: String? { get }
     var street: String? { get }
     var zip: String? { get }
     var city: String? { get }
@@ -657,7 +657,7 @@ extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
             case "email":
                 $0[$1] = prefillData?.email
             case "lastname":
-                $0[$1] = prefillData?.lastname
+                $0[$1] = prefillData?.lastName
             case "street":
                 $0[$1] = prefillData?.street
             case "zip":

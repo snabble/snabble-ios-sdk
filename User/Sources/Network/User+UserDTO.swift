@@ -15,8 +15,8 @@ extension SnabbleUser.User {
                 phoneNumber: user.phoneNumber,
                 fields: user.fields?.toSnabbleField(),
                 consent: .init(consent: user.consent)),
-            firstname: user.details?.firstname,
-            lastname: user.details?.lastname,
+            firstName: user.details?.firstName,
+            lastName: user.details?.lastName,
             email: user.details?.email,
             phone: nil,
             dateOfBirth: user.details?.dateOfBirth?.toDate(),
@@ -37,8 +37,8 @@ private extension Array where Element == UserDTO.Field {
 private extension SnabbleUser.User {
     func toDtoDetails() -> UserDTO.Details {
         return UserDTO.Details(
-            firstname: firstname,
-            lastname: lastname,
+            firstName: firstName,
+            lastName: lastName,
             email: email,
             dateOfBirth: dateOfBirth?.toString(),
             street: address?.street,

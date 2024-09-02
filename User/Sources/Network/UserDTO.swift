@@ -40,8 +40,8 @@ struct UserDTO: Codable, Identifiable {
     }
     
     struct Details: Codable, Equatable {
-        public let firstname: String?
-        public let lastname: String?
+        public let firstName: String?
+        public let lastName: String?
         public let email: String?
         public let dateOfBirth: String?
         public let street: String?

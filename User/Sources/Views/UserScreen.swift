@@ -7,10 +7,9 @@
 
 import SwiftUI
 
-import SnabbleCore
+//import SnabbleCore
 import SnabbleNetwork
-import SnabblePhoneAuth
-import SnabbleUser
+//import SnabblePhoneAuth
 import SnabbleAssetProviding
 
 public struct UserScreen: View {
@@ -52,6 +51,9 @@ public struct UserScreen: View {
     let networkManager: NetworkManager
     let user: SnabbleUser.User
     
+    var onDeletion: () -> Void
+    let onCompletion: (_ userDetails: User.Details) -> Void
+    
     private static var sixteenYearAgo: Date {
         let sixteenYears: TimeInterval = 504_910_816
         return Date(timeIntervalSinceNow: -sixteenYears)
@@ -63,13 +65,21 @@ public struct UserScreen: View {
         return formatter
     }()
     
-    public init(networkManager: NetworkManager, user: SnabbleUser.User, kind: Kind) {
+    public init(
+        networkManager: NetworkManager,
+        user: SnabbleUser.User,
+        kind: Kind,
+        onCompletion: @escaping (_ details: User.Details) -> Void,
+        onDeletion: @escaping () -> Void
+    ) {
         self.networkManager = networkManager
         self.user = user
         self.kind = kind
+        self.onCompletion = onCompletion
+        self.onDeletion = onDeletion
         
-        _firstName = State(initialValue: self.user.firstname ?? "")
-        _lastName = State(initialValue: self.user.lastname ?? "")
+        _firstName = State(initialValue: self.user.firstName ?? "")
+        _lastName = State(initialValue: self.user.lastName ?? "")
         _email = State(initialValue: self.user.email ?? "")
         if let dateOfBirth = self.user.dateOfBirth {
             _dateOfBirth = State(initialValue: dateOfBirth)
@@ -273,10 +283,11 @@ public struct UserScreen: View {
                                         state: stateSelection?.code ?? "")
                         })
                     if kind == .management {
-                        AccountDeleteButton(networkManager: networkManager, onCompletion: {
-                            UserDefaults.standard.setUserSignedIn(false)
-                            Snabble.shared.user = nil
-                            killApp()
+                        UserDeleteButton(networkManager: networkManager, onCompletion: {
+//                            UserDefaults.standard.setUserSignedIn(false)
+//                            Snabble.shared.user = nil
+                            onDeletion()
+//                            killApp()
                         })
                     }
                     
@@ -315,15 +326,15 @@ public struct UserScreen: View {
         }
     }
 
-    private func killApp() {
-        let application = UIApplication.shared
-        let suspend = #selector(URLSessionTask.suspend)
-        application.sendAction(suspend, to: application, from: nil, for: nil)
-        
-        Thread.sleep(forTimeInterval: 1)
-        
-        exit(0)
-    }
+//    private func killApp() {
+//        let application = UIApplication.shared
+//        let suspend = #selector(URLSessionTask.suspend)
+//        application.sendAction(suspend, to: application, from: nil, for: nil)
+//        
+//        Thread.sleep(forTimeInterval: 1)
+//        
+//        exit(0)
+//    }
     
     // swiftlint:disable:next function_parameter_count
     private func update(firstName: String,
@@ -351,10 +362,11 @@ public struct UserScreen: View {
             do {
                 isLoading = true
                 try await networkManager.publisher(for: endpoint)
-                DispatchQueue.main.async {
-                    user.update(withDetails: details)
-                    dismiss()
-                }
+                onCompletion(details)
+//                DispatchQueue.main.async {
+//                    user.update(withDetails: details)
+//                    dismiss()
+//                }
             } catch {
                 errorMessage = error.localizedDescription
             }
@@ -396,7 +408,19 @@ extension Array where Element == SnabbleUser.User.Field {
 
 class UserScreenViewController: UIHostingController<UserScreen> {
     init(networkManager: NetworkManager, user: SnabbleUser.User) {
-        super.init(rootView: UserScreen(networkManager: networkManager, user: user, kind: .initial))
+        let rootView = UserScreen(
+            networkManager: networkManager,
+            user: user,
+            kind: .initial
+            ,onCompletion: { details in
+                print(details)
+            },
+            onDeletion: {
+                print("Delete User")
+            }
+        )
+        
+        super.init(rootView: rootView)
     }
     
     @MainActor required dynamic init?(coder aDecoder: NSCoder) {
