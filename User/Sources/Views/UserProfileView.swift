@@ -134,12 +134,3 @@ public struct UserProfileView: View {
         logginView
     }
 }
-
-//extension UserProfileView {
-//    public init(user: Binding<SnabbleUser.User?>) where Teaser == Never, Login == Never, Fallback == Never {
-//        self.init(user: user, teaser: nil, login: nil, fallback: nil )
-//    }
-//    public init(user: Binding<SnabbleUser.User?>, fallback: (() -> Fallback)?) where Teaser == Never, Login == Never {
-//        self.init(user: user, teaser: nil, login: nil, fallback: fallback)
-//    }
-//}

@@ -23,11 +23,7 @@ public extension UserDefaults {
     }
 }
 
-public extension SnabbleUser.User {
-    static func delete() {
-        Snabble.shared.user = nil
-    }
-    
+public extension SnabbleUser.User {    
     func update(withDetails details: User.Details) {
         let user = SnabbleUser.User(user: self, details: details)
         Snabble.shared.user = user
