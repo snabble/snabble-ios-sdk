@@ -7,22 +7,10 @@
 
 import SwiftUI
 
-//import SnabbleCore
 import SnabbleNetwork
 import SnabblePhoneAuth
 import SnabbleAssetProviding
 import SnabbleUser
-
-//private extension SnabbleUser.User {
-//    var fullName: String? {
-//        guard let firstname, let lastname else {
-//            return nil
-//        }
-//        let fullName = "\(firstName ?? "") \(lastName ?? "")"
-//        
-//        return fullName.count > 1 ? fullName : nil
-//    }
-//}
 
 struct UserFallBackView: View {
     var body: some View {
@@ -70,7 +58,6 @@ public struct UserProfileView<Teaser: View, Login: View, Fallback: View>: View {
                 login: (() -> Login)?,
                 fallback: (() -> Fallback)?
     ) {
-//        self.phoneAuth = phoneAuth
         self._user = user
         
         self.teaser = teaser
