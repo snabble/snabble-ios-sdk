@@ -12,7 +12,7 @@ import SnabbleAssetProviding
 import SnabbleUser
 import SnabbleNetwork
 
-extension CodeViewKind {
+private extension PhoneAuthKind {
     var codeButtonTitle: String {
         switch self {
         case .initial:
@@ -23,21 +23,16 @@ extension CodeViewKind {
     }
 }
 
-public enum CodeViewKind {
-    case initial
-    case management
-}
-
 public struct CodeView: View {
     @SwiftUI.Environment(NetworkManager.self) var networkManager
     
-    public init(kind: CodeViewKind, phoneNumber: String, onCompletion: @escaping (_: SnabbleUser.AppUser?) -> Void) {
+    public init(kind: PhoneAuthKind, phoneNumber: String, onCompletion: @escaping (_: SnabbleUser.AppUser?) -> Void) {
         self.kind = kind
         self.phoneNumber = phoneNumber
         self.onCompletion = onCompletion
     }
     
-    public let kind: CodeViewKind
+    public let kind: PhoneAuthKind
     public let phoneNumber: String
     
     @State var otp: String = ""

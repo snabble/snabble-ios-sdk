@@ -11,7 +11,7 @@ import Combine
 import SnabbleNetwork
 import SnabbleAssetProviding
 
-private extension NumberViewKind {
+private extension PhoneAuthKind {
     var message: String {
         switch self {
         case .initial:
@@ -56,15 +56,10 @@ private struct LabelWithImageAccent: View {
     }
 }
 
-public enum NumberViewKind {
-    case initial
-    case management
-}
-
 public struct NumberView<Header: View, Footer: View>: View {
     @SwiftUI.Environment(NetworkManager.self) var networkManager: NetworkManager
     
-    let kind: NumberViewKind
+    let kind: PhoneAuthKind
     let countries: [CallingCode] = CallingCode.all
     
     @State var country: CallingCode = .germany
@@ -88,7 +83,7 @@ public struct NumberView<Header: View, Footer: View>: View {
         number.count > 3 && !showProgress
     }
     
-    public init(kind: NumberViewKind = .initial,
+    public init(kind: PhoneAuthKind = .initial,
                 header: (() -> Header)?,
                 footer: (() -> Footer)?,
                 callback: @escaping (_: String?) -> Void) {
@@ -197,14 +192,14 @@ public struct NumberView<Header: View, Footer: View>: View {
 }
 
 extension NumberView {
-    public init(kind: NumberViewKind = .initial,
+    public init(kind: PhoneAuthKind = .initial,
                 callback: @escaping (_: String?) -> Void) where Footer == Never, Header == Never {
         self.init(kind: kind,
                   header: nil,
                   footer: nil,
                   callback: callback)
     }
-    public init(kind: NumberViewKind = .initial,
+    public init(kind: PhoneAuthKind = .initial,
                 header: (() -> Header)?,
                 callback: @escaping (_: String?) -> Void) where Footer == Never {
         self.init(kind: kind,
@@ -212,7 +207,7 @@ extension NumberView {
                   footer: nil,
                   callback: callback)
     }
-    public init(kind: NumberViewKind = .initial,
+    public init(kind: PhoneAuthKind = .initial,
                 footer: (() -> Footer)?,
                 callback: @escaping (_: String?) -> Void) where Header == Never {
         self.init(kind: kind,
