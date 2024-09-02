@@ -7,9 +7,7 @@
 
 import SwiftUI
 
-//import SnabbleCore
 import SnabbleNetwork
-//import SnabblePhoneAuth
 import SnabbleAssetProviding
 
 public struct UserScreen: View {
@@ -411,8 +409,8 @@ class UserScreenViewController: UIHostingController<UserScreen> {
         let rootView = UserScreen(
             networkManager: networkManager,
             user: user,
-            kind: .initial
-            ,onCompletion: { details in
+            kind: .initial,
+            onCompletion: { details in
                 print(details)
             },
             onDeletion: {
