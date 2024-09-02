@@ -4,9 +4,9 @@ name: SwiftLint, nameSpecified: , owner: realm, version: main, source: https://g
 
 name: DeviceKit, nameSpecified: DeviceKit, owner: devicekit, version: 5.4.0, source: https://github.com/devicekit/DeviceKit
 
-name: GRDB.swift, nameSpecified: GRDB.swift, owner: groue, version: 6.29.1, source: https://github.com/groue/GRDB.swift
+name: GRDB.swift, nameSpecified: GRDB.swift, owner: groue, version: 6.29.2, source: https://github.com/groue/GRDB.swift
 
-name: ios-sdk, nameSpecified: Datatrans, owner: datatrans, version: 3.6.3, source: https://github.com/datatrans/ios-sdk
+name: ios-sdk, nameSpecified: Datatrans, owner: datatrans, version: 3.7.0, source: https://github.com/datatrans/ios-sdk
 
 name: KeychainAccess, nameSpecified: KeychainAccess, owner: kishikawakatsumi, version: 4.2.2, source: https://github.com/kishikawakatsumi/KeychainAccess
 
@@ -14,7 +14,7 @@ name: Pulley, nameSpecified: Pulley, owner: snabble, version: 2.9.2, source: htt
 
 name: SDCAlertView, nameSpecified: SDCAlertView, owner: sberrevoets, version: 12.0.4, source: https://github.com/sberrevoets/SDCAlertView
 
-name: swift-crypto, nameSpecified: swift-crypto, owner: apple, version: 3.6.0, source: https://github.com/apple/swift-crypto
+name: swift-crypto, nameSpecified: swift-crypto, owner: apple, version: 3.6.1, source: https://github.com/apple/swift-crypto
 
 name: swift-log, nameSpecified: swift-log, owner: apple, version: 1.6.1, source: https://github.com/apple/swift-log
 
