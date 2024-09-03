@@ -126,7 +126,9 @@ public struct CodeView: View {
                 case .management:
                     appUser = try await networkManager.changePhoneNumber(phoneNumber: phoneNumber, OTP: OTP)
                 }
-                onCompletion(appUser)
+                DispatchQueue.main.async {
+                    onCompletion(appUser)
+                }
             } catch {
                 errorMessage = messageFor(error: error)
             }
