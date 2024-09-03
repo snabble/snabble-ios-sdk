@@ -71,7 +71,7 @@ public struct NumberView<Header: View, Footer: View>: View {
     private let header: (() -> Header)?
     private let footer: (() -> Footer)?
 
-    var callback: (_ phoneNumber: String?) -> Void
+    var onCompetion: (_ phoneNumber: String?) -> Void
     
     private enum Field: Hashable {
         case phoneNumber
@@ -86,11 +86,11 @@ public struct NumberView<Header: View, Footer: View>: View {
     public init(kind: PhoneAuthKind = .initial,
                 header: (() -> Header)?,
                 footer: (() -> Footer)?,
-                callback: @escaping (_: String?) -> Void) {
+                onCompetion: @escaping (_: String?) -> Void) {
         self.kind = kind
         self.header = header
         self.footer = footer
-        self.callback = callback
+        self.onCompetion = onCompetion
     }
     
     public var body: some View {
@@ -181,7 +181,7 @@ public struct NumberView<Header: View, Footer: View>: View {
             do {
                 showProgress = true
                 let phoneNumber = try await networkManager.startAuthorization(phoneNumber: "+\(country.callingCode)\(number)")
-                callback(phoneNumber)
+                onCompetion(phoneNumber)
             } catch {
                 errorMessage = messageFor(error: error)
             }
@@ -193,26 +193,26 @@ public struct NumberView<Header: View, Footer: View>: View {
 
 extension NumberView {
     public init(kind: PhoneAuthKind = .initial,
-                callback: @escaping (_: String?) -> Void) where Footer == Never, Header == Never {
+                onCompetion: @escaping (_: String?) -> Void) where Footer == Never, Header == Never {
         self.init(kind: kind,
                   header: nil,
                   footer: nil,
-                  callback: callback)
+                  onCompetion: onCompetion)
     }
     public init(kind: PhoneAuthKind = .initial,
                 header: (() -> Header)?,
-                callback: @escaping (_: String?) -> Void) where Footer == Never {
+                onCompetion: @escaping (_: String?) -> Void) where Footer == Never {
         self.init(kind: kind,
                   header: header,
                   footer: nil,
-                  callback: callback)
+                  onCompetion: onCompetion)
     }
     public init(kind: PhoneAuthKind = .initial,
                 footer: (() -> Footer)?,
-                callback: @escaping (_: String?) -> Void) where Header == Never {
+                onCompetion: @escaping (_: String?) -> Void) where Header == Never {
         self.init(kind: kind,
                   header: nil,
                   footer: footer,
-                  callback: callback)
+                  onCompetion: onCompetion)
     }
 }
