@@ -281,12 +281,13 @@ public struct UserScreen: View {
                                         state: stateSelection?.code ?? "")
                         })
                     if kind == .management {
-                        UserDeleteButton(networkManager: networkManager, onCompletion: {
+                        UserDeleteButton {
 //                            UserDefaults.standard.setUserSignedIn(false)
 //                            Snabble.shared.user = nil
                             onDeletion()
 //                            killApp()
-                        })
+                        }
+                        .environment(networkManager)
                     }
                     
                     if isLoading {

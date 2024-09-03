@@ -11,16 +11,16 @@ import SnabbleNetwork
 import SnabbleAssetProviding
 
 public struct UserDeleteButton: View {
+    @SwiftUI.Environment(NetworkManager.self) var networkManager
+    
     @State private var showDeleteConfirmation = false
     
     @State private var isLoading: Bool = false
     @State private var errorMessage: String?
     
-    let networkManager: NetworkManager
     let onCompletion: () -> Void
     
-    public init(networkManager: NetworkManager, onCompletion: @escaping () -> Void) {
-        self.networkManager = networkManager
+    public init(onCompletion: @escaping () -> Void) {
         self.onCompletion = onCompletion
     }
     
