@@ -73,7 +73,11 @@ extension AppUser {
     
     public static func set(_ appUser: AppUser?, forConfig config: Configuration) {
         let keychain = Keychain(service: Self.service)
-        keychain[appUserKey(forConfig: config)] = appUser?.stringRepresentation
+        if let appUser {
+            keychain[appUserKey(forConfig: config)] = appUser.stringRepresentation
+        } else {
+            try? keychain.remove(appUserKey(forConfig: config))
+        }
         UserDefaults.standard.set(appUser?.id, forKey: "Snabble.api.appUserId")
     }
 }
