@@ -282,10 +282,9 @@ public struct UserScreen: View {
                         })
                     if kind == .management {
                         UserDeleteButton {
-//                            UserDefaults.standard.setUserSignedIn(false)
-//                            Snabble.shared.user = nil
-                            onDeletion()
-//                            killApp()
+                            DispatchQueue.main.async {
+                                onDeletion()
+                            }
                         }
                         .environment(networkManager)
                     }
@@ -324,16 +323,6 @@ public struct UserScreen: View {
             }
         }
     }
-
-//    private func killApp() {
-//        let application = UIApplication.shared
-//        let suspend = #selector(URLSessionTask.suspend)
-//        application.sendAction(suspend, to: application, from: nil, for: nil)
-//        
-//        Thread.sleep(forTimeInterval: 1)
-//        
-//        exit(0)
-//    }
     
     // swiftlint:disable:next function_parameter_count
     private func update(firstName: String,
@@ -361,7 +350,9 @@ public struct UserScreen: View {
             do {
                 isLoading = true
                 try await networkManager.publisher(for: endpoint)
-                onCompletion(details)
+                await MainActor.run {
+                    onCompletion(details)
+                }
             } catch {
                 errorMessage = error.localizedDescription
             }
