@@ -7,7 +7,6 @@
 
 import XCTest
 @testable import SnabbleNetwork
-import SnabbleUser
 
 final class TokenEndpointTests: XCTestCase {
 
@@ -20,7 +19,7 @@ final class TokenEndpointTests: XCTestCase {
     }
 
     var configuration: SnabbleNetwork.Configuration = .init(appId: "1", appSecret: "ABCDEFGHIJKLMNOP", domain: .production)
-    var appUser: AppUserDTO = .init(id: "555", secret: "123-456-789")
+    var appUser: AppUser = .init(id: "555", secret: "123-456-789")
 
     func testGet() throws {
         let endpoint = Endpoints.Token.get(appId: configuration.appId, appSecret: configuration.appSecret, appUser: appUser, projectId: "2")

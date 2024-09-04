@@ -16,7 +16,7 @@ final class NetworkManagerTests: XCTestCase {
     var cancellables: Set<AnyCancellable>!
     var networkManager: NetworkManager!
     var configuration: SnabbleNetwork.Configuration = .init(appId: "123", appSecret: "2", domain: .production)
-    var appUser: AppUserDTO?
+    var appUser: AppUser?
 
     override func setUpWithError() throws {
         cancellables = Set<AnyCancellable>()
@@ -124,11 +124,11 @@ final class NetworkManagerTests: XCTestCase {
 }
 
 extension NetworkManagerTests: NetworkManagerDelegate {
-    func networkManager(_ networkManager: NetworkManager, appUserUpdated appUser: AppUserDTO) {
+    func networkManager(_ networkManager: NetworkManager, appUserUpdated appUser: AppUser) {
         self.appUser = appUser
     }
 
-    func networkManager(_ networkManager: NetworkManager, appUserForConfiguration configuration: SnabbleNetwork.Configuration) -> AppUserDTO? {
+    func networkManager(_ networkManager: NetworkManager, appUserForConfiguration configuration: SnabbleNetwork.Configuration) -> AppUser? {
         appUser
     }
 

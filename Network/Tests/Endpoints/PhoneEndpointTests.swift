@@ -22,7 +22,7 @@ final class PhoneEndpointTests: XCTestCase {
     }
 
     var configuration: SnabbleNetwork.Configuration = .init(appId: "1", appSecret: "2", domain: .production)
-    var appUser: AppUserDTO = .init(id: "555", secret: "123-456-789")
+    var appUser: AppUser = .init(id: "555", secret: "123-456-789")
 
     func testAuth() throws {
         let endpoint = Endpoints.Phone.auth(phoneNumber: phoneNumber)

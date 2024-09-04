@@ -77,16 +77,16 @@ final class AuthenticatorTests: XCTestCase {
 #endif
     }
 
-    var appUser: AppUserDTO?
+    var appUser: AppUser?
     var projectId: String = "1"
 }
 
 extension AuthenticatorTests: AuthenticatorDelegate {
-    func authenticator(_ authenticator: Authenticator, appUserUpdated appUser: AppUserDTO) {
+    func authenticator(_ authenticator: Authenticator, appUserUpdated appUser: AppUser) {
         self.appUser = appUser
     }
 
-    func authenticator(_ authenticator: Authenticator, appUserForConfiguration configuration: SnabbleNetwork.Configuration) -> AppUserDTO? {
+    func authenticator(_ authenticator: Authenticator, appUserForConfiguration configuration: SnabbleNetwork.Configuration) -> AppUser? {
         appUser
     }
 

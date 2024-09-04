@@ -66,7 +66,7 @@ let package = Package(
     targets: [
         .target(
             name: "SnabbleNetwork",
-            dependencies: ["SwiftOTP"],
+            dependencies: ["SwiftOTP", "KeychainAccess"],
             path: "Network/Sources"
         ),
         .testTarget(
@@ -201,7 +201,6 @@ let package = Package(
         .target(
             name: "SnabbleUser",
             dependencies: [
-                "KeychainAccess",
                 "SnabbleAssetProviding",
                 "SnabbleNetwork"
             ],
