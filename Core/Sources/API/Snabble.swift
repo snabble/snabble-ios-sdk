@@ -95,7 +95,6 @@ public class Snabble {
         self.config = config
         self.tokenRegistry = tokenRegistry
         self.databases = [:]
-        self.userSubject = CurrentValueSubject(SnabbleUser.User.get(forConfig: config))
 
         if let metadataPath = config.seedMetadata {
             if let metadata = Metadata.readResource(metadataPath) {
@@ -231,9 +230,6 @@ public class Snabble {
     public var brands: [Brand] {
         metadata.brands
     }
-    
-    ///  Current user
-    public var userSubject: CurrentValueSubject<User?, Never>
 
     /// Finds project for a given id
     /// - Parameter projectId: matching id
