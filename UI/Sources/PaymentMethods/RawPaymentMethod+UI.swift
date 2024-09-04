@@ -114,7 +114,7 @@ extension RawPaymentMethod {
             let controller = TeleCashCreditCardAddViewController(brand: CreditCardBrand.forMethod(self), projectId, analyticsDelegate)
             return UserPaymentViewController(paymentViewController: controller)
         } else if descriptor.acceptedOriginTypes?.contains(.payonePseudoCardPAN) == true {
-            return PayoneCreditCardEditViewController(brand: CreditCardBrand.forMethod(self), projectId, analyticsDelegate)
+            return PayoneCreditCardEditViewController(brand: CreditCardBrand.forMethod(self), prefillData: nil, projectId, analyticsDelegate)
         } else if descriptor.acceptedOriginTypes?.contains(.datatransCreditCardAlias) == true {
             let controller = Snabble.methodRegistry.createEntry(method: self, projectId, analyticsDelegate)
             if let userValidation = controller as? UserInputConformance {

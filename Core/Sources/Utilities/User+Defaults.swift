@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import SnabbleUser
 
 public extension UserDefaults {
     static var isSignedInKey: String {
@@ -19,17 +18,5 @@ public extension UserDefaults {
 
     func setUserSignedIn(_ signedIn: Bool) {
         setValue(signedIn, forKey: Self.isSignedInKey)
-    }
-}
-
-public extension SnabbleUser.User {    
-    func update(withDetails details: User.Details) {
-        let user = Self(user: self, details: details)
-        Snabble.shared.user = user
-    }
-
-    func update(withConsent consent: User.Consent) {
-        let user = Self(user: self, consent: consent)
-        Snabble.shared.user = user
     }
 }

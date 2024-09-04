@@ -423,16 +423,6 @@ extension Snabble {
             OrderList.clearCache()
         }
     }
-    
-    public var user: User? {
-        get {
-            SnabbleUser.User.get(forConfig: config)
-        }
-        set {
-            userSubject.send(newValue)
-            SnabbleUser.User.set(newValue, forConfig: config)
-        }
-    }
 }
 
 extension Snabble {

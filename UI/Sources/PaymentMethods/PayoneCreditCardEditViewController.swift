@@ -75,7 +75,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     private var payonePreAuthResult: PayonePreAuthResult?
     private var payoneResponse: PayoneResponse?
 
-    public init(brand: CreditCardBrand?, prefillData: PrefillData? = Snabble.shared.user, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) {
+    public init(brand: CreditCardBrand?, prefillData: PrefillData?, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) {
         self.brand = brand
         self.analyticsDelegate = analyticsDelegate
         self.projectId = projectId
@@ -83,7 +83,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         super.init(nibName: nil, bundle: nil)
     }
 
-    init(_ detail: PaymentMethodDetail, prefillData: PrefillData? = Snabble.shared.user, _ analyticsDelegate: AnalyticsDelegate?) {
+    init(_ detail: PaymentMethodDetail, prefillData: PrefillData?, _ analyticsDelegate: AnalyticsDelegate?) {
         if case .payoneCreditCard(let data) = detail.methodData {
             self.brand = data.brand
             self.ccNumber = data.displayName

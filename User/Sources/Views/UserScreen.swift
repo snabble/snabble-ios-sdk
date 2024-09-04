@@ -362,10 +362,6 @@ public struct UserScreen: View {
                 isLoading = true
                 try await networkManager.publisher(for: endpoint)
                 onCompletion(details)
-//                DispatchQueue.main.async {
-//                    user.update(withDetails: details)
-//                    dismiss()
-//                }
             } catch {
                 errorMessage = error.localizedDescription
             }
