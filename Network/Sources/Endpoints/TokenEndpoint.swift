@@ -13,7 +13,7 @@ extension Endpoints {
         static func get(
             appId: String,
             appSecret: String,
-            appUser: SnabbleNetwork.AppUserDTO,
+            appUser: SnabbleNetwork.AppUser,
             projectId: String,
             role: SnabbleNetwork.Token.Scope = .retailerApp
         ) -> Endpoint<SnabbleNetwork.Token> {
@@ -32,7 +32,7 @@ extension Endpoints {
             return endpoint
         }
 
-        private static func authorization(appId: String, appSecret: String, appUser: SnabbleNetwork.AppUserDTO) -> String? {
+        private static func authorization(appId: String, appSecret: String, appUser: SnabbleNetwork.AppUser) -> String? {
             guard let password = password(withSecret: appSecret, forDate: Date()) else { return nil }
             return Data("\(appId):\(password):\(appUser.id):\(appUser.secret)".utf8).base64EncodedString()
         }

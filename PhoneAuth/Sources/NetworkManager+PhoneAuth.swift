@@ -12,8 +12,8 @@ import SnabbleUser
 
 public protocol PhoneAuthProviding {
     func startAuthorization(phoneNumber: String) async throws -> String
-    func signIn(phoneNumber: String, OTP: String) async throws -> SnabbleUser.AppUser?
-    func changePhoneNumber(phoneNumber: String, OTP: String) async throws -> SnabbleUser.AppUser?
+    func signIn(phoneNumber: String, OTP: String) async throws -> AppUser?
+    func changePhoneNumber(phoneNumber: String, OTP: String) async throws -> AppUser?
     func delete(phoneNumber: String) async throws
 }
 
@@ -51,34 +51,26 @@ extension NetworkManager: PhoneAuthProviding {
     }
 
     @discardableResult
-    public func signIn(phoneNumber: String, OTP: String) async throws -> SnabbleUser.AppUser? {
+    public func signIn(phoneNumber: String, OTP: String) async throws -> AppUser? {
         let endpoint = Endpoints.Phone.signIn(
             phoneNumber: phoneNumber,
             OTP: OTP
         )
 
         return try await useContinuation(endpoint: endpoint) { response, continuation in
-            var appUser: SnabbleUser.AppUser?
-            if let response {
-                appUser = .fromDTO(response)
-            }
-            continuation.resume(with: .success(appUser))
+            continuation.resume(with: .success(response))
         }
     }
 
     @discardableResult
-    public func changePhoneNumber(phoneNumber: String, OTP: String) async throws -> SnabbleUser.AppUser? {
+    public func changePhoneNumber(phoneNumber: String, OTP: String) async throws -> AppUser? {
         let endpoint = Endpoints.Phone.changePhoneNumber(
             phoneNumber: phoneNumber,
             OTP: OTP
         )
 
         return try await useContinuation(endpoint: endpoint) { response, continuation in
-            var appUser: SnabbleUser.AppUser?
-            if let response {
-                appUser = .fromDTO(response)
-            }
-            continuation.resume(with: .success(appUser))
+            continuation.resume(with: .success(response))
         }
     }
 

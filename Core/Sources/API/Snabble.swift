@@ -7,6 +7,7 @@
 import Foundation
 import CoreLocation
 import SnabbleUser
+import SnabbleNetwork
 import Combine
 
 public var globalButterOverflow: String?
@@ -73,7 +74,7 @@ public struct Config {
     }
 }
 
-extension Config: SnabbleUser.Configuration {
+extension Config: SnabbleUser.Configurable, SnabbleNetwork.Configurable {
     public var domainName: String {
         environment.name
     }
@@ -415,10 +416,10 @@ extension Snabble {
     */
     public var appUser: AppUser? {
         get {
-            SnabbleUser.AppUser.get(forConfig: config)
+            AppUser.get(forConfig: config)
         }
         set {
-            SnabbleUser.AppUser.set(newValue, forConfig: config)
+            AppUser.set(newValue, forConfig: config)
             tokenRegistry.invalidate()
             OrderList.clearCache()
         }

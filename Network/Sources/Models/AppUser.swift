@@ -59,11 +59,11 @@ extension AppUser {
     private static let service = "io.snabble.sdk"
     
     // MARK: - app user id
-    private static func appUserKey(forConfig config: Configuration) -> String {
+    private static func appUserKey(forConfig config: Configurable) -> String {
         "Snabble.api.appUserId.\(config.domainName).\(config.appId)"
     }
     
-    public static func get(forConfig config: Configuration) -> AppUser? {
+    public static func get(forConfig config: Configurable) -> AppUser? {
         let keychain = Keychain(service: Self.service)
         guard let stringRepresentation = keychain[appUserKey(forConfig: config)] else {
             return nil
@@ -71,7 +71,7 @@ extension AppUser {
         return AppUser(stringRepresentation: stringRepresentation)
     }
     
-    public static func set(_ appUser: AppUser?, forConfig config: Configuration) {
+    public static func set(_ appUser: AppUser?, forConfig config: Configurable) {
         let keychain = Keychain(service: Self.service)
         if let appUser {
             keychain[appUserKey(forConfig: config)] = appUser.stringRepresentation

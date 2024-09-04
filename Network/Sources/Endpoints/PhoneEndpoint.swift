@@ -23,7 +23,7 @@ extension Endpoints {
             )
         }
 
-        public static func signIn(phoneNumber: String, OTP: String) -> Endpoint<SnabbleNetwork.AppUserDTO?> {
+        public static func signIn(phoneNumber: String, OTP: String) -> Endpoint<SnabbleNetwork.AppUser?> {
             // swiftlint:disable:next force_try
             let data = try! JSONSerialization.data(withJSONObject: [
                 "otp": OTP,
@@ -35,7 +35,7 @@ extension Endpoints {
                 method: .post(data),
                 parse: { data in
                     do {
-                        return try Endpoints.jsonDecoder.decode(SnabbleNetwork.AppUserDTO.self, from: data)
+                        return try Endpoints.jsonDecoder.decode(SnabbleNetwork.AppUser.self, from: data)
                     } catch {
                         if case DecodingError.keyNotFound(let codingKey, _) = error {
                             if codingKey.stringValue == "secret" {
@@ -50,7 +50,7 @@ extension Endpoints {
                 })
         }
         
-        public static func changePhoneNumber(phoneNumber: String, OTP: String) -> Endpoint<SnabbleNetwork.AppUserDTO?> {
+        public static func changePhoneNumber(phoneNumber: String, OTP: String) -> Endpoint<SnabbleNetwork.AppUser?> {
             // swiftlint:disable:next force_try
             let data = try! JSONSerialization.data(withJSONObject: [
                 "otp": OTP,
@@ -62,7 +62,7 @@ extension Endpoints {
                 method: .post(data),
                 parse: { data in
                     do {
-                        return try Endpoints.jsonDecoder.decode(SnabbleNetwork.AppUserDTO.self, from: data)
+                        return try Endpoints.jsonDecoder.decode(SnabbleNetwork.AppUser.self, from: data)
                     } catch {
                         if case DecodingError.keyNotFound(let codingKey, _) = error {
                             if codingKey.stringValue == "secret" {

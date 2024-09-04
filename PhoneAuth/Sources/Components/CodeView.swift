@@ -26,7 +26,7 @@ private extension PhoneAuthKind {
 public struct CodeView: View {
     @SwiftUI.Environment(NetworkManager.self) var networkManager
     
-    public init(kind: PhoneAuthKind, phoneNumber: String, onCompletion: @escaping (_: SnabbleUser.AppUser?) -> Void) {
+    public init(kind: PhoneAuthKind, phoneNumber: String, onCompletion: @escaping (_: AppUser?) -> Void) {
         self.kind = kind
         self.phoneNumber = phoneNumber
         self.onCompletion = onCompletion
@@ -40,7 +40,7 @@ public struct CodeView: View {
     @State var showProgress: Bool = false
     @State var errorMessage: String = ""
     
-    public var onCompletion: (_ appUser: SnabbleUser.AppUser?) -> Void
+    public var onCompletion: (_ appUser: AppUser?) -> Void
     
     private var isEnabled: Bool {
         otp.count == 6
@@ -119,7 +119,7 @@ public struct CodeView: View {
         Task {
             do {
                 showProgress = true
-                let appUser: SnabbleUser.AppUser?
+                let appUser: AppUser?
                 switch kind {
                 case .initial:
                     appUser = try await networkManager.signIn(phoneNumber: phoneNumber, OTP: OTP)

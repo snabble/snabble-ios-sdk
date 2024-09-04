@@ -218,11 +218,11 @@ extension User {
 }
 
 extension User {
-    private static func userKey(forConfig config: Configuration) -> String {
+    private static func userKey(forConfig config: Configurable) -> String {
         "Snabble.api.user.\(config.domainName).\(config.appId)"
     }
     
-    public static func get(forConfig config: Configuration) -> User? {
+    public static func get(forConfig config: Configurable) -> User? {
         guard let data = UserDefaults.standard.data(forKey: userKey(forConfig: config)) else { return nil }
         let jsonDecoder = JSONDecoder()
         do {
@@ -232,7 +232,7 @@ extension User {
         }
     }
     
-    public static func set(_ user: User?, forConfig config: Configuration) {
+    public static func set(_ user: User?, forConfig config: Configurable) {
         do {
             let encoded = try JSONEncoder().encode(user)
             UserDefaults.standard.set(encoded, forKey: userKey(forConfig: config))

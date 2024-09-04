@@ -10,8 +10,8 @@ import Dispatch
 import Combine
 
 protocol AuthenticatorDelegate: AnyObject {
-    func authenticator(_ authenticator: Authenticator, appUserForConfiguration configuration: Configuration) -> AppUserDTO?
-    func authenticator(_ authenticator: Authenticator, appUserUpdated appUser: AppUserDTO)
+    func authenticator(_ authenticator: Authenticator, appUserForConfiguration configuration: Configuration) -> AppUser?
+    func authenticator(_ authenticator: Authenticator, appUserUpdated appUser: AppUser)
 
     func authenticator(_ authenticator: Authenticator, projectIdForConfiguration configuration: Configuration) -> String?
 }
@@ -36,7 +36,7 @@ class Authenticator {
         self.urlSession = urlSession
     }
 
-    func updateAppUser(_ appUser: AppUserDTO) {
+    func updateAppUser(_ appUser: AppUser) {
         invalidateToken()
         delegate?.authenticator(self, appUserUpdated: appUser)
     }
@@ -45,7 +45,7 @@ class Authenticator {
         token = nil
     }
 
-    private func validateAppUser(withConfiguration configuration: Configuration) -> AnyPublisher<AppUserDTO, Swift.Error> {
+    private func validateAppUser(withConfiguration configuration: Configuration) -> AnyPublisher<AppUser, Swift.Error> {
         // scenario 1: app instance is registered
         if let appUser = delegate?.authenticator(self, appUserForConfiguration: configuration) {
             return Just(appUser)
