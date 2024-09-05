@@ -10,6 +10,8 @@ import SwiftUI
 import SnabbleAssetProviding
 
 public struct UserFallBackView: View {
+    public init() {}
+    
     public var body: some View {
         Text(Asset.localizedString(forKey: "Snabble.Account.Info.fallback")).header()
     }
