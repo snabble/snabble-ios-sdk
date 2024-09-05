@@ -12,7 +12,7 @@ let package = Package(
     products: [
         .library(
             name: "Snabble",
-            targets: ["SnabbleAssetProviding", "SnabbleCore", "SnabbleUI", "SnabblePhoneAuth", "SnabbleScanAndGo"]
+            targets: ["SnabbleAssetProviding", "SnabbleCore", "SnabbleUI", "SnabblePhoneAuth", "SnabbleScanAndGo", "SnabbleUser", "SnabbleComponents"]
         ),
         .library(
             name: "SnabbleAssetProviding",
@@ -22,9 +22,13 @@ let package = Package(
             name: "SnabbleCore",
             targets: ["SnabbleCore"]
         ),
-       .library(
+        .library(
             name: "SnabbleUI",
             targets: ["SnabbleAssetProviding", "SnabbleUI"]
+        ),
+        .library(
+            name: "SnabbleComponents",
+            targets: ["SnabbleAssetProviding", "SnabbleComponents"]
         ),
         .library(
             name: "SnabbleDatatrans",
@@ -46,8 +50,9 @@ let package = Package(
             name: "SnabbleScanAndGo",
             targets: ["SnabbleScanAndGo"]
         ),
-       .library(name: "SnabbleUser",
-                 targets: ["SnabbleUser", "SnabbleAssetProviding"])
+       .library(
+            name: "SnabbleUser",
+            targets: ["SnabbleUser", "SnabbleAssetProviding"])
     ],
     dependencies: [
         .package(url: "https://github.com/lachlanbell/SwiftOTP", from: "3.0.2"),
@@ -120,11 +125,19 @@ let package = Package(
                 "Pulley",
                 "WCAG-Colors",
                 "SnabbleUser",
+                "SnabbleComponents"
             ],
             path: "UI/Sources",
             resources: [
                 .process("Resources")
             ]
+        ),
+        .target(
+            name: "SnabbleComponents",
+            dependencies: [
+                "SnabbleAssetProviding"
+            ],
+            path: "Components/Sources"
         ),
         .target(
             name: "SnabbleDatatrans",
@@ -202,7 +215,8 @@ let package = Package(
             name: "SnabbleUser",
             dependencies: [
                 "SnabbleAssetProviding",
-                "SnabbleNetwork"
+                "SnabbleNetwork",
+                "SnabbleComponents"
             ],
             path: "User/Sources"
         ),

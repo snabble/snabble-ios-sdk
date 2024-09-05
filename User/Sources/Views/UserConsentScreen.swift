@@ -10,6 +10,7 @@ import SwiftUI
 
 import SnabbleNetwork
 import SnabbleAssetProviding
+import SnabbleComponents
 
 struct ClearBackgroundView: UIViewRepresentable {
     func makeUIView(context: Context) -> UIView {
@@ -94,12 +95,10 @@ public struct UserConsentScreen: View {
                     .fontWeight(.bold)
                 
                 attributedText
-//                    .handle(with: $urlResource)
-//                    .sheet(item: $urlResource) { _ in
-//                        Color(.red) // WARNING: Show URL!
-//                        print("show \(url.relativePath)")
-//                        WebView(url: url)
-//                    }
+                    .handle(with: $urlResource)
+                    .sheet(item: $urlResource) { url in
+                        WebView(url: url)
+                    }
                 PrimaryButtonView(title: Asset.localizedString(forKey: "Consent.accept")) {
                     update()
                 }
@@ -125,7 +124,9 @@ public struct UserConsentScreen: View {
         Task {
             let endpoint = Endpoints.User.update(consent: userConsent)
             try? await networkManager.publisher(for: endpoint)
-            onCompletion(userConsent)
+            await MainActor.run {
+                onCompletion(userConsent)
+            }
         }
     }
 }

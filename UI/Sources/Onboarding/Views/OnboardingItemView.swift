@@ -9,6 +9,7 @@
 
 import SwiftUI
 import SnabbleAssetProviding
+import SnabbleComponents
 
 struct URLModifier: ViewModifier {
     @Binding var url: URL?
@@ -31,12 +32,6 @@ struct URLModifier: ViewModifier {
 extension View {
     func handle(with url: Binding<URL?>) -> some View {
         modifier(URLModifier(url: url))
-    }
-}
-
-extension URL: Swift.Identifiable {
-    public var id: String {
-        return self.absoluteString
     }
 }
 
