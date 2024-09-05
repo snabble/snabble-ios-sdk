@@ -10,7 +10,6 @@ import Combine
 
 import SnabbleAssetProviding
 
-
 public protocol UserViewControllerDelegate: AnyObject {
     func userViewController(_ viewController: UserViewController, didFinishWithUser user: User)
 }
@@ -66,7 +65,6 @@ public class UserViewController: UIViewController {
         hostingController.didMove(toParent: self)
         self.view = view
     }
-    
     
     private var userBinding: Binding<User?> {
         Binding<User?>(

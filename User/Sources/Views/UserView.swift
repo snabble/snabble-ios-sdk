@@ -71,9 +71,8 @@ public struct UserView: View {
         self.requiredFields = requiredFields
         
         var callingCode: CallingCode = .germany
-        if let code = user.wrappedValue?.phone?.code,
-           let _callingCode = CallingCode.all.callingCode(forCode: code) {
-            callingCode = _callingCode
+        if let code = user.wrappedValue?.phone?.code {
+            callingCode = CallingCode.all.callingCode(forCode: code) ?? callingCode
         }
 #if DEBUG
         self._firstName = State(initialValue: user.wrappedValue?.firstName ?? "Foo")
