@@ -8,7 +8,7 @@
 import Foundation
 import SnabbleNetwork
 
-public struct User: Codable {
+public struct User: Codable, Equatable {
     public let id: String
     
     public let metadata: Metadata?
@@ -20,11 +20,11 @@ public struct User: Codable {
     public var dateOfBirth: Date?
     public var address: Address?
     
-    public struct Phone: Codable {
+    public struct Phone: Codable, Equatable {
         public var code: UInt?
         public var number: String?
     }
-    public struct Address: Codable {
+    public struct Address: Codable, Equatable {
         public var street: String?
         public var zip: String?
         public var city: String?
@@ -40,7 +40,7 @@ public struct User: Codable {
         }
     }
     
-    public struct Metadata: Codable {
+    public struct Metadata: Codable, Equatable {
         public let phoneNumber: String?
         public let fields: [Field]?
         public let consent: Consent?
@@ -151,12 +151,6 @@ public struct User: Codable {
         self.phone = user.phone
         self.dateOfBirth = user.dateOfBirth
         self.address = user.address
-    }
-}
-
-extension SnabbleUser.User: Equatable {
-    public static func == (lhs: SnabbleUser.User, rhs: SnabbleUser.User) -> Bool {
-        lhs.id == rhs.id
     }
 }
 
