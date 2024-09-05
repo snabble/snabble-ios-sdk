@@ -1,6 +1,6 @@
 //
-//  UserScreen.swift
-//  teo
+//  UserInputView.swift
+//  SnabbleUser
 //
 //  Created by Andreas Osberghaus on 2024-02-19.
 //
@@ -10,7 +10,7 @@ import SwiftUI
 import SnabbleNetwork
 import SnabbleAssetProviding
 
-public struct UserScreen: View {
+public struct UserInputView: View {
     public enum Kind {
         case initial
         case management
@@ -42,7 +42,6 @@ public struct UserScreen: View {
             }
         }
     }
-    @Environment(\.dismiss) var dismiss
     
     let kind: Kind
     
@@ -364,7 +363,7 @@ public struct UserScreen: View {
 }
 
 extension Array where Element == SnabbleUser.User.Field {
-    func toFields() -> [UserScreen.Field] {
+    func toFields() -> [UserInputView.Field] {
         compactMap { element in
             switch element.id {
             case "firstName":
