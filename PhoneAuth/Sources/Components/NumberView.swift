@@ -180,7 +180,7 @@ public struct NumberView<Header: View, Footer: View>: View {
         Task {
             do {
                 showProgress = true
-                let phoneNumber = try await networkManager.startAuthorization(phoneNumber: "+\(country.callingCode)\(number)")
+                let phoneNumber = try await networkManager.startAuthorization(phoneNumber: "+\(country.code)\(number)")
                 onCompetion(phoneNumber)
             } catch {
                 errorMessage = messageFor(error: error)
