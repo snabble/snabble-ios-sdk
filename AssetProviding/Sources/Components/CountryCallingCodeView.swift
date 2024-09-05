@@ -26,7 +26,7 @@ public struct CountryCallingCodeView: View {
                 if let flag = selectedCountry.flagSymbol {
                     Text(flag)
                 }
-                Text("+\(selectedCountry.callingCode)")
+                Text("+\(selectedCountry.code)")
             }
             .foregroundColor(.primary)
         }
@@ -34,7 +34,7 @@ public struct CountryCallingCodeView: View {
             CountryCallingCodeListView(countries: countries, selection: $selection)
         }
         .onChange(of: selection) { _, value in
-            if let value, let country = countries.callingCode(forCode: value) {
+            if let value, let country = countries.callingCode(forId: value) {
                 selectedCountry = country
             }
         }
@@ -90,7 +90,7 @@ private struct CountryCallingCodeRow: View {
                     .font(.largeTitle)
             }
             VStack(alignment: .leading) {
-                Text("+\(country.callingCode)")
+                Text("+\(country.code)")
                 Text(country.name)
                     .foregroundColor(.secondary)
                     .font(.footnote)

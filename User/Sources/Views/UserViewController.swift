@@ -10,39 +10,34 @@ import Combine
 
 import SnabbleAssetProviding
 
-public final class UserModel: ObservableObject {
-    @Published public var user: User
+
+public protocol UserViewControllerDelegate: AnyObject {
+    func userViewController(_ viewController: UserViewController, didFinishWithUser user: User)
+}
+
+public class UserViewController: UIViewController {
     
-    public let fields: [UserField]
-    public let required: [UserField]
+    public weak var delegate: UserViewControllerDelegate?
     
-    public init(user: User, fields: [UserField] = UserField.allCases, required: [UserField] = UserField.allCases) {
+    private var user: User? {
+        didSet {
+            if let user {
+                delegate?.userViewController(self, didFinishWithUser: user)
+            }
+        }
+    }
+    
+    private let fields: [UserField]
+    private let requiredFields: [UserField]
+    
+    public init(user: User?,
+                fields: [UserField] = UserField.allCases,
+                requiredFields: [UserField] = UserField.allCases
+    ) {
         self.user = user
         self.fields = fields
-        self.required = required
-    }
-}
-
-public protocol UserViewProxy: AnyObject {
-    func userInfoAvailable(user: User)
-}
-
-public class UserViewController: UIHostingController<UserView> {
-    
-    public weak var delegate: UserViewProxy?
-    
-    public var model: UserModel {
-        rootView.model
-    }
-    
-    public init(user: User,
-                fields: [UserField] = UserField.allCases,
-                required: [UserField] = UserField.allCases
-    ) {
-        let model = UserModel(user: user, fields: fields, required: required)
-        
-        let userView = UserView(model: model)
-        super.init(rootView: userView)
+        self.requiredFields = requiredFields
+        super.init(nibName: nil, bundle: nil)
         self.title = Asset.localizedString(forKey: "Snabble.UserView.title")
     }
     
@@ -50,15 +45,35 @@ public class UserViewController: UIHostingController<UserView> {
         fatalError("init(coder:) has not been implemented")
     }
     
-    public override func viewDidLoad() {
-        super.viewDidLoad()
+    public override func loadView() {
+        let view = UIView(frame: UIScreen.main.bounds)
+        let userView = UserView(user: userBinding, fields: fields, requiredFields: requiredFields)
+        let hostingController = UIHostingController(rootView: userView)
         
-        model.$user
-            .sink { updatedUser in
-                self.delegate?.userInfoAvailable(user: updatedUser)
-            }
-            .store(in: &cancellables)
+        // Add the hosting controller as a child
+        addChild(hostingController)
+        hostingController.view.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(hostingController.view)
+        
+        // Set up constraints
+        NSLayoutConstraint.activate([
+            hostingController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            hostingController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            hostingController.view.topAnchor.constraint(equalTo: view.topAnchor),
+            hostingController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
+        
+        hostingController.didMove(toParent: self)
+        self.view = view
     }
     
-    private var cancellables = Set<AnyCancellable>()
+    
+    private var userBinding: Binding<User?> {
+        Binding<User?>(
+            get: { self.user },
+            set: { newValue in
+                self.user = newValue
+            }
+        )
+    }
 }
