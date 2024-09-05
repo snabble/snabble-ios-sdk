@@ -391,25 +391,3 @@ extension Array where Element == SnabbleUser.User.Field {
         }
     }
 }
-
-class UserScreenViewController: UIHostingController<UserScreen> {
-    init(networkManager: NetworkManager, user: SnabbleUser.User) {
-        let rootView = UserScreen(
-            networkManager: networkManager,
-            user: user,
-            kind: .initial,
-            onCompletion: { details in
-                print(details)
-            },
-            onDeletion: {
-                print("Delete User")
-            }
-        )
-        
-        super.init(rootView: rootView)
-    }
-    
-    @MainActor required dynamic init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-}
