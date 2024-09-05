@@ -311,3 +311,39 @@ private extension Date {
         return dateFormatter.string(from: self)
     }
 }
+
+public extension User {
+    var isInputRequired: Bool {
+        guard let fields = metadata?.fields else {
+            return false
+        }
+        var isInputRequired = false
+        for field in fields where field.isRequired {
+            let key = field.id
+            switch key {
+            case "firstName":
+                isInputRequired = firstName == nil
+            case "lastName":
+                isInputRequired = lastName == nil
+            case "email":
+                isInputRequired = email == nil
+            case "street":
+                isInputRequired = address?.street == nil
+            case "zip":
+                isInputRequired = address?.zip == nil
+            case "city":
+                isInputRequired = address?.city == nil
+            case "country":
+                isInputRequired = address?.country == nil
+            case "dateOfBirth":
+                isInputRequired = dateOfBirth == nil
+            default:
+                continue
+            }
+            if isInputRequired {
+                break
+            }
+        }
+        return isInputRequired
+    }
+}
