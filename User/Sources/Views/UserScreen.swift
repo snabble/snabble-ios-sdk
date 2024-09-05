@@ -89,7 +89,7 @@ public struct UserScreen: View {
         _city = State(initialValue: self.user.address?.city ?? "")
         _country = State(initialValue: self.user.address?.country ?? "")
         _state = State(initialValue: self.user.address?.state ?? "")
-   }
+    }
     
     var fields: [Field] {
         user.metadata?.fields?.toFields() ?? []
@@ -97,7 +97,7 @@ public struct UserScreen: View {
     
     enum Field: String, Swift.Identifiable, Hashable {
         var id: Self { self }
-
+        
         case firstName
         case lastName
         case email
@@ -120,12 +120,12 @@ public struct UserScreen: View {
     
     @State private var countrySelection: Country = Country.germany
     @State private var stateSelection: Country.State?
-
+    
     @State private var errorMessage: String?
     
     @State private var isLoading: Bool = false
     @State private var showAccountConfirmation: Bool = false
-
+    
     @FocusState private var focusField: Field?
     
     private var isButtonEnabled: Bool {
@@ -154,174 +154,172 @@ public struct UserScreen: View {
     }
     
     public var body: some View {
-        NavigationStack {
-            ScrollView {
-                VStack(spacing: 16) {
-                    Text(Asset.localizedString(forKey: kind.message))
-                        .multilineTextAlignment(.center)
-                    VStack(spacing: 8) {
-                        ForEach(fields, id: \.id) { field in
-                            switch field {
-                            case .firstName:
-                                TextField(Asset.localizedString(forKey: "Snabble.Account.UserDetails.firstName"), text: $firstName)
-                                    .focused($focusField, equals: .firstName)
-                                    .textContentType(.givenName)
-                                    .keyboardType(.default)
-                                    .submitLabel(.continue)
-                                    .padding(12)
-                                    .background(.quaternary)
-                                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                                    .onSubmit {
-                                        focusField = fields.after(.firstName)
-                                    }
-                                    .disabled(isLoading)
-                            case .lastName:
-                                TextField(Asset.localizedString(forKey: "Snabble.Account.UserDetails.lastName"), text: $lastName)
-                                    .focused($focusField, equals: .lastName)
-                                    .textContentType(.familyName)
-                                    .keyboardType(.default)
-                                    .submitLabel(.continue)
-                                    .padding(12)
-                                    .background(.quaternary)
-                                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                                    .onSubmit {
-                                        focusField = fields.after(.lastName)
-                                    }
-                                    .disabled(isLoading)
-                            case .email:
-                                TextField(Asset.localizedString(forKey: "Snabble.Account.UserDetails.email"), text: $email)
-                                    .focused($focusField, equals: .email)
-                                    .textContentType(.emailAddress)
-                                    .keyboardType(.emailAddress)
-                                    .textInputAutocapitalization(.never)
-                                    .submitLabel(.continue)
-                                    .padding(12)
-                                    .background(.quaternary)
-                                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                                    .onSubmit {
-                                        focusField = fields.after(.email)
-                                    }
-                                    .disabled(isLoading)
-                            case .dateOfBirth:
-                                DatePicker(Asset.localizedString(forKey: "Snabble.Account.UserDetails.dateOfBirth"),
-                                           selection: $dateOfBirth,
-                                           in: ...Self.sixteenYearAgo,
-                                           displayedComponents: .date)
-                                .datePickerStyle(.compact)
-                                .focused($focusField, equals: .dateOfBirth)
+        ScrollView {
+            VStack(spacing: 16) {
+                Text(Asset.localizedString(forKey: kind.message))
+                    .multilineTextAlignment(.center)
+                VStack(spacing: 8) {
+                    ForEach(fields, id: \.id) { field in
+                        switch field {
+                        case .firstName:
+                            TextField(Asset.localizedString(forKey: "Snabble.Account.UserDetails.firstName"), text: $firstName)
+                                .focused($focusField, equals: .firstName)
+                                .textContentType(.givenName)
+                                .keyboardType(.default)
+                                .submitLabel(.continue)
                                 .padding(12)
                                 .background(.quaternary)
                                 .clipShape(RoundedRectangle(cornerRadius: 6))
                                 .onSubmit {
-                                    focusField = fields.after(.dateOfBirth)
+                                    focusField = fields.after(.firstName)
                                 }
                                 .disabled(isLoading)
-                            case .street:
-                                TextField(Asset.localizedString(forKey: "Snabble.Account.UserDetails.street"), text: $street)
-                                    .focused($focusField, equals: .street)
-                                    .textContentType(.streetAddressLine1)
-                                    .keyboardType(.default)
-                                    .submitLabel(.continue)
-                                    .padding(12)
-                                    .background(.quaternary)
-                                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                                    .onSubmit {
-                                        focusField = fields.after(.street)
-                                    }
-                                    .disabled(isLoading)
-                            case .zip:
-                                TextField(Asset.localizedString(forKey: "Snabble.Account.UserDetails.zip"), text: $zip)
-                                    .focused($focusField, equals: .zip)
-                                    .textContentType(.postalCode)
-                                    .keyboardType(.numberPad)
-                                    .submitLabel(.continue)
-                                    .padding(12)
-                                    .background(.quaternary)
-                                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                                    .onSubmit {
-                                        focusField = fields.after(.zip)
-                                    }
-                                    .disabled(isLoading)
-                            case .city:
-                                TextField(Asset.localizedString(forKey: "Snabble.Account.UserDetails.city"), text: $city)
-                                    .focused($focusField, equals: .city)
-                                    .textContentType(.addressCity)
-                                    .keyboardType(.default)
-                                    .submitLabel(.continue)
-                                    .padding(12)
-                                    .background(.quaternary)
-                                    .clipShape(RoundedRectangle(cornerRadius: 6))
-                                    .onSubmit {
-                                        focusField = fields.after(.city)
-                                    }
-                                    .disabled(isLoading)
-                            case .country:
-                                CountryButtonView(
-                                    countries: Country.all,
-                                    selectedCountry: $countrySelection,
-                                    selectedState: $stateSelection
-                                )
-                                .focused($focusField, equals: .country)
+                        case .lastName:
+                            TextField(Asset.localizedString(forKey: "Snabble.Account.UserDetails.lastName"), text: $lastName)
+                                .focused($focusField, equals: .lastName)
+                                .textContentType(.familyName)
+                                .keyboardType(.default)
+                                .submitLabel(.continue)
+                                .padding(12)
+                                .background(.quaternary)
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                                .onSubmit {
+                                    focusField = fields.after(.lastName)
+                                }
                                 .disabled(isLoading)
+                        case .email:
+                            TextField(Asset.localizedString(forKey: "Snabble.Account.UserDetails.email"), text: $email)
+                                .focused($focusField, equals: .email)
+                                .textContentType(.emailAddress)
+                                .keyboardType(.emailAddress)
+                                .textInputAutocapitalization(.never)
+                                .submitLabel(.continue)
+                                .padding(12)
+                                .background(.quaternary)
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                                .onSubmit {
+                                    focusField = fields.after(.email)
+                                }
+                                .disabled(isLoading)
+                        case .dateOfBirth:
+                            DatePicker(Asset.localizedString(forKey: "Snabble.Account.UserDetails.dateOfBirth"),
+                                       selection: $dateOfBirth,
+                                       in: ...Self.sixteenYearAgo,
+                                       displayedComponents: .date)
+                            .datePickerStyle(.compact)
+                            .focused($focusField, equals: .dateOfBirth)
+                            .padding(12)
+                            .background(.quaternary)
+                            .clipShape(RoundedRectangle(cornerRadius: 6))
+                            .onSubmit {
+                                focusField = fields.after(.dateOfBirth)
                             }
+                            .disabled(isLoading)
+                        case .street:
+                            TextField(Asset.localizedString(forKey: "Snabble.Account.UserDetails.street"), text: $street)
+                                .focused($focusField, equals: .street)
+                                .textContentType(.streetAddressLine1)
+                                .keyboardType(.default)
+                                .submitLabel(.continue)
+                                .padding(12)
+                                .background(.quaternary)
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                                .onSubmit {
+                                    focusField = fields.after(.street)
+                                }
+                                .disabled(isLoading)
+                        case .zip:
+                            TextField(Asset.localizedString(forKey: "Snabble.Account.UserDetails.zip"), text: $zip)
+                                .focused($focusField, equals: .zip)
+                                .textContentType(.postalCode)
+                                .keyboardType(.numberPad)
+                                .submitLabel(.continue)
+                                .padding(12)
+                                .background(.quaternary)
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                                .onSubmit {
+                                    focusField = fields.after(.zip)
+                                }
+                                .disabled(isLoading)
+                        case .city:
+                            TextField(Asset.localizedString(forKey: "Snabble.Account.UserDetails.city"), text: $city)
+                                .focused($focusField, equals: .city)
+                                .textContentType(.addressCity)
+                                .keyboardType(.default)
+                                .submitLabel(.continue)
+                                .padding(12)
+                                .background(.quaternary)
+                                .clipShape(RoundedRectangle(cornerRadius: 6))
+                                .onSubmit {
+                                    focusField = fields.after(.city)
+                                }
+                                .disabled(isLoading)
+                        case .country:
+                            CountryButtonView(
+                                countries: Country.all,
+                                selectedCountry: $countrySelection,
+                                selectedState: $stateSelection
+                            )
+                            .focused($focusField, equals: .country)
+                            .disabled(isLoading)
                         }
                     }
-                    PrimaryButtonView(
-                        title: Asset.localizedString(forKey: kind.buttonTitle),
-                        disabled: Binding(get: { !isButtonEnabled || isLoading }, set: { _ in }),
-                        onAction: {
-                            self.update(firstName: firstName,
-                                        lastName: lastName,
-                                        email: email,
-                                        dateOfBirth: dateOfBirth,
-                                        street: street,
-                                        zip: zip,
-                                        city: city,
-                                        country: countrySelection.code,
-                                        state: stateSelection?.code ?? "")
-                        })
-                    if kind == .management {
-                        UserDeleteButton {
-                            DispatchQueue.main.async {
-                                onDeletion()
-                            }
+                }
+                PrimaryButtonView(
+                    title: Asset.localizedString(forKey: kind.buttonTitle),
+                    disabled: Binding(get: { !isButtonEnabled || isLoading }, set: { _ in }),
+                    onAction: {
+                        self.update(firstName: firstName,
+                                    lastName: lastName,
+                                    email: email,
+                                    dateOfBirth: dateOfBirth,
+                                    street: street,
+                                    zip: zip,
+                                    city: city,
+                                    country: countrySelection.code,
+                                    state: stateSelection?.code ?? "")
+                    })
+                if kind == .management {
+                    UserDeleteButton {
+                        DispatchQueue.main.async {
+                            onDeletion()
                         }
-                        .environment(networkManager)
                     }
+                    .environment(networkManager)
+                }
+                
+                if isLoading {
+                    ProgressView()
+                }
+                
+                if let errorMessage {
+                    Text(errorMessage)
+                        .font(.footnote)
+                        .foregroundStyle(.red)
+                        .multilineTextAlignment(.center)
+                }
+                Spacer()
+            }
+            .onAppear {
+                if let countryCode = user.address?.country,
+                   let country = Country.all.country(forCode: countryCode) {
+                    countrySelection = country
                     
-                    if isLoading {
-                        ProgressView()
-                    }
-                    
-                    if let errorMessage {
-                        Text(errorMessage)
-                            .font(.footnote)
-                            .foregroundStyle(.red)
-                            .multilineTextAlignment(.center)
-                    }
-                    Spacer()
-                }
-                .onAppear {
-                    if let countryCode = user.address?.country,
-                       let country = Country.all.country(forCode: countryCode) {
-                        countrySelection = country
-                        
-                        if let stateCode = user.address?.state,
-                           let state = country.states?.state(forCode: stateCode) {
-                            stateSelection = state
-                        }
+                    if let stateCode = user.address?.state,
+                       let state = country.states?.state(forCode: stateCode) {
+                        stateSelection = state
                     }
                 }
-                .onChange(of: countrySelection) { _, country in
-                    if user.address?.country != country.code {
-                        stateSelection = nil
-                    }
+            }
+            .onChange(of: countrySelection) { _, country in
+                if user.address?.country != country.code {
+                    stateSelection = nil
                 }
-                .navigationBarTitleDisplayMode(.inline)
-                .navigationTitle(Asset.localizedString(forKey: kind.title))
-                .padding()
             }
         }
+        .navigationBarTitleDisplayMode(.inline)
+        .navigationTitle(Asset.localizedString(forKey: kind.title))
+        .padding()
     }
     
     // swiftlint:disable:next function_parameter_count
