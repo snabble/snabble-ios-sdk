@@ -11,16 +11,7 @@ import SnabbleNetwork
 import SnabbleAssetProviding
 
 public struct UserProfileView: View {
-//    @Binding public var user: SnabbleUser.User?
-    
     public let user: SnabbleUser.User
-    
-//    private var teaser: (() -> Teaser)?
-//    private var login: (() -> Login)?
-//    private var fallback: (() -> Fallback)?
-    
-//    public var onEditUser: () -> Void
-//    public var onChangePhoneNumber: () -> Void
     
     @Binding var editUser: Bool
     @Binding var changePhoneNumber: Bool
@@ -28,21 +19,13 @@ public struct UserProfileView: View {
     public init(user: SnabbleUser.User,
                 editUser: Binding<Bool>,
                 changePhoneNumber: Binding<Bool>
-//                teaser: (() -> Teaser)?,
-//                login: (() -> Login)?,
-//                fallback: (() -> Fallback)?
     ) {
         self.user = user
         self._editUser = editUser
         self._changePhoneNumber = changePhoneNumber
-        
-//        self.teaser = teaser
-//        self.login = login
-//        self.fallback = fallback
     }
     
-    @ViewBuilder
-    var logginView: some View {
+    public var body: some View {
         VStack(spacing: 24) {
             Group {
                 if let name = user.fullName {
@@ -96,41 +79,9 @@ public struct UserProfileView: View {
                     }
                 }
             }
-                            
+            
         }
         .frame(maxWidth: .infinity, minHeight: 190)
         .padding([.leading, .trailing])
-        
-//        .sheet(isPresented: $editUser) {
-//            Color(.green)
-//                        UserScreen(networkManager: phoneAuth.networkManager, user: user, kind: .management)
-//        }
-//        .sheet(isPresented: $changePhoneNumber) {
-//            Color(.red)
-//                    PhoneAuthScreen(phoneAuth: phoneAuth, kind: .management)
-//        }
-        
-    //       } else {
-    //           VStack(spacing: 24) {
-    //               if let fallback {
-    //                   fallback()
-    //               } else {
-    //                   UserFallBackView()
-    //               }
-    //           }
-    //        }
-    }
-    
-//    @ViewBuilder
-//    var content: some View {
-//        if UserDefaults.standard.isUserSignedIn() {
-//            logginView
-//        } else {
-//            UserNotLoggedInView(teaser: teaser)
-//        }
-//    }
-    
-    public var body: some View {
-        logginView
     }
 }
