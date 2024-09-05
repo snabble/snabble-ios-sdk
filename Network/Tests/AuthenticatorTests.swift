@@ -8,7 +8,6 @@
 import XCTest
 @testable import SnabbleNetwork
 import Combine
-import SnabbleUser
 
 final class AuthenticatorTests: XCTestCase {
 

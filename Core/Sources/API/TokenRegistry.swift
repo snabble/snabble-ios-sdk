@@ -6,7 +6,7 @@
 
 import Foundation
 import SwiftOTP
-import SnabbleUser
+import SnabbleNetwork
 
 #if canImport(UIKit)
 import UIKit

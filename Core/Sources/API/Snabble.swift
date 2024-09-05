@@ -7,6 +7,7 @@
 import Foundation
 import CoreLocation
 import SnabbleUser
+import SnabbleNetwork
 import Combine
 
 public var globalButterOverflow: String?
@@ -73,7 +74,7 @@ public struct Config {
     }
 }
 
-extension Config: SnabbleUser.Configuration {
+extension Config: SnabbleUser.Configurable, SnabbleNetwork.Configurable {
     public var domainName: String {
         environment.name
     }
@@ -94,7 +95,6 @@ public class Snabble {
         self.config = config
         self.tokenRegistry = tokenRegistry
         self.databases = [:]
-        self.userSubject = CurrentValueSubject(SnabbleUser.User.get(forConfig: config))
 
         if let metadataPath = config.seedMetadata {
             if let metadata = Metadata.readResource(metadataPath) {
@@ -171,6 +171,8 @@ public class Snabble {
 
     /// Will be created in setup(config:, completion:)
     public let tokenRegistry: TokenRegistry
+    
+    public weak var userProvider: UserProviding?
 
     private(set) var metadata = Metadata.none {
         didSet {
@@ -230,9 +232,6 @@ public class Snabble {
     public var brands: [Brand] {
         metadata.brands
     }
-    
-    ///  Current user
-    public var userSubject: CurrentValueSubject<User?, Never>
 
     /// Finds project for a given id
     /// - Parameter projectId: matching id
@@ -415,22 +414,12 @@ extension Snabble {
     */
     public var appUser: AppUser? {
         get {
-            SnabbleUser.AppUser.get(forConfig: config)
+            AppUser.get(forConfig: config)
         }
         set {
-            SnabbleUser.AppUser.set(newValue, forConfig: config)
+            AppUser.set(newValue, forConfig: config)
             tokenRegistry.invalidate()
             OrderList.clearCache()
-        }
-    }
-    
-    public var user: User? {
-        get {
-            SnabbleUser.User.get(forConfig: config)
-        }
-        set {
-            userSubject.send(newValue)
-            SnabbleUser.User.set(newValue, forConfig: config)
         }
     }
 }

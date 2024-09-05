@@ -7,9 +7,9 @@
 
 import XCTest
 import Foundation
-@testable import SnabbleNetwork
 import Combine
-import SnabbleUser
+
+@testable import SnabbleNetwork
 
 final class NetworkManagerTests: XCTestCase {
 

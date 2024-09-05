@@ -11,7 +11,7 @@ public struct Header: ViewModifier {
     public func body(content: Content) -> some View {
         content
             .font(font)
-            .foregroundColor(.accentColor)
+            .foregroundColor(color ?? .accentColor)
             .multilineTextAlignment(.center)
             .fixedSize(horizontal: false, vertical: true)
 
@@ -22,6 +22,13 @@ public struct Header: ViewModifier {
             return Font(ctFont)
         }
         return customFont
+    }
+    
+    private var color: Color? {
+        guard let uiColor = Asset.color(named: "SnabbleUI.CustomColor.header") else {
+            return nil
+        }
+        return Color(uiColor: uiColor)
     }
 }
 

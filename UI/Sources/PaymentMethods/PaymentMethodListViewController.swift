@@ -179,7 +179,7 @@ extension PaymentMethodListViewController {
             case .giropayAuthorization:
                 editVC = GiropayEditViewController(detail, for: projectId, with: self.analyticsDelegate)
             case .payoneCreditCard:
-                editVC = PayoneCreditCardEditViewController(detail, self.analyticsDelegate)
+                editVC = PayoneCreditCardEditViewController(detail, prefillData: Snabble.shared.userProvider?.getUser(), self.analyticsDelegate)
             case .tegutEmployeeCard:
                 editVC = nil
             case .invoiceByLogin:

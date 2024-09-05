@@ -11,13 +11,13 @@ import Foundation
 ///
 /// The various endpoints defined as extensions on ``Endpoint``.
 public enum Endpoints {
-    static var jsonDecoder: JSONDecoder {
+    public static var jsonDecoder: JSONDecoder {
         let decoder: JSONDecoder = .init()
         decoder.dateDecodingStrategy = .secondsSince1970
         return decoder
     }
     
-    static var jsonEncoder: JSONEncoder {
+    public static var jsonEncoder: JSONEncoder {
         let encoder: JSONEncoder = .init()
         encoder.dateEncodingStrategy = .secondsSince1970
         return encoder

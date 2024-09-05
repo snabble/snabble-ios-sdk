@@ -33,9 +33,9 @@ public final class UserPaymentViewController: UIViewController {
     override public func viewDidLoad() {
         super.viewDidLoad()
         
-        let userVC = UserViewController(user: .init(),
+        let userVC = UserViewController(user: Snabble.shared.userProvider?.getUser(),
                                         fields: self.paymentViewController?.defaultUserFields ?? UserField.allCases,
-                                        required: self.paymentViewController?.requiredUserFields ?? UserField.allCases)
+                                        requiredFields: self.paymentViewController?.requiredUserFields ?? UserField.allCases)
         userVC.delegate = self
         add(userVC)
         
@@ -51,8 +51,8 @@ public final class UserPaymentViewController: UIViewController {
     }
 }
 
-extension UserPaymentViewController: UserViewProxy {
-    public func userInfoAvailable(user: SnabbleUser.User) {
+extension UserPaymentViewController: UserViewControllerDelegate {
+    public func userViewController(_ viewController: UserViewController, didFinishWithUser user: User) {
         guard let paymentViewController else {
             return
         }
