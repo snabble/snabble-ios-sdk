@@ -171,6 +171,8 @@ public class Snabble {
 
     /// Will be created in setup(config:, completion:)
     public let tokenRegistry: TokenRegistry
+    
+    public weak var userProvider: UserProviding?
 
     private(set) var metadata = Metadata.none {
         didSet {

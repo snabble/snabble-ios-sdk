@@ -10,12 +10,9 @@ import Combine
 
 import SnabbleAssetProviding
 
-public protocol UserProviding: AnyObject {
-    var user: User { get set }
-}
-
-public final class UserModel: ObservableObject, UserProviding {
+public final class UserModel: ObservableObject {
     @Published public var user: User
+    
     public let fields: [UserField]
     public let required: [UserField]
     
@@ -38,7 +35,7 @@ public class UserViewController: UIHostingController<UserView> {
         rootView.model
     }
     
-    public init(user: User = .init(),
+    public init(user: User,
                 fields: [UserField] = UserField.allCases,
                 required: [UserField] = UserField.allCases
     ) {
