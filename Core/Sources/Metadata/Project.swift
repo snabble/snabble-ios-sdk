@@ -281,6 +281,30 @@ public struct ProjectMessages: Decodable {
     public let companyNotice: String?
 }
 
+public struct CustomizationConfig: Decodable {
+    public let colorHexPrimaryLight: String?
+    public let colorHexOnPrimaryLight: String?
+    public let colorHexSecondaryLight: String?
+    public let colorHexOnSecondaryLight: String?
+    
+    public let colorHexPrimaryDark: String?
+    public let colorHexOnPrimaryDark: String?
+    public let colorHexSecondaryDark: String?
+    public let colorHexOnSecondaryDark: String?
+    
+    enum CodingKeys: String, CodingKey {
+        case colorHexPrimaryLight = "colorPrimary_light"
+        case colorHexOnPrimaryLight = "colorOnPrimary_light"
+        case colorHexSecondaryLight = "colorSecondary_light"
+        case colorHexOnSecondaryLight = "colorOnSecondary_light"
+        
+        case colorHexPrimaryDark = "colorPrimary_dark"
+        case colorHexOnPrimaryDark = "colorOnPrimary_dark"
+        case colorHexSecondaryDark = "colorSecondary_dark"
+        case colorHexOnSecondaryDark = "colorOnSecondary_dark"
+    }
+}
+
 public struct Project: Decodable, Identifiable {
     public let id: Identifier<Project>
     public let name: String
@@ -295,6 +319,7 @@ public struct Project: Decodable, Identifiable {
 
     // config for embedded QR codes
     public let qrCodeConfig: QRCodeConfig?
+    public let customizationConfig: CustomizationConfig?
 
     public let scanFormats: [ScanFormat]
     public let barcodeDetector: BarcodeDetectorType
@@ -343,6 +368,7 @@ public struct Project: Decodable, Identifiable {
         case id, name, links
         case currency, decimalDigits, locale, roundingMode
         case qrCodeConfig = "qrCodeOffline"
+        case customizationConfig = "appCustomizationConfig"
         case shops, scanFormats, barcodeDetector, expectedBarcodeWidth
         case customerCards, codeTemplates, searchableTemplates, priceOverrideCodes, checkoutLimits
         case messages = "texts"
@@ -367,6 +393,7 @@ public struct Project: Decodable, Identifiable {
         self.roundingMode = try container.decode(.roundingMode)
 
         self.qrCodeConfig = try container.decodeIfPresent(.qrCodeConfig)
+        self.customizationConfig = try container.decodeIfPresent(CustomizationConfig.self, forKey: .customizationConfig)
 
         self.currencySymbol = Self.currencySymbol(for: self.currency, locale: self.locale)
 
@@ -412,6 +439,7 @@ public struct Project: Decodable, Identifiable {
         self.locale = ""
         self.roundingMode = .up
         self.qrCodeConfig = nil
+        self.customizationConfig = nil
         self.currencySymbol = ""
         self.scanFormats = []
         self.barcodeDetector = .default
@@ -440,6 +468,7 @@ public struct Project: Decodable, Identifiable {
         self.locale = ""
         self.roundingMode = .up
         self.qrCodeConfig = nil
+        self.customizationConfig = nil
         self.currencySymbol = ""
         self.scanFormats = []
         self.barcodeDetector = .default
