@@ -5,7 +5,7 @@
 //
 
 import UIKit
-import WebKit
+@preconcurrency import WebKit
 import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleUser
