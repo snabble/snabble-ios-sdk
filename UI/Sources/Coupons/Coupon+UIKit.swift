@@ -8,13 +8,14 @@
 import Foundation
 import UIKit
 import SnabbleCore
+import SnabbleComponents
 
 extension Coupon {
     var backgroundColor: UIColor? {
-        UIColor(rgbString: colors?.background ?? "ffffff")
+        UIColor(hex: colors?.background ?? "#ffffff")
     }
 
     var textColor: UIColor? {
-        UIColor(rgbString: colors?.foreground ?? "000000")
+        UIColor(hex: colors?.foreground ?? "#000000")
     }
 }
