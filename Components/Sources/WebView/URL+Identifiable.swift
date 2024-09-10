@@ -7,6 +7,6 @@
 
 import Foundation
 
-extension URL: @retroactive Identifiable {
+extension URL: Swift.Identifiable {
     public var id: URL { self }
 }
