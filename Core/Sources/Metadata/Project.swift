@@ -292,6 +292,8 @@ public struct CustomizationConfig: Decodable {
     public let colorHexSecondaryDark: String?
     public let colorHexOnSecondaryDark: String?
     
+    public let landingPage: String?
+
     enum CodingKeys: String, CodingKey {
         case colorHexPrimaryLight = "colorPrimary_light"
         case colorHexOnPrimaryLight = "colorOnPrimary_light"
@@ -302,6 +304,8 @@ public struct CustomizationConfig: Decodable {
         case colorHexOnPrimaryDark = "colorOnPrimary_dark"
         case colorHexSecondaryDark = "colorSecondary_dark"
         case colorHexOnSecondaryDark = "colorOnSecondary_dark"
+
+        case landingPage = "landingPageImageURL"
     }
 }
 
