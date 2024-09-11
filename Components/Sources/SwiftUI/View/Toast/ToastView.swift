@@ -7,34 +7,6 @@
 
 import SwiftUI
 
-public struct Toast: Swift.Identifiable, Equatable {
-    public let id = UUID()
-    /// The text to show
-    public let text: String
-    /// The `Toast.Style` to show
-    public var style: Toast.Style = .information
-    
-    public enum Style {
-        case information
-        case warning
-        case error
-    }
-    public init(text: String, style: Toast.Style = .information) {
-        self.text = text
-        self.style = style
-    }
-    public var image: SwiftUI.Image {
-        switch style {
-        case .information:
-            Image(systemName: "checkmark.circle")
-        case .warning:
-            Image(systemName: "exclamationmark.triangle")
-        case .error:
-            Image(systemName: "xmark.circle")
-        }
-    }
-}
-
 public struct ToastView: View {
     /// The text to show
     public let toast: Toast
@@ -59,6 +31,19 @@ public struct ToastView: View {
         .task {
             try? await Task.sleep(nanoseconds: 200_000_000)
             animated = true
+        }
+    }
+}
+
+extension Toast {
+    var image: SwiftUI.Image {
+        switch style {
+        case .information:
+            Image(systemName: "checkmark.circle")
+        case .warning:
+            Image(systemName: "exclamationmark.triangle")
+        case .error:
+            Image(systemName: "xmark.circle")
         }
     }
 }

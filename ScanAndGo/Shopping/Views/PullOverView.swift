@@ -8,6 +8,7 @@
 import SwiftUI
 
 import SnabbleAssetProviding
+import SnabbleComponents
 
 struct DraggableModifier: ViewModifier {
     enum Direction {

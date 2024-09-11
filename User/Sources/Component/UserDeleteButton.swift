@@ -8,6 +8,7 @@
 import SwiftUI
 
 import SnabbleNetwork
+import SnabbleComponents
 import SnabbleAssetProviding
 
 public struct UserDeleteButton: View {

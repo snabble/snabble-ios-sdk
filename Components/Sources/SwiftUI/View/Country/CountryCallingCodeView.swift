@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SnabbleAssetProviding
 
 public struct CountryCallingCodeView: View {
     var countries: [CallingCode]

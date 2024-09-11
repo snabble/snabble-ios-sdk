@@ -10,6 +10,7 @@ import Combine
 
 import SnabbleNetwork
 import SnabbleAssetProviding
+import SnabbleComponents
 
 private extension PhoneAuthKind {
     var message: String {

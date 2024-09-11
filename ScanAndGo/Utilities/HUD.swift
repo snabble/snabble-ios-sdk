@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SnabbleAssetProviding
+import SnabbleComponents
 
 struct HUD<Content: View>: View {
     @ViewBuilder let content: Content

@@ -10,6 +10,7 @@ import OSLog
 import Combine
 import SnabbleUI
 import SnabbleAssetProviding
+import SnabbleComponents
 
 /// Represents different types of actions that can be triggered in the application.
 public enum ActionType: Equatable {

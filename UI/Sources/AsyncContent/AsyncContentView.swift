@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 
 import SnabbleAssetProviding
+import SnabbleComponents
 
 protocol LoadableObject: ObservableObject {
     associatedtype Output

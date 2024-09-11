@@ -10,6 +10,7 @@ import Combine
 
 import SnabbleCore
 import SnabbleAssetProviding
+import SnabbleComponents
 import SnabbleUI
 
 struct CheckoutView: View {

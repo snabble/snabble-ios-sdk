@@ -9,6 +9,7 @@ import SwiftUI
 
 import SnabbleCore
 import SnabbleAssetProviding
+import SnabbleComponents
 import SnabbleUI
 
 extension BarcodeManager {

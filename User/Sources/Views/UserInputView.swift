@@ -9,6 +9,7 @@ import SwiftUI
 
 import SnabbleNetwork
 import SnabbleAssetProviding
+import SnabbleComponents
 
 public struct UserInputView: View {
     public enum Kind {

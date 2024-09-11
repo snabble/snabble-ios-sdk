@@ -11,6 +11,7 @@ import Combine
 
 import SnabbleCore
 import SnabbleAssetProviding
+import SnabbleComponents
 import SnabbleUI
 
 extension UserDefaults {

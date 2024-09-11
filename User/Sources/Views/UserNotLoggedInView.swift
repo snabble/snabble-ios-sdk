@@ -8,6 +8,7 @@
 import SwiftUI
 
 import SnabbleAssetProviding
+import SnabbleComponents
 
 public struct UserNotLoggedInView: View {
     @Binding var showSignin: Bool

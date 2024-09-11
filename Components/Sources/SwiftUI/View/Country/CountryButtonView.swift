@@ -6,8 +6,9 @@
 //
 
 import SwiftUI
+import SnabbleAssetProviding
 
-struct CountryButtonModifier: ViewModifier {
+private struct CountryButtonModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .frame(maxWidth: .infinity)
@@ -18,7 +19,7 @@ struct CountryButtonModifier: ViewModifier {
     }
 }
 
-extension View {
+private extension View {
     func countryButtonStyle() -> some View {
         modifier(CountryButtonModifier())
     }
