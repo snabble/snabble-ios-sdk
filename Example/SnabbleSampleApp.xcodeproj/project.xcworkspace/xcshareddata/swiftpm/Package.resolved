@@ -1,5 +1,5 @@
 {
-  "originHash" : "8a298e2abbb7efe62cf79f7fb65c1e4da7e12dc3be73de7625fea124cfb67f7c",
+  "originHash" : "e6f5a29cfef4dc71d68f632d503881d568ad1865b863d22e15f3bc0c6362c8be",
   "pins" : [
     {
       "identity" : "devicekit",
@@ -15,8 +15,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/groue/GRDB.swift.git",
       "state" : {
-        "revision" : "57a4587b5b09ac706bc985288a62432ddbf20b09",
-        "version" : "6.29.2"
+        "revision" : "2cf6c756e1e5ef6901ebae16576a7e4e4b834622",
+        "version" : "6.29.3"
       }
     },
     {
@@ -60,8 +60,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-crypto.git",
       "state" : {
-        "revision" : "a53a7e8f858902659d4784322bede34f4e49097e",
-        "version" : "3.6.1"
+        "revision" : "9f95b4d033a4edd3814b48608db3f2ca90c7218b",
+        "version" : "3.7.0"
       }
     },
     {
