@@ -9,11 +9,15 @@ import SwiftUI
 
 extension UIApplication {
     public var sceneKeyWindow: UIWindow? {
+        windowScene?.windows
+            .first(where: \.isKeyWindow)
+    }
+    
+    public var windowScene: UIWindowScene? {
         connectedScenes
             .filter { $0.activationState == .foregroundActive }
             .first(where: { $0 is UIWindowScene })
-            .flatMap({ $0 as? UIWindowScene })?.windows
-            .first(where: \.isKeyWindow)
+            .flatMap({ $0 as? UIWindowScene })
     }
 }
 
