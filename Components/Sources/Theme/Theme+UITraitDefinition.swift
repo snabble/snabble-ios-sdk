@@ -35,11 +35,11 @@ extension ThemeKey: UITraitBridgedEnvironmentKey {
     }
 }
 
-extension UITraitCollection {
+public extension UITraitCollection {
     var theme: Theme { self[ThemeTrait.self] }
 }
 
-extension UIMutableTraits {
+public extension UIMutableTraits {
     var theme: Theme {
         get {
             self[ThemeTrait.self]
