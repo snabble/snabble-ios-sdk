@@ -1,10 +1,8 @@
 //
-//  WebView.swift
-//  SnabbleComponents
+//  WebViewPresentable.swift
+//  Snabble
 //
-//  Created by Andreas Osberghaus on 05.09.24.
-//
-//  Copyright © 2024 snabble. All rights reserved.
+//  Created by Andreas Osberghaus on 2024-09-11.
 //
 
 import SwiftUI
@@ -55,44 +53,6 @@ struct WebViewRepresentable: UIViewRepresentable {
             // Page loaded so no need to show loader anymore
             if isFinished == false {
                 isFinished = true
-            }
-        }
-    }
-}
-
-public struct WebView: View {
-    let url: URL
-    @State private var refreshURL: Bool = false
-
-    public init(url: URL) {
-        self.url = url
-    }
-    public var body: some View {
-        VStack {
-            GeometryReader { geometry in
-                ScrollView(.vertical) {
-                    WebViewRepresentable(url: url, refresh: $refreshURL)
-                        .frame(width: geometry.size.width, height: geometry.size.height)
-                }
-            }
-        }
-    }
-}
-
-public struct HTMLView: View {
-    let string: String
-    @State private var refreshURL: Bool = false
-
-    public init(string: String) {
-        self.string = string
-    }
-    public var body: some View {
-        VStack {
-            GeometryReader { geometry in
-                ScrollView(.vertical) {
-                    WebViewRepresentable(string: string, refresh: $refreshURL)
-                        .frame(width: geometry.size.width, height: geometry.size.height)
-                }
             }
         }
     }
