@@ -9,7 +9,7 @@ import SwiftUI
 import SnabbleAssetProviding
 
 public struct AccentButtonStyle: ButtonStyle {
-    var disabled: Bool
+    public var disabled: Bool
     
     public init(disabled: Bool = false) {
         self.disabled = disabled
@@ -40,7 +40,7 @@ public struct BorderedButtonStyle: ButtonStyle {
 }
 
 public struct SecondaryButtonStyle: ButtonStyle {
-    var disabled: Bool
+    public var disabled: Bool
     
     public init(disabled: Bool = false) {
         self.disabled = disabled
