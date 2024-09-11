@@ -41,7 +41,7 @@ extension CallingCode: Hashable {
     }
 }
 
-extension CallingCode {
+public extension CallingCode {
     var name: String {
         Locale.current.localizedString(forRegionCode: id) ?? "n/a"
     }

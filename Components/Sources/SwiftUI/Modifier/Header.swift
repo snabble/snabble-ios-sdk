@@ -6,9 +6,10 @@
 //
 
 import SwiftUI
+import SnabbleAssetProviding
 
-public struct Header: ViewModifier {
-    public func body(content: Content) -> some View {
+struct HeaderViewModifier: ViewModifier {
+    func body(content: Content) -> some View {
         content
             .font(font)
             .foregroundColor(color ?? .accentColor)
@@ -34,7 +35,7 @@ public struct Header: ViewModifier {
 
 public extension View {
     func header() -> some View {
-        modifier(Header())
+        modifier(HeaderViewModifier())
     }
 }
 

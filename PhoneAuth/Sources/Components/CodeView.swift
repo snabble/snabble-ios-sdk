@@ -11,6 +11,7 @@ import Combine
 import SnabbleAssetProviding
 import SnabbleUser
 import SnabbleNetwork
+import SnabbleComponents
 
 private extension PhoneAuthKind {
     var codeButtonTitle: String {

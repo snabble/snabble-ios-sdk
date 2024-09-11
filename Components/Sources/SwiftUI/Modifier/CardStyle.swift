@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct CardStyle: ViewModifier {
+struct CardViewModifier: ViewModifier {
     func body(content: Content) -> some View {
         content
             .background(Color.tertiarySystemBackground)
@@ -17,6 +17,6 @@ struct CardStyle: ViewModifier {
 }
 extension View {
     public func cardStyle() -> some View {
-        modifier(CardStyle())
+        modifier(CardViewModifier())
     }
 }

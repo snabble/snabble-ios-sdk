@@ -25,7 +25,7 @@ public struct Country: Decodable, Equatable {
         public let code: String
         public let name: String
 
-        var label: String {
+        public var label: String {
             name
         }
     }

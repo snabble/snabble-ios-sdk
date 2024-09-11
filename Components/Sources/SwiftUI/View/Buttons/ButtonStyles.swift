@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SnabbleAssetProviding
 
 public struct AccentButtonStyle: ButtonStyle {
     var disabled: Bool
