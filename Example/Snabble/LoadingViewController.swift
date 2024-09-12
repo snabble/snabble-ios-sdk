@@ -8,6 +8,7 @@
 
 import Foundation
 import UIKit
+import SnabbleComponents
 
 class LoadingViewController: UIViewController {
     private(set) weak var activityIndicatorView: UIActivityIndicatorView?
@@ -17,7 +18,7 @@ class LoadingViewController: UIViewController {
 
         let activityIndicatorView = UIActivityIndicatorView(style: .large)
         activityIndicatorView.translatesAutoresizingMaskIntoConstraints = false
-        activityIndicatorView.color = .primary()
+        activityIndicatorView.color = .projectPrimary()
         activityIndicatorView.startAnimating()
         view.addSubview(activityIndicatorView)
 

@@ -10,6 +10,7 @@ import SnabbleUI
 import SnabbleCore
 import SwiftUI
 import SnabbleAssetProviding
+import SnabbleComponents
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -106,7 +107,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let tabBarAppearanceProxy = UITabBar.appearance()
         tabBarAppearanceProxy.barTintColor = .systemBackground
-        tabBarAppearanceProxy.tintColor = .primary()
+        tabBarAppearanceProxy.tintColor = .projectPrimary()
         tabBarAppearanceProxy.unselectedItemTintColor = .darkGray
 
         let tabBarAppearance = UITabBarAppearance()
@@ -119,7 +120,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let tabBarItemAppearance = UITabBarItem.appearance()
         tabBarItemAppearance.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.darkGray], for: .normal)
-        tabBarItemAppearance.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.primary()], for: .selected)
+        tabBarItemAppearance.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.projectPrimary()], for: .selected)
         
         ViewProviderStore.register(view: {
             SnabbleEmptyView(
