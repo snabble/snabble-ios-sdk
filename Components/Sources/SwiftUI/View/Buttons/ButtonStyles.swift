@@ -8,7 +8,7 @@
 import SwiftUI
 import SnabbleAssetProviding
 
-public struct AccentButtonStyle: ButtonStyle {
+public struct ProjectPrimaryButtonStyle: ButtonStyle {
     public var disabled: Bool
     
     public init(disabled: Bool = false) {
@@ -26,7 +26,7 @@ public struct AccentButtonStyle: ButtonStyle {
     }
 }
 
-public struct BorderedButtonStyle: ButtonStyle {
+public struct BorderedProjectPrimaryButtonStyle: ButtonStyle {
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .padding([.top, .bottom], 13)
@@ -39,7 +39,7 @@ public struct BorderedButtonStyle: ButtonStyle {
     }
 }
 
-public struct SecondaryButtonStyle: ButtonStyle {
+public struct ProjectSecondaryButtonStyle: ButtonStyle {
     public var disabled: Bool
     
     public init(disabled: Bool = false) {

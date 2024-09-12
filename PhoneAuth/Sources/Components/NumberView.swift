@@ -135,7 +135,7 @@ public struct NumberView<Header: View, Footer: View>: View {
                         action: {
                             submit()
                         })
-                    .buttonStyle(AccentButtonStyle(disabled: !isEnabled))
+                    .buttonStyle(ProjectPrimaryButtonStyle(disabled: !isEnabled))
                     .disabled(!isEnabled)
                 }
                 
