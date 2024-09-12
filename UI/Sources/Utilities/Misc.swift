@@ -13,6 +13,7 @@ extension UIButton {
     public func makeSnabbleButton() {
         self.layer.cornerRadius = 8
         self.backgroundColor = .projectPrimary()
+        self.setTitleColor(.onProjectPrimary(), for: .normal)
         self.tintColor = .onProjectPrimary()
     }
 
