@@ -21,8 +21,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         Asset.provider = self
-
-        setupAppearance()
         
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.backgroundColor = .systemBackground
@@ -38,11 +36,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let config = Config.config(for: DeveloperMode.environmentMode)
         
         Snabble.setup(config: config) { [unowned self] snabble in
+            
             // initial config parsed/loaded
             guard let project = snabble.projects.first else {
                 fatalError("project initialization failed - make sure APPID and APPSECRET are valid")
             }
 
+            self.setupAppearance()
             // register the project with the UI components
             SnabbleCI.register(project)
             snabble.checkInManager.delegate = self
