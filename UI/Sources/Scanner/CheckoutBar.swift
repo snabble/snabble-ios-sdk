@@ -325,10 +325,6 @@ final class CheckoutBar: UIView {
         alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default, handler: nil))
         parentVC?.present(alert, animated: true)
     }
-
-    func setCustomAppearance(_ appearance: CustomAppearance) {
-        self.checkoutButton?.setCustomAppearance(appearance)
-    }
 }
 
 // MARK: - taxation info

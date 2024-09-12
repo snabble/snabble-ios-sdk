@@ -217,10 +217,6 @@ final class ScanConfirmationView: UIView {
         ])
     }
 
-    func setCustomAppearance(_ appearance: CustomAppearance) {
-        self.cartButton?.setCustomAppearance(appearance)
-    }
-
     func present(withProduct scannedProduct: ScannedProduct, withCode scannedCode: String, forCart cart: ShoppingCart) {
         // avoid ugly animations
         UIView.performWithoutAnimation {

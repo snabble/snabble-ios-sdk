@@ -18,8 +18,6 @@ final class ScannerDrawerViewController: UIViewController {
     
     private let projectId: Identifier<Project>
 
-    private var customAppearance: CustomAppearance?
-
     weak var shoppingCartDelegate: ShoppingCartDelegate? {
         didSet {
             checkoutBar?.shoppingCartDelegate = shoppingCartDelegate
@@ -67,8 +65,6 @@ final class ScannerDrawerViewController: UIViewController {
         self.shoppingCartVC = ShoppingCartViewController(shoppingCart: shoppingCart, compactMode: true)
 
         super.init(nibName: nil, bundle: nil)
-
-        SnabbleCI.registerForAppearanceChange(self)
     }
 
     required init?(coder: NSCoder) {
@@ -176,18 +172,11 @@ final class ScannerDrawerViewController: UIViewController {
       
         registerForTraitChanges([UITraitUserInterfaceStyle.self], handler: { (self: Self, _: UITraitCollection) in
             self.setupBlurEffect()
-            if let customAppearance = self.customAppearance {
-                self.checkoutBar?.setCustomAppearance(customAppearance)
-            }
         })
    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
-        if let custom = self.customAppearance {
-            checkoutBar?.setCustomAppearance(custom)
-        }
 
         self.updateShoppingLists()
         checkoutBar?.updateSelectionVisibility()
@@ -319,14 +308,6 @@ extension ScannerDrawerViewController: PulleyDrawerViewControllerDelegate {
         let scanner = drawer.primaryContentViewController as? ScanningViewController
         let offset = -min(distance, view.bounds.height * 0.8) / 2
         scanner?.setOverlayOffset(offset)
-    }
-}
-
-// MARK: - appearance
-extension ScannerDrawerViewController: CustomizableAppearance {
-    public func setCustomAppearance(_ appearance: CustomAppearance) {
-        self.checkoutBar?.setCustomAppearance(appearance)
-        self.customAppearance = appearance
     }
 }
 
