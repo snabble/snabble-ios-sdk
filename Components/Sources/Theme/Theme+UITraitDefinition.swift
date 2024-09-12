@@ -16,7 +16,7 @@ public enum Project: Equatable {
 public struct ProjectTrait: UITraitDefinition {
     public static var defaultValue: Project = .none
     public static var affectsColorAppearance: Bool = true
-    public static var identifier: String = "io.snabble.project"
+    public static var identifier: String = "io.snabble.components.project"
     public static var name: String = "Project"
 }
 
