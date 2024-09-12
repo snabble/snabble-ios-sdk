@@ -788,17 +788,3 @@ extension ScanningViewController: KeyboardHandling {
     }
 
 }
-
-//extension ScanningViewController: CustomizableAppearance {
-//    public func setCustomAppearance(_ appearance: CustomAppearance) {
-//        self.customAppearance = appearance
-//
-//        self.scanConfirmationView?.setCustomAppearance(appearance)
-//        SnabbleCI.getAsset(.storeLogoSmall) { img in
-//            if let image = img ?? appearance.titleIcon {
-//                let imgView = UIImageView(image: image)
-//                self.navigationItem.titleView = imgView
-//            }
-//        }
-//    }
-//}
