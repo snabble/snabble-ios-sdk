@@ -28,7 +28,7 @@ struct OnboardingButtonView: View {
                 Text(keyed: isLast ? "Snabble.Onboarding.done" : "Snabble.Onboarding.next")
             }
         }
-        .buttonStyle(AccentButtonStyle())
+        .buttonStyle(PrimaryButtonStyle())
     }
 
     @ViewBuilder

@@ -27,7 +27,7 @@ public struct SnabbleEmptyView: View {
                 .resizable()
                 .scaledToFit()
                 .frame(width: imageWidth)
-                .foregroundColor(.accent())
+                .foregroundColor(.projectPrimary())
             
             Text(title)
                 .multilineTextAlignment(.center)

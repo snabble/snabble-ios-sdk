@@ -64,7 +64,7 @@ struct OnboardingItemView: View {
             }) {
                 Text(keyed: "Snabble.Onboarding.Link.show")
                     .font(.headline)
-                    .foregroundColor(Color.accent())
+                    .foregroundColor(Color.projectPrimary())
             }
             .sheet(isPresented: $isPresenting) {
                 if let url = Asset.url(forResource: resource, withExtension: nil) {
@@ -84,7 +84,7 @@ struct OnboardingItemView: View {
                 Text(AttributedString(attrString))
             } else {
                 Text(item.attributedString)
-                    .tint(.accent())
+                    .tint(.projectPrimary())
             }
         } else {
             AttributedText(htmlString: Asset.localizedString(forKey: item.text), openURL: $urlResource)

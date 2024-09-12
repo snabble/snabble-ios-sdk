@@ -106,7 +106,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let tabBarAppearanceProxy = UITabBar.appearance()
         tabBarAppearanceProxy.barTintColor = .systemBackground
-        tabBarAppearanceProxy.tintColor = .accent()
+        tabBarAppearanceProxy.tintColor = .primary()
         tabBarAppearanceProxy.unselectedItemTintColor = .darkGray
 
         let tabBarAppearance = UITabBarAppearance()
@@ -119,7 +119,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let tabBarItemAppearance = UITabBarItem.appearance()
         tabBarItemAppearance.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.darkGray], for: .normal)
-        tabBarItemAppearance.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.accent()], for: .selected)
+        tabBarItemAppearance.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.primary()], for: .selected)
         
         ViewProviderStore.register(view: {
             SnabbleEmptyView(

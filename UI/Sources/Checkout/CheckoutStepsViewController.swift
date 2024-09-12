@@ -154,7 +154,7 @@ struct CheckoutView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .disabled(!model.isComplete)
-                    .buttonStyle(AccentButtonStyle())
+                    .buttonStyle(PrimaryButtonStyle())
                     .padding([.bottom, .horizontal], 16)
                 }
 

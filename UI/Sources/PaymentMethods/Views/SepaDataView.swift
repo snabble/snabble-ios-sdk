@@ -219,7 +219,7 @@ public struct SepaDataEditorView: View {
             Text(keyed: "Snabble.save")
                 .frame(maxWidth: .infinity)
         }
-        .buttonStyle(AccentButtonStyle())
+        .buttonStyle(PrimaryButtonStyle())
         .disabled(!self.model.isValid)
         .opacity(!self.model.isValid ? 0.5 : 1.0)
     }
@@ -227,7 +227,7 @@ public struct SepaDataEditorView: View {
     @ViewBuilder
     var ibanCountryView: some View {
         IbanCountryPicker(model: model)
-            .foregroundColor(Color.accent())
+            .foregroundColor(Color.projectPrimary())
     }
 
     @ViewBuilder

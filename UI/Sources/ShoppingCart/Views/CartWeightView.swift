@@ -8,6 +8,7 @@
 import SwiftUI
 import SnabbleCore
 import Combine
+import SnabbleAssetProviding
 
 extension ShoppingCartViewModel {
     func updateQuantity(_ string: Binding<String>, for itemModel: ProductItemModel) {
@@ -38,7 +39,7 @@ struct CartWeightView: View {
     @ViewBuilder
     var minusImage: some View {
         Image(systemName: "trash")
-            .foregroundColor(.accent())
+            .foregroundColor(.projectPrimary())
             .frame(width: 22 * scale, height: 22 * scale)
     }
     

@@ -76,7 +76,7 @@ public struct ShopMapView: View {
                 image
             } else {
                 Image(systemName: "mappin.and.ellipse")
-                    .foregroundColor(.accent())
+                    .foregroundColor(.projectPrimary())
                     .font(.title)
             }
         }.onTapGesture {
@@ -98,8 +98,8 @@ public struct ShopMapView: View {
                                 .scaledToFit()
                                 .frame(width: 24, height: 24)
                                 .padding(8)
-                                .background(Color.accent())
-                                .foregroundColor(.onAccent())
+                                .background(Color.projectPrimary())
+                                .foregroundColor(.onProjectPrimary())
                                 .cornerRadius(4)
                         }
                         .navigateToShopAlert(isPresented: $showingAlert, shop: shop)
@@ -167,7 +167,7 @@ public struct ShopMapView: View {
         }
         .padding(10)
         .background(Color.systemBackground)
-        .foregroundColor(Color.accent())
+        .foregroundColor(Color.projectPrimary())
         .cornerRadius(8)
         .shadow(color: .gray, radius: 3, x: 0, y: 0)
     }

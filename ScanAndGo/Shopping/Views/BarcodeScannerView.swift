@@ -10,6 +10,7 @@ import OSLog
 import SwiftUI
 import AVFoundation
 import Combine
+import SnabbleAssetProviding
 
 class BarcodeScannerViewController: UIViewController {
     let manager: BarcodeManager
@@ -39,7 +40,7 @@ class BarcodeScannerViewController: UIViewController {
             logger.warning("camera preview is not available")
 #if targetEnvironment(simulator)
             let layer = CAGradientLayer()
-            layer.colors = [UIColor.accent().cgColor, UIColor.white.cgColor]
+            layer.colors = [UIColor.projectPrimary().cgColor, UIColor.white.cgColor]
             addLayer(layer, to: self)
 #endif
         }

@@ -52,7 +52,7 @@ private struct LabelWithImageAccent: View {
             Text(title)
         }, icon: {
             Image(systemName: systemName)
-                .foregroundStyle(Color.accent())
+                .foregroundStyle(Color.projectPrimary())
         })
     }
 }

@@ -169,7 +169,7 @@ struct CheckoutRatingView: View {
                 .cornerRadius(6)
                 
                 sendButton
-                    .buttonStyle(AccentButtonStyle())
+                    .buttonStyle(PrimaryButtonStyle())
                     .disabled(model.selectionIndex == nil)
                 
                 customView

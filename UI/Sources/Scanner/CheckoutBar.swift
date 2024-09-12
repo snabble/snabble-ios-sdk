@@ -103,7 +103,7 @@ final class CheckoutBar: UIView {
         let checkoutButton = UIButton(type: .system)
         checkoutButton.translatesAutoresizingMaskIntoConstraints = false
         checkoutButton.setTitle(Asset.localizedString(forKey: "Snabble.Shoppingcart.BuyProducts.now"), for: .normal)
-        let disabledColor = UIColor.onAccent().withAlphaComponent(0.5)
+        let disabledColor = UIColor.onProjectPrimary().withAlphaComponent(0.5)
         checkoutButton.setTitleColor(disabledColor, for: .disabled)
         checkoutButton.titleLabel?.font = .preferredFont(forTextStyle: .headline)
         checkoutButton.titleLabel?.adjustsFontForContentSizeCategory = true

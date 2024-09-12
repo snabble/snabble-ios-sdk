@@ -19,8 +19,8 @@ public struct AccentButtonStyle: ButtonStyle {
         configuration.label
             .padding([.top, .bottom], 15)
             .padding([.leading, .trailing], 20)
-            .background(Color.accent())
-            .foregroundColor(Color.onAccent().opacity(disabled ? 0.5 : 1.0))
+            .background(Color.projectPrimary())
+            .foregroundColor(Color.onProjectPrimary().opacity(disabled ? 0.5 : 1.0))
             .disabled(disabled)
             .clipShape(RoundedRectangle(cornerRadius: 10))
     }
@@ -34,7 +34,7 @@ public struct BorderedButtonStyle: ButtonStyle {
             .background(RoundedRectangle(cornerRadius: 8)
                 .fill(.regularMaterial)
                 .strokeBorder(Color.gray, style: StrokeStyle(lineWidth: 0.5, lineCap: .round, lineJoin: .round))
-                .foregroundColor(.accent())
+                .foregroundColor(.projectPrimary())
             )
     }
 }
@@ -50,7 +50,7 @@ public struct SecondaryButtonStyle: ButtonStyle {
         configuration.label
             .padding([.top, .bottom], 15)
             .padding([.leading, .trailing], 20)
-            .foregroundColor(.accent())
+            .foregroundColor(.projectPrimary())
             .disabled(disabled)
     }
 }

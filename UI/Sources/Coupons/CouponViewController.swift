@@ -72,7 +72,7 @@ public struct CouponView: View {
                     .fontWeight(.bold)
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(AccentButtonStyle())
+            .buttonStyle(PrimaryButtonStyle())
             
             if couponModel.coupon.isActivated {
                 HStack {

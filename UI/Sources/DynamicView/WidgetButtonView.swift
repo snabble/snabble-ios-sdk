@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SnabbleAssetProviding
 
 private protocol WidgetButtonStyling {
     var foregroundColor: Color { get }
@@ -37,7 +38,7 @@ extension WidgetButton: WidgetButtonStyling {
         guard
             let source = foregroundColorSource,
             let style = ColorStyle(rawValue: source) else {
-            return .accent()
+            return Color.projectPrimary()
         }
         return style.color
 

@@ -35,13 +35,13 @@ struct CartStepperView: View {
     @ViewBuilder
     var minusImage: some View {
         Image(systemName: itemModel.quantity == 1 ? "trash" : "minus")
-            .foregroundColor(.accent())
+            .foregroundColor(.projectPrimary())
             .frame(width: 22 * scale, height: 22 * scale)
     }
     @ViewBuilder
     var plusImage: some View {
         Image(systemName: "plus")
-            .foregroundColor(.accent())
+            .foregroundColor(.projectPrimary())
             .frame(width: 22 * scale, height: 22 * scale)
     }
 

@@ -49,7 +49,7 @@ public struct InvoiceLoginView: View {
             }
             .frame(maxWidth: .infinity)
         }
-        .buttonStyle(AccentButtonStyle())
+        .buttonStyle(PrimaryButtonStyle())
         .disabled(!canLogin)
         .opacity(!canLogin ? 0.5 : 1.0)
     }
@@ -146,7 +146,7 @@ public struct InvoiceDetailView: View {
                 }) {
                     Image(systemName: "trash")
                 }
-                .foregroundColor(Color.accent())
+                .foregroundColor(Color.projectPrimary())
             }
         }
     }

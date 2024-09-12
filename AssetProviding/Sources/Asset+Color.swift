@@ -29,13 +29,21 @@ extension UIColor {
     public static func shadow(in domain: Any? = Asset.domain) -> UIColor {
         Asset.color(named: "shadow", domain: domain) ?? .systemGray3
     }
-
-    public static func accent(in domain: Any? = Asset.domain) -> UIColor {
-        return Asset.color(named: "accent", domain: domain) ?? Asset.color(named: "AccentColor", domain: domain) ?? UIColor(red: 0, green: 119.0 / 255.0, blue: 187.0 / 255.0, alpha: 1)
+    
+    public static func projectPrimary(in domain: Any? = Asset.domain) -> UIColor {
+        Asset.color(named: "primary", domain: domain) ?? UIColor(red: 0, green: 119.0 / 255.0, blue: 187.0 / 255.0, alpha: 1)
     }
-
-    public static func onAccent(in domain: Any? = Asset.domain) -> UIColor {
-        Asset.color(named: "onAccent", domain: domain) ?? accent(in: domain).contrast ?? .label
+    
+    public static func onProjectPrimary(in domain: Any? = Asset.domain) -> UIColor {
+        Asset.color(named: "onPrimary", domain: domain) ?? .label
+    }
+    
+    public static func projectSecondary(in domain: Any? = Asset.domain) -> UIColor {
+        Asset.color(named: "secondary", domain: domain) ?? UIColor(red: 0, green: 119.0 / 255.0, blue: 187.0 / 255.0, alpha: 1)
+    }
+    
+    public static func onProjectSecondary(in domain: Any? = Asset.domain) -> UIColor {
+        Asset.color(named: "onSecondary", domain: domain) ?? .secondaryLabel
     }
 
     public static func systemGreen(in domain: Any? = Asset.domain) -> UIColor {
@@ -74,13 +82,21 @@ extension SwiftUI.Color {
     public static func shadow(in domain: Any? = Asset.domain) -> SwiftUI.Color {
         color(UIColor.shadow(in: domain))
     }
-
-    public static func accent(in domain: Any? = Asset.domain) -> SwiftUI.Color {
-        color(UIColor.accent(in: domain))
+    
+    public static func projectPrimary(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        color(UIColor.projectPrimary(in: domain))
     }
-
-    public static func onAccent(in domain: Any? = Asset.domain) -> SwiftUI.Color {
-        color(UIColor.onAccent(in: domain))
+    
+    public static func onProjectPrimary(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        color(UIColor.onProjectPrimary(in: domain))
+    }
+    
+    public static func projectSecondary(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        color(UIColor.projectSecondary(in: domain))
+    }
+    
+    public static func onProjectSecondary(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        color(UIColor.onProjectSecondary(in: domain))
     }
 
     public static func systemGreen(in domain: Any? = Asset.domain) -> SwiftUI.Color {

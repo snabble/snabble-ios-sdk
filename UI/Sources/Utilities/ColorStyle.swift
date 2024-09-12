@@ -89,8 +89,10 @@ public enum ColorStyle: String {
     case secondary
 
     // MARK: - Snabble
-    case accent
-    case onAccent
+    case projectPrimary
+    case onProjectPrimary
+    case projectSecondary
+    case onProjectSecondary
     case border
     case shadow
 
@@ -234,10 +236,14 @@ public enum ColorStyle: String {
             if #available(iOS 15.0, *) {
                 return .teal
             }
-        case .accent:
-            return .accent()
-        case .onAccent:
-            return .onAccent()
+        case .projectPrimary:
+            return .projectPrimary()
+        case .onProjectPrimary:
+            return .onProjectPrimary()
+        case .projectSecondary:
+            return .projectSecondary()
+        case .onProjectSecondary:
+            return .onProjectSecondary()
         case .border:
             return .border()
         case .shadow:

@@ -118,12 +118,12 @@ final class ScanConfirmationView: UIView {
         manualDiscountButton.titleLabel?.font = .preferredFont(forTextStyle: .body)
         manualDiscountButton.titleLabel?.adjustsFontForContentSizeCategory = true
 
-        let contrastRatio = UIColor.getContrastRatio(forTextColor: .accent(),
+        let contrastRatio = UIColor.getContrastRatio(forTextColor: .projectPrimary(),
                                                      onBackgroundColor: .systemBackground)
         let conformanceLevel = ConformanceLevel(contrastRatio: contrastRatio ?? 1, fontSize: 17, isBoldFont: false)
 
         if conformanceLevel == .AA || conformanceLevel == .AAA {
-            manualDiscountButton.tintColor = .accent()
+            manualDiscountButton.tintColor = .projectPrimary()
         } else {
             manualDiscountButton.tintColor = .label
         }

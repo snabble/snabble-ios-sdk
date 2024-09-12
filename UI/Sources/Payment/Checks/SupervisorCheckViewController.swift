@@ -53,7 +53,7 @@ struct SupervisorView: View {
             }) {
                 Text(keyed: Asset.localizedString(forKey: "Snabble.cancel"))
                     .fontWeight(.bold)
-                    .foregroundColor(Color.accent())
+                    .foregroundColor(Color.projectPrimary())
             }.frame(alignment: .bottom)
         }
     }

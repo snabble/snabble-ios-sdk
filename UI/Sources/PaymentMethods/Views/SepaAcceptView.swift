@@ -31,7 +31,7 @@ public struct SepaAcceptView: View {
             Text(keyed: "Snabble.SEPA.iAgree")
                 .frame(maxWidth: .infinity)
         }
-        .buttonStyle(AccentButtonStyle())
+        .buttonStyle(PrimaryButtonStyle())
     }
     
     @ViewBuilder

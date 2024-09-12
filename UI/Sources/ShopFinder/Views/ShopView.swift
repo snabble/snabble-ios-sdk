@@ -22,7 +22,7 @@ public struct ShopView: View {
             }) {
                 Text(keyed: "Snabble.Shop.Detail.shopNow")
             }
-            .buttonStyle(AccentButtonStyle())
+            .buttonStyle(PrimaryButtonStyle())
         } else {
             HStack {
                 Spacer()
@@ -35,7 +35,7 @@ public struct ShopView: View {
                 }) {
                     Image(systemName: "arrow.triangle.turn.up.right.circle.fill")
                         .font(.title2)
-                        .foregroundColor(Color.accent())
+                        .foregroundColor(Color.projectPrimary())
                 }
                 .navigateToShopAlert(isPresented: $showingAlert, shop: shop)
                 Spacer()

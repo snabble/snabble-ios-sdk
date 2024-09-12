@@ -7,6 +7,7 @@
 
 import Foundation
 import UIKit
+import SnabbleAssetProviding
 
 class CouponCollectionViewCell: UICollectionViewCell, Cardable, ReuseIdentifiable {
     private(set) weak var imageView: UIImageView?
@@ -47,7 +48,7 @@ class CouponCollectionViewCell: UICollectionViewCell, Cardable, ReuseIdentifiabl
         let textLabel = UILabel()
         textLabel.translatesAutoresizingMaskIntoConstraints = false
         textLabel.font = .preferredFont(forTextStyle: .headline)
-        textLabel.textColor = .accent()
+        textLabel.textColor = .projectPrimary()
         textLabel.numberOfLines = 0
         textLabel.setContentCompressionResistancePriority(.defaultHigh + 2, for: .vertical)
         textLabel.minimumScaleFactor = 0.75

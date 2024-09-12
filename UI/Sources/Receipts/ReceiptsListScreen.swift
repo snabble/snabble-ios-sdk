@@ -61,7 +61,7 @@ public struct ReceiptsItemView: View {
             HStack {
                 self.stateView
                 self.image
-                    .foregroundColor(.accent())
+                    .foregroundColor(.projectPrimary())
             }
             .frame(width: 60)
             VStack(alignment: .leading) {

@@ -8,6 +8,7 @@
 import Foundation
 import CoreLocation
 import SwiftUI
+import SnabbleAssetProviding
 
 public struct ShopCellView: View {
     let shop: ShopProviding
@@ -48,10 +49,10 @@ private struct YouAreHere: ViewModifier {
     func body(content: Content) -> some View {
         content
            .font(.footnote)
-           .foregroundColor(Color.named("Snabble.Shop.Finder.YouAreHere.foreground") ?? .onAccent())
+           .foregroundColor(Color.named("Snabble.Shop.Finder.YouAreHere.foreground") ?? .onProjectPrimary())
            .padding(.horizontal, 8)
            .padding(.vertical, 4)
-           .background(Color.named("Snabble.Shop.Finder.YouAreHere.background") ?? .accent())
+           .background(Color.named("Snabble.Shop.Finder.YouAreHere.background") ?? .projectPrimary())
            .clipShape(Capsule())
     }
 }

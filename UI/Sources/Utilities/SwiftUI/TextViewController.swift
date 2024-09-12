@@ -9,6 +9,7 @@
 
 import SwiftUI
 import UIKit
+import SnabbleAssetProviding
 
 extension String {
     public var containsHTML: Bool {
@@ -50,7 +51,7 @@ extension String {
         }
 
         for range in links {
-            attributedString.addAttributes([.foregroundColor: UIColor.accent(),
+            attributedString.addAttributes([.foregroundColor: UIColor.projectPrimary(),
                                             .underlineStyle: 0], range: range)
 
         }

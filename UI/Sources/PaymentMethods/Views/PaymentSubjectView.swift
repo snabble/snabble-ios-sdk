@@ -59,7 +59,7 @@ public struct PaymentSubjectView: View {
                 }
                 .opacity(!viewModel.isValid ? 0.5 : 1.0)
                 .disabled(!viewModel.isValid)
-                .buttonStyle(AccentButtonStyle())
+                .buttonStyle(PrimaryButtonStyle())
                 
                 Button( action: {
                     viewModel.skip()

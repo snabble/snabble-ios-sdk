@@ -8,15 +8,16 @@
 //
 
 import SwiftUI
+import SnabbleAssetProviding
 
-/// Tinted button style using `Color.accent()` as background color and `Color.onAccent()` as text color
-public struct AccentButtonStyle: ButtonStyle {    
+/// Tinted button style using `Color.projectPrimary()` as background color and `Color.onProjectPrimary()` as text color
+public struct PrimaryButtonStyle: ButtonStyle {
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .padding([.top, .bottom], 15)
             .padding([.leading, .trailing], 22)
-            .background(Color.accent())
-            .foregroundColor(Color.onAccent())
+            .background(Color.projectPrimary())
+            .foregroundColor(Color.onProjectPrimary())
             .clipShape(RoundedRectangle(cornerRadius: 10))
             .scaleEffect(configuration.isPressed ? 1.1 : 1)
             .animation(.easeOut, value: configuration.isPressed)
