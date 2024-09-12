@@ -36,15 +36,15 @@ extension UIColor {
     }
     
     public static func onProjectPrimary(in domain: Any? = Asset.domain) -> UIColor {
-        Asset.color(named: "onPrimary", domain: domain) ?? .label
+        Asset.color(named: "onPrimary", domain: domain) ?? projectPrimary(in: domain).contrast!
     }
     
     public static func projectSecondary(in domain: Any? = Asset.domain) -> UIColor {
-        Asset.color(named: "secondary", domain: domain) ?? UIColor(red: 0, green: 119.0 / 255.0, blue: 187.0 / 255.0, alpha: 1)
+        Asset.color(named: "secondary", domain: domain) ?? projectPrimary(in: domain)
     }
     
     public static func onProjectSecondary(in domain: Any? = Asset.domain) -> UIColor {
-        Asset.color(named: "onSecondary", domain: domain) ?? .secondaryLabel
+        Asset.color(named: "onSecondary", domain: domain) ?? projectSecondary(in: domain).contrast!
     }
 
     public static func systemGreen(in domain: Any? = Asset.domain) -> UIColor {
