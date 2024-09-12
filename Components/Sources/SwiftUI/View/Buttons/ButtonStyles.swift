@@ -9,6 +9,8 @@ import SwiftUI
 import SnabbleAssetProviding
 
 public struct ProjectPrimaryButtonStyle: ButtonStyle {
+    @SwiftUI.Environment(\.project) private var project
+    
     public var disabled: Bool
     
     public init(disabled: Bool = false) {
@@ -27,6 +29,8 @@ public struct ProjectPrimaryButtonStyle: ButtonStyle {
 }
 
 public struct BorderedProjectPrimaryButtonStyle: ButtonStyle {
+    @SwiftUI.Environment(\.project) private var project
+    
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .padding([.top, .bottom], 13)
@@ -40,6 +44,8 @@ public struct BorderedProjectPrimaryButtonStyle: ButtonStyle {
 }
 
 public struct ProjectSecondaryButtonStyle: ButtonStyle {
+    @SwiftUI.Environment(\.project) private var project
+    
     public var disabled: Bool
     
     public init(disabled: Bool = false) {

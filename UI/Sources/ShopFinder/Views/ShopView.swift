@@ -7,8 +7,11 @@
 
 import SnabbleCore
 import SwiftUI
+import SnabbleComponents
 
 public struct ShopView: View {
+    @SwiftUI.Environment(\.project) private var project
+    
     var shop: ShopProviding
 
     @ObservedObject var viewModel: ShopsViewModel

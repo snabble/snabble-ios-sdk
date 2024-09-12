@@ -25,7 +25,7 @@ public struct ProjectEnvironmentKey: EnvironmentKey {
     public static var defaultValue = ProjectTrait.defaultValue
 }
 
-extension EnvironmentValues {
+public extension EnvironmentValues {
     var project: Project {
         get { self[ProjectEnvironmentKey.self] }
         set { self[ProjectEnvironmentKey.self] = newValue }

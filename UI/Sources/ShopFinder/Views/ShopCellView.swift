@@ -9,6 +9,7 @@ import Foundation
 import CoreLocation
 import SwiftUI
 import SnabbleAssetProviding
+import SnabbleComponents
 
 public struct ShopCellView: View {
     let shop: ShopProviding
@@ -46,6 +47,8 @@ private struct Secondary: ViewModifier {
 }
 
 private struct YouAreHere: ViewModifier {
+    @SwiftUI.Environment(\.project) private var project
+    
     func body(content: Content) -> some View {
         content
            .font(.footnote)

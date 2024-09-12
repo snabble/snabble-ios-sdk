@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 import WCAG_Colors
+import SwiftUI
 
 private extension UIColor {
     var contrast: UIColor? {
@@ -54,17 +55,6 @@ extension UIColor {
     }
 }
 
-import SwiftUI
-extension SwiftUI.Color {
-    private static func color(_ uiColor: UIColor) -> SwiftUI.Color {
-        if #available(iOS 15.0, *) {
-            return Self(uiColor: uiColor)
-        } else {
-            return Self(uiColor)
-        }
-    }
-}
-
 extension SwiftUI.Color {
     // MARK: - Snabble Colors
 
@@ -72,38 +62,38 @@ extension SwiftUI.Color {
         guard let uiColor = UIColor.named(name, domain: domain) else {
             return nil
         }
-        return color(uiColor)
+        return .init(uiColor: (uiColor))
     }
-
+    
     public static func border(in domain: Any? = Asset.domain) -> SwiftUI.Color {
-        color(UIColor.border(in: domain))
+        .init(uiColor: UIColor.border(in: domain))
     }
-
+    
     public static func shadow(in domain: Any? = Asset.domain) -> SwiftUI.Color {
-        color(UIColor.shadow(in: domain))
+        .init(uiColor: UIColor.shadow(in: domain))
     }
     
     public static func projectPrimary(in domain: Any? = Asset.domain) -> SwiftUI.Color {
-        color(UIColor.projectPrimary(in: domain))
+        .init(uiColor: UIColor.projectPrimary(in: domain))
     }
     
     public static func onProjectPrimary(in domain: Any? = Asset.domain) -> SwiftUI.Color {
-        color(UIColor.onProjectPrimary(in: domain))
+        .init(uiColor: UIColor.onProjectPrimary(in: domain))
     }
     
     public static func projectSecondary(in domain: Any? = Asset.domain) -> SwiftUI.Color {
-        color(UIColor.projectSecondary(in: domain))
+        .init(uiColor: UIColor.projectSecondary(in: domain))
     }
     
     public static func onProjectSecondary(in domain: Any? = Asset.domain) -> SwiftUI.Color {
-        color(UIColor.onProjectSecondary(in: domain))
+        .init(uiColor: UIColor.onProjectSecondary(in: domain))
     }
 
     public static func systemGreen(in domain: Any? = Asset.domain) -> SwiftUI.Color {
-        color(UIColor.systemGreen(in: domain))
+        .init(uiColor: UIColor.systemGreen(in: domain))
     }
     public static func systemRed(in domain: Any? = Asset.domain) -> SwiftUI.Color {
-        color(UIColor.systemRed(in: domain))
+        .init(uiColor: UIColor.systemRed(in: domain))
     }
 }
 
@@ -111,101 +101,101 @@ public extension SwiftUI.Color {
     // MARK: - Semantic Colors
 
     static var label: SwiftUI.Color {
-        color(.label)
+        .init(uiColor: .label)
     }
 
     static var secondaryLabel: SwiftUI.Color {
-        color(.secondaryLabel)
+        .init(uiColor: .secondaryLabel)
     }
 
     static var tertiaryLabel: SwiftUI.Color {
-        color(.tertiaryLabel)
+        .init(uiColor: .tertiaryLabel)
     }
 
     static var quaternaryLabel: SwiftUI.Color {
-        color(.quaternaryLabel)
+        .init(uiColor: .quaternaryLabel)
     }
 
     static var systemFill: SwiftUI.Color {
-        color(.systemFill)
+        .init(uiColor: .systemFill)
     }
 
     static var secondarySystemFill: SwiftUI.Color {
-        color(.secondarySystemFill)
+        .init(uiColor: .secondarySystemFill)
     }
 
     static var tertiarySystemFill: SwiftUI.Color {
-        color(.tertiarySystemFill)
+        .init(uiColor: .tertiarySystemFill)
     }
 
     static var quaternarySystemFill: SwiftUI.Color {
-        color(.quaternarySystemFill)
+        .init(uiColor: .quaternarySystemFill)
     }
 
     static var placeholderText: SwiftUI.Color {
-        color(.placeholderText)
+        .init(uiColor: .placeholderText)
     }
 
     @available(iOS 15.0, *)
     static var tintColor: SwiftUI.Color {
-        color(.tintColor)
+        .init(uiColor: .tintColor)
     }
 
     static var systemBackground: SwiftUI.Color {
-        color(.systemBackground)
+        .init(uiColor: .systemBackground)
     }
 
     static var secondarySystemBackground: SwiftUI.Color {
-        color(.secondarySystemBackground)
+        .init(uiColor: .secondarySystemBackground)
     }
 
     static var tertiarySystemBackground: SwiftUI.Color {
-        color(.tertiarySystemBackground)
+        .init(uiColor: .tertiarySystemBackground)
     }
 
     static var systemGroupedBackground: SwiftUI.Color {
-        color(.systemGroupedBackground)
+        .init(uiColor: .systemGroupedBackground)
     }
 
     static var secondarySystemGroupedBackground: SwiftUI.Color {
-        color(.secondarySystemGroupedBackground)
+        .init(uiColor: .secondarySystemGroupedBackground)
     }
 
     static var tertiarySystemGroupedBackground: SwiftUI.Color {
-        color(.tertiarySystemGroupedBackground)
+        .init(uiColor: .tertiarySystemGroupedBackground)
     }
 
     static var separator: SwiftUI.Color {
-        color(.separator)
+        .init(uiColor: .separator)
     }
 
     static var opaqueSeparator: SwiftUI.Color {
-        color(.opaqueSeparator)
+        .init(uiColor: .opaqueSeparator)
     }
 
     static var link: SwiftUI.Color {
-        color(.link)
+        .init(uiColor: .link)
     }
 
     static var darkText: SwiftUI.Color {
-        color(.darkText)
+        .init(uiColor: .darkText)
     }
 
     static var lightText: SwiftUI.Color {
-        color(.lightText)
+        .init(uiColor: .lightText)
     }
 
     static var systemBlue: SwiftUI.Color {
-        color(.systemBlue)
+        .init(uiColor: .systemBlue)
     }
 
     static var systemBrown: SwiftUI.Color {
-        color(.systemBrown)
+        .init(uiColor: .systemBrown)
     }
 
     @available(iOS 15.0, *)
     static var systemCyan: SwiftUI.Color {
-        color(.systemCyan)
+        .init(uiColor: .systemCyan)
     }
 
     static var systemGreen: SwiftUI.Color {
@@ -213,24 +203,24 @@ public extension SwiftUI.Color {
     }
 
     static var systemIndigo: SwiftUI.Color {
-        color(.systemIndigo)
+        .init(uiColor: .systemIndigo)
     }
 
     @available(iOS 15.0, *)
     static var systemMint: SwiftUI.Color {
-        color(.systemMint)
+        .init(uiColor: .systemMint)
     }
 
     static var systemOrange: SwiftUI.Color {
-        color(.systemOrange)
+        .init(uiColor: .systemOrange)
     }
 
     static var systemPink: SwiftUI.Color {
-        color(.systemPink)
+        .init(uiColor: .systemPink)
     }
 
     static var systemPurple: SwiftUI.Color {
-        color(.systemPurple)
+        .init(uiColor: .systemPurple)
     }
 
     static var systemRed: SwiftUI.Color {
@@ -238,46 +228,46 @@ public extension SwiftUI.Color {
     }
 
     static var systemTeal: SwiftUI.Color {
-        color(.systemTeal)
+        .init(uiColor: .systemTeal)
     }
 
     static var systemYellow: SwiftUI.Color {
-        color(.systemYellow)
+        .init(uiColor: .systemYellow)
     }
 
     static var systemGray: SwiftUI.Color {
-        color(.systemGray)
+        .init(uiColor: .systemGray)
     }
 
     static var systemGray2: SwiftUI.Color {
-        color(.systemGray2)
+        .init(uiColor: .systemGray2)
     }
 
     static var systemGray3: SwiftUI.Color {
-        color(.systemGray3)
+        .init(uiColor: .systemGray3)
     }
 
     static var systemGray4: SwiftUI.Color {
-        color(.systemGray4)
+        .init(uiColor: .systemGray4)
     }
 
     static var systemGray5: SwiftUI.Color {
-        color(.systemGray5)
+        .init(uiColor: .systemGray5)
     }
 
     static var systemGray6: SwiftUI.Color {
-        color(.systemGray6)
+        .init(uiColor: .systemGray6)
     }
 
     static var lightGray: SwiftUI.Color {
-        color(.lightGray)
+        .init(uiColor: .lightGray)
     }
 
     static var darkGray: SwiftUI.Color {
-        color(.darkGray)
+        .init(uiColor: .darkGray)
     }
 
     static var magenta: SwiftUI.Color {
-        color(.magenta)
+        .init(uiColor: .magenta)
     }
 }

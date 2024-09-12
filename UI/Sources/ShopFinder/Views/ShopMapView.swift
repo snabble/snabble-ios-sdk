@@ -10,6 +10,7 @@ import SwiftUI
 import MapKit
 import Contacts
 import SnabbleAssetProviding
+import SnabbleComponents
 
 extension View {
     func navigateToShopAlert(isPresented: Binding<Bool>, shop: ShopProviding) -> some View {
@@ -36,6 +37,8 @@ extension View {
 }
 
 public struct ShopMapView: View {
+    @SwiftUI.Environment(\.project) private var project
+    
     let shop: ShopProviding
     let showNavigationControl: Bool
 

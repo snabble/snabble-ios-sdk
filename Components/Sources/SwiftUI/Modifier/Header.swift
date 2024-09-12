@@ -9,6 +9,8 @@ import SwiftUI
 import SnabbleAssetProviding
 
 struct HeaderViewModifier: ViewModifier {
+    @SwiftUI.Environment(\.project) private var project
+    
     func body(content: Content) -> some View {
         content
             .font(font)
