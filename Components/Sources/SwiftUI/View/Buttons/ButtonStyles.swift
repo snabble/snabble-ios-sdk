@@ -34,7 +34,7 @@ public struct BorderedButtonStyle: ButtonStyle {
             .background(RoundedRectangle(cornerRadius: 8)
                 .fill(.regularMaterial)
                 .strokeBorder(Color.gray, style: StrokeStyle(lineWidth: 0.5, lineCap: .round, lineJoin: .round))
-                .foregroundColor(.accentColor)
+                .foregroundColor(.accent())
             )
     }
 }

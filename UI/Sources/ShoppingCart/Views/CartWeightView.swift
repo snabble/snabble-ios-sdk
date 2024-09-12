@@ -38,7 +38,7 @@ struct CartWeightView: View {
     @ViewBuilder
     var minusImage: some View {
         Image(systemName: "trash")
-            .foregroundColor(.accentColor)
+            .foregroundColor(.accent())
             .frame(width: 22 * scale, height: 22 * scale)
     }
     

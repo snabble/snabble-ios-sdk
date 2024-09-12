@@ -66,7 +66,7 @@ struct AccountsView: View {
         VStack {
             Image("Title")
             Text("The Future of Mobile Payment")
-                .foregroundColor(.accentColor)
+                .foregroundColor(.accent())
         }
         .shadow(radius: 3)
         .shadow(radius: 3)
