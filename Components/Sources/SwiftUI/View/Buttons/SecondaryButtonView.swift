@@ -7,9 +7,7 @@
 
 import SwiftUI
 
-public struct SecondaryButtonView: View {
-    @SwiftUI.Environment(\.project) private var project
-    
+public struct SecondaryButtonView: View {    
     let title: String
     @Binding var disabled: Bool
     

@@ -8,8 +8,6 @@
 import SwiftUI
 
 public struct PrimaryButtonView: View {
-    @SwiftUI.Environment(\.project) private var project
-    
     let title: String
     @Binding var disabled: Bool
     
