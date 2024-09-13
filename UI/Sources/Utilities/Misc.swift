@@ -7,6 +7,7 @@
 
 import UIKit
 import SnabbleAssetProviding
+import SnabbleComponents
 
 extension UIButton {
     /// add a "rounded button" appearance to this button
