@@ -9,6 +9,7 @@ import SwiftUI
 import SnabbleCore
 import Combine
 import SnabbleAssetProviding
+import SnabbleComponents
 
 extension ShoppingCartViewModel {
     func updateQuantity(_ string: Binding<String>, for itemModel: ProductItemModel) {

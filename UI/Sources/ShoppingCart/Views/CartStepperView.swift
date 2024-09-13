@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SnabbleCore
+import SnabbleComponents
 
 struct BorderedButtonStyle: ButtonStyle {
     let radius: CGFloat
