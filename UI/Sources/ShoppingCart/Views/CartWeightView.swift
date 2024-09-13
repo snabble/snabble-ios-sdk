@@ -25,7 +25,7 @@ extension ShoppingCartViewModel {
 }
 
 struct CartWeightView: View {
-    @SwiftUI.Environment(\.project) private var project
+    @SwiftUI.Environment(\.projectTrait) private var project
     
     @ObservedObject var itemModel: ProductItemModel
     let editable: Bool

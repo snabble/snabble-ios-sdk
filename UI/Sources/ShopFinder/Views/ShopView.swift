@@ -10,7 +10,7 @@ import SwiftUI
 import SnabbleComponents
 
 public struct ShopView: View {
-    @SwiftUI.Environment(\.project) private var project
+    @SwiftUI.Environment(\.projectTrait) private var project
     
     var shop: ShopProviding
 

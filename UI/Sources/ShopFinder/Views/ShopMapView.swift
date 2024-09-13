@@ -37,7 +37,7 @@ extension View {
 }
 
 public struct ShopMapView: View {
-    @SwiftUI.Environment(\.project) private var project
+    @SwiftUI.Environment(\.projectTrait) private var project
     
     let shop: ShopProviding
     let showNavigationControl: Bool

@@ -9,7 +9,7 @@ import SwiftUI
 import SnabbleAssetProviding
 
 public struct ProjectPrimaryButtonStyle: ButtonStyle {
-    @SwiftUI.Environment(\.project) private var project
+    @SwiftUI.Environment(\.projectTrait) private var project
     
     public var disabled: Bool
     
@@ -29,7 +29,7 @@ public struct ProjectPrimaryButtonStyle: ButtonStyle {
 }
 
 public struct BorderedProjectPrimaryButtonStyle: ButtonStyle {
-    @SwiftUI.Environment(\.project) private var project
+    @SwiftUI.Environment(\.projectTrait) private var project
     
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
@@ -44,7 +44,7 @@ public struct BorderedProjectPrimaryButtonStyle: ButtonStyle {
 }
 
 public struct ProjectSecondaryButtonStyle: ButtonStyle {
-    @SwiftUI.Environment(\.project) private var project
+    @SwiftUI.Environment(\.projectTrait) private var project
     
     public var disabled: Bool
     

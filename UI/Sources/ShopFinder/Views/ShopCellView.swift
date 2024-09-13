@@ -47,7 +47,7 @@ private struct Secondary: ViewModifier {
 }
 
 private struct YouAreHere: ViewModifier {
-    @SwiftUI.Environment(\.project) private var project
+    @SwiftUI.Environment(\.projectTrait) private var project
     
     func body(content: Content) -> some View {
         content

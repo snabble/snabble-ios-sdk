@@ -26,7 +26,7 @@ public struct ProjectEnvironmentKey: EnvironmentKey {
 }
 
 public extension EnvironmentValues {
-    var project: Project {
+    var projectTrait: Project {
         get { self[ProjectEnvironmentKey.self] }
         set { self[ProjectEnvironmentKey.self] = newValue }
     }
