@@ -7,8 +7,11 @@
 
 import SwiftUI
 import SnabbleAssetProviding
+import SnabbleComponents
 
 public struct SnabbleEmptyView: View {
+    @SwiftUI.Environment(\.projectTrait) private var project
+    
     public let title: String
     public let subtitle: String?
     public let image: Image
