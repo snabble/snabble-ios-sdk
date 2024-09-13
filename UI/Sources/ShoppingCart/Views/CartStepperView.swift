@@ -28,6 +28,8 @@ struct BorderedButtonStyle: ButtonStyle {
 }
 
 struct CartStepperView: View {
+    @SwiftUI.Environment(\.project) private var project
+    
     @ObservedObject var itemModel: ProductItemModel
     @EnvironmentObject var cartModel: ShoppingCartViewModel
     @ScaledMetric var scale: CGFloat = 1
