@@ -22,8 +22,8 @@ private class StartShoppingViewModel: ObservableObject {
                     self?.widget = WidgetButton(
                         id: "Snabble.DynamicView.StartShopping.button",
                         text: "Snabble.DynamicView.StartShopping.button",
-                        foregroundColorSource: "onAccent",
-                        backgroundColorSource: "accent"
+                        foregroundColorSource: "onProjectPrimary",
+                        backgroundColorSource: "projectPrimary"
                     )
                 } else {
                     self?.widget = nil
