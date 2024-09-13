@@ -9,6 +9,7 @@ import SwiftUI
 import Combine
 import SnabbleCore
 import SnabbleAssetProviding
+import SnabbleComponents
 
 #if canImport(UIKit)
 import UIKit
@@ -219,7 +220,7 @@ public struct SepaDataEditorView: View {
             Text(keyed: "Snabble.save")
                 .frame(maxWidth: .infinity)
         }
-        .buttonStyle(PrimaryButtonStyle())
+        .buttonStyle(ProjectPrimaryButtonStyle())
         .disabled(!self.model.isValid)
         .opacity(!self.model.isValid ? 0.5 : 1.0)
     }

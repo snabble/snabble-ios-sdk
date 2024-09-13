@@ -25,7 +25,7 @@ public struct ShopView: View {
             }) {
                 Text(keyed: "Snabble.Shop.Detail.shopNow")
             }
-            .buttonStyle(PrimaryButtonStyle())
+            .buttonStyle(ProjectPrimaryButtonStyle())
         } else {
             HStack {
                 Spacer()

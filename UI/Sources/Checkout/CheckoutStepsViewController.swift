@@ -8,6 +8,7 @@ import SnabbleCore
 import SwiftUI
 import Combine
 import SnabbleAssetProviding
+import SnabbleComponents
 
 final class CheckoutModel: ObservableObject {
 
@@ -154,7 +155,7 @@ struct CheckoutView: View {
                             .frame(maxWidth: .infinity)
                     }
                     .disabled(!model.isComplete)
-                    .buttonStyle(PrimaryButtonStyle())
+                    .buttonStyle(ProjectPrimaryButtonStyle())
                     .padding([.bottom, .horizontal], 16)
                 }
 

@@ -25,6 +25,8 @@ public struct ProjectPrimaryButtonStyle: ButtonStyle {
             .foregroundColor(Color.onProjectPrimary().opacity(disabled ? 0.5 : 1.0))
             .disabled(disabled)
             .clipShape(RoundedRectangle(cornerRadius: 10))
+            .scaleEffect(configuration.isPressed ? 1.1 : 1)
+            .animation(.easeOut, value: configuration.isPressed)
     }
 }
 
