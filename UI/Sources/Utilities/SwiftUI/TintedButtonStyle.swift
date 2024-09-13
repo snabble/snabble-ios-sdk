@@ -9,9 +9,12 @@
 
 import SwiftUI
 import SnabbleAssetProviding
+import SnabbleComponents
 
 /// Tinted button style using `Color.projectPrimary()` as background color and `Color.onProjectPrimary()` as text color
 public struct PrimaryButtonStyle: ButtonStyle {
+    @Environment(\.projectTrait) private var project
+    
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .padding([.top, .bottom], 15)
