@@ -81,7 +81,7 @@ public struct CodeView: View {
                 action: {
                     verifyCode(otp, phoneNumber: phoneNumber)
                 })
-            .buttonStyle(AccentButtonStyle(disabled: !isEnabled))
+            .buttonStyle(ProjectPrimaryButtonStyle(disabled: !isEnabled))
             .disabled(!isEnabled)
             
             LockedButtonView(

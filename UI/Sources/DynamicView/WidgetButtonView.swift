@@ -6,6 +6,8 @@
 //
 
 import SwiftUI
+import SnabbleAssetProviding
+import SnabbleComponents
 
 private protocol WidgetButtonStyling {
     var foregroundColor: Color { get }
@@ -13,6 +15,8 @@ private protocol WidgetButtonStyling {
 }
 
 public struct WidgetButtonView: View {
+    @SwiftUI.Environment(\.projectTrait) private var project
+    
     let widget: WidgetButton
     let action: (WidgetButton) -> Void
     
@@ -33,11 +37,12 @@ public struct WidgetButtonView: View {
 }
 
 extension WidgetButton: WidgetButtonStyling {
+    
     var foregroundColor: Color {
         guard
             let source = foregroundColorSource,
             let style = ColorStyle(rawValue: source) else {
-            return .accent()
+            return Color.projectPrimary()
         }
         return style.color
 

@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SnabbleAssetProviding
 
 /// Usage::
 ///
@@ -64,7 +65,7 @@ private struct LockedButtonStyle: ButtonStyle {
         configuration.label
             .padding([.top, .bottom], 10)
             .background(background)
-            .foregroundColor(.accent().opacity(!isEnabled ? 0.5 : 1.0))
+            .foregroundColor(.projectPrimary().opacity(!isEnabled ? 0.5 : 1.0))
             .disabled(!isEnabled)
             .clipShape(Capsule())
     }

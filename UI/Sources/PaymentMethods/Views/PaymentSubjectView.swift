@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import SnabbleCore
 import SnabbleAssetProviding
+import SnabbleComponents
 
 public struct PaymentSubjectView: View {
     @ObservedObject var viewModel: PaymentSubjectViewModel
@@ -59,7 +60,7 @@ public struct PaymentSubjectView: View {
                 }
                 .opacity(!viewModel.isValid ? 0.5 : 1.0)
                 .disabled(!viewModel.isValid)
-                .buttonStyle(AccentButtonStyle())
+                .buttonStyle(ProjectPrimaryButtonStyle())
                 
                 Button( action: {
                     viewModel.skip()

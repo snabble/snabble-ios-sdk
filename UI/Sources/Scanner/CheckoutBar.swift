@@ -103,7 +103,7 @@ final class CheckoutBar: UIView {
         let checkoutButton = UIButton(type: .system)
         checkoutButton.translatesAutoresizingMaskIntoConstraints = false
         checkoutButton.setTitle(Asset.localizedString(forKey: "Snabble.Shoppingcart.BuyProducts.now"), for: .normal)
-        let disabledColor = UIColor.onAccent().withAlphaComponent(0.5)
+        let disabledColor = UIColor.onProjectPrimary().withAlphaComponent(0.5)
         checkoutButton.setTitleColor(disabledColor, for: .disabled)
         checkoutButton.titleLabel?.font = .preferredFont(forTextStyle: .headline)
         checkoutButton.titleLabel?.adjustsFontForContentSizeCategory = true
@@ -324,10 +324,6 @@ final class CheckoutBar: UIView {
         let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.SaleStop.ErrorMsg.title"), message: msg, preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default, handler: nil))
         parentVC?.present(alert, animated: true)
-    }
-
-    func setCustomAppearance(_ appearance: CustomAppearance) {
-        self.checkoutButton?.setCustomAppearance(appearance)
     }
 }
 

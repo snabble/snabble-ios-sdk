@@ -100,6 +100,7 @@ let package = Package(
                 .product(name: "GRDB", package: "GRDB.swift"),
                 "ZIPFoundation",
                 "SnabbleUser",
+                "SnabbleComponents"
             ],
             path: "Core/Sources",
             resources: [

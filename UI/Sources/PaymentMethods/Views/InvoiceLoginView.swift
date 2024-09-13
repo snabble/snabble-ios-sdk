@@ -9,6 +9,7 @@ import Foundation
 import SwiftUI
 import UIKit
 import SnabbleAssetProviding
+import SnabbleComponents
 
 extension InvoiceLoginModel {
     public var image: SwiftUI.Image? {
@@ -49,7 +50,7 @@ public struct InvoiceLoginView: View {
             }
             .frame(maxWidth: .infinity)
         }
-        .buttonStyle(AccentButtonStyle())
+        .buttonStyle(ProjectPrimaryButtonStyle())
         .disabled(!canLogin)
         .opacity(!canLogin ? 0.5 : 1.0)
     }
@@ -146,7 +147,7 @@ public struct InvoiceDetailView: View {
                 }) {
                     Image(systemName: "trash")
                 }
-                .foregroundColor(Color.accent())
+                .foregroundColor(Color.projectPrimary())
             }
         }
     }

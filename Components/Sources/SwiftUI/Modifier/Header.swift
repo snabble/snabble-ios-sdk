@@ -9,10 +9,12 @@ import SwiftUI
 import SnabbleAssetProviding
 
 struct HeaderViewModifier: ViewModifier {
+    @SwiftUI.Environment(\.projectTrait) private var project
+    
     func body(content: Content) -> some View {
         content
             .font(font)
-            .foregroundColor(color ?? .accentColor)
+            .foregroundColor(color ?? .projectPrimary())
             .multilineTextAlignment(.center)
             .fixedSize(horizontal: false, vertical: true)
 

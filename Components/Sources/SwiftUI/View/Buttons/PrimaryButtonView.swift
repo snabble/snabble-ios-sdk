@@ -27,7 +27,7 @@ public struct PrimaryButtonView: View {
                 .fontWeight(.bold)
                 .frame(maxWidth: .infinity)
         }
-        .buttonStyle(AccentButtonStyle(disabled: disabled))
+        .buttonStyle(ProjectPrimaryButtonStyle(disabled: disabled))
         .disabled(disabled)
     }
 }

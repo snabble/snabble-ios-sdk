@@ -6,13 +6,16 @@
 //  Miscellaneous UI utility methods that don't warrant having their own source file
 
 import UIKit
+import SnabbleAssetProviding
+import SnabbleComponents
 
 extension UIButton {
     /// add a "rounded button" appearance to this button
     public func makeSnabbleButton() {
         self.layer.cornerRadius = 8
-        self.backgroundColor = .accent()
-        self.tintColor = .onAccent()
+        self.backgroundColor = .projectPrimary()
+        self.setTitleColor(.onProjectPrimary(), for: .normal)
+        self.tintColor = .onProjectPrimary()
     }
 
     /// add a "bordered button" appearance to this button

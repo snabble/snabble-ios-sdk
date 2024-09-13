@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SnabbleComponents
 
 public struct SepaAcceptView: View {
     @ObservedObject public var model: SepaAcceptModel
@@ -31,7 +32,7 @@ public struct SepaAcceptView: View {
             Text(keyed: "Snabble.SEPA.iAgree")
                 .frame(maxWidth: .infinity)
         }
-        .buttonStyle(AccentButtonStyle())
+        .buttonStyle(ProjectPrimaryButtonStyle())
     }
     
     @ViewBuilder

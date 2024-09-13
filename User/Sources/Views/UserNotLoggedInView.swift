@@ -25,6 +25,5 @@ public struct UserNotLoggedInView: View {
             }
         }
         .padding(.horizontal)
-        
     }
 }

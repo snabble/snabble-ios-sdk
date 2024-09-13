@@ -126,7 +126,7 @@ public final class GiropayEditViewController: UIViewController {
         errorButton.titleLabel?.font = .preferredFont(forTextStyle: .headline)
         errorButton.titleLabel?.adjustsFontForContentSizeCategory = true
         errorButton.setTitle(Asset.localizedString(forKey: "Snabble.PaymentError.tryAgain"), for: .normal)
-        errorButton.setTitleColor(.onAccent(), for: .normal)
+        errorButton.setTitleColor(.onProjectPrimary(), for: .normal)
         errorButton.makeSnabbleButton()
         errorButton.isUserInteractionEnabled = true
         errorButton.addTarget(self, action: #selector(errorButtonTapped(_:)), for: .touchUpInside)

@@ -7,6 +7,7 @@
 import SwiftUI
 import SnabbleCore
 import SnabbleAssetProviding
+import SnabbleComponents
 import Combine
 
 struct RatingItem: Swift.Identifiable, Equatable {
@@ -169,7 +170,7 @@ struct CheckoutRatingView: View {
                 .cornerRadius(6)
                 
                 sendButton
-                    .buttonStyle(AccentButtonStyle())
+                    .buttonStyle(ProjectPrimaryButtonStyle())
                     .disabled(model.selectionIndex == nil)
                 
                 customView

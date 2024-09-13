@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SnabbleCore
+import SnabbleComponents
 
 struct BorderedButtonStyle: ButtonStyle {
     let radius: CGFloat
@@ -28,6 +29,8 @@ struct BorderedButtonStyle: ButtonStyle {
 }
 
 struct CartStepperView: View {
+    @SwiftUI.Environment(\.projectTrait) private var project
+    
     @ObservedObject var itemModel: ProductItemModel
     @EnvironmentObject var cartModel: ShoppingCartViewModel
     @ScaledMetric var scale: CGFloat = 1
@@ -35,13 +38,13 @@ struct CartStepperView: View {
     @ViewBuilder
     var minusImage: some View {
         Image(systemName: itemModel.quantity == 1 ? "trash" : "minus")
-            .foregroundColor(.accentColor)
+            .foregroundColor(.projectPrimary())
             .frame(width: 22 * scale, height: 22 * scale)
     }
     @ViewBuilder
     var plusImage: some View {
         Image(systemName: "plus")
-            .foregroundColor(.accentColor)
+            .foregroundColor(.projectPrimary())
             .frame(width: 22 * scale, height: 22 * scale)
     }
 

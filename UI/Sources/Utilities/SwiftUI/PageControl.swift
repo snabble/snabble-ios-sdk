@@ -9,6 +9,7 @@
 
 import SwiftUI
 import UIKit
+import SnabbleAssetProviding
 
 struct PageControl: UIViewRepresentable {
     var numberOfPages: Int
@@ -22,7 +23,7 @@ struct PageControl: UIViewRepresentable {
         let control = UIPageControl()
         control.numberOfPages = numberOfPages
         control.pageIndicatorTintColor = .gray
-        control.currentPageIndicatorTintColor = .accent()
+        control.currentPageIndicatorTintColor = .projectPrimary()
 
         control.addTarget(
             context.coordinator,

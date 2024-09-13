@@ -33,8 +33,8 @@ public class LocationPermissionViewModel: NSObject, ObservableObject {
             widget = WidgetButton(
                 id: "Snabble.LocationPermission.notDetermined",
                 text: "Snabble.DynamicView.LocationPermission.Button.notDetermined",
-                foregroundColorSource: "onAccent",
-                backgroundColorSource: "accent"
+                foregroundColorSource: "onProjectPrimary",
+                backgroundColorSource: "projectPrimary"
             )
             permissionDeniedOrRestricted = false
         case .denied, .restricted:

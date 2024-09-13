@@ -27,8 +27,8 @@ private class AllStoresViewModel: ObservableObject {
                     self?.widget = WidgetButton(
                         id: widget.id,
                         text: "Snabble.DynamicView.AllStores.button",
-                        foregroundColorSource: "onAccent",
-                        backgroundColorSource: "accent"
+                        foregroundColorSource: "onProjectPrimary",
+                        backgroundColorSource: "projectPrimary"
                     )
                 }
             }

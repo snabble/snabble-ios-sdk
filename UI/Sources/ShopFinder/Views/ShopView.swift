@@ -7,8 +7,11 @@
 
 import SnabbleCore
 import SwiftUI
+import SnabbleComponents
 
 public struct ShopView: View {
+    @SwiftUI.Environment(\.projectTrait) private var project
+    
     var shop: ShopProviding
 
     @ObservedObject var viewModel: ShopsViewModel
@@ -22,7 +25,7 @@ public struct ShopView: View {
             }) {
                 Text(keyed: "Snabble.Shop.Detail.shopNow")
             }
-            .buttonStyle(AccentButtonStyle())
+            .buttonStyle(ProjectPrimaryButtonStyle())
         } else {
             HStack {
                 Spacer()
@@ -35,7 +38,7 @@ public struct ShopView: View {
                 }) {
                     Image(systemName: "arrow.triangle.turn.up.right.circle.fill")
                         .font(.title2)
-                        .foregroundColor(Color.accent())
+                        .foregroundColor(Color.projectPrimary())
                 }
                 .navigateToShopAlert(isPresented: $showingAlert, shop: shop)
                 Spacer()

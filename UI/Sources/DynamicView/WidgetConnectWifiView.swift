@@ -162,7 +162,7 @@ public struct WidgetConnectWifiView: View {
             image
         } else {
             Asset.image(named: viewModel.networkError == nil ? "wifi" : "wifi.exclamationmark")
-                .foregroundColor(.accent())
+                .foregroundColor(.projectPrimary())
                 .font(.title)
         }
     }

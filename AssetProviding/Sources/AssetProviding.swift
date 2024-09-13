@@ -9,12 +9,6 @@ import Foundation
 import UIKit
 import SwiftUI
 
-public protocol CustomAppearance {
-    var accent: UIColor { get }
-    var onAccent: UIColor { get }
-    var titleIcon: UIImage? { get }
-}
-
 public protocol ImageProviding: AnyObject {
     /// Providing an image for the given `name` compatible with the `domain`
     /// - Parameters:
@@ -72,11 +66,4 @@ public protocol FontProviding: AnyObject {
     func font(_ name: String, size: CGFloat?, relativeTo textStyle: Font.TextStyle?, domain: Any?) -> SwiftUI.Font?
 }
 
-public protocol AppearanceProviding: AnyObject {
-    /// Providing a `CustomAppearance` for the given `projectId`
-    /// - Parameter domain: The domain, usually the current `Identifier<Project>`
-    /// - Returns: The custom appearance for the specified projectId or `nil`
-    func appearance(for domain: Any?) -> CustomAppearance?
-}
-
-public typealias AssetProviding = ImageProviding & ColorProviding & StringProviding & UrlProviding & FontProviding & AppearanceProviding
+public typealias AssetProviding = ImageProviding & ColorProviding & StringProviding & UrlProviding & FontProviding

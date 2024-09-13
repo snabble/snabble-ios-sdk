@@ -10,7 +10,6 @@ import SnabbleCore
 import SnabbleAssetProviding
 
 public final class ScannerViewController: PulleyViewController {
-    private var customAppearance: CustomAppearance?
 
     public weak var scannerDelegate: ScannerDelegate? {
         didSet {
@@ -68,8 +67,6 @@ public final class ScannerViewController: PulleyViewController {
         self.tabBarItem.image = Asset.image(named: "SnabbleSDK/icon-scan-inactive")
         self.tabBarItem.selectedImage = Asset.image(named: "SnabbleSDK/icon-scan-active")
 
-        SnabbleCI.registerForAppearanceChange(self)
-
         shoppingCart.delegate = self
     }
 
@@ -79,16 +76,6 @@ public final class ScannerViewController: PulleyViewController {
 
     required init(contentViewController: UIViewController, drawerViewController: UIViewController) {
         fatalError("init(contentViewController:drawerViewController:) has not been implemented")
-    }
-}
-
-extension ScannerViewController: CustomizableAppearance {
-    public func setCustomAppearance(_ appearance: CustomAppearance) {
-        self.customAppearance = appearance
-
-        if let drawer = self.drawerContentViewController as? ScannerDrawerViewController {
-            drawer.setCustomAppearance(appearance)
-        }
     }
 }
 

@@ -10,6 +10,7 @@ import SnabbleUI
 import SnabbleCore
 import SwiftUI
 import SnabbleAssetProviding
+import SnabbleComponents
 
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
@@ -21,8 +22,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         Asset.provider = self
-
-        setupAppearance()
         
         window = UIWindow(frame: UIScreen.main.bounds)
         window?.backgroundColor = .systemBackground
@@ -38,11 +37,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         let config = Config.config(for: DeveloperMode.environmentMode)
         
         Snabble.setup(config: config) { [unowned self] snabble in
+            
             // initial config parsed/loaded
             guard let project = snabble.projects.first else {
                 fatalError("project initialization failed - make sure APPID and APPSECRET are valid")
             }
 
+            self.setupAppearance()
             // register the project with the UI components
             SnabbleCI.register(project)
             snabble.checkInManager.delegate = self
@@ -106,7 +107,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let tabBarAppearanceProxy = UITabBar.appearance()
         tabBarAppearanceProxy.barTintColor = .systemBackground
-        tabBarAppearanceProxy.tintColor = .accent()
+        tabBarAppearanceProxy.tintColor = .projectPrimary()
         tabBarAppearanceProxy.unselectedItemTintColor = .darkGray
 
         let tabBarAppearance = UITabBarAppearance()
@@ -119,7 +120,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
         let tabBarItemAppearance = UITabBarItem.appearance()
         tabBarItemAppearance.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.darkGray], for: .normal)
-        tabBarItemAppearance.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.accent()], for: .selected)
+        tabBarItemAppearance.setTitleTextAttributes([NSAttributedString.Key.foregroundColor: UIColor.projectPrimary()], for: .selected)
         
         ViewProviderStore.register(view: {
             SnabbleEmptyView(

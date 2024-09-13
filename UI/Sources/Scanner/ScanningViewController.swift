@@ -50,7 +50,6 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
 
     private var keyboardObserver: KeyboardObserver!
     private var barcodeDetector: BarcodeDetector
-    private var customAppearance: CustomAppearance?
     private var torchButton: UIBarButtonItem?
 
     private weak var spinnerTimer: Timer?
@@ -79,8 +78,6 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
         self.tabBarItem.image = Asset.image(named: "SnabbleSDK/icon-scan-inactive")
         self.tabBarItem.selectedImage = Asset.image(named: "SnabbleSDK/icon-scan-active")
         self.navigationItem.title = Asset.localizedString(forKey: "Snabble.Scanner.scanningTitle")
-
-        SnabbleCI.registerForAppearanceChange(self)
         
         NotificationCenter.default.addObserver(self, selector: #selector(textFieldDidBeginEditing(_:)), name: .textFieldDidBeginEditing, object: nil)
     }
@@ -140,10 +137,7 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
         super.viewDidLoad()
 
         self.view.backgroundColor = .systemGray
-
-        if let custom = self.customAppearance {
-            scanConfirmationView?.setCustomAppearance(custom)
-        }
+        
         scanConfirmationView?.delegate = self
         scanConfirmationViewBottom?.constant = hiddenConfirmationOffset
 
@@ -156,12 +150,6 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
 
         let searchButton = UIBarButtonItem(image: Asset.image(named: "SnabbleSDK/icon-entercode"), style: .plain, target: self, action: #selector(searchTapped(_:)))
         self.pulleyViewController?.navigationItem.rightBarButtonItem = searchButton
-        
-        registerForTraitChanges([UITraitUserInterfaceStyle.self], handler: { (self: Self, _: UITraitCollection) in
-            if let appearance = self.customAppearance {
-                self.setCustomAppearance(appearance)
-            }
-        })
     }
 
     override public func viewWillAppear(_ animated: Bool) {
@@ -799,18 +787,4 @@ extension ScanningViewController: KeyboardHandling {
         }
     }
 
-}
-
-extension ScanningViewController: CustomizableAppearance {
-    public func setCustomAppearance(_ appearance: CustomAppearance) {
-        self.customAppearance = appearance
-
-        self.scanConfirmationView?.setCustomAppearance(appearance)
-        SnabbleCI.getAsset(.storeLogoSmall) { img in
-            if let image = img ?? appearance.titleIcon {
-                let imgView = UIImageView(image: image)
-                self.navigationItem.titleView = imgView
-            }
-        }
-    }
 }

@@ -282,9 +282,6 @@ extension PaymentProcess {
                                                              paymentDelegate: self.paymentDelegate)
                 
                 if let viewController = checkoutVC {
-                    if let customizable = viewController as? CustomizableAppearance {
-                        customizable.setCustomAppearance(SnabbleCI.appearance)
-                    }
                     completion(.success(viewController))
                 } else {
                     self.paymentDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))

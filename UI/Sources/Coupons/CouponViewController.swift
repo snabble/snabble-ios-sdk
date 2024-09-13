@@ -9,6 +9,7 @@ import Foundation
 import SnabbleCore
 import SwiftUI
 import SnabbleAssetProviding
+import SnabbleComponents
 
 public struct CouponView: View {
     @ObservedObject var couponModel: CouponViewModel
@@ -72,7 +73,7 @@ public struct CouponView: View {
                     .fontWeight(.bold)
                     .frame(maxWidth: .infinity)
             }
-            .buttonStyle(AccentButtonStyle())
+            .buttonStyle(ProjectPrimaryButtonStyle())
             
             if couponModel.coupon.isActivated {
                 HStack {

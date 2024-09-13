@@ -52,7 +52,7 @@ private struct LabelWithImageAccent: View {
             Text(title)
         }, icon: {
             Image(systemName: systemName)
-                .foregroundStyle(Color.accent())
+                .foregroundStyle(Color.projectPrimary())
         })
     }
 }
@@ -135,7 +135,7 @@ public struct NumberView<Header: View, Footer: View>: View {
                         action: {
                             submit()
                         })
-                    .buttonStyle(AccentButtonStyle(disabled: !isEnabled))
+                    .buttonStyle(ProjectPrimaryButtonStyle(disabled: !isEnabled))
                     .disabled(!isEnabled)
                 }
                 

@@ -9,6 +9,7 @@
 
 import Foundation
 import SwiftUI
+import SnabbleComponents
 
 /// View to render one onboarding item
 struct OnboardingButtonView: View {
@@ -28,7 +29,7 @@ struct OnboardingButtonView: View {
                 Text(keyed: isLast ? "Snabble.Onboarding.done" : "Snabble.Onboarding.next")
             }
         }
-        .buttonStyle(AccentButtonStyle())
+        .buttonStyle(ProjectPrimaryButtonStyle())
     }
 
     @ViewBuilder

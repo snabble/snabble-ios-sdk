@@ -17,7 +17,7 @@
           "type": "text",
           "id": "2",
           "text": "Dashboard.title",
-          "textColor": "accent",
+          "textColor": "projectPrimary",
           "textStyle": "title",
           "padding": {
               "bottom": 4

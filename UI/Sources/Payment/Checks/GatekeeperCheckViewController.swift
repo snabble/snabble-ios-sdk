@@ -68,7 +68,7 @@ struct UpArrow: View {
     var body: some View {
         SwiftUI.Image(systemName: "arrow.up")
             .font(Font(.init(.application, size: 40)))
-            .foregroundColor(Color.accent())
+            .foregroundColor(Color.projectPrimary())
             .offset(y: (y - (offset * 5)))
             .onAppear {
                 withAnimation(animation) {
@@ -108,7 +108,7 @@ struct GatekeeperView: View {
            }) {
                 Text(keyed: Asset.localizedString(forKey: "Snabble.cancel"))
                     .fontWeight(.bold)
-                    .foregroundColor(Color.accent())
+                    .foregroundColor(Color.projectPrimary())
             }
         }
     }

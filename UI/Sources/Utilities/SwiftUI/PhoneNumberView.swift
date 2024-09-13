@@ -6,10 +6,14 @@
 //
 
 import SwiftUI
+import SnabbleAssetProviding
+import SnabbleComponents
 
 public struct PhoneNumberView: View {
-    var phone: String
+    let phone: String
+    
     @Environment(\.openURL) var openURL
+    @Environment(\.projectTrait) private var project
 
     public var body: some View {
         HStack {
@@ -19,7 +23,7 @@ public struct PhoneNumberView: View {
                 openURL(URL(string: "tel:\(phone)")!)
             }) {
                 Text(phone)
-                    .foregroundColor(Color.accent())
+                    .foregroundColor(Color.projectPrimary())
             }
         }
     }
