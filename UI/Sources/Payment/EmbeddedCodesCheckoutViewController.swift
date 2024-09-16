@@ -260,10 +260,6 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         configureCodeScrollView()
 
         codeScrollView?.delegate = self
-        
-        registerForTraitChanges([UITraitUserInterfaceStyle.self], handler: { (self: Self, _: UITraitCollection) in
-            self.setupIcon()
-        })
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -298,6 +294,11 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             // user "aborted" this payment process by tapping 'Back'
             cart.generateNewUUID()
         }
+    }
+    
+    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
+        super.traitCollectionDidChange(previousTraitCollection)
+        setupIcon()
     }
 
     private func configureViewForDevice() {
