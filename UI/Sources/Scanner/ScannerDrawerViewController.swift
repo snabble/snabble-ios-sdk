@@ -161,7 +161,6 @@ final class ScannerDrawerViewController: UIViewController {
         view.backgroundColor = .clear
         self.shoppingListTableVC.view.backgroundColor = .clear
         self.shoppingCartVC.view.backgroundColor = .clear
-        setupBlurEffect()
 
         checkoutBar?.shoppingCartDelegate = shoppingCartDelegate
 
@@ -171,9 +170,14 @@ final class ScannerDrawerViewController: UIViewController {
         nc.addObserver(self, selector: #selector(self.shoppingCartUpdated(_:)), name: .snabbleCartUpdated, object: nil)
       
         registerForTraitChanges([UITraitUserInterfaceStyle.self], handler: { (self: Self, _: UITraitCollection) in
-            self.setupBlurEffect()
+            self.setupBlurEffect(forTraitCollection: self.traitCollection)
         })
    }
+    
+    override func viewIsAppearing(_ animated: Bool) {
+        super.viewIsAppearing(animated)
+        setupBlurEffect(forTraitCollection: traitCollection)
+    }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -183,8 +187,8 @@ final class ScannerDrawerViewController: UIViewController {
         checkoutBar?.updateTotals()
     }
 
-    private func setupBlurEffect() {
-        self.effectView?.effect = UIBlurEffect(style: traitCollection.userInterfaceStyle == .light ? .extraLight : .dark)
+    private func setupBlurEffect(forTraitCollection traitCollection: UITraitCollection) {
+        effectView?.effect = UIBlurEffect(style: traitCollection.userInterfaceStyle == .light ? .extraLight : .dark)
     }
 
     @objc private func handleTapped(_ gesture: UITapGestureRecognizer) {
