@@ -50,8 +50,13 @@ extension UIColor {
     public static func systemGreen(in domain: Any? = Asset.domain) -> UIColor {
         Asset.color(named: "systemGreen", domain: domain) ?? .systemGreen
     }
+
     public static func systemRed(in domain: Any? = Asset.domain) -> UIColor {
         Asset.color(named: "systemRed", domain: domain) ?? .systemRed
+    }
+
+    public static func badge(in domain: Any? = Asset.domain) -> UIColor {
+        Asset.color(named: "badge", domain: domain) ?? .systemRed
     }
 }
 
@@ -92,8 +97,13 @@ extension SwiftUI.Color {
     public static func systemGreen(in domain: Any? = Asset.domain) -> SwiftUI.Color {
         .init(uiColor: UIColor.systemGreen(in: domain))
     }
+
     public static func systemRed(in domain: Any? = Asset.domain) -> SwiftUI.Color {
         .init(uiColor: UIColor.systemRed(in: domain))
+    }
+
+    public static func badge(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        .init(uiColor: UIColor.badge(in: domain))
     }
 }
 
@@ -269,5 +279,9 @@ public extension SwiftUI.Color {
 
     static var magenta: SwiftUI.Color {
         .init(uiColor: .magenta)
+    }
+    
+    static var badge: SwiftUI.Color {
+        badge()
     }
 }
