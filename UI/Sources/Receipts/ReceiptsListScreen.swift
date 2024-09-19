@@ -52,7 +52,7 @@ public struct ReceiptsItemView: View {
     @ViewBuilder
     var stateView: some View {
         Circle()
-            .fill((showReadState && !provider.loaded) ? .red : .clear)
+            .fill((showReadState && !provider.loaded) ? Color.badge() : .clear)
             .frame(width: 10, height: 10)
     }
 
