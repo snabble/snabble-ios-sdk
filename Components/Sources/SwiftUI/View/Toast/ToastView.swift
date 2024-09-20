@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import SnabbleAssetProviding
 
 public struct ToastView: View {
     
