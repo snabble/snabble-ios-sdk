@@ -16,16 +16,18 @@ struct ToastModifier: ViewModifier {
         content
             .blur(radius: toast != nil ? 1 : 0)
             .overlay(
-                mainToastView()
+                toastView()
                     .animation(.spring(), value: toast)
             )
             .ignoresSafeArea()
-            .onChange(of: toast) { oldvalue, newValue in
-                showToast()
+            .onChange(of: toast) { _, newValue in
+                if let newValue  {
+                    showToast(newValue)
+                }
             }
     }
     
-    @ViewBuilder func mainToastView() -> some View {
+    @ViewBuilder private func toastView() -> some View {
         if let toast = toast {
             ZStack() {
                 Color.black
@@ -47,9 +49,7 @@ struct ToastModifier: ViewModifier {
         }
     }
     
-    private func showToast() {
-        guard let toast = toast else { return }
-        
+    private func showToast(_ toast: Toast) {
         UIImpactFeedbackGenerator(style: .light)
             .impactOccurred()
         
