@@ -6,21 +6,26 @@
 //
 
 import Foundation
+import SwiftUI
 
 public struct Toast: Swift.Identifiable, Equatable {
     public let id = UUID()
     /// The text to show
-    public let text: String
+    public let message: String
     /// The `Toast.Style` to show
-    public var style: Toast.Style = .information
+    public var style: Toast.Style
+    /// The duration the toast is shown
+    public var duration: TimeInterval
     
     public enum Style {
-        case information
-        case warning
         case error
+        case warning
+        case success
     }
-    public init(text: String, style: Toast.Style = .information) {
-        self.text = text
+    
+    public init(message: String, style: Toast.Style = .success, duration: TimeInterval = 3) {
+        self.message = message
         self.style = style
+        self.duration = duration
     }
 }

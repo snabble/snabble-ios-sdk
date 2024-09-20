@@ -8,19 +8,19 @@
 import SwiftUI
 
 public struct ToastView: View {
-    /// The text to show
-    public let toast: Toast
     
-    /// State to control the animation of the checkmark
+    public var style: Toast.Style
+    public var message: String
+    
     @State private var animated: Bool = false
-
+    
     public var body: some View {
-        VStack(spacing: 8) {
-            toast.image
+        VStack(spacing: 12) {
+            style.image
                 .font(.system(size: 64))
-                .foregroundColor(toast.style == .warning ? .yellow : toast.style == .error ? .red : .white)
+                .foregroundColor(style.color)
                 .symbolEffect(.bounce, value: animated)
-            Text(toast.text)
+            Text(message)
                 .font(.caption)
                 .multilineTextAlignment(.center)
         }
@@ -35,15 +35,20 @@ public struct ToastView: View {
     }
 }
 
-extension Toast {
-    var image: SwiftUI.Image {
-        switch style {
-        case .information:
-            Image(systemName: "checkmark.circle")
-        case .warning:
-            Image(systemName: "exclamationmark.triangle")
-        case .error:
-            Image(systemName: "xmark.circle")
+extension Toast.Style {
+    var color: Color {
+        switch self {
+        case .error: return Color.red
+        case .warning: return Color.orange
+        case .success: return Color.white
+        }
+    }
+    
+    var image: Image {
+        switch self {
+        case .warning: return Image(systemName: "exclamationmark.triangle.fill")
+        case .success: return Image(systemName: "checkmark.circle.fill")
+        case .error: return Image(systemName: "xmark.circle.fill")
         }
     }
 }
