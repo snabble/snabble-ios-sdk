@@ -138,7 +138,6 @@ public struct ActionModifier: ViewModifier {
     
     @State private var toast: Toast?
     
-//    @State var toastPresented: Bool = false
     @State var dialogPresented: Bool = false
     @State var sheetPresented: Bool = false
     @State var alertSheetPresented: Bool = false
