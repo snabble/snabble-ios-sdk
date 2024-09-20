@@ -28,7 +28,6 @@ public struct ToastView: View {
         .background(Color(red: 0.3, green: 0.3, blue: 0.3, opacity: 1))
         .foregroundColor(.white)
         .cornerRadius(20)
-        .padding(.horizontal, 16)
         .task {
             try? await Task.sleep(nanoseconds: 200_000_000)
             animated = true
