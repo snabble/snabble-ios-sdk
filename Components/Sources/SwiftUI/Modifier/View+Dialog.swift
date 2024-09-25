@@ -36,7 +36,6 @@ struct DialogViewModifier<DialogContent: View>: ViewModifier {
             ZStack(alignment: .center) {
                 Color.black
                     .opacity(opacity)
-                    .ignoresSafeArea()
                 GeometryReader { geometry in
                     dialogContent
                         .position(x: geometry.size.width / 2, y: geometry.size.height / 2)

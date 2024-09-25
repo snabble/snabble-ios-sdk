@@ -31,7 +31,6 @@ struct ToastModifier: ViewModifier {
             ZStack() {
                 Color.black
                     .opacity(0.3)
-                    .ignoresSafeArea()
                 GeometryReader { geometry in
                     ToastView(
                         style: toast.style,
@@ -40,6 +39,7 @@ struct ToastModifier: ViewModifier {
                     .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                 }
             }
+            .ignoresSafeArea()
             .onTapGesture {
                 dismissToast()
             }
