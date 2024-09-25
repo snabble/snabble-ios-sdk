@@ -123,6 +123,10 @@
 "Snabble.LimitsAlert.notAllMethodsAvailable" = "Nad hodnotu tovaru %@ nie sú k dispozícii všetky spôsoby platby";
 "Snabble.LimitsAlert.title" = "Pozor";
 "Snabble.NotForSale.ErrorMsg.scan" = "Tento produkt momentálne nie je možné zaplatiť cez aplikáciu. Zaplať ho pri pokladni ako obvykle.";
+"Snabble.Notifications.Dialog.message" = "Allow push notifications so you don't miss any processes or new receipts.";
+"Snabble.Notifications.Dialog.reject" = "Later";
+"Snabble.Notifications.Dialog.requestPermission" = "Activate";
+"Snabble.Notifications.Dialog.title" = "Stay up to date";
 "Snabble.Onboarding.Deeplink.accessibility" = "Otvoriť %@";
 "Snabble.Onboarding.Link.show" = "Prezrieť";
 "Snabble.Onboarding.done" = "Hotovo";
