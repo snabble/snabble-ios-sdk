@@ -7,64 +7,56 @@
 
 import SwiftUI
 
-struct DialogViewModifier<Dialog: View>: ViewModifier {
-    /// The binding that determines if the toast is presented
+struct DialogViewModifier<DialogContent: View>: ViewModifier {
     @Binding var isPresented: Bool
-    let dialog: () -> Dialog
+    let opacity: Double
+    let dialogContent: DialogContent
     
-    /// State to control the visibility of the toast
-    @State private var isShowing = false
-    @State var transaction = Transaction(animation: .linear)
-    @State private var opacity = 0.3
-    init(isPresented: Binding<Bool>, @ViewBuilder dialog: @escaping () -> Dialog) {
-        self._isPresented = isPresented
-        self.dialog = dialog
+    init(isPresented: Binding<Bool>,
+         opacity: Double = 0.3,
+         @ViewBuilder dialogContent: () -> DialogContent)
+    {
+        _isPresented = isPresented
+        self.opacity = opacity
+        self.dialogContent = dialogContent()
     }
+    
     func body(content: Content) -> some View {
         content
-            .fullScreenCover(isPresented: $isPresented,
-                             onDismiss: {
-                withTransaction(transaction) {
-                    isPresented = false
-                    isShowing = false
+            .blur(radius: isPresented ? 1 : 0)
+            .overlay(
+                contentView
+                    .animation(.spring(), value: isPresented)
+            )
+        
+    }
+    
+    @ViewBuilder var contentView: some View {
+        if isPresented {
+            ZStack(alignment: .center) {
+                Color.black
+                    .opacity(opacity)
+                GeometryReader { geometry in
+                    dialogContent
+                        .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                 }
                 
-            }) {
-                GeometryReader { geometry in
-                    ZStack(alignment: .center) {
-                        if isShowing {
-                            Color.black
-                                .opacity(0.3)
-                            dialog()
-                                .frame(width: geometry.size.width, height: geometry.size.height)
-                        }
-                    }
-                }
-                .ignoresSafeArea()
-                .transition(.opacity)
-                .presentationBackground(.clear)
-                .onAppear {
-                    withTransaction(transaction) {
-                        isShowing = true
-                    }
-                }
             }
-            .transaction { transaction in
-                transaction.disablesAnimations = isPresented
-            }
-            .animation(.easeInOut(duration: 0.3), value: isShowing)
+            .ignoresSafeArea()
+        }
     }
 }
 
 extension View {
-    /// Presents a toast message
-    /// - Parameters:
-    ///   - isPresented: Binding to display the toast
-    /// - Returns: A view that presents a toast
-    public func dialog<Dialog: View>(isPresented: Binding<Bool>,
-                                     @ViewBuilder dialog: @escaping () -> Dialog) -> some View {
-        modifier(DialogViewModifier(isPresented: isPresented,
-                                    dialog: dialog)
+    public func dialog<DialogContent: View>(
+        isPresented: Binding<Bool>,
+        opacity: Double = 0.3,
+        @ViewBuilder dialogContent: @escaping () -> DialogContent
+    ) -> some View {
+        modifier(DialogViewModifier(
+            isPresented: isPresented,
+            opacity: opacity,
+            dialogContent: dialogContent)
         )
     }
 }
