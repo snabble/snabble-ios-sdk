@@ -19,7 +19,6 @@ struct ToastModifier: ViewModifier {
                 toastView()
                     .animation(.spring(), value: toast)
             )
-            .ignoresSafeArea()
             .onChange(of: toast) { _, newValue in
                 if let newValue  {
                     showToast(newValue)
@@ -32,15 +31,13 @@ struct ToastModifier: ViewModifier {
             ZStack() {
                 Color.black
                     .opacity(0.3)
+                    .ignoresSafeArea()
                 GeometryReader { geometry in
-                    VStack {
-                        Spacer()
-                        ToastView(
-                            style: toast.style,
-                            message: toast.message)
-                        .padding(.horizontal, geometry.size.width * 0.2)
-                        Spacer()
-                    }
+                    ToastView(
+                        style: toast.style,
+                        message: toast.message)
+                    .padding(.horizontal, geometry.size.width * 0.2)
+                    .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                 }
             }
             .onTapGesture {
