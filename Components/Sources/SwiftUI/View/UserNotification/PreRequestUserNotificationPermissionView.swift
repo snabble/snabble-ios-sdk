@@ -13,41 +13,43 @@ import SnabbleAssetProviding
 struct PreRequestUserNotificationPermissionView: View {
     let notificationCenter: UNUserNotificationCenter
     let options: UNAuthorizationOptions
-    let completion: (_ isAuthorized: Bool?) -> Void
+    let completion: (_ shouldRequestAuthorization: Bool) -> Void
     
     var body: some View {
-        VStack {
+        VStack(spacing: 12) {
             Text(Asset.localizedString(forKey: "Snabble.Notifications.Dialog.title"))
+                .font(.body)
+                .bold()
+                .padding(.top)
+                .padding(.horizontal)
             Text(Asset.localizedString(forKey: "Snabble.Notifications.Dialog.message"))
+                .font(.caption)
+                .padding(.horizontal)
+            
+            Color.systemGray
+                .frame(height: 1 / UIScreen.main.scale)
+            
             Button {
-                requestAuthorization()
+                completion(true)
             } label: {
                 Text(Asset.localizedString(forKey: "Snabble.Notifications.Dialog.requestPermission"))
+                    .bold()
             }
+            
+            Color.systemGray
+                .frame(height: 1 / UIScreen.main.scale)
+            
             Button {
-                completion(nil)
+                completion(false)
             } label: {
                 Text(Asset.localizedString(forKey: "Snabble.Notifications.Dialog.reject"))
             }
+            .padding(.bottom)
         }
-    }
-    
-    private func requestAuthorization() {
-        Task {
-            var isAuthorized: Bool? = nil
-            let settings = await notificationCenter.notificationSettings()
-            switch settings.authorizationStatus {
-            case .notDetermined:
-                isAuthorized = try await notificationCenter.requestAuthorization(options: options)
-            case .denied:
-                isAuthorized = false
-            case .authorized, .provisional, .ephemeral:
-                isAuthorized = true
-            @unknown default:
-                break
-            }
-            completion(isAuthorized)
-        }
+       
+        .background(Color.systemBackground)
+        .cornerRadius(10)
+        .padding(.horizontal, 60)
     }
 }
 
@@ -74,9 +76,9 @@ struct UserNotificationDialogViewModifier: ViewModifier {
             .task() {
                 let settings = await notificationCenter.notificationSettings()
                 switch settings.authorizationStatus {
-                case .authorized, .provisional, .ephemeral:
+                case .notDetermined:
                     shouldBePresented = true
-                case .denied, .notDetermined:
+                case .denied, .authorized, .provisional, .ephemeral:
                     shouldBePresented = false
                 @unknown default:
                     shouldBePresented = false
@@ -93,9 +95,14 @@ struct UserNotificationDialogViewModifier: ViewModifier {
                 GeometryReader { geometry in
                     PreRequestUserNotificationPermissionView(
                         notificationCenter: notificationCenter,
-                        options: options,
-                        completion: completion
-                    )
+                        options: options) { shouldRequestAuthorization in
+                            shouldBePresented = false
+                            if shouldRequestAuthorization {
+                                requestAuthorization()
+                            } else {
+                                completion(nil)
+                            }
+                        }
                         .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                 }
                 
@@ -103,10 +110,28 @@ struct UserNotificationDialogViewModifier: ViewModifier {
             .ignoresSafeArea()
         }
     }
+    
+    private func requestAuthorization() {
+        Task {
+            var isAuthorized: Bool? = nil
+            let settings = await notificationCenter.notificationSettings()
+            switch settings.authorizationStatus {
+            case .notDetermined:
+                isAuthorized = try await notificationCenter.requestAuthorization(options: options)
+            case .denied:
+                isAuthorized = false
+            case .authorized, .provisional, .ephemeral:
+                isAuthorized = true
+            @unknown default:
+                break
+            }
+            completion(isAuthorized)
+        }
+    }
 }
 
 extension View {
-    public func userNotificationDialog(
+    public func requestUserNotificationDialog(
         isAllowedToBePresented: Binding<Bool>,
         notificationCenter: UNUserNotificationCenter = .current(),
         options: UNAuthorizationOptions = [.alert, .badge, .sound],
