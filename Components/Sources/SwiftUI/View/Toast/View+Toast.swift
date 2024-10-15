@@ -7,83 +7,74 @@
 
 import SwiftUI
 
-struct ToastViewModifier: ViewModifier {
-    /// The binding that determines if the toast is presented
-    @Binding var isPresented: Bool
-    /// Time until the toast is dismissed or `nil` to keep it visible
-    let duration: TimeInterval?
-    let toast: Toast
-
-    /// State to control the visibility of the toast
-    @State private var isShowing = false
+struct ToastModifier: ViewModifier {
+    
+    @Binding var toast: Toast?
+    @State private var workItem: DispatchWorkItem?
     
     func body(content: Content) -> some View {
         content
-            .blur(radius: isPresented ? 1 : 0)
-            .fullScreenCover(isPresented: $isPresented) {
+            .blur(radius: toast != nil ? 1 : 0)
+            .overlay(
+                toastView()
+                    .animation(.spring(), value: toast)
+            )
+            .onChange(of: toast) { _, newValue in
+                if let newValue  {
+                    showToast(newValue)
+                }
+            }
+    }
+    
+    @ViewBuilder private func toastView() -> some View {
+        if let toast = toast {
+            ZStack() {
+                Color.black
+                    .opacity(0.3)
                 GeometryReader { geometry in
-                    ZStack(alignment: .center) {
-                        if isShowing {
-                            Color.black
-                                .opacity(0.3)
-                            ToastView(toast: toast)
-                                .padding(.horizontal, geometry.size.width * 0.2)
-                        }
-                    }
-                    .task {
-                        if let duration {
-                            await autoDismiss(after: duration)
-                        }
-                    }
-                    .onTapGesture {
-                        dismiss()
-                    }
-                }
-                .ignoresSafeArea()
-                .transition(.opacity)
-                .presentationBackground(.clear)
-                .onAppear {
-                    withAnimation {
-                        isShowing = true
-                    }
+                    ToastView(
+                        style: toast.style,
+                        message: toast.message)
+                    .padding(.horizontal, geometry.size.width * 0.2)
+                    .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
                 }
             }
-            .transaction { transaction in
-                transaction.disablesAnimations = isPresented
+            .ignoresSafeArea()
+            .onTapGesture {
+                dismissToast()
             }
-    }
-
-    /// Automatically dismisses the toast after the given duration
-    private func autoDismiss(after: TimeInterval) async {
-        // Delay of `after` seconds (1 second = 1_000_000_000 nanoseconds)
-        try? await Task.sleep(nanoseconds: UInt64(after) * 1_500_000_000)
-        dismiss()
-    }
-
-    /// Dismisses the toast and the full screen cover animated
-    private func dismiss() {
-        withAnimation(completionCriteria: .logicallyComplete) {
-            isShowing = false
-        } completion: {
-            isPresented = false
         }
+    }
+    
+    private func showToast(_ toast: Toast) {
+        UIImpactFeedbackGenerator(style: .light)
+            .impactOccurred()
+        
+        if toast.duration > 0 {
+            workItem?.cancel()
+            
+            let task = DispatchWorkItem {
+                dismissToast()
+            }
+            
+            workItem = task
+            DispatchQueue.main.asyncAfter(deadline: .now() + toast.duration, execute: task)
+        }
+    }
+    
+    private func dismissToast() {
+        withAnimation {
+            toast = nil
+        }
+        
+        workItem?.cancel()
+        workItem = nil
     }
 }
 
 extension View {
     /// Presents a toast message
-    /// - Parameters:
-    ///   - isShowing: Binding to display the toast
-    ///   - duration: Time until the toast is dismissed or `nil` to keep it visible
-    ///   - text: The text to show
-    /// - Returns: A view that presents a toast
-    public func toast(isPresented: Binding<Bool>,
-                      duration: TimeInterval? = 3,
-                      toast: Toast
-    ) -> some View {
-        modifier(ToastViewModifier(isPresented: isPresented,
-                                   duration: duration,
-                                   toast: toast)
-        )
+    public func toastView(toast: Binding<Toast?>) -> some View {
+        modifier(ToastModifier(toast: toast))
     }
 }

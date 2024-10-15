@@ -123,6 +123,10 @@
 "Snabble.LimitsAlert.notAllMethodsAvailable" = "Ab einem Warenwert von %@ stehen nicht mehr alle Zahlungsmethoden zur Verfügung";
 "Snabble.LimitsAlert.title" = "Bitte beachten";
 "Snabble.NotForSale.ErrorMsg.scan" = "Dieses Produkt kann derzeit leider nicht mit der App bezahlt werden, bitte bezahle es wie gewohnt an der Kasse.";
+"Snabble.Notifications.Dialog.message" = "Erlaube Push-Benachrichtigungen, um keine Vorgänge oder neue Kassenbons zu verpassen.";
+"Snabble.Notifications.Dialog.reject" = "Später";
+"Snabble.Notifications.Dialog.requestPermission" = "Aktivieren";
+"Snabble.Notifications.Dialog.title" = "Bleibe auf dem Laufenden";
 "Snabble.Onboarding.Deeplink.accessibility" = "%@ öffnen";
 "Snabble.Onboarding.Link.show" = "Ansehen";
 "Snabble.Onboarding.done" = "Fertig";
@@ -474,6 +478,7 @@
 "Snabble.noDiscount" = "kein Rabatt";
 "Snabble.ok" = "OK";
 "Snabble.pleaseWait" = "Bitte warten …";
+"Snabble.pushMessages" = "Push-Benachrichtigungen";
 "Snabble.remove" = "Entfernen";
 "Snabble.save" = "Speichern";
 "Snabble.undo" = "Rückgängig";

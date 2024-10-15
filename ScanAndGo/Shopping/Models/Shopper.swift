@@ -262,11 +262,11 @@ extension Shopper: ShoppingCartDelegate {
 extension Shopper: MessageDelegate {
     public func showInfoMessage(_ message: String) {
         logger.debug("showInfoMessage: \(message)")
-        sendAction(.toast(Toast(text: message)))
+        sendAction(.toast(Toast(message: message)))
     }
     
     public func showWarningMessage(_ message: String) {
         logger.debug("showWarningMessage: \(message)")
-        sendAction(.toast(Toast(text: message, style: .warning)))
+        sendAction(.toast(Toast(message: message, style: .warning)))
     }
 }

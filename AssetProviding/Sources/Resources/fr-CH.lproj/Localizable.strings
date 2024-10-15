@@ -123,6 +123,10 @@
 "Snabble.LimitsAlert.notAllMethodsAvailable" = "À partir d’une valeur des marchandises de %@, certains modes de paiement ne sont plus disponibles.";
 "Snabble.LimitsAlert.title" = "À noter";
 "Snabble.NotForSale.ErrorMsg.scan" = "Ce produit ne peut malheureusement pas être payé avec l’application actuellement, merci de le payer comme d’habitude à la caisse.";
+"Snabble.Notifications.Dialog.message" = "Allow push notifications so you don't miss any processes or new receipts.";
+"Snabble.Notifications.Dialog.reject" = "Later";
+"Snabble.Notifications.Dialog.requestPermission" = "Activate";
+"Snabble.Notifications.Dialog.title" = "Stay up to date";
 "Snabble.Onboarding.Deeplink.accessibility" = "open %@";
 "Snabble.Onboarding.Link.show" = "Show";
 "Snabble.Onboarding.done" = "Done";
@@ -474,6 +478,7 @@
 "Snabble.noDiscount" = "pas de rabais";
 "Snabble.ok" = "OK";
 "Snabble.pleaseWait" = "Merci d’attendre…";
+"Snabble.pushMessages" = "Push Messages";
 "Snabble.remove" = "Supprimer";
 "Snabble.save" = "Enregistrer";
 "Snabble.undo" = "Annuler";

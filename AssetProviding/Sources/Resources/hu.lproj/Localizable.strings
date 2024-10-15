@@ -123,6 +123,10 @@
 "Snabble.LimitsAlert.notAllMethodsAvailable" = "%@ feletti áruértéknél nem áll rendelkezésedre az összes fizetési mód";
 "Snabble.LimitsAlert.title" = "Vedd figyelembe";
 "Snabble.NotForSale.ErrorMsg.scan" = "Ezt a terméket jelenleg sajnos nem lehet az alkalmazással kifizetni. Kérlek, fizesd a szokásos módon a kasszánál.";
+"Snabble.Notifications.Dialog.message" = "Allow push notifications so you don't miss any processes or new receipts.";
+"Snabble.Notifications.Dialog.reject" = "Later";
+"Snabble.Notifications.Dialog.requestPermission" = "Activate";
+"Snabble.Notifications.Dialog.title" = "Stay up to date";
 "Snabble.Onboarding.Deeplink.accessibility" = "%@ megnyitása";
 "Snabble.Onboarding.Link.show" = "Megtekintés";
 "Snabble.Onboarding.done" = "Kész";
@@ -474,6 +478,7 @@
 "Snabble.noDiscount" = "nincs árengedmény";
 "Snabble.ok" = "OK";
 "Snabble.pleaseWait" = "Kérlek, várj...";
+"Snabble.pushMessages" = "Push Messages";
 "Snabble.remove" = "Eltávolítás";
 "Snabble.save" = "Mentés";
 "Snabble.undo" = "Visszavonás";

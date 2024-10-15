@@ -128,21 +128,21 @@ public final class ActionManager: ObservableObject {
 
 /// A view modifier that observes the `ActionManager` and modifies the view based on the current action state.
 public struct ActionModifier: ViewModifier {
-    @State var actionState: ActionType = .idle
+    @State var actionState: ActionType = .idle {
+        didSet {
+            if case .toast(let toast) = actionState {
+                self.toast = toast
+            }
+        }
+    }
     
-    @State var toastPresented: Bool = false
+    @State private var toast: Toast?
+    
     @State var dialogPresented: Bool = false
     @State var sheetPresented: Bool = false
     @State var alertSheetPresented: Bool = false
     @State var alertPresented: Bool = false
     
-    var toast: Toast {
-        if case .toast(let toast) = actionState {
-            toast
-        } else {
-            Toast(text: String.errorString(reason: "No toast to be displayed."))
-        }
-    }
     @ViewBuilder var dialogView: some View {
         if case .dialog(let view) = actionState {
             AnyView(view)
@@ -171,14 +171,14 @@ public struct ActionModifier: ViewModifier {
         
         switch newState {
         case .idle:
-            toastPresented = false
+            toast = nil
             dialogPresented = false
             sheetPresented = false
             alertSheetPresented = false
             alertPresented = false
             
-        case .toast:
-            toastPresented = true
+        case .toast(let toast):
+            self.toast = toast
         case .dialog:
             dialogPresented = true
         case .sheet:
@@ -196,12 +196,10 @@ public struct ActionModifier: ViewModifier {
             .onReceive(ActionManager.shared.actionPublisher) { actionType in
                 handleAction(actionType)
             }
-            .toast(isPresented: $toastPresented, toast: toast)
-            .onChange(of: toastPresented) {
-                // toastPresented
-                resetState(toastPresented)
-            }
-        
+            .toastView(toast: $toast)
+            .onChange(of: toast, { oldValue, newValue in
+                resetState(newValue != nil)
+            })
             .dialog(isPresented: $dialogPresented) {
                 dialogView
             }

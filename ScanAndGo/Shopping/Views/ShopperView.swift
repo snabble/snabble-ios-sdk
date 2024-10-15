@@ -8,6 +8,7 @@
 import SwiftUI
 
 import SnabbleAssetProviding
+import SnabbleComponents
 
 /// A view that manages the shopping session for a user, integrating with the Shopper model to handle barcode scanning, displaying scan messages, and error handling.
 public struct ShopperView: View {
