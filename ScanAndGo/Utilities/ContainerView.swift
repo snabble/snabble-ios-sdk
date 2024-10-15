@@ -52,5 +52,15 @@ public struct ContainerView: UIViewControllerRepresentable {
                 childViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             ])
         }
+        override func viewDidAppear(_ animated: Bool) {
+            super.viewDidAppear(animated)
+            print("container view did appear")
+        }
+
+        override func viewDidDisappear(_ animated: Bool) {
+            super.viewDidDisappear(animated)
+            print("container view did disappear")
+            isPresented = false
+        }
     }
 }
