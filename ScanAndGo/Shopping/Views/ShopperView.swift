@@ -18,7 +18,6 @@ public struct ShopperView: View {
     @State private var showSearch: Bool = false
     @State private var showError: Bool = false
     @State private var showEditor: Bool = false
-    @State private var showDialog: Bool = false
     @State private var minHeight: CGFloat = 0
     
     public init(model: Shopper) {
@@ -28,8 +27,8 @@ public struct ShopperView: View {
     public var body: some View {
         ShoppingScannerView(model: model, minHeight: $minHeight)
             .animation(.easeInOut, value: model.scannedItem)
-            .navigationDestination(isPresented: $showDialog) {
-                model.navigationDestination(isPresented: $showDialog)
+            .navigationDestination(isPresented: $model.isNavigating) {
+                model.navigationDestination(isPresented: $model.isNavigating)
             }
             .alert(Asset.localizedString(forKey: "Snabble.SaleStop.ErrorMsg.title"), isPresented: $showError) {
                 Button(Asset.localizedString(forKey: "Snabble.ok")) {
@@ -72,20 +71,6 @@ public struct ShopperView: View {
                     withAnimation {
                         showEditor = true
                     }
-                }
-            }
-            .onReceive(model.$controller) { controller in
-                if controller != nil {
-                    model.stopScanner()
-                    withAnimation {
-                        showDialog = true
-                    }
-                }
-            }
-            .onChange(of: showDialog) {
-                if !showDialog {
-                    model.controller = nil
-                    model.startScanner()
                 }
             }
             .onChange(of: showEditor) {

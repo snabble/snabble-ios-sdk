@@ -185,7 +185,22 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
             barcodeManager.barcodeDetector.setTorch(flashlight)
         }
     }
-    @Published public var controller: UIViewController?
+    @Published public var isNavigating: Bool = false {
+        didSet {
+            if isNavigating == false {
+                controller = nil
+                self.startScanner()
+            }
+        }
+    }
+    @Published public var controller: UIViewController? {
+        didSet {
+            if controller != nil {
+                self.stopScanner()
+                isNavigating = true
+            }
+        }
+    }
     
     /// Resets the scan data.
     public func reset() {
