@@ -9,27 +9,45 @@ import SwiftUI
 
 public struct ContainerView: UIViewControllerRepresentable {
     public let viewController: UIViewController
-    @Binding public var isPresented: Bool
+    @Binding public var isPresented: Bool {
+        didSet {
+            print("ContactView: isPresented: \(isPresented)")
+        }
+    }
     
     public init(viewController: UIViewController, isPresented: Binding<Bool>) {
         self.viewController = viewController
         self._isPresented = isPresented
     }
     public func makeUIViewController(context: Context) -> UIViewController {
-        return ContainerViewController(viewController: viewController, isPresented: $isPresented)
+        return ContainerViewController(coordinator: context.coordinator)
+    }
+    public func makeCoordinator() -> Coordinator {
+        Coordinator(parent: self)
     }
     
     // swiftlint:disable:next no_empty_block
     public func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
     
-    class ContainerViewController: UIViewController {
-        let childViewController: UIViewController
-        @Binding var isPresented: Bool
+    public class Coordinator: NSObject {
+        let parent: ContainerView
         
-        init(viewController: UIViewController, isPresented: Binding<Bool>) {
-            self.childViewController = viewController
-            self._isPresented = isPresented
-            
+        init(parent: ContainerView) {
+            self.parent = parent
+        }
+        var viewController: UIViewController {
+            parent.viewController
+        }
+        func close() {
+            parent.isPresented = false
+        }
+    }
+    
+    class ContainerViewController: UIViewController {
+        let coordinator: Coordinator
+        
+        init(coordinator: Coordinator) {
+            self.coordinator = coordinator
             super.init(nibName: nil, bundle: nil)
         }
         
@@ -40,27 +58,23 @@ public struct ContainerView: UIViewControllerRepresentable {
         override func viewDidLoad() {
             super.viewDidLoad()
             
-            addChild(childViewController)
-            view.addSubview(childViewController.view)
-            childViewController.didMove(toParent: self)
+            let viewController = coordinator.viewController
             
-            childViewController.view.translatesAutoresizingMaskIntoConstraints = false
+            addChild(viewController)
+            view.addSubview(viewController.view)
+            viewController.didMove(toParent: self)
+            
+            viewController.view.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
-                childViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                childViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                childViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
-                childViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+                viewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                viewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                viewController.view.topAnchor.constraint(equalTo: view.topAnchor),
+                viewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             ])
         }
-        override func viewDidAppear(_ animated: Bool) {
-            super.viewDidAppear(animated)
-            print("container view did appear")
-        }
-
-        override func viewDidDisappear(_ animated: Bool) {
-            super.viewDidDisappear(animated)
-            print("container view did disappear")
-            isPresented = false
+        override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            coordinator.close()
         }
     }
 }
