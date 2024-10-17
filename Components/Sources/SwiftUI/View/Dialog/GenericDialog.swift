@@ -10,41 +10,39 @@ import UIKit
 import Combine
 
 public struct GenericDialog<DialogContent: View>: ViewModifier {
-    @Binding var isShowing: Bool
-    let dismissOnTapOutside: Bool
-    let dismissed: (() -> Void)?
+    @Binding var isPresented: Bool
+    let onDismiss: (() -> Void)?
     let duration: TimeInterval
     let dialogContent: DialogContent
     
+    @State private var isFullscreenCoverPresented: Bool = false
     @State private var isFullScreenCoverVisible: Bool = false
     
-    public init(isShowing: Binding<Bool>,
-                dismissOnTapOutside: Bool,
-                dismissed: (() -> Void)?,
+    public init(isPresented: Binding<Bool>,
+                onDismiss: (() -> Void)?,
                 duration: TimeInterval,
-                @ViewBuilder dialogContent: () -> DialogContent) {
-        _isShowing = isShowing
-        self.dismissOnTapOutside = dismissOnTapOutside
-        self.dismissed = dismissed
+                @ViewBuilder content: () -> DialogContent) {
+        _isPresented = isPresented
+        self.onDismiss = onDismiss
         self.duration = duration
-        self.dialogContent = dialogContent()
+        self.dialogContent = content()
     }
     
     public func body(content: Content) -> some View {
         content
-            .fullScreenCover(isPresented: $isShowing) {
+            .fullScreenCover(isPresented: $isFullscreenCoverPresented) {
                 Group {
                     if isFullScreenCoverVisible {
                         ZStack {
-                            Color.black.opacity(0.3)
+                            Color.black.opacity(0.2)
                                 .ignoresSafeArea()
                                 .onTapGesture {
                                     isFullScreenCoverVisible = false
                                 }
                             dialogContent
                         }.onDisappear {
-                            isShowing = false
-                            dismissed?()
+                            isFullscreenCoverPresented = false
+                            onDismiss?()
                         }
                         .presentationBackground(.clear)
                     }
@@ -57,20 +55,31 @@ public struct GenericDialog<DialogContent: View>: ViewModifier {
                 transaction.disablesAnimations = true
                 transaction.animation = .linear(duration: duration)
             })
+            .onChange(of: isPresented) { _, newValue in
+                if newValue {
+                    isFullscreenCoverPresented = true
+                } else {
+                    isFullScreenCoverVisible = false
+                }
+            }
+            .onChange(of: isFullscreenCoverPresented) { _, newValue in
+                if !newValue {
+                    isPresented = false
+                }
+            }
     }
 }
 
 public extension View {
-    func genericDialog<DialogContent: View>(isShowing: Binding<Bool>,
-                                            dismissOnTapOutside: Bool = true,
-                                            dismissed: (() -> Void)? = nil,
+    func genericDialog<DialogContent: View>(isPresented: Binding<Bool>,
+                                            onDismiss: (() -> Void)? = nil,
                                             duration: TimeInterval = 0.3,
-                                            @ViewBuilder dialogContent: @escaping () -> DialogContent) -> some View {
-        self.modifier(GenericDialog(isShowing: isShowing,
-                                    dismissOnTapOutside: dismissOnTapOutside,
-                                    dismissed: dismissed,
-                                    duration: duration,
-                                    dialogContent: dialogContent))
+                                            @ViewBuilder content: @escaping () -> DialogContent) -> some View {
+        modifier(GenericDialog(
+            isPresented: isPresented,
+            onDismiss: onDismiss,
+            duration: duration,
+            content: content)
+        )
     }
-    
 }
