@@ -9,8 +9,13 @@ import SwiftUI
 
 public struct ToastView: View {
     
-    public var style: Toast.Style
-    public var message: String
+    public let style: Toast.Style
+    public let message: String
+    
+    init(toast: Toast) {
+        style = toast.style
+        message = toast.message
+    }
     
     @State private var animated: Bool = false
     

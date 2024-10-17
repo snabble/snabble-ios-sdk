@@ -196,7 +196,7 @@ public struct ActionModifier: ViewModifier {
             .onReceive(ActionManager.shared.actionPublisher) { actionType in
                 handleAction(actionType)
             }
-            .toastView(toast: $toast)
+            .toast(item: $toast)
             .onChange(of: toast, { oldValue, newValue in
                 resetState(newValue != nil)
             })

@@ -7,74 +7,20 @@
 
 import SwiftUI
 
-struct ToastModifier: ViewModifier {
-    
-    @Binding var toast: Toast?
-    @State private var workItem: DispatchWorkItem?
-    
-    func body(content: Content) -> some View {
-        content
-            .blur(radius: toast != nil ? 1 : 0)
-            .overlay(
-                toastView()
-                    .animation(.spring(), value: toast)
-            )
-            .onChange(of: toast) { _, newValue in
-                if let newValue  {
-                    showToast(newValue)
-                }
-            }
-    }
-    
-    @ViewBuilder private func toastView() -> some View {
-        if let toast = toast {
-            ZStack() {
-                Color.black
-                    .opacity(0.3)
-                GeometryReader { geometry in
-                    ToastView(
-                        style: toast.style,
-                        message: toast.message)
-                    .padding(.horizontal, geometry.size.width * 0.2)
-                    .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
-                }
-            }
-            .ignoresSafeArea()
-            .onTapGesture {
-                dismissToast()
-            }
-        }
-    }
-    
-    private func showToast(_ toast: Toast) {
-        UIImpactFeedbackGenerator(style: .light)
-            .impactOccurred()
-        
-        if toast.duration > 0 {
-            workItem?.cancel()
-            
-            let task = DispatchWorkItem {
-                dismissToast()
-            }
-            
-            workItem = task
-            DispatchQueue.main.asyncAfter(deadline: .now() + toast.duration, execute: task)
-        }
-    }
-    
-    private func dismissToast() {
-        withAnimation {
-            toast = nil
-        }
-        
-        workItem?.cancel()
-        workItem = nil
-    }
-}
-
 extension View {
     /// Presents a toast message
-    public func toastView(toast: Binding<Toast?>) -> some View {
-        modifier(ToastModifier(toast: toast))
+    public func toast(item toast: Binding<Toast?>, duration: TimeInterval = 3) -> some View {
+        let isPresented = Binding<Bool>(get: { toast.wrappedValue != nil }, set: { _ in })
+        
+        return modifier(GenericDialog(
+            isPresented: isPresented,
+            onDismiss: { toast.wrappedValue = nil },
+            duration: duration,
+            content: {
+                if let toast = toast.wrappedValue {
+                    ToastView(toast: toast)
+                }
+            })
+        )
     }
 }
