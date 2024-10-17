@@ -9,11 +9,7 @@ import SwiftUI
 
 public struct ContainerView: UIViewControllerRepresentable {
     public let viewController: UIViewController
-    @Binding public var isPresented: Bool {
-        didSet {
-            print("ContactView: isPresented: \(isPresented)")
-        }
-    }
+    @Binding public var isPresented: Bool
     
     public init(viewController: UIViewController, isPresented: Binding<Bool>) {
         self.viewController = viewController
