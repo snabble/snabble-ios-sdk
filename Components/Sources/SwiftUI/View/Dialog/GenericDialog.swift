@@ -71,10 +71,10 @@ public struct GenericDialog<DialogContent: View>: ViewModifier {
 }
 
 public extension View {
-    func genericDialog<DialogContent: View>(isPresented: Binding<Bool>,
-                                            onDismiss: (() -> Void)? = nil,
-                                            duration: TimeInterval = 0.3,
-                                            @ViewBuilder content: @escaping () -> DialogContent) -> some View {
+    func dialog<DialogContent: View>(isPresented: Binding<Bool>,
+                                     onDismiss: (() -> Void)? = nil,
+                                     duration: TimeInterval = 0.3,
+                                     @ViewBuilder content: @escaping () -> DialogContent) -> some View {
         modifier(GenericDialog(
             isPresented: isPresented,
             onDismiss: onDismiss,
