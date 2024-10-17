@@ -187,7 +187,7 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
     }
     @Published public var isNavigating: Bool = false {
         didSet {
-            if isNavigating == false {
+            if !isNavigating {
                 controller = nil
                 self.startScanner()
             }

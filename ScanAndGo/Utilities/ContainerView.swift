@@ -55,11 +55,12 @@ public struct ContainerView: UIViewControllerRepresentable {
             fatalError("init(coder:) has not been implemented")
         }
         
+        var viewController: UIViewController {
+            coordinator.viewController
+        }
         override func viewDidLoad() {
             super.viewDidLoad()
-            
-            let viewController = coordinator.viewController
-            
+                        
             addChild(viewController)
             view.addSubview(viewController.view)
             viewController.didMove(toParent: self)
