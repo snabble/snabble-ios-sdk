@@ -2,7 +2,7 @@ name: LicensePlist, nameSpecified: , owner: mono0926, version: 3.25.1, source: h
 
 name: SwiftLint, nameSpecified: , owner: realm, version: main, source: https://github.com/realm/SwiftLint
 
-name: DeviceKit, nameSpecified: DeviceKit, owner: devicekit, version: 5.4.0, source: https://github.com/devicekit/DeviceKit
+name: DeviceKit, nameSpecified: DeviceKit, owner: devicekit, version: 5.5.0, source: https://github.com/devicekit/DeviceKit
 
 name: GRDB.swift, nameSpecified: GRDB.swift, owner: groue, version: 6.29.3, source: https://github.com/groue/GRDB.swift
 

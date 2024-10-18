@@ -9,27 +9,46 @@ import SwiftUI
 
 public struct ContainerView: UIViewControllerRepresentable {
     public let viewController: UIViewController
+    
     @Binding public var isPresented: Bool
     
     public init(viewController: UIViewController, isPresented: Binding<Bool>) {
         self.viewController = viewController
         self._isPresented = isPresented
     }
+    
     public func makeUIViewController(context: Context) -> UIViewController {
-        return ContainerViewController(viewController: viewController, isPresented: $isPresented)
+        return ContainerViewController(coordinator: context.coordinator)
+    }
+    
+    public func makeCoordinator() -> Coordinator {
+        Coordinator(parent: self)
     }
     
     // swiftlint:disable:next no_empty_block
     public func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
     
-    class ContainerViewController: UIViewController {
-        let childViewController: UIViewController
-        @Binding var isPresented: Bool
+    public class Coordinator: NSObject {
+        let parent: ContainerView
         
-        init(viewController: UIViewController, isPresented: Binding<Bool>) {
-            self.childViewController = viewController
-            self._isPresented = isPresented
-            
+        init(parent: ContainerView) {
+            self.parent = parent
+        }
+        
+        deinit {
+            parent.isPresented = false
+        }
+        
+        var viewController: UIViewController {
+            parent.viewController
+        }
+    }
+    
+    class ContainerViewController: UIViewController {
+        private let coordinator: Coordinator
+        
+        init(coordinator: Coordinator) {
+            self.coordinator = coordinator
             super.init(nibName: nil, bundle: nil)
         }
         
@@ -37,19 +56,23 @@ public struct ContainerView: UIViewControllerRepresentable {
             fatalError("init(coder:) has not been implemented")
         }
         
+        var viewController: UIViewController {
+            coordinator.viewController
+        }
+        
         override func viewDidLoad() {
             super.viewDidLoad()
+                        
+            addChild(viewController)
+            view.addSubview(viewController.view)
+            viewController.didMove(toParent: self)
             
-            addChild(childViewController)
-            view.addSubview(childViewController.view)
-            childViewController.didMove(toParent: self)
-            
-            childViewController.view.translatesAutoresizingMaskIntoConstraints = false
+            viewController.view.translatesAutoresizingMaskIntoConstraints = false
             NSLayoutConstraint.activate([
-                childViewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                childViewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-                childViewController.view.topAnchor.constraint(equalTo: view.topAnchor),
-                childViewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+                viewController.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+                viewController.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+                viewController.view.topAnchor.constraint(equalTo: view.topAnchor),
+                viewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             ])
         }
     }
