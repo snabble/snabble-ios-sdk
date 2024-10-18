@@ -30,6 +30,7 @@ public struct ToastView: View {
                 .multilineTextAlignment(.center)
         }
         .padding(16)
+        .frame(maxWidth: 240)
         .background(Color(red: 0.3, green: 0.3, blue: 0.3, opacity: 1))
         .foregroundColor(.white)
         .cornerRadius(20)
