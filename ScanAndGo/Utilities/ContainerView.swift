@@ -35,12 +35,12 @@ public struct ContainerView: UIViewControllerRepresentable {
             self.parent = parent
         }
         
-        var viewController: UIViewController {
-            parent.viewController
+        deinit {
+            parent.isPresented = false
         }
         
-        func close() {
-            parent.isPresented = false
+        var viewController: UIViewController {
+            parent.viewController
         }
     }
     
@@ -51,9 +51,7 @@ public struct ContainerView: UIViewControllerRepresentable {
             self.coordinator = coordinator
             super.init(nibName: nil, bundle: nil)
         }
-        deinit {
-            coordinator.close()
-        }
+        
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
