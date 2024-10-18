@@ -9,15 +9,18 @@ import SwiftUI
 
 public struct ContainerView: UIViewControllerRepresentable {
     public let viewController: UIViewController
+    
     @Binding public var isPresented: Bool
     
     public init(viewController: UIViewController, isPresented: Binding<Bool>) {
         self.viewController = viewController
         self._isPresented = isPresented
     }
+    
     public func makeUIViewController(context: Context) -> UIViewController {
         return ContainerViewController(coordinator: context.coordinator)
     }
+    
     public func makeCoordinator() -> Coordinator {
         Coordinator(parent: self)
     }
@@ -31,16 +34,18 @@ public struct ContainerView: UIViewControllerRepresentable {
         init(parent: ContainerView) {
             self.parent = parent
         }
+        
         var viewController: UIViewController {
             parent.viewController
         }
+        
         func close() {
             parent.isPresented = false
         }
     }
     
     class ContainerViewController: UIViewController {
-        let coordinator: Coordinator
+        private let coordinator: Coordinator
         
         init(coordinator: Coordinator) {
             self.coordinator = coordinator
@@ -54,6 +59,7 @@ public struct ContainerView: UIViewControllerRepresentable {
         var viewController: UIViewController {
             coordinator.viewController
         }
+        
         override func viewDidLoad() {
             super.viewDidLoad()
                         
@@ -69,8 +75,9 @@ public struct ContainerView: UIViewControllerRepresentable {
                 viewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             ])
         }
-        override func viewWillDisappear(_ animated: Bool) {
-            super.viewWillDisappear(animated)
+        
+        override func viewDidDisappear(_ animated: Bool) {
+            super.viewDidDisappear(animated)
             coordinator.close()
         }
     }
