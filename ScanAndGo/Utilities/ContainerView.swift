@@ -51,7 +51,9 @@ public struct ContainerView: UIViewControllerRepresentable {
             self.coordinator = coordinator
             super.init(nibName: nil, bundle: nil)
         }
-        
+        deinit {
+            coordinator.close()
+        }
         required init?(coder: NSCoder) {
             fatalError("init(coder:) has not been implemented")
         }
@@ -76,9 +78,9 @@ public struct ContainerView: UIViewControllerRepresentable {
             ])
         }
         
-        override func viewDidDisappear(_ animated: Bool) {
-            super.viewDidDisappear(animated)
-            coordinator.close()
-        }
+//        override func viewDidDisappear(_ animated: Bool) {
+//            super.viewDidDisappear(animated)
+//            coordinator.close()
+//        }
     }
 }
