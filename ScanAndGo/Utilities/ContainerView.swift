@@ -77,10 +77,5 @@ public struct ContainerView: UIViewControllerRepresentable {
                 viewController.view.bottomAnchor.constraint(equalTo: view.bottomAnchor)
             ])
         }
-        
-//        override func viewDidDisappear(_ animated: Bool) {
-//            super.viewDidDisappear(animated)
-//            coordinator.close()
-//        }
     }
 }
