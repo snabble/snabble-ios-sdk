@@ -21,11 +21,14 @@ public struct ProjectPrimaryButtonStyle: ButtonStyle {
         configuration.label
             .padding([.top, .bottom], 15)
             .padding([.leading, .trailing], 20)
-            .background(Color.projectPrimary())
-            .foregroundColor(Color.onProjectPrimary().opacity(disabled ? 0.5 : 1.0))
+            .background(RoundedRectangle(cornerRadius: 12)
+                .fill(Color.projectPrimary())
+            )
+            .foregroundStyle(Color.onProjectPrimary()
+                .opacity(disabled ? 0.5 : 1.0)
+            )
             .disabled(disabled)
-            .clipShape(RoundedRectangle(cornerRadius: 10))
-            .scaleEffect(configuration.isPressed ? 1.1 : 1)
+            .scaleEffect(configuration.isPressed ? 1.05 : 1)
             .animation(.easeOut, value: configuration.isPressed)
     }
 }
@@ -33,6 +36,8 @@ public struct ProjectPrimaryButtonStyle: ButtonStyle {
 public struct BorderedProjectPrimaryButtonStyle: ButtonStyle {
     @SwiftUI.Environment(\.projectTrait) private var project
     
+    public init() { }
+
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
             .padding([.top, .bottom], 13)
@@ -40,7 +45,7 @@ public struct BorderedProjectPrimaryButtonStyle: ButtonStyle {
             .background(RoundedRectangle(cornerRadius: 8)
                 .fill(.regularMaterial)
                 .strokeBorder(Color.gray, style: StrokeStyle(lineWidth: 0.5, lineCap: .round, lineJoin: .round))
-                .foregroundColor(.projectPrimary())
+                .foregroundStyle(Color.projectPrimary())
             )
     }
 }
@@ -58,7 +63,7 @@ public struct ProjectSecondaryButtonStyle: ButtonStyle {
         configuration.label
             .padding([.top, .bottom], 15)
             .padding([.leading, .trailing], 20)
-            .foregroundColor(.projectPrimary())
+            .foregroundStyle(Color.projectPrimary())
             .disabled(disabled)
     }
 }
