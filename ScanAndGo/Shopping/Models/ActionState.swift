@@ -200,21 +200,21 @@ public struct ActionModifier: ViewModifier {
             .onChange(of: toast, { oldValue, newValue in
                 resetState(newValue != nil)
             })
-            .dialog(isPresented: $dialogPresented) {
+            .windowDialog(isPresented: $dialogPresented) {
                 dialogView
             }
             .onChange(of: dialogPresented) {
                 resetState(dialogPresented)
             }
         
-            .dialog(isPresented: $sheetPresented) {
+            .windowDialog(isPresented: $sheetPresented) {
                 dialogView
             }
             .onChange(of: sheetPresented) {
                 resetState(sheetPresented)
             }
         
-            .dialog(isPresented: $alertSheetPresented) {
+            .windowDialog(isPresented: $alertSheetPresented) {
                 alertSheetView
             }
             .onChange(of: alertSheetPresented) {
