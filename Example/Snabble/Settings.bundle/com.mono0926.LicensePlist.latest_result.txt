@@ -26,6 +26,12 @@ name: TrustKit, nameSpecified: TrustKit, owner: datatheorem, version: 3.0.4, sou
 
 name: WCAG-Colors, nameSpecified: WCAG-Colors, owner: chrs1885, version: 1.0.0, source: https://github.com/chrs1885/WCAG-Colors
 
+name: WindowKit, nameSpecified: WindowKit, owner: divadretlaw, version: 2.5.2, source: https://github.com/divadretlaw/WindowKit
+
+name: WindowReader, nameSpecified: WindowReader, owner: divadretlaw, version: 2.0.1, source: https://github.com/divadretlaw/WindowReader
+
+name: WindowSceneReader, nameSpecified: WindowSceneReader, owner: divadretlaw, version: 3.1.2, source: https://github.com/divadretlaw/WindowSceneReader
+
 name: ZIPFoundation, nameSpecified: ZIPFoundation, owner: weichsel, version: 0.9.19, source: https://github.com/weichsel/ZIPFoundation
 
 add-version-numbers: false
