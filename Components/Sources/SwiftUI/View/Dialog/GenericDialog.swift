@@ -8,69 +8,41 @@
 import SwiftUI
 import UIKit
 import Combine
+import WindowKit
 
 public struct GenericDialog<DialogContent: View>: ViewModifier {
     @Binding var isPresented: Bool
-    let onDismiss: (() -> Void)?
     let duration: TimeInterval?
     let dialogContent: DialogContent
-    
-    @State private var isFullscreenCoverPresented: Bool = false
-    @State private var isFullScreenCoverVisible: Bool = false
     
     @State private var workItem: DispatchWorkItem?
     
     public init(isPresented: Binding<Bool>,
-                onDismiss: (() -> Void)?,
                 duration: TimeInterval?,
                 @ViewBuilder content: () -> DialogContent) {
         _isPresented = isPresented
-        self.onDismiss = onDismiss
         self.duration = duration
         self.dialogContent = content()
     }
     
     public func body(content: Content) -> some View {
         content
-            .fullScreenCover(isPresented: $isFullscreenCoverPresented) {
-                Group {
-                    if isFullScreenCoverVisible {
-                        ZStack {
-                            Color.black.opacity(0.2)
-                                .ignoresSafeArea()
-                                .onTapGesture {
-                                    isFullScreenCoverVisible = false
-                                }
-                            dialogContent
-                        }.onDisappear {
-                            isFullscreenCoverPresented = false
-                            onDismiss?()
+            .windowCover(isPresented: $isPresented) {
+                ZStack {
+                    Color.black.opacity(0.2)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            isPresented = false
                         }
-                        .presentationBackground(.clear)
-                    }
+                    dialogContent
                 }
+                .presentationBackground(.clear)
                 .onAppear {
-                    isFullScreenCoverVisible = true
                     enableAutomaticDismiss(duration: duration)
-                    UIImpactFeedbackGenerator(style: .light)
-                        .impactOccurred()
                 }
-            }
-            .transaction({ transaction in
-                transaction.disablesAnimations = true
-                transaction.animation = .linear(duration: 0.3)
-            })
-            .onChange(of: isPresented) { _, newValue in
-                if newValue {
-                    isFullscreenCoverPresented = true
-                } else {
-                    isFullScreenCoverVisible = false
-                }
-            }
-            .onChange(of: isFullscreenCoverPresented) { _, newValue in
-                if !newValue {
-                    isPresented = false
-                }
+            } configure: { configuration in
+                configuration.modalPresentationStyle = .custom
+                configuration.modalTransitionStyle = .crossDissolve
             }
     }
     
@@ -89,7 +61,7 @@ public struct GenericDialog<DialogContent: View>: ViewModifier {
     
     private func dismiss() {
         withAnimation {
-            isFullScreenCoverVisible = false
+            isPresented = false
         }
         
         workItem?.cancel()
@@ -98,15 +70,14 @@ public struct GenericDialog<DialogContent: View>: ViewModifier {
 }
 
 public extension View {
-    func genericDialog<DialogContent: View>(isPresented: Binding<Bool>,
-                                     onDismiss: (() -> Void)? = nil,
-                                     duration: TimeInterval? = nil,
-                                     @ViewBuilder content: @escaping () -> DialogContent) -> some View {
-        modifier(GenericDialog(
-            isPresented: isPresented,
-            onDismiss: onDismiss,
-            duration: duration,
-            content: content)
-        )
-    }
+    func windowDialog<DialogContent: View>(
+        isPresented: Binding<Bool>,
+        duration: TimeInterval? = nil,
+        @ViewBuilder content: @escaping () -> DialogContent) -> some View {
+            modifier(GenericDialog(
+                isPresented: isPresented,
+                duration: duration,
+                content: content)
+            )
+        }
 }
