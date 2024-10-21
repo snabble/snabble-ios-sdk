@@ -10,7 +10,7 @@ import UIKit
 import Combine
 import WindowKit
 
-public struct GenericDialog<DialogContent: View>: ViewModifier {
+public struct WindowDialog<DialogContent: View>: ViewModifier {
     @Binding var isPresented: Bool
     let duration: TimeInterval?
     let dialogContent: DialogContent
@@ -74,7 +74,7 @@ public extension View {
         isPresented: Binding<Bool>,
         duration: TimeInterval? = nil,
         @ViewBuilder content: @escaping () -> DialogContent) -> some View {
-            modifier(GenericDialog(
+            modifier(WindowDialog(
                 isPresented: isPresented,
                 duration: duration,
                 content: content)
