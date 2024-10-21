@@ -23,26 +23,19 @@ struct DialogViewModifier<DialogContent: View>: ViewModifier {
     
     func body(content: Content) -> some View {
         content
-            .blur(radius: isPresented ? 1 : 0)
-            .overlay(
+            .windowDialog(isPresented: $isPresented) {
                 contentView
                     .animation(.spring(), value: isPresented)
-            )
+            }
         
     }
     
     @ViewBuilder var contentView: some View {
-        if isPresented {
-            ZStack(alignment: .center) {
-                Color.black
-                    .opacity(opacity)
-                GeometryReader { geometry in
-                    dialogContent
-                        .position(x: geometry.size.width / 2, y: geometry.size.height / 2)
-                }
-                
-            }
-            .ignoresSafeArea()
+        ZStack(alignment: .center) {
+            Color.black
+                .opacity(opacity)
+                .ignoresSafeArea()
+            dialogContent
         }
     }
 }
