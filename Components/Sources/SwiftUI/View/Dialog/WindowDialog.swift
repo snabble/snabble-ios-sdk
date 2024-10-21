@@ -36,7 +36,6 @@ public struct WindowDialog<DialogContent: View>: ViewModifier {
                         }
                     dialogContent
                 }
-                .presentationBackground(.clear)
                 .onAppear {
                     enableAutomaticDismiss(duration: duration)
                 }
