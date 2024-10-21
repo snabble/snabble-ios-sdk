@@ -29,7 +29,7 @@ public struct WindowDialog<DialogContent: View>: ViewModifier {
         content
             .windowCover(isPresented: $isPresented) {
                 ZStack {
-                    Color.black.opacity(0.2)
+                    Color.black.opacity(0.3)
                         .ignoresSafeArea()
                         .onTapGesture {
                             isPresented = false
