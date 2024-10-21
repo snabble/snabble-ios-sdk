@@ -66,7 +66,8 @@ let package = Package(
         .package(url: "https://github.com/snabble/Pulley.git", from: "2.9.2"),
         .package(url: "https://github.com/chrs1885/WCAG-Colors.git", from: "1.0.0"),
         .package(url: "https://github.com/pointfreeco/swift-tagged", from: "0.10.0"),
-        .package(url: "https://github.com/apple/swift-log.git", from: "1.6.1")
+        .package(url: "https://github.com/apple/swift-log.git", from: "1.6.1"),
+        .package(url: "https://github.com/divadretlaw/WindowKit", from: "2.5.2")
     ],
     targets: [
         .target(
@@ -136,7 +137,8 @@ let package = Package(
         .target(
             name: "SnabbleComponents",
             dependencies: [
-                "SnabbleAssetProviding"
+                "SnabbleAssetProviding",
+                "WindowKit"
             ],
             path: "Components/Sources"
         ),
