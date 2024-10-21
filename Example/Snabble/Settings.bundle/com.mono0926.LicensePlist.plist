@@ -124,6 +124,30 @@
 		</dict>
 		<dict>
 			<key>File</key>
+			<string>com.mono0926.LicensePlist/WindowKit</string>
+			<key>Title</key>
+			<string>WindowKit</string>
+			<key>Type</key>
+			<string>PSChildPaneSpecifier</string>
+		</dict>
+		<dict>
+			<key>File</key>
+			<string>com.mono0926.LicensePlist/WindowReader</string>
+			<key>Title</key>
+			<string>WindowReader</string>
+			<key>Type</key>
+			<string>PSChildPaneSpecifier</string>
+		</dict>
+		<dict>
+			<key>File</key>
+			<string>com.mono0926.LicensePlist/WindowSceneReader</string>
+			<key>Title</key>
+			<string>WindowSceneReader</string>
+			<key>Type</key>
+			<string>PSChildPaneSpecifier</string>
+		</dict>
+		<dict>
+			<key>File</key>
 			<string>com.mono0926.LicensePlist/ZIPFoundation</string>
 			<key>Title</key>
 			<string>ZIPFoundation</string>
