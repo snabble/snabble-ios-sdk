@@ -11,6 +11,8 @@ import SnabbleAssetProviding
 public struct ProjectPrimaryButtonStyle: ButtonStyle {
     @SwiftUI.Environment(\.projectTrait) private var project
     
+    @ScaledMetric private var verticalPadding = 15
+    
     public var disabled: Bool
     
     public init(disabled: Bool = false) {
@@ -19,7 +21,7 @@ public struct ProjectPrimaryButtonStyle: ButtonStyle {
 
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
-            .padding([.top, .bottom], 15)
+            .padding([.top, .bottom], verticalPadding)
             .padding([.leading, .trailing], 20)
             .background(RoundedRectangle(cornerRadius: 12)
                 .fill(Color.projectPrimary())
