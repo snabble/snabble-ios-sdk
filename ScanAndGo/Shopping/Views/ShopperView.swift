@@ -37,7 +37,7 @@ public struct ShopperView: View {
             } message: {
                 Text(model.errorMessage ?? "No errorMessage! This should not happen! 😳")
             }
-            .dialog(isPresented: $showEditor) {
+            .windowDialog(isPresented: $showEditor) {
                 ScannedItemEditorView(model: model) {
                     showEditor = false
                 }
