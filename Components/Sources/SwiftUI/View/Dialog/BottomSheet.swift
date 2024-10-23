@@ -27,29 +27,33 @@ public struct BottomSheet<DialogContent: View>: ViewModifier {
         content
             .windowCover(isPresented: $isPresented) {
                 ZStack {
-                    Color.black.opacity(0.3)
+                    Color.black.opacity(0.25)
                         .ignoresSafeArea()
                         .onAppear {
                             showContent = true
-                        }
-                        .windowCover(isPresented: $showContent) {
-                            ZStack {
-                                Color.black.opacity(0.001)
-                                    .ignoresSafeArea()
-                                    .onTapGesture {
-                                        showContent = false
-                                        isPresented = false
-                                    }
-                                VStack {
-                                    Spacer()
-                                    dialogContent
-                                }
-                            }
                         }
                 }
             } configure: { configuration in
                 configuration.modalPresentationStyle = .custom
                 configuration.modalTransitionStyle = .crossDissolve
+            }
+            .windowCover(isPresented: $showContent) {
+                ZStack {
+                    Color.black.opacity(0.001)
+                        .ignoresSafeArea()
+                        .onTapGesture {
+                            isPresented = false
+                        }
+                    VStack {
+                        Spacer()
+                        dialogContent
+                    }
+                }
+            }
+            .onChange(of: isPresented) {
+                if !isPresented, showContent {
+                    showContent = false
+                }
             }
     }
 }
