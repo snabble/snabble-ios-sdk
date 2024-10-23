@@ -187,30 +187,40 @@ extension PaymentMethodItem {
     }
 }
 
+extension Snabble {
+    func allAvailablePaymentMethods() -> [RawPaymentMethod] {
+        projects
+            .flatMap(\.paymentMethods)
+            .filter(\.isAvailable)
+    }
+}
+
 extension Project {
-    public func paymentItems(for shoppingCart: ShoppingCart? = nil) -> [PaymentMethodItem] {
-        let allAppMethods = Set(
-            Snabble.shared.projects
-                .flatMap { $0.paymentMethods }
-                .filter { $0.isAvailable }
-        )
+    public var orderedPaymentMethods: [RawPaymentMethod] {
+        let allAppMethods = Snabble.shared.allAvailablePaymentMethods()
 
         // and get them in the desired display order
-        let availableOrderedMethods = RawPaymentMethod.orderedMethods
+        return RawPaymentMethod.orderedMethods
             .filter { allAppMethods.contains($0) }
             .filter { paymentMethods.available.contains($0) }
-
-        var actions = [PaymentMethodItem]()
-        for method in availableOrderedMethods {
-            actions.append(
+    }
+    
+    public func supportedPaymentMethodItems(for supportedMethods: [RawPaymentMethod]? = nil) -> [PaymentMethodItem] {
+        var items = [PaymentMethodItem]()
+        for method in orderedPaymentMethods {
+            items.append(
                 contentsOf: PaymentMethodItem.itemsFor(
                     method,
                     withPaymentMethodDetails: paymentMethodDetails,
-                    andSupportedMethods: shoppingCart?.paymentMethods?.map { $0.method }
+                    andSupportedMethods: supportedMethods
                 )
             )
         }
-        return actions
+        return items
+    }
+    
+    public func paymentItems(for shoppingCart: ShoppingCart? = nil) -> [PaymentMethodItem] {
+        return supportedPaymentMethodItems(for: shoppingCart?.paymentMethods?.map { $0.method })
     }
 
     func paymentActions(for shoppingCart: ShoppingCart? = nil) -> [PaymentMethodAction] {
