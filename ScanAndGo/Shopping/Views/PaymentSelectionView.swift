@@ -10,12 +10,7 @@ import SwiftUI
 import SnabbleCore
 import SnabbleUI
 import SnabbleAssetProviding
-/*
-    let isAnyActive = actions.contains { $0.active == true && $0.method.offline == false }
 
-     let icon = isAnyActive && !(action.active || action.methodDetail != nil) ? action.icon?.grayscale() : action.icon
-
- */
 public struct PaymentMethodItemView: View {
     
     var item: PaymentMethodItem
@@ -37,7 +32,9 @@ public struct PaymentMethodItemView: View {
                         .foregroundStyle(.secondary)
                 }
             }
+            Spacer()
         }
+        .contentShape(Rectangle())
         .padding(.horizontal)
     }
 }
@@ -45,10 +42,12 @@ public struct PaymentMethodItemView: View {
 public struct PaymentSelectionView: View {
     var project: Project
     
+    let onAction: (PaymentMethodItem?) -> Void
+    
     @State var items: [PaymentMethodItem] = []
     @State var isAnyActive = false
     @ScaledMetric var minHeight: CGFloat = 40
-
+    
     public var body: some View {
             VStack(spacing: 10) {
                 VStack {
@@ -63,6 +62,9 @@ public struct PaymentSelectionView: View {
                             Divider()
                             PaymentMethodItemView(item: item, isActive: !(isAnyActive && !(item.active || item.methodDetail != nil)))
                                 .frame(height: minHeight)
+                                .onTapGesture {
+                                    onAction(item)
+                                }
                         }
                     }
                     .padding(.bottom, 10)
@@ -71,7 +73,7 @@ public struct PaymentSelectionView: View {
                 .padding(.horizontal, 10)
                 
                 Button(action: {
-                    
+                    onAction(nil)
                 }) {
                     HStack {
                         Spacer()
