@@ -22,8 +22,6 @@ public enum ActionType: Equatable {
     case dialog(any View)
     /// Shows a `View` full screen, using `.sheet(isPresenting:) {}`
     case sheet(any View)
-    /// Shows the given associated `SheetProviding`
-    case alertSheet(SheetProviding)
     /// Shows the given associated `Alert`
     case alert(Alert)
     
@@ -50,8 +48,6 @@ extension ActionType: CustomStringConvertible {
             "dialog"
         case .sheet:
             "sheet"
-        case .alertSheet:
-            "alertSheet"
         case .alert:
             "alert"
         }
@@ -140,7 +136,6 @@ public struct ActionModifier: ViewModifier {
     
     @State var dialogPresented: Bool = false
     @State var sheetPresented: Bool = false
-    @State var alertSheetPresented: Bool = false
     @State var alertPresented: Bool = false
     
     @ViewBuilder var dialogView: some View {
@@ -150,19 +145,12 @@ public struct ActionModifier: ViewModifier {
             ErrorText(reason: "No dialogView to be displayed.")
         }
     }
+    
     @ViewBuilder var sheetView: some View {
         if case .sheet(let view) = actionState {
             AnyView(view)
         } else {
             ErrorText(reason: "No sheetView to be displayed.")
-        }
-    }
-    @ViewBuilder var alertSheetView: some View {
-        if case .alertSheet(let sheetProvider) = actionState {
-            let sheet = sheetProvider.sheetController { }
-            ContainerView(viewController: sheet, isPresented: $alertSheetPresented)
-        } else {
-            ErrorText(reason: "No alertSheet to be displayed.")
         }
     }
     
@@ -174,7 +162,6 @@ public struct ActionModifier: ViewModifier {
             toast = nil
             dialogPresented = false
             sheetPresented = false
-            alertSheetPresented = false
             alertPresented = false
             
         case .toast(let toast):
@@ -183,8 +170,6 @@ public struct ActionModifier: ViewModifier {
             dialogPresented = true
         case .sheet:
             sheetPresented = true
-        case .alertSheet:
-            alertSheetPresented = true
         case .alert:
             alertPresented = true
         }
@@ -214,12 +199,6 @@ public struct ActionModifier: ViewModifier {
                 resetState(sheetPresented)
             }
         
-            .windowDialog(isPresented: $alertSheetPresented) {
-                alertSheetView
-            }
-            .onChange(of: alertSheetPresented) {
-                resetState(alertSheetPresented)
-            }
             .alert(isPresented: $alertPresented) {
                 if case .alert(let alert) = actionState {
                     alert

@@ -127,11 +127,7 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
         if case .idle = newState {
             startScanner()
         } else {
-            if case.alertSheet = newState {
-                logger.debug("Don't stop scanner while showing alertSheet")
-            } else {
-                stopScanner()
-            }
+            stopScanner()
         }
     }
     
