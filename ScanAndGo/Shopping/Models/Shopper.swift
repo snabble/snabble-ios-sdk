@@ -71,6 +71,15 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
     /// A list of payment methods that are restricted for the shopper.
     public var restrictedPayments: [RawPaymentMethod] = []
     
+    /// A list of supported payment methods that the backend provides from the current shopping cart.
+    public var supportedShoppingCartPayments: [RawPaymentMethod]? {
+        cartModel.shoppingCart.supportedPayments
+    }
+    
+    /// A list of supported payment methods of the current project.
+    public var projectPayments: [RawPaymentMethod] {
+        project.availablePaymentMethods.filter({ !restrictedPayments.contains($0) })
+    }
     /// Provides a dynamic member lookup for retrieving payment icons.
     ///
     /// - Parameter member: The member name to lookup.
