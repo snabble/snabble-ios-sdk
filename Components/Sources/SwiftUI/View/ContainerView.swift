@@ -1,8 +1,8 @@
 //
 //  ContainerView.swift
-//  SnabbleScanAndGo
+//  Snabble
 //
-//  Created by Uwe Tilemann on 28.06.24.
+//  Created by Andreas Osberghaus on 2024-10-24.
 //
 
 import SwiftUI
@@ -11,6 +11,11 @@ public struct ContainerView: UIViewControllerRepresentable {
     public let viewController: UIViewController
     
     @Binding public var isPresented: Bool
+    
+    public init(viewController: UIViewController) {
+        self.viewController = viewController
+        self._isPresented = .constant(true)
+    }
     
     public init(viewController: UIViewController, isPresented: Binding<Bool>) {
         self.viewController = viewController
@@ -58,7 +63,7 @@ public struct ContainerView: UIViewControllerRepresentable {
         
         override func viewDidLoad() {
             super.viewDidLoad()
-                        
+            
             addChild(viewController)
             view.addSubview(viewController.view)
             viewController.didMove(toParent: self)

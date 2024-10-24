@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SnabbleComponents
 
 extension String {
     static func errorString(reason: String) -> String {
