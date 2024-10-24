@@ -65,9 +65,11 @@ struct CheckoutView: View {
                     }
                 }
                 .bottomSheet(isPresented: $showPaymentSelector) {
-                    PaymentSelectionView(project: model.project) { paymentMethodItem in
-                        if let paymentMethodItem {
-                            model.paymentManager.setSelectedPaymentItem(paymentMethodItem)
+                    PaymentSelectionView(project: model.project,
+                                         availablePayments: model.projectPayments,
+                                         supportedPayments: model.supportedShoppingCartPayments) { paymentItem in
+                        if let paymentItem {
+                            model.paymentManager.setSelectedPaymentItem(paymentItem)
                         }
                         showPaymentSelector = false
                     }
