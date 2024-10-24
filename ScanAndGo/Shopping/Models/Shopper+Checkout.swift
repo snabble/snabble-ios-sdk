@@ -26,7 +26,6 @@ extension Shopper {
     func startCheckout() {
         guard let paymentMethod = self.paymentManager.selectedPayment?.method else {
             logger.debug("selectedPayment method is nil")
-            sendAction(.alertSheet(paymentManager))
             return
         }
         

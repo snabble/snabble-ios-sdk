@@ -22,6 +22,10 @@ public final class ShoppingCart: Codable {
         }
     }
     public private(set) var paymentMethods: [PaymentMethodDescription]?
+    public var supportedPayments: [RawPaymentMethod]? {
+        paymentMethods?.map { $0.method }
+    }
+    
     public private(set) var lastCheckoutInfoError: SnabbleError?
     public private(set) var coupons: [CartCoupon]
 

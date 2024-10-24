@@ -29,7 +29,7 @@ public struct ContainerView: UIViewControllerRepresentable {
     public func makeCoordinator() -> Coordinator {
         Coordinator(parent: self)
     }
-    
+
     // swiftlint:disable:next no_empty_block
     public func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
     
@@ -39,11 +39,7 @@ public struct ContainerView: UIViewControllerRepresentable {
         init(parent: ContainerView) {
             self.parent = parent
         }
-        
-        deinit {
-            parent.isPresented = false
-        }
-        
+                
         var viewController: UIViewController {
             parent.viewController
         }
