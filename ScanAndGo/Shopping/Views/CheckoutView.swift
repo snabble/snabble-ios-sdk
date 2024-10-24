@@ -67,9 +67,7 @@ struct CheckoutView: View {
                 .bottomSheet(isPresented: $showPaymentSelector) {
                     PaymentSelectionView(project: model.project) { paymentMethodItem in
                         if let paymentMethodItem {
-                            print("select payment: \(paymentMethodItem.title)")
-                        } else {
-                            print("select payment: nil")
+                            model.paymentManager.setSelectedPaymentItem(paymentMethodItem)
                         }
                         showPaymentSelector = false
                     }
