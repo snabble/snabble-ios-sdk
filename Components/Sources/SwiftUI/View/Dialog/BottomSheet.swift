@@ -14,7 +14,6 @@ public struct BottomSheet<DialogContent: View>: ViewModifier {
     @Binding var isPresented: Bool
     let dialogContent: DialogContent
     
-    @State private var workItem: DispatchWorkItem?
     @State private var showContent: Bool = false
     
     public init(isPresented: Binding<Bool>,
