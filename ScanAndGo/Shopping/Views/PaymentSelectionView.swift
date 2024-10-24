@@ -87,7 +87,7 @@ public struct PaymentSelectionView: View {
             }
 
             .onAppear {
-            items = project.supportedPaymentMethodItems()
+            items = project.paymentItems()
             isAnyActive = items.contains { $0.active == true && $0.method.offline == false }
         }
     }
