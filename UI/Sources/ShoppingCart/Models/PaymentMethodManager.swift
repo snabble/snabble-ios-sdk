@@ -223,7 +223,7 @@ struct PaymentMethodAction: PaymentPovider {
 extension Project {
     func paymentActions(for shoppingCart: ShoppingCart? = nil) -> [PaymentMethodAction] {
         // combine all payment methods of all projects
-        let items = paymentItems(for: shoppingCart?.paymentMethods?.map { $0.method })
+        let items = paymentItems(for: shoppingCart?.supportedPayments)
         
         let actions = items.map { item in
             let title = Self.attributedString(
