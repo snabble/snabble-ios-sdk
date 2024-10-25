@@ -262,7 +262,7 @@ struct ScannedItemEditorView: View {
                     })
             }
         }
-        .padding(.bottom, (keyboardHeight > 0 ? keyboardHeight + 80 : 150))
+        .padding(.bottom, (keyboardHeight > 0 ? 20 : 150))
     }
     
     private func updateCartItem(_ cartItem: CartItem) {
