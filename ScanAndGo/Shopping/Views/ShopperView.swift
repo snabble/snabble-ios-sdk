@@ -38,8 +38,13 @@ public struct ShopperView: View {
                 Text(model.errorMessage ?? "No errorMessage! This should not happen! 😳")
             }
             .windowDialog(isPresented: $showEditor) {
-                ScannedItemEditorView(model: model) {
-                    showEditor = false
+                ScannedItemEditorView(model: model) { cartItem in
+                    showEditor.toggle()
+                    if let cartItem {
+                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                            model.updateCartItem(cartItem)
+                        }
+                    }
                 }
             }
             .keyboardHeightEnvironmentValue()
