@@ -87,7 +87,7 @@ public struct UserView: View {
         self._zip = State(initialValue: user.wrappedValue?.address?.zip ?? "12345")
         self._city = State(initialValue: user.wrappedValue?.address?.city ?? "Jupiter")
         self._country = State(initialValue: user.wrappedValue?.address?.country ?? Country.germany.code)
-        self._state = State(initialValue: user.wrappedValue?.address?.state ?? "")
+        self._state = State(initialValue: user.wrappedValue?.address?.state ?? "NRW")
 #else
         self._firstName = State(initialValue: user.wrappedValue?.firstName ?? "")
         self._lastName = State(initialValue: user.wrappedValue?.lastName ?? "")
