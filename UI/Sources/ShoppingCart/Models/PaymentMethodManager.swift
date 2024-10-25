@@ -166,21 +166,11 @@ extension PaymentMethodItem {
     }
 }
 
-extension Snabble {
-    public func allAvailablePaymentMethods() -> [RawPaymentMethod] {
-        projects
-            .flatMap(\.paymentMethods)
-            .filter(\.isAvailable)
-    }
-}
-
 extension Project {
     public var orderedPaymentMethods: [RawPaymentMethod] {
-        let allAppMethods = Snabble.shared.allAvailablePaymentMethods()
         
         // and get them in the desired display order
         return RawPaymentMethod.orderedMethods
-            .filter { allAppMethods.contains($0) }
             .filter { paymentMethods.available.contains($0) }
     }
     
