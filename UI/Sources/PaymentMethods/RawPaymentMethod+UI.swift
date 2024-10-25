@@ -111,7 +111,7 @@ extension RawPaymentMethod {
         }
 
         if descriptor.acceptedOriginTypes?.contains(.ipgHostedDataID) == true {
-            let creditCardViewController = TeleCashCreditCardAddViewController(brand: CreditCardBrand.forMethod(self), projectId, analyticsDelegate)
+            let creditCardViewController = TeleCashCreditCardAddViewController(brand: CreditCardBrand.forMethod(self), projectId: projectId)
             let viewController = UserPaymentViewController(
                 fields: creditCardViewController.defaultUserFields,
                 requiredFields: creditCardViewController.requiredUserFields

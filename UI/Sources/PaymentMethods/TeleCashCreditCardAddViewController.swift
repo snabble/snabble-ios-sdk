@@ -5,6 +5,7 @@
 //
 
 import UIKit
+import SwiftUI
 @preconcurrency import WebKit
 import SnabbleCore
 import SnabbleAssetProviding
@@ -22,14 +23,19 @@ struct TeleCashAuthorizationResult: Decodable {
     let links: AuthLinks
 
     struct AuthLinks: Decodable {
-        let _self: Link
-        let tokenizationForm: Link
+        let _self: SnabbleCore.Link
+        let tokenizationForm: SnabbleCore.Link
 
         enum CodingKeys: String, CodingKey {
             case _self = "self"
             case tokenizationForm
         }
     }
+}
+
+public protocol TelecashCreditCardAddViewControllerDelegate: AnyObject {
+    func telecashCreditCardAddViewController(_ controller: TeleCashCreditCardAddViewController, didCompleteWith paymentMethodDetail: PaymentMethodDetail)
+    func telecashCreditCardAddViewControllerDidCancel(_ controller: TeleCashCreditCardAddViewController)
 }
 
 public final class TeleCashCreditCardAddViewController: UIViewController {
@@ -40,15 +46,14 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
 
     private var brand: CreditCardBrand?
     private var projectId: Identifier<Project>
-
-    private weak var analyticsDelegate: AnalyticsDelegate?
     
     var user: TeleCashUser?
-    var deletePreAuthUrl: String?
+    private var deletePreAuthUrl: String?
     
-    public init(brand: CreditCardBrand?, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) {
+    weak var delegate: TelecashCreditCardAddViewControllerDelegate?
+    
+    public init(brand: CreditCardBrand?, projectId: Identifier<Project>) {
         self.brand = brand
-        self.analyticsDelegate = analyticsDelegate
         self.projectId = projectId
         super.init(nibName: nil, bundle: nil)
         title = brand?.displayName ?? Asset.localizedString(forKey: "Snabble.Payment.creditCard")
@@ -73,6 +78,7 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.translatesAutoresizingMaskIntoConstraints = false
         webView.navigationDelegate = self
+        webView.isInspectable = true
         view.addSubview(webView)
         self.webView = webView
 
@@ -133,7 +139,6 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
     }
     
     private func loadForm() {
-        analyticsDelegate?.track(.viewPaymentMethodDetail)
 
         guard
             let brand = brand,
@@ -204,6 +209,7 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
         }
 
         let urlRequest = URLRequest(url: url)
+        print(url)
         self.webView?.load(urlRequest)
     }
 
@@ -266,9 +272,12 @@ extension TeleCashCreditCardAddViewController: WKScriptMessageHandler {
             let connectGatewayReponse = try JSONDecoder().decode(ConnectGatewayResponse.self, from: jsonData)
             if let ccData = TeleCashCreditCardData(connectGatewayReponse, projectId, certificate: cert.data) {
                 let detail = PaymentMethodDetail(ccData)
-                PaymentMethodDetails.save(detail)
+                if let delegate {
+                    delegate.telecashCreditCardAddViewController(self, didCompleteWith: detail)
+                } else {
+                    PaymentMethodDetails.save(detail)
+                }
                 deletePreAuth()
-                self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
                 goBack()
             } else {
                 Snabble.shared.project(for: projectId)?.logError("can't create CC data from IPG response: \(connectGatewayReponse)")
@@ -284,7 +293,11 @@ extension TeleCashCreditCardAddViewController: WKScriptMessageHandler {
     }
 
     private func abort() {
-        goBack()
+        if let delegate {
+            delegate.telecashCreditCardAddViewControllerDidCancel(self)
+        } else {
+            goBack()
+        }
     }
 
     private func showError() {
@@ -331,5 +344,66 @@ private struct PreAuthInfo: Decodable {
 extension PreAuthInfo {
     static var mock: Self {
         .init(charge: "1.00", currency: "EUR")
+    }
+}
+
+public struct TelecashView: UIViewControllerRepresentable {
+    public typealias UIViewControllerType = TeleCashCreditCardAddViewController
+    
+    @Binding public var user: User?
+    @Binding public var paymentMethodDetail: PaymentMethodDetail?
+    public var didCancel: (() -> Void)?
+    
+    public let rawPaymentMethod: RawPaymentMethod
+    public let projectId: Identifier<Project>
+    
+    public init(user: Binding<User?>,
+                paymentMethodDetail: Binding<PaymentMethodDetail?>,
+                didCancel: (() -> Void)?,
+                rawPaymentMethod: RawPaymentMethod,
+                projectId: Identifier<Project>)
+    {
+        self._user = user
+        self._paymentMethodDetail = paymentMethodDetail
+        self.didCancel = didCancel
+        self.rawPaymentMethod = rawPaymentMethod
+        self.projectId = projectId
+    }
+    
+    public func makeUIViewController(context: Context) -> UIViewControllerType {
+        let viewController = TeleCashCreditCardAddViewController(
+            brand: CreditCardBrand.forMethod(rawPaymentMethod),
+            projectId: projectId
+        )
+        viewController.delegate = context.coordinator
+        return viewController
+    }
+    
+    public func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
+        if let user = context.coordinator.parent.user {
+            uiViewController.user = TeleCashUser.user(from: user)
+        } else {
+            uiViewController.user = nil
+        }
+    }
+    
+    public func makeCoordinator() -> Coordinator {
+        Coordinator(parent: self)
+    }
+    
+    public class Coordinator: TelecashCreditCardAddViewControllerDelegate {
+        let parent: TelecashView
+        
+        init(parent: TelecashView) {
+            self.parent = parent
+        }
+        
+        public func telecashCreditCardAddViewControllerDidCancel(_ controller: TeleCashCreditCardAddViewController) {
+            parent.didCancel?()
+        }
+        
+        public func telecashCreditCardAddViewController(_ controller: TeleCashCreditCardAddViewController, didCompleteWith paymentMethodDetail: PaymentMethodDetail) {
+            parent.paymentMethodDetail = paymentMethodDetail
+        }
     }
 }
