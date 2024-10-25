@@ -90,7 +90,11 @@ public struct UserPaymentView: UIViewControllerRepresentable {
     public let fields: [UserField]
     public let requiredFields: [UserField]
     
-    public init(user: Binding<User?>, fields: [UserField] = UserField.allCases, requiredFields: [UserField] = UserField.allCases) {
+    public init(
+        user: Binding<User?>,
+        fields: [UserField] = UserField.allCases,
+        requiredFields: [UserField] = UserField.allCases
+    ) {
         self._user = user
         self.fields = fields
         self.requiredFields = requiredFields
