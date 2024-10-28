@@ -341,3 +341,9 @@ public extension User {
         return isInputRequired
     }
 }
+
+extension User: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+}
