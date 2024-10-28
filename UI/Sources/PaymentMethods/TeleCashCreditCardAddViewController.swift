@@ -271,14 +271,15 @@ extension TeleCashCreditCardAddViewController: WKScriptMessageHandler {
             let jsonData = try JSONSerialization.data(withJSONObject: jsonObject)
             let connectGatewayReponse = try JSONDecoder().decode(ConnectGatewayResponse.self, from: jsonData)
             if let ccData = TeleCashCreditCardData(connectGatewayReponse, projectId, certificate: cert.data) {
+                deletePreAuth()
+                
                 let detail = PaymentMethodDetail(ccData)
                 if let delegate {
                     delegate.telecashCreditCardAddViewController(self, didCompleteWith: detail)
                 } else {
                     PaymentMethodDetails.save(detail)
+                    goBack()
                 }
-                deletePreAuth()
-                goBack()
             } else {
                 Snabble.shared.project(for: projectId)?.logError("can't create CC data from IPG response: \(connectGatewayReponse)")
                 showError()
@@ -350,19 +351,19 @@ extension PreAuthInfo {
 public struct TelecashView: UIViewControllerRepresentable {
     public typealias UIViewControllerType = TeleCashCreditCardAddViewController
     
-    @Binding public var user: User?
+    public let user: User
     @Binding public var paymentMethodDetail: PaymentMethodDetail?
     public var didCancel: (() -> Void)?
     
     public let rawPaymentMethod: RawPaymentMethod
     public let projectId: Identifier<Project>
     
-    public init(user: Binding<User?>,
-                paymentMethodDetail: Binding<PaymentMethodDetail?>,
+    public init(paymentMethodDetail: Binding<PaymentMethodDetail?>,
+                user: User,
                 didCancel: (() -> Void)?,
                 rawPaymentMethod: RawPaymentMethod,
                 projectId: Identifier<Project>) {
-        self._user = user
+        self.user = user
         self._paymentMethodDetail = paymentMethodDetail
         self.didCancel = didCancel
         self.rawPaymentMethod = rawPaymentMethod
@@ -378,13 +379,7 @@ public struct TelecashView: UIViewControllerRepresentable {
         return viewController
     }
     
-    public func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) {
-        if let user = context.coordinator.parent.user {
-            uiViewController.user = TeleCashUser.user(from: user)
-        } else {
-            uiViewController.user = nil
-        }
-    }
+    public func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) { }
     
     public func makeCoordinator() -> Coordinator {
         Coordinator(parent: self)
