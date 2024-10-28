@@ -142,8 +142,7 @@ struct ScannerCartItemView: View {
     @ObservedObject var model: Shopper
     
     let scannedItem: BarcodeManager.ScannedItem
-    let onDismiss: () -> Void
-    let onAdd: (_ cartItem: CartItem) -> Void
+    let onDismiss: (_ cartItem: CartItem?) -> Void
     let alreadyInCart: Bool
     
     @State private var cartItem: CartItem
@@ -156,12 +155,10 @@ struct ScannerCartItemView: View {
     
     init(model: Shopper,
          scannedItem: BarcodeManager.ScannedItem,
-         onDismiss: @escaping () -> Void,
-         onAdd: @escaping (_ cartItem: CartItem) -> Void
+         onDismiss: @escaping (_ cartItem: CartItem?) -> Void
     ) {
         self.model = model
         self.scannedItem = scannedItem
-        self.onAdd = onAdd
         self.onDismiss = onDismiss
         
         let result = model.cartItem(for: scannedItem)
@@ -181,7 +178,7 @@ struct ScannerCartItemView: View {
         VStack {
             VStack(spacing: 6) {
                 Button(action: {
-                    onDismiss()
+                    onDismiss(nil)
                 }) {
                     SwiftUI.Image(systemName: "xmark")
                         .font(.title2)
@@ -218,7 +215,7 @@ struct ScannerCartItemView: View {
                 let title = alreadyInCart ? Asset.localizedString(forKey: "Snabble.Scanner.updateCart") : Asset.localizedString(forKey: "Snabble.Scanner.addToCart")
                 
                 PrimaryButtonView(title: title, disabled: $disableCheckout, onAction: {
-                    onAdd(cartItem)
+                    onDismiss(cartItem)
                 })
                 .padding()
             }
@@ -247,7 +244,7 @@ struct ScannerCartItemView: View {
 struct ScannedItemEditorView: View {
     @SwiftUI.Environment(\.keyboardHeight) var keyboardHeight
     @ObservedObject var model: Shopper
-    var onDismiss: () -> Void
+    var onDismiss: (CartItem?) -> Void
     
     var body: some View {
         VStack {
@@ -256,17 +253,9 @@ struct ScannedItemEditorView: View {
                 ScannerCartItemView(
                     model: model,
                     scannedItem: scannedItem,
-                    onDismiss: onDismiss,
-                    onAdd: { cartItem in
-                        updateCartItem(cartItem)
-                    })
+                    onDismiss: onDismiss)
             }
         }
-        .padding(.bottom, (keyboardHeight > 0 ? keyboardHeight + 80 : 150))
-    }
-    
-    private func updateCartItem(_ cartItem: CartItem) {
-        model.updateCartItem(cartItem)
-        onDismiss()
+        .padding(.bottom, (keyboardHeight > 0 ? 20 : 150))
     }
 }

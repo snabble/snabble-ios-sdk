@@ -25,7 +25,7 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
         PriceFormatter(SnabbleCI.project)
     }
     
-    let shoppingCart: ShoppingCart
+    public let shoppingCart: ShoppingCart
     
     public weak var shoppingCartDelegate: ShoppingCartDelegate?
     

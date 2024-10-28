@@ -47,7 +47,7 @@ extension Shopper {
     @ViewBuilder
     public func navigationDestination(isPresented: Binding<Bool>) -> some View {
         if let controller {
-            ContainerView(viewController: controller, isPresented: isPresented)
+            ContainerView(viewController: controller)
                 .navigationTitle(controller.navigationItem.title ?? "Navigation")
         } else {
             InvalidNavigationView(isPresented: isPresented)
