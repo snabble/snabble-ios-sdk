@@ -34,8 +34,8 @@ struct TeleCashAuthorizationResult: Decodable {
 }
 
 public protocol TelecashCreditCardAddViewControllerDelegate: AnyObject {
-    func telecashCreditCardAddViewController(_ controller: TeleCashCreditCardAddViewController, didCompleteWith paymentMethodDetail: PaymentMethodDetail)
-    func telecashCreditCardAddViewControllerDidCancel(_ controller: TeleCashCreditCardAddViewController)
+    func telecashCreditCardAddViewController(_ controller: TeleCashCreditCardAddViewController, didTokenizePaymentMethodDetail paymentMethodDetail: PaymentMethodDetail)
+    func telecashCreditCardAddViewControllerDidComplete(_ controller: TeleCashCreditCardAddViewController)
 }
 
 public final class TeleCashCreditCardAddViewController: UIViewController {
@@ -180,7 +180,9 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
     }
     
     private func goBack() {
-        if
+        if let delegate {
+            delegate.telecashCreditCardAddViewControllerDidComplete(self)
+        } else if
             let viewControllers = navigationController?.viewControllers,
             let viewController = viewControllers.first(where: { viewController in
                 viewController is UserPaymentViewController
@@ -274,11 +276,11 @@ extension TeleCashCreditCardAddViewController: WKScriptMessageHandler {
                 
                 let detail = PaymentMethodDetail(ccData)
                 if let delegate {
-                    delegate.telecashCreditCardAddViewController(self, didCompleteWith: detail)
+                    delegate.telecashCreditCardAddViewController(self, didTokenizePaymentMethodDetail: detail)
                 } else {
                     PaymentMethodDetails.save(detail)
-                    goBack()
                 }
+                goBack()
             } else {
                 Snabble.shared.project(for: projectId)?.logError("can't create CC data from IPG response: \(connectGatewayReponse)")
                 showError()
@@ -294,7 +296,7 @@ extension TeleCashCreditCardAddViewController: WKScriptMessageHandler {
 
     private func abort() {
         if let delegate {
-            delegate.telecashCreditCardAddViewControllerDidCancel(self)
+            delegate.telecashCreditCardAddViewControllerDidComplete(self)
         } else {
             goBack()
         }
@@ -352,19 +354,19 @@ public struct TelecashView: UIViewControllerRepresentable {
     
     public let user: User
     @Binding public var paymentMethodDetail: PaymentMethodDetail?
-    public var didCancel: (() -> Void)?
+    public var didComplete: (() -> Void)?
     
     public let rawPaymentMethod: RawPaymentMethod
     public let projectId: Identifier<Project>
     
     public init(paymentMethodDetail: Binding<PaymentMethodDetail?>,
                 user: User,
-                didCancel: (() -> Void)?,
+                didComplete: (() -> Void)?,
                 rawPaymentMethod: RawPaymentMethod,
                 projectId: Identifier<Project>) {
         self.user = user
         self._paymentMethodDetail = paymentMethodDetail
-        self.didCancel = didCancel
+        self.didComplete = didComplete
         self.rawPaymentMethod = rawPaymentMethod
         self.projectId = projectId
     }
@@ -391,11 +393,11 @@ public struct TelecashView: UIViewControllerRepresentable {
             self.parent = parent
         }
         
-        public func telecashCreditCardAddViewControllerDidCancel(_ controller: TeleCashCreditCardAddViewController) {
-            parent.didCancel?()
+        public func telecashCreditCardAddViewControllerDidComplete(_ controller: TeleCashCreditCardAddViewController) {
+            parent.didComplete?()
         }
         
-        public func telecashCreditCardAddViewController(_ controller: TeleCashCreditCardAddViewController, didCompleteWith paymentMethodDetail: PaymentMethodDetail) {
+        public func telecashCreditCardAddViewController(_ controller: TeleCashCreditCardAddViewController, didTokenizePaymentMethodDetail paymentMethodDetail: PaymentMethodDetail) {
             parent.paymentMethodDetail = paymentMethodDetail
         }
     }

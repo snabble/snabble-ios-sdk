@@ -44,6 +44,11 @@ extension SnabbleUser.User: PrefillData {
     public var state: String? { address?.state }
 }
 
+public protocol PayoneCreditCardEditViewControllerDelegate: AnyObject {
+    func payoneCreditCardEditViewController(_ controller: PayoneCreditCardEditViewController, didTokenizePaymentMethodDetail: PaymentMethodDetail)
+    func payoneCreditCardEditViewControllerDidComplete(_ controller: PayoneCreditCardEditViewController)
+}
+
 public final class PayoneCreditCardEditViewController: UIViewController {
     private let webViewContainer = UIView()
     private weak var activityIndicator: UIActivityIndicatorView?
@@ -69,28 +74,27 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     private var projectId: Identifier<Project>?
 
     private weak var pollTimer: Timer?
-    private weak var analyticsDelegate: AnalyticsDelegate?
 
     private var payoneTokenization: PayoneTokenization?
     private var payonePreAuthResult: PayonePreAuthResult?
     private var payoneResponse: PayoneResponse?
+    
+    public weak var delegate: PayoneCreditCardEditViewControllerDelegate?
 
-    public init(brand: CreditCardBrand?, prefillData: PrefillData?, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) {
+    public init(brand: CreditCardBrand?, prefillData: PrefillData?, _ projectId: Identifier<Project>) {
         self.brand = brand
-        self.analyticsDelegate = analyticsDelegate
         self.projectId = projectId
         self.prefillData = prefillData
         super.init(nibName: nil, bundle: nil)
     }
 
-    init(_ detail: PaymentMethodDetail, prefillData: PrefillData?, _ analyticsDelegate: AnalyticsDelegate?) {
+    init(_ detail: PaymentMethodDetail, prefillData: PrefillData?) {
         if case .payoneCreditCard(let data) = detail.methodData {
             self.brand = data.brand
             self.ccNumber = data.displayName
             self.expDate = data.expirationDate
             self.detail = detail
         }
-        self.analyticsDelegate = analyticsDelegate
         self.projectId = nil
         self.prefillData = prefillData
         super.init(nibName: nil, bundle: nil)
@@ -131,12 +135,6 @@ public final class PayoneCreditCardEditViewController: UIViewController {
 
             self.startCreditCardTokenization()
         }
-    }
-
-    override public func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-
-        self.analyticsDelegate?.track(.viewPaymentMethodDetail)
     }
 
     // (re)start the tokenization process
@@ -196,7 +194,11 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     }
 
     private func goBack() {
-        self.navigationController?.popViewController(animated: true)
+        if let delegate {
+            delegate.payoneCreditCardEditViewControllerDidComplete(self)
+        } else {
+            navigationController?.popViewController(animated: true)
+        }
     }
 
     private func threeDSecureHint(for projectId: Identifier<Project>?, tokenization: PayoneTokenization) -> String {
@@ -355,7 +357,6 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         let alert = UIAlertController(title: nil, message: Asset.localizedString(forKey: "Snabble.Payment.Delete.message"), preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.yes"), style: .destructive) { _ in
             PaymentMethodDetails.remove(detail)
-            self.analyticsDelegate?.track(.paymentMethodDeleted(self.brand?.rawValue ?? ""))
             self.goBack()
         })
         alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.no"), style: .cancel, handler: nil))
@@ -449,8 +450,11 @@ public final class PayoneCreditCardEditViewController: UIViewController {
                                                  preAuthResult: preAuthResult,
                                                  projectId: projectId) {
                 let detail = PaymentMethodDetail(ccData)
-                PaymentMethodDetails.save(detail)
-                self.analyticsDelegate?.track(.paymentMethodAdded(detail.rawMethod.displayName))
+                if let delegate {
+                    delegate.payoneCreditCardEditViewController(self, didTokenizePaymentMethodDetail: detail)
+                } else {
+                    PaymentMethodDetails.save(detail)
+                }
                 goBack()
             } else {
                 project.logError("can't create CC data from pay1 response: \(response)")
@@ -478,7 +482,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
 extension PayoneCreditCardEditViewController {
     // get the info we need for the web form / tokenization request
     private func getPayoneTokenization(for project: Project,
-                                       _ link: Link?,
+                                       _ link: SnabbleCore.Link?,
                                        completion: @escaping (Result<PayoneTokenization, SnabbleError>) -> Void ) {
         guard let url = link?.href else {
             Log.error("no tokenization link found")
@@ -498,7 +502,7 @@ extension PayoneCreditCardEditViewController {
 
     // given a newly tokenized card, start the pre auth for e.g. 1€
     private func startPayonePreauthorization(for project: Project,
-                                             _ link: Link?,
+                                             _ link: SnabbleCore.Link?,
                                              _ response: PayoneResponse,
                                              completion: @escaping (Result<PayonePreAuthResult, SnabbleError>) -> Void) {
         guard let url = link?.href else {
@@ -522,7 +526,7 @@ extension PayoneCreditCardEditViewController {
 
     // get the status of a pre auth - we need to poll this until status is either `.successful` or `.failed`
     private func getPreAuthStatus(for project: Project,
-                                  _ link: Link,
+                                  _ link: SnabbleCore.Link,
                                   completion: @escaping (Result<PayonePreAuthStatusResult, SnabbleError>) -> Void) {
         project.request(.get, link.href, timeout: 2) { request in
             guard var request = request else {
@@ -674,5 +678,61 @@ extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
             return "{}"
         }
         return String(decoding: jsonData, as: UTF8.self)
+    }
+}
+
+import SwiftUI
+
+public struct PayoneView: UIViewControllerRepresentable {
+    public typealias UIViewControllerType = PayoneCreditCardEditViewController
+    
+    public let user: User
+    @Binding public var paymentMethodDetail: PaymentMethodDetail?
+    public var didComplete: (() -> Void)?
+    
+    public let rawPaymentMethod: RawPaymentMethod
+    public let projectId: Identifier<Project>
+    
+    public init(paymentMethodDetail: Binding<PaymentMethodDetail?>,
+                user: User,
+                didComplete: (() -> Void)?,
+                rawPaymentMethod: RawPaymentMethod,
+                projectId: Identifier<Project>) {
+        self.user = user
+        self._paymentMethodDetail = paymentMethodDetail
+        self.didComplete = didComplete
+        self.rawPaymentMethod = rawPaymentMethod
+        self.projectId = projectId
+    }
+    
+    public func makeUIViewController(context: Context) -> UIViewControllerType {
+        let viewController = PayoneCreditCardEditViewController(
+            brand: CreditCardBrand.forMethod(rawPaymentMethod),
+            prefillData: user,
+            projectId)
+        viewController.delegate = context.coordinator
+        return viewController
+    }
+    
+    public func updateUIViewController(_ uiViewController: UIViewControllerType, context: Context) { }
+    
+    public func makeCoordinator() -> Coordinator {
+        Coordinator(parent: self)
+    }
+    
+    public class Coordinator: PayoneCreditCardEditViewControllerDelegate {
+        let parent: PayoneView
+        
+        init(parent: PayoneView) {
+            self.parent = parent
+        }
+        
+        public func payoneCreditCardEditViewControllerDidComplete(_ controller: PayoneCreditCardEditViewController) {
+            parent.didComplete?()
+        }
+        
+        public func payoneCreditCardEditViewController(_ controller: PayoneCreditCardEditViewController, didTokenizePaymentMethodDetail paymentMethodDetail: PaymentMethodDetail) {
+            parent.paymentMethodDetail = paymentMethodDetail
+        }
     }
 }

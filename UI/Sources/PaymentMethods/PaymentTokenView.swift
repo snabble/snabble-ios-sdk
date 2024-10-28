@@ -32,18 +32,23 @@ public struct PaymentTokenView: View {
         NavigationStack(path: $path) {
             SnabbleUser.UserView(user: $user)
                 .navigationDestination(item: $user, destination: { user in
-                    switch provider(forProjectId: projectId) {
+                    switch provider(forProjectId: projectId, withRawPaymentMethod: rawPaymentMethod) {
                     case .none:
-                        Text("No supported")
+                        Text("\(rawPaymentMethod.displayName) is not supported")
                     case .telecash:
                         TelecashView(
                             paymentMethodDetail: $paymentMethodDetail,
                             user: user,
-                            didCancel: didComplete,
+                            didComplete: didComplete,
                             rawPaymentMethod: rawPaymentMethod,
                             projectId: projectId)
                     case .payone:
-                        Text("Payone is not yet supported")
+                        PayoneView(
+                            paymentMethodDetail: $paymentMethodDetail,
+                            user: user,
+                            didComplete: didComplete,
+                            rawPaymentMethod: rawPaymentMethod,
+                            projectId: projectId)
                     }
                 })
                 .toolbar {
@@ -57,10 +62,10 @@ public struct PaymentTokenView: View {
         .navigationBarTitleDisplayMode(.inline)
     }
     
-    private func provider(forProjectId projectId: Identifier<Project>) -> Provider {
+    private func provider(forProjectId projectId: Identifier<Project>, withRawPaymentMethod method: RawPaymentMethod) -> Provider {
         guard
             let project = Snabble.shared.project(for: projectId),
-            let descriptor = project.paymentMethodDescriptors.first(where: { $0.id == rawPaymentMethod }) else {
+            let descriptor = project.paymentMethodDescriptors.first(where: { $0.id == method }) else {
                 return .none
             }
         

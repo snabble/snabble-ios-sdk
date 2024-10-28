@@ -119,7 +119,7 @@ extension RawPaymentMethod {
             viewController.nextViewController = creditCardViewController
             return viewController
         } else if descriptor.acceptedOriginTypes?.contains(.payonePseudoCardPAN) == true {
-            return PayoneCreditCardEditViewController(brand: CreditCardBrand.forMethod(self), prefillData: Snabble.shared.userProvider?.getUser(), projectId, analyticsDelegate)
+            return PayoneCreditCardEditViewController(brand: CreditCardBrand.forMethod(self), prefillData: Snabble.shared.userProvider?.getUser(), projectId)
         } else if descriptor.acceptedOriginTypes?.contains(.datatransCreditCardAlias) == true {
             let controller = Snabble.methodRegistry.createEntry(method: self, projectId, analyticsDelegate)
             if let userValidation = controller as? UserInputConformance {
