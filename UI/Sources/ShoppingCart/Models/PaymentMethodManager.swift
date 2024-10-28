@@ -18,12 +18,6 @@ public protocol PaymentPovider {
     var active: Bool { get }
 }
 
-extension PaymentPovider {
-    public var icon: UIImage? {
-        methodDetail?.icon ?? method.icon
-    }
-}
-
 public struct PaymentMethodItem: Swift.Identifiable, PaymentPovider {
     public let id = UUID()
     public let title: String
@@ -32,21 +26,6 @@ public struct PaymentMethodItem: Swift.Identifiable, PaymentPovider {
     public let methodDetail: PaymentMethodDetail?
     public let selectable: Bool
     public let active: Bool
-}
-
-struct PaymentMethodAction: PaymentPovider {
-    let title: NSAttributedString
-    let item: PaymentMethodItem
-    
-    init(title: NSAttributedString, item: PaymentMethodItem) {
-        self.title = title
-        self.item = item
-    }
-
-    var method: SnabbleCore.RawPaymentMethod { item.method }
-    var methodDetail: SnabbleCore.PaymentMethodDetail? { item.methodDetail }
-    var selectable: Bool { item.selectable }
-    var active: Bool { item.active }
 }
 
 extension PaymentMethodItem {
@@ -188,34 +167,53 @@ extension PaymentMethodItem {
 }
 
 extension Project {
-    public func paymentItems(for shoppingCart: ShoppingCart? = nil) -> [PaymentMethodItem] {
-        let allAppMethods = Set(
-            Snabble.shared.projects
-                .flatMap { $0.paymentMethods }
-                .filter { $0.isAvailable }
-        )
-
+    public var orderedPaymentMethods: [RawPaymentMethod] {
+        
         // and get them in the desired display order
-        let availableOrderedMethods = RawPaymentMethod.orderedMethods
-            .filter { allAppMethods.contains($0) }
+        return RawPaymentMethod.orderedMethods
             .filter { paymentMethods.available.contains($0) }
-
-        var actions = [PaymentMethodItem]()
-        for method in availableOrderedMethods {
-            actions.append(
+    }
+    
+    public func paymentItems(for supportedMethods: [RawPaymentMethod]? = nil) -> [PaymentMethodItem] {
+        var items = [PaymentMethodItem]()
+        for method in orderedPaymentMethods {
+            items.append(
                 contentsOf: PaymentMethodItem.itemsFor(
                     method,
                     withPaymentMethodDetails: paymentMethodDetails,
-                    andSupportedMethods: shoppingCart?.paymentMethods?.map { $0.method }
+                    andSupportedMethods: supportedMethods
                 )
             )
         }
-        return actions
+        return items
+    }
+}
+
+extension PaymentPovider {
+    public var icon: UIImage? {
+        methodDetail?.icon ?? method.icon
+    }
+}
+
+struct PaymentMethodAction: PaymentPovider {
+    let title: NSAttributedString
+    let item: PaymentMethodItem
+    
+    init(title: NSAttributedString, item: PaymentMethodItem) {
+        self.title = title
+        self.item = item
     }
 
+    var method: SnabbleCore.RawPaymentMethod { item.method }
+    var methodDetail: SnabbleCore.PaymentMethodDetail? { item.methodDetail }
+    var selectable: Bool { item.selectable }
+    var active: Bool { item.active }
+}
+
+extension Project {
     func paymentActions(for shoppingCart: ShoppingCart? = nil) -> [PaymentMethodAction] {
         // combine all payment methods of all projects
-        let items = paymentItems(for: shoppingCart)
+        let items = paymentItems(for: shoppingCart?.supportedPayments)
         
         let actions = items.map { item in
             let title = Self.attributedString(
@@ -360,7 +358,12 @@ public final class PaymentMethodManager: ObservableObject {
             self.setSelectedPayment(self.selectedPayment?.method, detail: self.selectedPayment?.detail)
         }
     }
-
+    
+    public func update() {
+        updateAvailablePaymentMethods()
+        updateSelectionVisibility()
+    }
+    
     private func setSelectedPayment(_ method: RawPaymentMethod?, detail: PaymentMethodDetail?) {
         if let detail {
             self.selectedPayment = Payment(detail: detail)
@@ -376,15 +379,12 @@ public final class PaymentMethodManager: ObservableObject {
         self.selectedPayment = project.preferredPayment
     }
     
-    private func userSelectedPaymentMethod(with action: PaymentMethodAction) {
-        guard action.selectable else {
-            return
-        }
-        let method = action.method
-        let detail = action.methodDetail
+    public func setSelectedPaymentItem(_ item: PaymentMethodItem) {
+        guard item.selectable else { return }
         
-        setSelectedPayment(method, detail: detail)
-        delegate?.paymentMethodManager(didSelectItem: action.item)
+        setSelectedPayment(item.method, detail: item.methodDetail)
+
+        delegate?.paymentMethodManager(didSelectItem: item)
     }
 }
 
@@ -413,7 +413,7 @@ extension PaymentMethodManager: SheetProviding {
         for action in actions {
             let alertAction = AlertAction(attributedTitle: action.title, style: .normal) { [self] _ in
                 if action.selectable {
-                    userSelectedPaymentMethod(with: action)
+                    setSelectedPaymentItem(action.item)
                     onDismiss?()
                 }
             }

@@ -20,6 +20,7 @@ struct CheckoutView: View {
     
     @State private var countString: String = ""
     @State private var totalString: String = ""
+    @State private var showPaymentSelector: Bool = false
     
     @State var cancellables = Set<AnyCancellable>()
     
@@ -47,7 +48,7 @@ struct CheckoutView: View {
                 HStack(spacing: 16) {
                     if model.hasValidPayment {
                         PaymentButtonView(model: model, onAction: {
-                            model.sendAction(.alertSheet(model.paymentManager))
+                            showPaymentSelector = true
                         })
                         .frame(width: 88, height: 38)
                         if model.paymentManager.selectedPayment != nil {
@@ -58,15 +59,28 @@ struct CheckoutView: View {
                         }
                     } else {
                         PaymentButtonView(model: model, onAction: {
-                            model.sendAction(.alertSheet(model.paymentManager))
+                            showPaymentSelector = true
                         })
                         .frame(minWidth: 88, maxWidth: .infinity)
                     }
                 }
-            }
+                .bottomSheet(isPresented: $showPaymentSelector) {
+                    PaymentSelectionView(project: model.project,
+                                         availablePayments: model.projectPayments,
+                                         supportedPayments: model.supportedShoppingCartPayments) { paymentItem in
+                        if let paymentItem {
+                            model.paymentManager.setSelectedPaymentItem(paymentItem)
+                        }
+                        showPaymentSelector = false
+                    }
+                }
+           }
             .padding([.leading, .trailing], 16)
             .padding(.bottom, 10)
             Divider()
+        }
+        .onAppear {
+            model.paymentManager.update()
         }
         .task {
             update()
