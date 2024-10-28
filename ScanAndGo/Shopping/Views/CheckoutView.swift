@@ -79,6 +79,9 @@ struct CheckoutView: View {
             .padding(.bottom, 10)
             Divider()
         }
+        .onAppear {
+            model.paymentManager.update()
+        }
         .task {
             update()
         }
