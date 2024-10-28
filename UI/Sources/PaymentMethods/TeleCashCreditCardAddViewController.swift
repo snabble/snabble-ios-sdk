@@ -361,8 +361,7 @@ public struct TelecashView: UIViewControllerRepresentable {
                 paymentMethodDetail: Binding<PaymentMethodDetail?>,
                 didCancel: (() -> Void)?,
                 rawPaymentMethod: RawPaymentMethod,
-                projectId: Identifier<Project>)
-    {
+                projectId: Identifier<Project>) {
         self._user = user
         self._paymentMethodDetail = paymentMethodDetail
         self.didCancel = didCancel
