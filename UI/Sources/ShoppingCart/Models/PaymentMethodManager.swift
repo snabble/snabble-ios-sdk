@@ -358,7 +358,12 @@ public final class PaymentMethodManager: ObservableObject {
             self.setSelectedPayment(self.selectedPayment?.method, detail: self.selectedPayment?.detail)
         }
     }
-
+    
+    public func update() {
+        updateAvailablePaymentMethods()
+        updateSelectionVisibility()
+    }
+    
     private func setSelectedPayment(_ method: RawPaymentMethod?, detail: PaymentMethodDetail?) {
         if let detail {
             self.selectedPayment = Payment(detail: detail)
