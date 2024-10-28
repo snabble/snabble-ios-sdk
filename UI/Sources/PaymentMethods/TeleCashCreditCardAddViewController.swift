@@ -209,7 +209,6 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
         }
 
         let urlRequest = URLRequest(url: url)
-        print(url)
         self.webView?.load(urlRequest)
     }
 
