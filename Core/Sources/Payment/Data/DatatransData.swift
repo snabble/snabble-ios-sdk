@@ -127,7 +127,7 @@ public struct DatatransData: Codable, EncryptedPaymentData, Equatable {
 
     public var isExpired: Bool { token.isExpired }
 
-    public var expirationDate: String? { token.expirationDate }
+    public var validUntil: String? { token.expirationDate }
 }
 
 // Usable for Credit Cards
@@ -178,5 +178,5 @@ public struct DatatransCreditCardData: Codable, EncryptedPaymentData, Equatable,
 
     public var isExpired: Bool { token.isExpired }
 
-    public var expirationDate: String? { token.expirationDate }
+    public var validUntil: String? { token.expirationDate }
 }

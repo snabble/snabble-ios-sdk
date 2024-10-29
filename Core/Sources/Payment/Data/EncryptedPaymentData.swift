@@ -18,6 +18,8 @@ public protocol EncryptedPaymentData {
 
     // check if this payment method data is expired
     var isExpired: Bool { get }
+    
+    var validUntil: String? { get }
 
     var originType: AcceptedOriginType { get }
 }

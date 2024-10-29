@@ -19,6 +19,8 @@ public struct InvoiceByLoginData: Codable, EncryptedPaymentData, Equatable {
         return invoiceName
     }
     public let isExpired = false
+    
+    public let validUntil: String? = nil
 
     public let originType = AcceptedOriginType.contactPersonCredentials
 

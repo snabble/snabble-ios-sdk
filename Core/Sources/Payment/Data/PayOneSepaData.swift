@@ -17,6 +17,7 @@ public struct PayoneSepaData: Codable, EncryptedPaymentData, Equatable {
     public var displayName: String
 
     public var isExpired: Bool = false
+    public let validUntil: String? = nil
     
     public var originType = AcceptedOriginType.payoneSepaData
     

@@ -95,6 +95,10 @@ public struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, Br
             return false
         }
     }
+    
+    public var validUntil: String? {
+        "\(self.expirationDate.prefix(2))/20\(self.expirationDate.suffix(2))"
+    }
 }
 
 public struct PayoneResponse {
