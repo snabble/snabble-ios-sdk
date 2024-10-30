@@ -12,9 +12,9 @@ jobs:
   Test:
     runs-on: macos-14
     env:
-      DEVELOPER_DIR: /Applications/Xcode_16.app/Contents/Developer
+      DEVELOPER_DIR: /Applications/Xcode_16.1.app/Contents/Developer
 
     steps:
       - uses: actions/checkout@v4
       - name: Test Network
-        run: xcodebuild -scheme Snabble-Package -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.0' test
+        run: xcodebuild -scheme Snabble-Package -destination 'platform=iOS Simulator,name=iPhone 16,OS=18.1' test

@@ -16,6 +16,8 @@ public struct GiropayData: Codable, EncryptedPaymentData, Equatable {
     public let displayName: String
 
     public let isExpired = false
+    
+    public let validUntil: String? = nil
 
     public let originType = AcceptedOriginType.giropayCustomerAuthorization
 

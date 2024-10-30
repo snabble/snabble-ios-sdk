@@ -10,6 +10,7 @@ import UIKit
 import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleUser
+import SwiftUI
 
 public protocol UserValidation: UIViewController {
     func acceptUser(user: SnabbleUser.User) -> Bool
@@ -17,11 +18,26 @@ public protocol UserValidation: UIViewController {
 
 public typealias UserInputConformance = UserValidation & UserFieldProviding
 
+public protocol UserPaymentViewControllerDelegate: AnyObject {
+    func userPaymentViewController(_ viewController: UserPaymentViewController, didAcceptUser user: SnabbleUser.User)
+}
+
 public final class UserPaymentViewController: UIViewController {
-    private(set) var paymentViewController: UserInputConformance?
     
-    public init(paymentViewController: UserInputConformance) {
-        self.paymentViewController = paymentViewController
+    private weak var userViewController: UserViewController?
+    public weak var delegate: UserPaymentViewControllerDelegate?
+    
+    public var nextViewController: UserValidation?
+    
+    let fields: [UserField]
+    let requiredFields: [UserField]
+    
+    public init(
+        fields: [UserField] = UserField.allCases,
+        requiredFields: [UserField] = UserField.allCases
+    ) {
+        self.fields = fields
+        self.requiredFields = fields
         
         super.init(nibName: nil, bundle: nil)
     }
@@ -30,35 +46,39 @@ public final class UserPaymentViewController: UIViewController {
         fatalError("init(coder:) has not been implemented")
     }
     
+    public override func loadView() {
+        let view = UIView(frame: UIScreen.main.bounds)
+        
+        let userViewController = UserViewController(user: Snabble.shared.userProvider?.getUser(),
+                                                    fields: fields,
+                                                    requiredFields: requiredFields)
+        
+        addChild(userViewController)
+        view.addSubview(userViewController.view)
+        userViewController.view.frame = view.bounds
+        userViewController.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        userViewController.didMove(toParent: self)
+        self.userViewController = userViewController
+        
+        self.view = view
+    }
+    
     override public func viewDidLoad() {
         super.viewDidLoad()
-        
-        let userVC = UserViewController(user: Snabble.shared.userProvider?.getUser(),
-                                        fields: self.paymentViewController?.defaultUserFields ?? UserField.allCases,
-                                        requiredFields: self.paymentViewController?.requiredUserFields ?? UserField.allCases)
-        userVC.delegate = self
-        add(userVC)
-        
-        self.title = userVC.title
-    }
-
-    private func add(_ child: UIViewController) {
-        addChild(child)
-        view.addSubview(child.view)
-        child.view.frame = view.bounds
-        child.view.autoresizingMask = [.flexibleWidth, .flexibleHeight]
-        child.didMove(toParent: self)
+        userViewController?.delegate = self
+        title = userViewController?.title
     }
 }
 
 extension UserPaymentViewController: UserViewControllerDelegate {
     public func userViewController(_ viewController: UserViewController, didFinishWithUser user: User) {
-        guard let paymentViewController else {
-            return
+        if let nextViewController {
+            guard nextViewController.acceptUser(user: user) else {
+                return
+            }
+            navigationController?.pushViewController(nextViewController, animated: true)
+        } else {
+            delegate?.userPaymentViewController(self, didAcceptUser: user)
         }
-        guard paymentViewController.acceptUser(user: user) else {
-            return
-        }
-        self.navigationController?.pushViewController(paymentViewController, animated: true)
     }
 }

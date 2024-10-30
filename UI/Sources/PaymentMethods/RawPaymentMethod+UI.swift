@@ -111,14 +111,24 @@ extension RawPaymentMethod {
         }
 
         if descriptor.acceptedOriginTypes?.contains(.ipgHostedDataID) == true {
-            let controller = TeleCashCreditCardAddViewController(brand: CreditCardBrand.forMethod(self), projectId, analyticsDelegate)
-            return UserPaymentViewController(paymentViewController: controller)
+            let creditCardViewController = TeleCashCreditCardAddViewController(brand: CreditCardBrand.forMethod(self), projectId: projectId)
+            let viewController = UserPaymentViewController(
+                fields: TeleCashCreditCardAddViewController.defaultUserFields,
+                requiredFields: TeleCashCreditCardAddViewController.requiredUserFields
+            )
+            viewController.nextViewController = creditCardViewController
+            return viewController
         } else if descriptor.acceptedOriginTypes?.contains(.payonePseudoCardPAN) == true {
-            return PayoneCreditCardEditViewController(brand: CreditCardBrand.forMethod(self), prefillData: Snabble.shared.userProvider?.getUser(), projectId, analyticsDelegate)
+            return PayoneCreditCardEditViewController(brand: CreditCardBrand.forMethod(self), prefillData: Snabble.shared.userProvider?.getUser(), projectId)
         } else if descriptor.acceptedOriginTypes?.contains(.datatransCreditCardAlias) == true {
             let controller = Snabble.methodRegistry.createEntry(method: self, projectId, analyticsDelegate)
             if let userValidation = controller as? UserInputConformance {
-                return UserPaymentViewController(paymentViewController: userValidation)
+                let viewController = UserPaymentViewController(
+                    fields: type(of: userValidation).defaultUserFields,
+                    requiredFields: type(of: userValidation).requiredUserFields
+                )
+                viewController.nextViewController = userValidation
+                return viewController
             } else {
                 return controller
             }

@@ -84,8 +84,8 @@ public struct TeleCashCreditCardData: Codable, EncryptedPaymentData, Equatable, 
     }
 
     // the card's expiration date as a YYYY/MM/DD string with the last day of the month,
-    // e.g. 2020/02/29 for expirationDate == 02/20202
-    private var validUntil: String? {
+    // e.g. 2020/02/29 for expirationDate == 02/2020
+    public var validUntil: String? {
         guard
             let year = Int(self.expirationYear),
             let month = Int(self.expirationMonth)
@@ -107,7 +107,7 @@ public struct TeleCashCreditCardData: Codable, EncryptedPaymentData, Equatable, 
         }
 
         let dateFormatter = DateFormatter()
-        dateFormatter.dateFormat = "yyyy/MM/dd"
+        dateFormatter.dateFormat = "MM/yyyy"
 
         return dateFormatter.string(from: lastDate)
     }
@@ -127,6 +127,10 @@ public struct TeleCashCreditCardData: Codable, EncryptedPaymentData, Equatable, 
     // the card's expiration date as usally displayed, e.g. 09/2020
     public var expirationDate: String {
         return "\(self.expirationMonth)/\(self.expirationYear)"
+    }
+    
+    public var expiryDate: String? {
+        return expirationDate
     }
 
     public var isExpired: Bool {

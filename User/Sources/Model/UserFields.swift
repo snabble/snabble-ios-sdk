@@ -9,8 +9,8 @@ import SwiftUI
 import SnabbleAssetProviding
 
 public protocol UserFieldProviding {
-    var defaultUserFields: [UserField] { get }
-    var requiredUserFields: [UserField] { get }
+    static var defaultUserFields: [UserField] { get }
+    static var requiredUserFields: [UserField] { get }
 }
 
 public enum UserField: String, CaseIterable, Swift.Identifiable, Hashable {
@@ -26,6 +26,10 @@ public enum UserField: String, CaseIterable, Swift.Identifiable, Hashable {
     case city
     case country
     case state
+    
+    public static var `default`: [Self] {
+        Self.fieldsWithout([.state, .dateOfBirth])
+    }
 }
 
 extension UserField {

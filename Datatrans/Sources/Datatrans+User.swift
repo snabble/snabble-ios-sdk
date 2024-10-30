@@ -45,11 +45,11 @@ extension User {
 }
 
 extension DatatransAliasViewController: UserFieldProviding {
-    public var defaultUserFields: [SnabbleUser.UserField] {
+    public static var defaultUserFields: [SnabbleUser.UserField] {
         UserField.fieldsWithout([.state, .dateOfBirth])
     }
     
-    public var requiredUserFields: [SnabbleUser.UserField] {
+    public static var requiredUserFields: [SnabbleUser.UserField] {
         UserField.fieldsWithout([.state, .dateOfBirth])
     }
 }

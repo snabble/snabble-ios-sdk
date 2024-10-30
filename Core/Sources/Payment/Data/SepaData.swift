@@ -18,6 +18,7 @@ public struct SepaData: Codable, EncryptedPaymentData, Equatable {
     public let originType = AcceptedOriginType.iban
 
     public let isExpired = false
+    public let validUntil: String? = nil
 
     enum CodingKeys: String, CodingKey {
         case encryptedPaymentData, serial, displayName
