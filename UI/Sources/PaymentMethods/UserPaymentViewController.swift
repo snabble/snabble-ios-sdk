@@ -23,7 +23,6 @@ public protocol UserPaymentViewControllerDelegate: AnyObject {
 }
 
 public final class UserPaymentViewController: UIViewController {
-    private var paymentViewController: UserInputConformance?
     
     private weak var userViewController: UserViewController?
     public weak var delegate: UserPaymentViewControllerDelegate?
