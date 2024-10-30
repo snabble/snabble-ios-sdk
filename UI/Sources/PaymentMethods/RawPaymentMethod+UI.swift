@@ -113,8 +113,8 @@ extension RawPaymentMethod {
         if descriptor.acceptedOriginTypes?.contains(.ipgHostedDataID) == true {
             let creditCardViewController = TeleCashCreditCardAddViewController(brand: CreditCardBrand.forMethod(self), projectId: projectId)
             let viewController = UserPaymentViewController(
-                fields: creditCardViewController.defaultUserFields,
-                requiredFields: creditCardViewController.requiredUserFields
+                fields: TeleCashCreditCardAddViewController.defaultUserFields,
+                requiredFields: TeleCashCreditCardAddViewController.requiredUserFields
             )
             viewController.nextViewController = creditCardViewController
             return viewController
@@ -124,8 +124,8 @@ extension RawPaymentMethod {
             let controller = Snabble.methodRegistry.createEntry(method: self, projectId, analyticsDelegate)
             if let userValidation = controller as? UserInputConformance {
                 let viewController = UserPaymentViewController(
-                    fields: userValidation.defaultUserFields,
-                    requiredFields: userValidation.requiredUserFields
+                    fields: type(of: userValidation).defaultUserFields,
+                    requiredFields: type(of: userValidation).requiredUserFields
                 )
                 viewController.nextViewController = userValidation
                 return viewController
