@@ -78,7 +78,6 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
         let webView = WKWebView(frame: .zero, configuration: config)
         webView.translatesAutoresizingMaskIntoConstraints = false
         webView.navigationDelegate = self
-        webView.isInspectable = true
         view.addSubview(webView)
         self.webView = webView
 
