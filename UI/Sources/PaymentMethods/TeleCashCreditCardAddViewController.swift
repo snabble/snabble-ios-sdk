@@ -294,11 +294,7 @@ extension TeleCashCreditCardAddViewController: WKScriptMessageHandler {
     }
 
     private func abort() {
-        if let delegate {
-            delegate.telecashCreditCardAddViewControllerDidComplete(self)
-        } else {
-            goBack()
-        }
+        goBack()
     }
 
     private func showError() {
