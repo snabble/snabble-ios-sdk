@@ -26,6 +26,10 @@ public enum UserField: String, CaseIterable, Swift.Identifiable, Hashable {
     case city
     case country
     case state
+    
+    public static var `default`: [Self] {
+        Self.fieldsWithout([.state, .dateOfBirth])
+    }
 }
 
 extension UserField {

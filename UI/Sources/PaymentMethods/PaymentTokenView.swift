@@ -92,7 +92,7 @@ public struct PaymentTokenView: View {
             case .telecash:
                 return TeleCashCreditCardAddViewController.defaultUserFields
             case .payone:
-                return UserField.allCases.fieldsWithout([.state, .dateOfBirth])
+                return UserField.default
             case .none:
                 return UserField.allCases
             }
@@ -103,7 +103,7 @@ public struct PaymentTokenView: View {
             case .telecash:
                 return TeleCashCreditCardAddViewController.requiredUserFields
             case .payone:
-                return UserField.allCases.fieldsWithout([.state, .dateOfBirth])
+                return UserField.default
             case .none:
                 return UserField.allCases
             }

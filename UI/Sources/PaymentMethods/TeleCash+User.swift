@@ -10,10 +10,10 @@ import SnabbleUser
 
 extension TeleCashCreditCardAddViewController: UserFieldProviding {
     public static var defaultUserFields: [UserField] {
-        UserField.allCases.fieldsWithout([.state, .dateOfBirth])
+        UserField.default
     }
     public static var requiredUserFields: [UserField] {
-        UserField.allCases.fieldsWithout([.state, .dateOfBirth])
+        UserField.default
     }
 }
 
