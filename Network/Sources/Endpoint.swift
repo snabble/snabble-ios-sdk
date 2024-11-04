@@ -32,14 +32,13 @@ public struct Endpoint<Response> {
 
     var token: Token?
     var headerFields: [String: String] = [:]
+    var domain: Domain = .production
 
     public init(path: String, method: HTTPMethod, parse: @escaping (Data) throws -> Response) {
         self.path = path
         self.method = method
         self.parse = parse
     }
-
-    var domain: Domain = .production
 
     enum Error: Swift.Error {
         case invalidRequestError(String)
