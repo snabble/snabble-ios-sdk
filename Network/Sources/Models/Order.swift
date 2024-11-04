@@ -22,6 +22,16 @@ public struct Order: Codable {
     
     public let price: Int
     
+    public init(from decoder: any Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        self.projectId = try container.decode(String.self, forKey: .projectId)
+        self.id = try container.decode(String.self, forKey: .id)
+        self.date = try container.decode(Date.self, forKey: .date)
+        self.shopName = try container.decode(String.self, forKey: .shopName)
+        self.price = try container.decode(Int.self, forKey: .price)
+        self.shopId = try container.decode(String.self, forKey: .shopId)
+    }
+    
     enum CodingKeys: String, CodingKey {
         case projectId = "project"
         case id, date, shopName, price
