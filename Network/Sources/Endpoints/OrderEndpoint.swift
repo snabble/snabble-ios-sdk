@@ -9,22 +9,27 @@ import Foundation
 
 extension Endpoints {
     public enum Order {
+        private static func path(forAppUserId appUserId: String) -> String {
+            "/apps/users/\(appUserId)/orders"
+        }
+        
         public static func get(forAppUserId appUserId: String) -> Endpoint<[SnabbleNetwork.Order]> {
             return .init(
-                path: "/apps/users/\(appUserId)/orders",
+                path: path(forAppUserId: appUserId),
                 method: .get(nil),
                 parse: { data in
-                    try Endpoints.jsonDecoder.decode([SnabbleNetwork.Order].self, from: data)
+                    try Endpoints.jsonDecoder.decode(SnabbleNetwork.Orders.self, from: data).orders
                 }
             )
         }
         
         public static func get(forAppUserId appUserId: String, filteredByProjectId projectId: String) -> Endpoint<[SnabbleNetwork.Order]> {
             return .init(
-                path: "/apps/users/\(appUserId)/orders",
+                path: path(forAppUserId: appUserId),
                 method: .get(nil),
                 parse: { data in
-                    try Endpoints.jsonDecoder.decode([SnabbleNetwork.Order].self, from: data)
+                    try Endpoints.jsonDecoder.decode(SnabbleNetwork.Orders.self, from: data)
+                        .orders
                         .filter { $0.projectId == projectId }
                 }
             )
@@ -32,10 +37,11 @@ extension Endpoints {
         
         public static func get(forAppUserId appUserId: String, filteredByProjectId projectId: String, andShopId shopId: String) -> Endpoint<[SnabbleNetwork.Order]> {
             return .init(
-                path: "/apps/users/\(appUserId)/orders",
+                path: path(forAppUserId: appUserId),
                 method: .get(nil),
                 parse: { data in
-                    try Endpoints.jsonDecoder.decode([SnabbleNetwork.Order].self, from: data)
+                    try Endpoints.jsonDecoder.decode(SnabbleNetwork.Orders.self, from: data)
+                        .orders
                         .filter { $0.projectId == projectId }
                         .filter { $0.shopId == shopId }
                 }

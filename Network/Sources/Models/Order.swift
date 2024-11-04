@@ -7,6 +7,10 @@
 
 import Foundation
 
+struct Orders: Codable {
+    let orders: [Order]
+}
+
 public struct Order: Codable {
     public let id: String
     public let date: Date
