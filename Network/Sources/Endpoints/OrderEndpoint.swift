@@ -61,7 +61,7 @@ extension Endpoints {
             )
         }
         
-        enum Receipts {
+        public enum Receipts {
             public static func receipt(forOrder order: SnabbleNetwork.Order) -> Endpoint<URL> {                
                 return .init(
                     path: order.receiptPath,
