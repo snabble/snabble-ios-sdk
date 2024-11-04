@@ -7,8 +7,6 @@
 
 import Foundation
 
-
-
 extension Endpoints {
     public enum Order {
         private static var jsonDecoder: JSONDecoder {
