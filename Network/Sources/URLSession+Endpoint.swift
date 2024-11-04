@@ -54,3 +54,21 @@ extension URLSession {
             .eraseToAnyPublisher()
     }
 }
+
+extension URLSession {
+    func downloadTaskPublisher(for url: URL) -> AnyPublisher<URL, URLError> {
+        Future<URL, URLError> { promise in
+            let task = self.downloadTask(with: url) { location, _, error in
+                if let error = error as? URLError {
+                    promise(.failure(error))
+                } else if let location = location {
+                    promise(.success(location))
+                } else {
+                    promise(.failure(URLError(.unknown)))
+                }
+            }
+            task.resume()
+        }
+        .eraseToAnyPublisher()
+    }
+}
