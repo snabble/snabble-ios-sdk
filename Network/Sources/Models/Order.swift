@@ -13,15 +13,18 @@ struct Orders: Codable {
     init(from decoder: any Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         orders = try container.decode([Order].self, forKey: .orders).filter {
-            guard let href = $0.links.receipt?.href, !href.isEmpty else {
-                return false
-            }
-            return true
+            $0.paymentStatus == .successful
         }
     }
 }
 
 public struct Order: Codable {
+    public enum PaymentStatus {
+        case failed
+        case pending
+        case successful
+    }
+    
     public let id: String
     public let date: Date
     
@@ -32,6 +35,23 @@ public struct Order: Codable {
     
     public let price: Int
     
+    enum CodingKeys: String, CodingKey {
+        case projectId = "project"
+        case id, date, shopName, price
+        case shopId = "shopID"
+        case links
+    }
+    
+    public var paymentStatus: PaymentStatus? {
+        guard let href = links.receipt?.href else {
+            return .pending
+        }
+        guard !href.isEmpty else {
+            return .failed
+        }
+        return .successful
+    }
+    
     let links: Links
     
     struct Links: Codable {
@@ -40,13 +60,6 @@ public struct Order: Codable {
         struct Link: Codable {
             let href: String
         }
-    }
-    
-    enum CodingKeys: String, CodingKey {
-        case projectId = "project"
-        case id, date, shopName, price
-        case shopId = "shopID"
-        case links
     }
     
     var receiptPath: String {
@@ -83,6 +96,10 @@ public struct Order: Codable {
             return false
         }
         return Self.fileManager.fileExists(atPath: receiptURL.path)
+    }
+    
+    public func deleteLocalReceipt() throws {
+        try Self.fileManager.removeItem(at: receiptURL())
     }
     
     public static func deleteLocalReceipts() throws {
