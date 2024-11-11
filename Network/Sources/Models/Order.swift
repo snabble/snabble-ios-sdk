@@ -9,16 +9,6 @@ import Foundation
 
 struct Orders: Codable {
     let orders: [Order]
-    
-    init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        orders = try container.decode([Order].self, forKey: .orders).filter {
-            guard let href = $0.links.receipt?.href, !href.isEmpty else {
-                return false
-            }
-            return true
-        }
-    }
 }
 
 public struct Order: Codable {
@@ -31,6 +21,7 @@ public struct Order: Codable {
     public let shopName: String
     
     public let price: Int
+    public let isSuccessful: Bool
     
     let links: Links
     
@@ -47,6 +38,7 @@ public struct Order: Codable {
         case id, date, shopName, price
         case shopId = "shopID"
         case links
+        case isSuccessful
     }
     
     var receiptPath: String {
@@ -59,6 +51,13 @@ public struct Order: Codable {
     
     private static var fileManager: FileManager {
         .default
+    }
+    
+    public var isReceiptAvailable: Bool {
+        guard let href = links.receipt?.href, !href.isEmpty else {
+            return false
+        }
+        return true
     }
     
     func saveReceipt(forData data: Data) throws -> URL {
@@ -94,5 +93,15 @@ public struct Order: Codable {
                 try Self.fileManager.removeItem(atPath: fullPath.path)
             }
         }
+    }
+}
+
+extension Order: Swift.Identifiable, Hashable {
+    public static func == (lhs: SnabbleNetwork.Order, rhs: SnabbleNetwork.Order) -> Bool {
+        lhs.id == rhs.id
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }
