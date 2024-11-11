@@ -7,24 +7,11 @@
 
 import Foundation
 
-struct Orders: Codable {
+struct Orders: Decodable {
     let orders: [Order]
-    
-    init(from decoder: any Decoder) throws {
-        let container = try decoder.container(keyedBy: CodingKeys.self)
-        orders = try container.decode([Order].self, forKey: .orders).filter {
-            $0.paymentStatus == .successful
-        }
-    }
 }
 
-public struct Order: Codable {
-    public enum PaymentStatus {
-        case failed
-        case pending
-        case successful
-    }
-    
+public struct Order: Decodable {    
     public let id: String
     public let date: Date
     
@@ -34,23 +21,7 @@ public struct Order: Codable {
     public let shopName: String
     
     public let price: Int
-    
-    enum CodingKeys: String, CodingKey {
-        case projectId = "project"
-        case id, date, shopName, price
-        case shopId = "shopID"
-        case links
-    }
-    
-    public var paymentStatus: PaymentStatus? {
-        guard let href = links.receipt?.href else {
-            return .pending
-        }
-        guard !href.isEmpty else {
-            return .failed
-        }
-        return .successful
-    }
+    public let isSuccessful: Bool
     
     let links: Links
     
@@ -60,6 +31,14 @@ public struct Order: Codable {
         struct Link: Codable {
             let href: String
         }
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case projectId = "project"
+        case id, date, shopName, price
+        case shopId = "shopID"
+        case links
+        case isSuccessful
     }
     
     var receiptPath: String {
@@ -72,6 +51,13 @@ public struct Order: Codable {
     
     private static var fileManager: FileManager {
         .default
+    }
+    
+    public var isReceiptAvailable: Bool {
+        guard let href = links.receipt?.href, !href.isEmpty else {
+            return false
+        }
+        return true
     }
     
     func saveReceipt(forData data: Data) throws -> URL {
@@ -111,5 +97,15 @@ public struct Order: Codable {
                 try Self.fileManager.removeItem(atPath: fullPath.path)
             }
         }
+    }
+}
+
+extension Order: Swift.Identifiable, Hashable {
+    public static func == (lhs: SnabbleNetwork.Order, rhs: SnabbleNetwork.Order) -> Bool {
+        lhs.id == rhs.id
+    }
+    
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
     }
 }

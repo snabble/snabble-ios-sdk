@@ -34,31 +34,6 @@ extension Endpoints {
             )
         }
         
-        public static func get(forAppUserId appUserId: String, filteredByProjectId projectId: String) -> Endpoint<[SnabbleNetwork.Order]> {
-            return .init(
-                path: path(forAppUserId: appUserId),
-                method: .get(nil),
-                parse: { data in
-                    try jsonDecoder.decode(SnabbleNetwork.Orders.self, from: data)
-                        .orders
-                        .filter { $0.projectId == projectId }
-                }
-            )
-        }
-        
-        public static func get(forAppUserId appUserId: String, filteredByProjectId projectId: String, andShopId shopId: String) -> Endpoint<[SnabbleNetwork.Order]> {
-            return .init(
-                path: path(forAppUserId: appUserId),
-                method: .get(nil),
-                parse: { data in
-                    try jsonDecoder.decode(SnabbleNetwork.Orders.self, from: data)
-                        .orders
-                        .filter { $0.projectId == projectId }
-                        .filter { $0.shopId == shopId }
-                }
-            )
-        }
-        
         public enum Receipts {
             public static func receipt(forOrder order: SnabbleNetwork.Order) -> Endpoint<URL> {                
                 return .init(
