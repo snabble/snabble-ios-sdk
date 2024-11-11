@@ -11,13 +11,7 @@ struct Orders: Decodable {
     let orders: [Order]
 }
 
-public struct Order: Decodable {
-    public enum PaymentStatus {
-        case failed
-        case pending
-        case successful
-    }
-    
+public struct Order: Decodable {    
     public let id: String
     public let date: Date
     
