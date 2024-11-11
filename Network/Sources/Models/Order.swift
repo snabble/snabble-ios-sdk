@@ -12,6 +12,12 @@ struct Orders: Codable {
 }
 
 public struct Order: Codable {
+    public enum PaymentStatus {
+        case failed
+        case pending
+        case successful
+    }
+    
     public let id: String
     public let date: Date
     
@@ -21,6 +27,14 @@ public struct Order: Codable {
     public let shopName: String
     
     public let price: Int
+    
+    enum CodingKeys: String, CodingKey {
+        case projectId = "project"
+        case id, date, shopName, price
+        case shopId = "shopID"
+        case links
+    }
+    
     public let isSuccessful: Bool
     
     let links: Links
@@ -82,6 +96,10 @@ public struct Order: Codable {
             return false
         }
         return Self.fileManager.fileExists(atPath: receiptURL.path)
+    }
+    
+    public func deleteLocalReceipt() throws {
+        try Self.fileManager.removeItem(at: receiptURL())
     }
     
     public static func deleteLocalReceipts() throws {
