@@ -7,11 +7,11 @@
 
 import Foundation
 
-struct Orders: Codable {
+struct Orders: Decodable {
     let orders: [Order]
 }
 
-public struct Order: Codable {
+public struct Order: Decodable {
     public enum PaymentStatus {
         case failed
         case pending
@@ -27,14 +27,6 @@ public struct Order: Codable {
     public let shopName: String
     
     public let price: Int
-    
-    enum CodingKeys: String, CodingKey {
-        case projectId = "project"
-        case id, date, shopName, price
-        case shopId = "shopID"
-        case links
-    }
-    
     public let isSuccessful: Bool
     
     let links: Links
