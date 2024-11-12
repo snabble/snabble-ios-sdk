@@ -53,7 +53,7 @@ public struct Order: Decodable {
         .default
     }
     
-    public var isReceiptAvailable: Bool {
+    public var hasReceipt: Bool {
         guard let href = links.receipt?.href, !href.isEmpty else {
             return false
         }
