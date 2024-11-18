@@ -18,6 +18,36 @@ public struct CustomerNetworks: Codable {
     public let ssid: String
 }
 
+public struct ShopService: Codable {
+    public let serviceId: String
+    public let iconPath: String
+    public let translations: [String: String]
+    
+    public var germanTranslation: String? {
+        translations["de"]
+    }
+    
+    public var englishTranslation: String? {
+        translations["en"]
+    }
+    
+    public func translation(for language: String) -> String? {
+        guard let translation = translations[language] else {
+            return englishTranslation
+        }
+        guard !translation.isEmpty else {
+            return englishTranslation
+        }
+        return translation
+    }
+    
+    enum CodingKeys: String, CodingKey {
+        case serviceId = "serviceID"
+        case iconPath = "iconURL"
+        case translations
+    }
+}
+
 /// base data for one shop
 public struct Shop: Codable, Identifiable {
     /// id of this shop, use this to initialize shopping carts
@@ -44,6 +74,10 @@ public struct Shop: Codable, Identifiable {
 
     /// services offered
     public let services: [String]
+    
+    /// Shop service
+    public let shopServices: [ShopService]
+    
     /// opening hours
     public let openingHoursSpecification: [OpeningHoursSpecification]
 
@@ -68,7 +102,7 @@ public struct Shop: Codable, Identifiable {
     enum CodingKeys: String, CodingKey {
         case id, name, projectId = "project", externalId, external
         case latitude = "lat", longitude = "lon"
-        case services, openingHoursSpecification, email, phone, city, street
+        case services, shopServices, openingHoursSpecification, email, phone, city, street
         case postalCode = "zip", state, country, countryCode
         case customerNetworks
     }
@@ -84,6 +118,7 @@ public struct Shop: Codable, Identifiable {
         self.latitude = try container.decode(.latitude)
         self.longitude = try container.decode(.longitude)
         self.services = try container.decode(.services)
+        self.shopServices = try container.decodeIfPresent(.shopServices) ?? []
         self.openingHoursSpecification = try container.decode(.openingHoursSpecification)
         self.email = try container.decode(.email)
         self.phone = try container.decode(.phone)
@@ -106,6 +141,7 @@ public struct Shop: Codable, Identifiable {
         try container.encode(self.latitude, forKey: .latitude)
         try container.encode(self.longitude, forKey: .longitude)
         try container.encode(self.services, forKey: .services)
+        try container.encode(self.shopServices, forKey: .shopServices)
         try container.encode(self.openingHoursSpecification, forKey: .openingHoursSpecification)
         try container.encode(self.email, forKey: .email)
         try container.encode(self.phone, forKey: .phone)
@@ -128,6 +164,7 @@ public struct Shop: Codable, Identifiable {
         self.latitude = 10
         self.longitude = 20
         self.services = []
+        self.shopServices = []
         self.openingHoursSpecification = []
         self.email = "info@snabble.io"
         self.phone = "0228123456"
