@@ -51,7 +51,7 @@ extension Endpoint {
             url: domain.baseURL,
             resolvingAgainstBaseURL: false
         )
-        components?.path = path
+        components?.path = path.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? path
 
         switch method {
         case .get(let queryItems):
