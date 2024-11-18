@@ -23,24 +23,6 @@ public struct ShopService: Codable {
     public let iconPath: String
     public let translations: [String: String]
     
-    public var germanTranslation: String? {
-        translations["de"]
-    }
-    
-    public var englishTranslation: String? {
-        translations["en"]
-    }
-    
-    public func translation(for language: String) -> String? {
-        guard let translation = translations[language] else {
-            return englishTranslation
-        }
-        guard !translation.isEmpty else {
-            return englishTranslation
-        }
-        return translation
-    }
-    
     enum CodingKeys: String, CodingKey {
         case serviceId = "serviceID"
         case iconPath = "iconURL"
