@@ -28,6 +28,7 @@ public enum Autonomo {
         public let id: Identifier<Session>
         public let entryToken: EntryToken?
         public let state: State
+        public let customerMessage: String?
     }
 
     public struct EntryToken: Codable, SnabbleCore.EntryToken {
