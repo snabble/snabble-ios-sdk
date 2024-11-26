@@ -121,7 +121,6 @@ final class ApplePayCheckoutViewController: UIViewController {
             }
             if let postalAddress = payment.billingContact?.postalAddress {
                 body["countryCode"] = postalAddress.isoCountryCode
-                body["country"] = postalAddress.country
                 body["state"] = postalAddress.state
             }
             // swiftlint:disable:next force_try
