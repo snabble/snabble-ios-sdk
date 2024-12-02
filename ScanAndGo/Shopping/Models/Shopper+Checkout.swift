@@ -74,8 +74,6 @@ extension Shopper {
                     switch error.type {
                     case .noAvailableMethod:
                         self.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.noMethodAvailable"))
-                    case .invalidDepositVoucher:
-                        self.showWarningMessage(Asset.localizedString(forKey: "Snabble.InvalidDepositVoucher.errorMsg"))
                     default:
                         self.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
                     }

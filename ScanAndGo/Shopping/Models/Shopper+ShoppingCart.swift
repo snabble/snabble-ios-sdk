@@ -60,7 +60,6 @@ extension Shopper {
         let shop = barcodeManager.shop
         let shoppingCart = barcodeManager.shoppingCart
         
-        // deprecated depositReturnVoucher deleted
         let cartQuantity = shoppingCart.quantity(of: cartItem)
         if cartQuantity == 0 || !cartItem.canMerge {
             logger.info("adding to cart: \(cartItem.quantity) x \(cartItem.product.name), scannedCode = \(cartItem.scannedCode.code), embed=\(String(describing: cartItem.scannedCode.embeddedData))")

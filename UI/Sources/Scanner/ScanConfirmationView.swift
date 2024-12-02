@@ -236,9 +236,6 @@ final class ScanConfirmationView: UIView {
         self.productNameLabel?.text = product.name
 
         var embeddedData = scannedProduct.embeddedData
-        if let embed = embeddedData, product.type == .depositReturnVoucher, scannedProduct.encodingUnit == .price {
-            embeddedData = -1 * embed
-        }
 
         let scannedCode = ScannedCode(
             scannedCode: scannedCode,
@@ -359,16 +356,6 @@ final class ScanConfirmationView: UIView {
 
         let tapticFeedback = UINotificationFeedbackGenerator()
         tapticFeedback.notificationOccurred(.success)
-
-        if self.cartItem.product.type == .depositReturnVoucher {
-            // check if we already have this exact scanned code in the cart
-            let index = cart.items.firstIndex(where: { $0.scannedCode.code == self.cartItem.scannedCode.code })
-            if index != nil {
-                let msg = ScanMessage(Asset.localizedString(forKey: "Snabble.Scanner.duplicateDepositScanned"))
-                self.delegate?.showMessage(msg)
-                return
-            }
-        }
 
         let cartQuantity = cart.quantity(of: self.cartItem)
         if cartQuantity == 0 || !self.cartItem.canMerge {

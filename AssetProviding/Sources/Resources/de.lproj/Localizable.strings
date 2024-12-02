@@ -116,7 +116,6 @@
 "Snabble.Hints.closedBags" = "Weiter so! Bitte mache es dem Kassenpersonal leicht und packe deine Artikel nicht direkt in geschlossene Taschen. Danke!";
 "Snabble.Hints.continueScanning" = "Weiter scannen";
 "Snabble.Hints.title" = "Hinweis von %@";
-"Snabble.InvalidDepositVoucher.errorMsg" = "Leergutbons können nur einmal eingelöst werden.";
 "Snabble.Keyguard.message" = "Dadurch stellen wir sicher, dass nur du selbst Zugriff auf diese Zahlungsmethode hast";
 "Snabble.Keyguard.requireScreenLock" = "Du musst dein Smartphone mit einer Display-Sperre schützen, um diese Zahlungsmethode hinzuzufügen.";
 "Snabble.LimitsAlert.checkoutNotAvailable" = "Ab einem Warenwert von %@ ist der Einkauf per App leider nicht mehr möglich.";

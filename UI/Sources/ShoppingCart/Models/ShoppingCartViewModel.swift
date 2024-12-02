@@ -30,7 +30,6 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
     public weak var shoppingCartDelegate: ShoppingCartDelegate?
     
     @Published public var productError: Bool = false
-    @Published public var voucherError: Bool = false
     var productErrorMessage: String = ""
     
     @Published public var confirmDeletion: Bool = false
@@ -73,10 +72,8 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
                 if let offendingSkus = error.details?.compactMap({ $0.sku }) {
                     self.showProductError(offendingSkus)
                 }
-            case .invalidDepositVoucher:
-                self.showVoucherError()
             default:
-                ()
+                break
             }
         }
         
@@ -183,10 +180,6 @@ extension ShoppingCartViewModel {
         let msg = start + "\n\n" + offendingProducts.joined(separator: "\n")
         productErrorMessage = msg
         productError.toggle()
-    }
-    
-    private func showVoucherError() {
-        voucherError.toggle()
     }
 }
 
