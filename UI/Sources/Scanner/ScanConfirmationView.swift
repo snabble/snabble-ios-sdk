@@ -235,12 +235,10 @@ final class ScanConfirmationView: UIView {
         let product = scannedProduct.product
         self.productNameLabel?.text = product.name
 
-        var embeddedData = scannedProduct.embeddedData
-
         let scannedCode = ScannedCode(
             scannedCode: scannedCode,
             transmissionCode: scannedProduct.transmissionCode,
-            embeddedData: embeddedData,
+            embeddedData: scannedProduct.embeddedData,
             encodingUnit: scannedProduct.encodingUnit,
             priceOverride: scannedProduct.priceOverride,
             referencePriceOverride: scannedProduct.referencePriceOverride,
