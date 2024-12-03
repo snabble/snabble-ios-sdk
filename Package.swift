@@ -59,7 +59,7 @@ let package = Package(
         .package(url: "https://github.com/kishikawakatsumi/KeychainAccess.git", from: "4.2.2"),
         .package(url: "https://github.com/groue/GRDB.swift.git", from: "6.29.3"),
         .package(url: "https://github.com/weichsel/ZIPFoundation.git", .upToNextMajor(from: "0.9.19")),
-        .package(url: "https://github.com/datatrans/ios-sdk.git", from: "3.7.0"),
+        .package(url: "https://github.com/datatrans/ios-sdk.git", from: "3.7.3"),
         .package(url: "https://github.com/sberrevoets/SDCAlertView.git", from: "12.0.4"),
         .package(url: "https://github.com/devicekit/DeviceKit.git", from: "5.5.0"),
         .package(url: "https://github.com/snabble/Pulley.git", from: "2.9.2"),
