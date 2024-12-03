@@ -68,6 +68,14 @@
 		</dict>
 		<dict>
 			<key>File</key>
+			<string>com.mono0926.LicensePlist/swift-asn1</string>
+			<key>Title</key>
+			<string>swift-asn1</string>
+			<key>Type</key>
+			<string>PSChildPaneSpecifier</string>
+		</dict>
+		<dict>
+			<key>File</key>
 			<string>com.mono0926.LicensePlist/swift-crypto</string>
 			<key>Title</key>
 			<string>swift-crypto</string>
@@ -103,14 +111,6 @@
 			<string>com.mono0926.LicensePlist/SwiftOTP</string>
 			<key>Title</key>
 			<string>SwiftOTP</string>
-			<key>Type</key>
-			<string>PSChildPaneSpecifier</string>
-		</dict>
-		<dict>
-			<key>File</key>
-			<string>com.mono0926.LicensePlist/TrustKit</string>
-			<key>Title</key>
-			<string>TrustKit</string>
 			<key>Type</key>
 			<string>PSChildPaneSpecifier</string>
 		</dict>

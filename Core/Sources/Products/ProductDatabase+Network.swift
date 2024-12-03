@@ -69,7 +69,7 @@ extension ProductDatabase {
 
 }
 
-final class AppDBDownloadDelegate: CertificatePinningDelegate, URLSessionDownloadDelegate {
+final class AppDBDownloadDelegate: NSObject, URLSessionDownloadDelegate {
     private var completion: (AppDbResponse) -> Void
     private var response: URLResponse?
     private weak var productDb: ProductDatabase?
