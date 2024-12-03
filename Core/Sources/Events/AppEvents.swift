@@ -152,7 +152,6 @@ extension AppEvent {
             Log.error("\(error)")
         }
 
-        // use a system default session here so we can still log pinning errors
         let task = URLSession.shared.dataTask(with: request) { _, _, error in
             if let error = error {
                 Log.error("posting event failed: \(error)")
