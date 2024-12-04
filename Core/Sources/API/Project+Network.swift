@@ -106,8 +106,6 @@ public enum ErrorResponseType: String, UnknownCaseRepresentable {
 
     case checkoutUnavailable = "checkout_unavailable"
 
-    case invalidDepositVoucher = "invalid_deposit_return_voucher"
-
     // invalidCartItem detail types
     case saleStop = "sale_stop"
     case productNotFound = "product_not_found"

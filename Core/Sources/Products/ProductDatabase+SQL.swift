@@ -79,7 +79,6 @@ enum SQLQuery {
                         and ((s.code glob ?) or (s.sku glob?))
                         \(depositCondition)
                         and p.weighing != \(ProductType.preWeighed.rawValue)
-                        and p.weighing != \(ProductType.depositReturnVoucher.rawValue)
                         and availability != \(ProductAvailability.notAvailable.rawValue)
                     limit ?
                     """

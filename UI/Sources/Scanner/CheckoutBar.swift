@@ -301,8 +301,6 @@ final class CheckoutBar: UIView {
                     switch error.type {
                     case .noAvailableMethod:
                         self.shoppingCartDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.noMethodAvailable"))
-                    case .invalidDepositVoucher:
-                        self.shoppingCartDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.InvalidDepositVoucher.errorMsg"))
                     default:
                         self.shoppingCartDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
                     }

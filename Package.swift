@@ -56,7 +56,6 @@ let package = Package(
     ],
     dependencies: [
         .package(url: "https://github.com/lachlanbell/SwiftOTP", from: "3.0.2"),
-        .package(url: "https://github.com/datatheorem/TrustKit.git", from: "3.0.4"),
         .package(url: "https://github.com/kishikawakatsumi/KeychainAccess.git", from: "4.2.2"),
         .package(url: "https://github.com/groue/GRDB.swift.git", from: "6.29.3"),
         .package(url: "https://github.com/weichsel/ZIPFoundation.git", .upToNextMajor(from: "0.9.19")),
@@ -96,7 +95,6 @@ let package = Package(
         .target(
             name: "SnabbleCore",
             dependencies: [
-                "TrustKit",
                 "SwiftOTP",
                 .product(name: "GRDB", package: "GRDB.swift"),
                 "ZIPFoundation",
