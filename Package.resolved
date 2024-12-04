@@ -1,5 +1,5 @@
 {
-  "originHash" : "350131f85fa163617ff2e4c6922c71c5c85c6fdc637704f7cca300b7ba5e23ff",
+  "originHash" : "e029cf5f1861fe81553dec02b4b46e248819aa291f5331f6caa4a1a53e5bda4e",
   "pins" : [
     {
       "identity" : "devicekit",
@@ -98,15 +98,6 @@
       "state" : {
         "revision" : "9660551ea3df153c3cbacfa34ac3abbec73a8b84",
         "version" : "3.0.2"
-      }
-    },
-    {
-      "identity" : "trustkit",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/datatheorem/TrustKit.git",
-      "state" : {
-        "revision" : "d009bab582513e029924f394c2a3b974f10a44a6",
-        "version" : "3.0.5"
       }
     },
     {
