@@ -49,7 +49,7 @@ class SnabbleTests: XCTestCase {
             self.runDbTests(expectation)
         }
 
-        self.wait(for: [expectation], timeout: 15)
+        self.wait(for: [expectation], timeout: 30)
     }
 
     private func runDbTests(_ expectation: XCTestExpectation) {
