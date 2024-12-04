@@ -63,16 +63,7 @@ extension ShoppingCartViewModel {
                             }))
         
     }
-    public var voucherErrorAlert: Alert {
-        Alert(
-            title: Text(keyed: "Snabble.InvalidDepositVoucher.errorMsg"),
-            message: nil,
-            dismissButton:
-                    .default(Text(keyed: "Snabble.ok"),
-                             action: {
-                                 self.voucherError = false
-                             }))
-    }
+
     public var productErrorAlert: Alert {
         Alert(
             title: Text(keyed: "Snabble.SaleStop.ErrorMsg.title"),
@@ -118,9 +109,6 @@ public struct ShoppingCartItemsView<Footer: View>: View {
         content
             .alert(isPresented: $cartModel.productError) {
                 cartModel.productErrorAlert
-            }
-            .alert(isPresented: $cartModel.voucherError) {
-                cartModel.voucherErrorAlert
             }
             .alert(isPresented: $cartModel.confirmDeletion) {
                 cartModel.confirmDeletionAlert

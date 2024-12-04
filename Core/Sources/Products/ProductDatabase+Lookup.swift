@@ -201,7 +201,6 @@ private final class ResolvedProduct: Decodable {
         case `default`
         case weighable
         case deposit
-        case depositReturnVoucher
     }
 
     enum ResolvedProductAvailability: String, Codable {
