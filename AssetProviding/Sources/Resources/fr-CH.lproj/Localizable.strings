@@ -116,7 +116,6 @@
 "Snabble.Hints.closedBags" = "Continue comme ça ! Merci de faciliter la tâche au personnel de caisse et de ne pas emballer tes articles directement dans des sacs fermés. Merci !";
 "Snabble.Hints.continueScanning" = "Continuer à scanner";
 "Snabble.Hints.title" = "Remarque de %@";
-"Snabble.InvalidDepositVoucher.errorMsg" = "Les bons des emballages vides ne peuvent être encaissés qu’une seule fois.";
 "Snabble.Keyguard.message" = "De cette façon, nous nous assurons que tu es l’unique personne à pouvoir accéder à cette procédure de paiement.";
 "Snabble.Keyguard.requireScreenLock" = "Merci de protéger ton smartphone au moyen d’un verrouillage d’écran pour ajouter ce mode de paiement.";
 "Snabble.LimitsAlert.checkoutNotAvailable" = "À partir d’une valeur des marchandises de %@, il n’est malheureusement plus possible d’effectuer les achats via l’application.";
