@@ -209,7 +209,6 @@ public final class DatatransAliasViewController: UIViewController {
         transaction.delegate = self
         transaction.options.appCallbackScheme = DatatransFactory.appCallbackScheme
         transaction.options.testing = tokenResponse.isTesting ?? false
-        transaction.options.useCertificatePinning = true
         transaction.start(presentingController: presentingController)
 
         self.transaction = transaction

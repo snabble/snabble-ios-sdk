@@ -33,10 +33,6 @@ public struct Config {
     /// this flag is ignored for projects that have a `shoppingListDB` link
     public var useFTS = false
 
-    /// set to false to disable certificate pinning for requests to the snabble API server
-    /// NOTE: this setting is intended for debugging purposes only and is ignored in Release builds
-    public var useCertificatePinning = true
-
     /// if the app comes with a zipped seed database, set this to the path in the Bundle
     public var seedDatabase: String?
     /// if the app comes with a zipped seed database, set this to the db revision of the seed
@@ -250,10 +246,6 @@ public class Snabble {
     ///   - config: `SnabbleAPIConfig` with at least an `appId` and a `secret`
     ///   - completion: CompletionHandler is called as soon as everything is finished
     public static func setup(config: Config, completion: @escaping (Snabble) -> Void) {
-        if config.useCertificatePinning {
-            initializeTrustKit()
-        }
-
         shared = Snabble(
             config: config,
             tokenRegistry: TokenRegistry(appId: config.appId, secret: config.secret)

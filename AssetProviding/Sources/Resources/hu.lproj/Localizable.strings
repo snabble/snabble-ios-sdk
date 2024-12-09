@@ -116,7 +116,6 @@
 "Snabble.Hints.closedBags" = "Csak így tovább! Kérjük, könnyítsd meg a pénztáros munkáját, és ne csomagold közvetlenül lezárt tasakba a termékedet. Köszönjük!";
 "Snabble.Hints.continueScanning" = "Szkennelés folytatása";
 "Snabble.Hints.title" = "%@ megjegyzése";
-"Snabble.InvalidDepositVoucher.errorMsg" = "Az üvegvisszaváltó blokkot csak egyszer lehet beváltani.";
 "Snabble.Keyguard.message" = "Ezzel garantálható, hogy csak te férj ehhez a fizetési eljáráshoz";
 "Snabble.Keyguard.requireScreenLock" = "E fizetési mód hozzáadásához képernyőzárral kell védened az okostelefonod.";
 "Snabble.LimitsAlert.checkoutNotAvailable" = "%@ feletti áruértéknél az alkalmazással nem tudsz bevásárolni.";
