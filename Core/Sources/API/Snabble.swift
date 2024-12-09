@@ -180,6 +180,11 @@ public class Snabble {
                 project.codeTemplates.forEach {
                     CodeMatcher.addTemplate(project.id, $0.id, $0.template)
                 }
+                project.depositReturnVouchers.forEach { voucher in
+                    for template in voucher.templates {
+                        CodeMatcher.addTemplate(project.id, template.id, template.template)
+                    }
+                }
 
                 project.priceOverrideCodes?.forEach {
                     CodeMatcher.addTemplate(project.id, $0.id, $0.template)
