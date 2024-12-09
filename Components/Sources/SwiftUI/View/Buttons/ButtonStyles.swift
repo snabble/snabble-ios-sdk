@@ -39,6 +39,10 @@ extension ButtonStyle where Self == ProjectPrimaryButtonStyle {
     public static var projectPrimary: ProjectPrimaryButtonStyle {
         ProjectPrimaryButtonStyle()
     }
+    
+    public static func projectPrimary(disabled: Bool) -> ProjectPrimaryButtonStyle {
+        ProjectPrimaryButtonStyle(disabled: disabled)
+    }
 }
 
 public struct ProjectBorderedPrimaryButtonStyle: ButtonStyle {
@@ -85,5 +89,9 @@ public struct ProjectSecondaryButtonStyle: ButtonStyle {
 extension ButtonStyle where Self == ProjectSecondaryButtonStyle {
     public static var projectSecondary: ProjectSecondaryButtonStyle {
         ProjectSecondaryButtonStyle()
+    }
+    
+    public static func projectSecondary(disabled: Bool) -> ProjectSecondaryButtonStyle {
+        ProjectSecondaryButtonStyle(disabled: disabled)
     }
 }
