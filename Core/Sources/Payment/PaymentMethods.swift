@@ -8,10 +8,17 @@ public struct PaymentMethodDescriptor: Decodable {
     public let id: RawPaymentMethod
     public let acceptedOriginTypes: [AcceptedOriginType]?
     public let links: Links?
+    public let providerName: Provider?
 
     public struct Links: Decodable {
         public let tokenization: Link?
     }
+}
+
+public enum Provider: String, Decodable {
+    case payone
+    case telecash
+    case datatrans
 }
 
 // known payment methods
@@ -26,7 +33,7 @@ public enum RawPaymentMethod: String, Decodable, CaseIterable, Swift.Identifiabl
     case gatekeeperTerminal
     case customerCardPOS        // payment via customer card invoice
     case giropayOneKlick = "paydirektOneKlick"
-    case applePay               // via Telecash/First Data
+    case applePay               // via Apple Pay
     case postFinanceCard        // via Datatrans
     case twint                  // via Datatrans
     
