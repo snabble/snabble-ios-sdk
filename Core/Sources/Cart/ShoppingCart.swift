@@ -28,6 +28,7 @@ public final class ShoppingCart: Codable {
     
     public private(set) var lastCheckoutInfoError: SnabbleError?
     public private(set) var coupons: [CartCoupon]
+    public private(set) var vouchers: [CartVoucher]
 
     // info that the backend requires
     public private(set) var requiredInformation: [RequiredInformation]
@@ -71,7 +72,7 @@ public final class ShoppingCart: Codable {
 
     enum CodingKeys: String, CodingKey {
         case items, session, lastSaved, backendCartInfo, projectId, shopId
-        case uuid, backupItems, backupSession, customerCard, maxAge, coupons
+        case uuid, backupItems, backupSession, customerCard, maxAge, coupons, vouchers
         case requiredInformation, requiredInformationData
     }
 
@@ -90,6 +91,7 @@ public final class ShoppingCart: Codable {
         self.maxAge = try container.decode(.maxAge)
         self.lastCheckoutInfoError = nil
         self.coupons = try container.decodeIfPresent([CartCoupon].self, forKey: .coupons) ?? []
+        self.vouchers = try container.decodeIfPresent([CartVoucher].self, forKey: .vouchers) ?? []
         self.requiredInformation = try container.decodeIfPresent([RequiredInformation].self, forKey: .requiredInformation) ?? []
         self.requiredInformationData = try container.decodeIfPresent([RequiredInformation].self, forKey: .requiredInformationData) ?? []
     }
@@ -109,6 +111,7 @@ public final class ShoppingCart: Codable {
         try container.encodeIfPresent(self.customerCard, forKey: .customerCard)
         try container.encode(self.maxAge, forKey: .maxAge)
         try container.encode(self.coupons, forKey: .coupons)
+        try container.encode(self.vouchers, forKey: .vouchers)
         try container.encode(self.requiredInformation, forKey: .requiredInformation)
         try container.encode(self.requiredInformationData, forKey: .requiredInformationData)
     }
@@ -124,6 +127,7 @@ public final class ShoppingCart: Codable {
         self.uuid = ""
         self.items = []
         self.coupons = []
+        self.vouchers = []
         self.requiredInformation = []
         self.requiredInformationData = []
         self.generateNewUUID()
@@ -186,6 +190,8 @@ public final class ShoppingCart: Codable {
                 return item.id == uuid
             case .product(let item):
                 return item.id == uuid
+            case .voucher(let item):
+                return item.id == uuid
             }
         })
     }
@@ -197,9 +203,16 @@ public final class ShoppingCart: Codable {
             removeProduct(with: item.id)
         case .coupon(let item):
             removeCoupon(with: item.id)
+        case .voucher(let item):
+            removeVoucher(with: item.id)
         }
     }
 
+    func removeVoucher(with uuid: String) {
+        items.removeAll { $0.uuid == uuid }
+        save()
+    }
+    
     func removeCoupon(with uuid: String) {
         coupons.removeAll { $0.uuid == uuid }
         save()
@@ -426,6 +439,21 @@ extension ShoppingCart {
     public func removeCoupon(_ coupon: Coupon) {
         guard coupon.projectID == projectId else { return }
         coupons.removeAll { $0.coupon.id == coupon.id }
+        self.save()
+    }
+}
+// MARK: - Vouchers
+extension ShoppingCart {
+    public func addVoucher(_ voucher: Voucher) {
+        let index = vouchers.firstIndex(where: { $0.voucher.id == voucher.id })
+        if index == nil {
+            vouchers.append(CartVoucher(uuid: UUID().uuidString, voucher: voucher))
+            self.save()
+        }
+    }
+    
+    public func removeVoucher(_ voucher: Voucher) {
+        vouchers.removeAll { $0.voucher.id == voucher.id }
         self.save()
     }
 }
