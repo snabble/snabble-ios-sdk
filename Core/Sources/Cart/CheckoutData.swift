@@ -461,6 +461,7 @@ public struct Cart: Encodable {
     public enum Item: Encodable {
         case product(ProductItem)
         case coupon(CouponItem)
+        case voucher(VoucherItem)
 
         public func encode(to encoder: Encoder) throws {
             var container = encoder.singleValueContainer()
@@ -469,7 +470,9 @@ public struct Cart: Encodable {
                 try container.encode(productItem)
             case .coupon(let couponItem):
                 try container.encode(couponItem)
-            }
+            case .voucher(let voucherItem):
+                try container.encode(voucherItem)
+           }
         }
     }
 
@@ -499,6 +502,14 @@ public struct Cart: Encodable {
             self.scannedCode = scannedCode
             self.amount = amount
         }
+    }
+
+    public struct VoucherItem: Encodable {
+        public let id: String
+        public let itemID: String
+        public let amount: Int
+        public let type: String
+        public let scannedCode: String
     }
 
     public struct CustomerInfo: Encodable {
