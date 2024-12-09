@@ -35,7 +35,17 @@ public struct ProjectPrimaryButtonStyle: ButtonStyle {
     }
 }
 
-public struct BorderedProjectPrimaryButtonStyle: ButtonStyle {
+extension ButtonStyle where Self == ProjectPrimaryButtonStyle {
+    public static var projectPrimary: ProjectPrimaryButtonStyle {
+        ProjectPrimaryButtonStyle()
+    }
+    
+    public static func projectPrimary(disabled: Bool) -> ProjectPrimaryButtonStyle {
+        ProjectPrimaryButtonStyle(disabled: disabled)
+    }
+}
+
+public struct ProjectBorderedPrimaryButtonStyle: ButtonStyle {
     @SwiftUI.Environment(\.projectTrait) private var project
     
     public init() { }
@@ -49,6 +59,12 @@ public struct BorderedProjectPrimaryButtonStyle: ButtonStyle {
                 .strokeBorder(Color.gray, style: StrokeStyle(lineWidth: 0.5, lineCap: .round, lineJoin: .round))
                 .foregroundStyle(Color.projectPrimary())
             )
+    }
+}
+
+extension ButtonStyle where Self == ProjectBorderedPrimaryButtonStyle {
+    public static var projectBorderedPrimary: ProjectBorderedPrimaryButtonStyle {
+        ProjectBorderedPrimaryButtonStyle()
     }
 }
 
@@ -67,5 +83,15 @@ public struct ProjectSecondaryButtonStyle: ButtonStyle {
             .padding([.leading, .trailing], 20)
             .foregroundStyle(Color.projectPrimary())
             .disabled(disabled)
+    }
+}
+
+extension ButtonStyle where Self == ProjectSecondaryButtonStyle {
+    public static var projectSecondary: ProjectSecondaryButtonStyle {
+        ProjectSecondaryButtonStyle()
+    }
+    
+    public static func projectSecondary(disabled: Bool) -> ProjectSecondaryButtonStyle {
+        ProjectSecondaryButtonStyle(disabled: disabled)
     }
 }
