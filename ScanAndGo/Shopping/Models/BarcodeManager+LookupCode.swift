@@ -14,6 +14,7 @@ import SnabbleUI
 enum ScannerLookup {
     case product(ScannedProduct)
     case coupon(Coupon, String)
+    case voucher(Voucher)
     case failure(ProductLookupError)
 }
 
@@ -80,6 +81,13 @@ extension BarcodeManager {
                 NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
                 let msg = Asset.localizedString(forKey: "Snabble.Scanner.couponAdded", arguments: coupon.name)
                 self.processingDelegate?.scanMessage = ScanMessage(msg)
+                return
+                
+            case .voucher(let voucher):
+                self.logger.debug("got voucher: \(voucher.scannedCode)")
+                self.shoppingCart.addVoucher(voucher)
+                NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
+                self.tapticFeedback.notificationOccurred(.success)
                 return
             }
             
@@ -257,6 +265,9 @@ extension BarcodeManager {
                         return completion(.coupon(coupon, code))
                     }
                     
+                    if let voucher = self.checkValidVoucher(for: code) {
+                        return completion(.voucher(voucher))
+                    }
                     return completion(.failure(.notFound))
                 } else {
                     let event = AppEvent(scannedCode: code, codes: codes, project: project)
@@ -265,6 +276,22 @@ extension BarcodeManager {
                 }
             }
         }
+    }
+    
+    private func checkValidVoucher(for scannedCode: String) -> Voucher? {
+        let project = self.project
+        let vouchers = project.depositReturnVouchers
+        
+        for voucher in vouchers {
+            for code in voucher.templates {
+                let result = CodeMatcher.match(scannedCode, project.id)
+                if result.first(where: { $0.template.id == code.id }) != nil {
+                    return Voucher(id: UUID().uuidString, itemID: code.id, type: .depositReturn, scannedCode: scannedCode)
+                }
+            }
+        }
+        
+        return nil
     }
     
     private func checkValidCoupon(for scannedCode: String) -> Coupon? {
