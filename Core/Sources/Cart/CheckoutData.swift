@@ -510,9 +510,17 @@ public struct Cart: Encodable {
     public struct VoucherItem: Encodable {
         public let id: String
         public let itemID: String
-        public let amount: Int
         public let type: String
         public let scannedCode: String
+        public let amount: Int
+        
+        public init(id: String, itemId: String, type: String, scannedCode: String, amount: Int = 1) {
+            self.id = id
+            self.itemID = itemId
+            self.type = type
+            self.scannedCode = scannedCode
+            self.amount = amount
+        }
     }
 
     public struct CustomerInfo: Encodable {
