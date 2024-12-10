@@ -37,7 +37,6 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
     var deletionItemIndex: Int?
     
     @Published public var items = [CartEntry]()
-
     
     func index(for itemModel: CartItemModel) -> Int? {
         guard let index = items.firstIndex(where: { $0.id == itemModel.id }) else {
@@ -149,7 +148,6 @@ extension ShoppingCartViewModel {
     }
     
     private func updateQuantity(itemModel: ProductItemModel, reload: Bool = true) {
-        guard let index = cartIndex(for: itemModel) else {
         guard cartIndex(for: itemModel) != nil else {
             return
         }
@@ -157,7 +155,6 @@ extension ShoppingCartViewModel {
         self.shoppingCartDelegate?.track(.cartAmountChanged)
         
         if reload {
-            self.updateQuantity(itemModel.quantity, at: index)
             self.shoppingCart.setQuantity(itemModel.quantity, for: itemModel.item)
             NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
         }
@@ -202,7 +199,6 @@ extension ShoppingCartViewModel {
             self.shoppingCartDelegate?.track(.deletedFromCart(item.product.sku))
             
             self.items.remove(at: index)
-            self.shoppingCart.remove(at: index)
             self.shoppingCart.removeItem(item)
         } else if case .coupon(let coupon, _) = self.items[index] {
             self.items.remove(at: index)
