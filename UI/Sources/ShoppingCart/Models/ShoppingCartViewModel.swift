@@ -207,6 +207,9 @@ extension ShoppingCartViewModel {
         } else if case .coupon(let coupon, _) = self.items[index] {
             self.items.remove(at: index)
             self.shoppingCart.removeCoupon(coupon.coupon)
+        } else if case .voucher(let voucherItem, _) = self.items[index] {
+            self.items.remove(at: index)
+            self.shoppingCart.removeVoucher(voucherItem.voucher)
         }
         
         NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
@@ -227,6 +230,8 @@ extension ShoppingCartViewModel {
             name = item.product.name
         } else if case .coupon(let cartCoupon, _) = self.items[index] {
             name = cartCoupon.coupon.name
+        } else if case .voucher(let cartVoucher, _) = self.items[index] {
+            name = cartVoucher.voucher.type.rawValue
         }
         guard let name = name else {
             return
