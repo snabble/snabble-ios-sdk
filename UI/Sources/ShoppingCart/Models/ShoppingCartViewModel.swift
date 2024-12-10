@@ -429,6 +429,8 @@ extension ShoppingCartViewModel {
         return items
     }
     
+    // all vouchers
+    var vouchers: [(cartVoucher: CartVoucher, lineItem: CheckoutInfo.LineItem?)] {
         var vouchers = [(cartVoucher: CartVoucher, lineItem: CheckoutInfo.LineItem?)]()
 
         for voucher in self.shoppingCart.vouchers {
