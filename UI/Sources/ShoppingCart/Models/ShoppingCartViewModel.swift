@@ -108,6 +108,8 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
     private func setupItems(_ cart: ShoppingCart) {
         var newItems = [CartEntry]()
         
+        // all vouchers
+        newItems.append(contentsOf: self.voucherItems)
         // all regular cart items
         newItems.append(contentsOf: self.cartItemEntries)
         // all coupons
