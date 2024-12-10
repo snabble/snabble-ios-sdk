@@ -558,9 +558,14 @@ extension ShoppingCartViewModel {
 }
 
 extension ShoppingCartViewModel {
+    
+    var cartIsEmpty: Bool {
+        self.numberOfItems == 0
+    }
     var numberOfProducts: Int {
         return self.shoppingCart.numberOfProducts
     }
+
     var numberOfProductsString: String {
         return Asset.localizedString(forKey: "Snabble.Shoppingcart.numberOfItems", arguments: self.numberOfProducts)
     }
