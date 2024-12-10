@@ -37,7 +37,7 @@ public struct ShoppingCartView: View {
     }
     
     public var body: some View {
-        if cartModel.numberOfProducts == 0 {
+        if cartModel.cartIsEmpty {
             if !compactMode {
                 Text(keyed: "Snabble.Shoppingcart.EmptyState.description")
             }
