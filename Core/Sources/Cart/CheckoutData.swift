@@ -83,7 +83,10 @@ public enum LineItemType: String, Codable, UnknownCaseRepresentable {
 
     /// a coupon
     case coupon
-
+    
+    /// a deposit return voucher
+    case depositReturnVoucher
+    
     public static let unknownCase = LineItemType.unknown
 }
 
