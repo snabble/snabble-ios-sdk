@@ -562,6 +562,10 @@ extension ShoppingCartViewModel {
     var cartIsEmpty: Bool {
         self.numberOfItems == 0
     }
+    var numberOfItems: Int {
+        self.numberOfProducts + self.vouchers.count
+    }
+    
     var numberOfProducts: Int {
         return self.shoppingCart.numberOfProducts
     }
