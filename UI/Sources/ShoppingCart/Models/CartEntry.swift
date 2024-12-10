@@ -44,7 +44,7 @@ public enum CartEntry: Swift.Identifiable {
     // a user-added coupon, plus the backend info for it
     case coupon(CartCoupon, CheckoutInfo.LineItem?)
     
-    // a user-added coupon, plus the backend info for it
+    // a voucher plus the backend info for it
     case voucher(CartVoucher, CheckoutInfo.LineItem?)
 
     // a new main item from the backend, plus its additional items.
