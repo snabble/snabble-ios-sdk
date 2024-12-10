@@ -418,6 +418,18 @@ extension ShoppingCartViewModel {
 }
 
 extension ShoppingCartViewModel {
+    var voucherItems: [CartEntry] {
+        var items = [CartEntry]()
+        
+        // all vouchers
+        for voucher in self.vouchers {
+            let item = CartEntry.voucher(voucher.cartVoucher, voucher.lineItem)
+            items.append(item)
+        }
+        return items
+    }
+    
+extension ShoppingCartViewModel {
     // the remaining lineItems
     var remainingItems: [CartEntry] {
         var items = [CartEntry]()
