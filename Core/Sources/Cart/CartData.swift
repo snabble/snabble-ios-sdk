@@ -90,7 +90,7 @@ public struct CartVoucher: Codable {
     }
     
     public var cartItem: Cart.Item {
-        let voucherItem = Cart.VoucherItem(id: uuid, itemID: voucher.itemID, amount: 1, type: voucher.type.rawValue, scannedCode: voucher.scannedCode)
+        let voucherItem = Cart.VoucherItem(id: uuid, itemId: voucher.itemID, type: voucher.type.rawValue, scannedCode: voucher.scannedCode)
         return Cart.Item.voucher(voucherItem)
     }
 }
