@@ -283,10 +283,10 @@ extension BarcodeManager {
         let vouchers = project.depositReturnVouchers
         
         for voucher in vouchers {
-            for code in voucher.templates {
+            for template in voucher.templates {
                 let result = CodeMatcher.match(scannedCode, project.id)
-                if result.first(where: { $0.template.id == code.id }) != nil {
-                    return Voucher(id: UUID().uuidString, itemID: code.id, type: .depositReturn, scannedCode: scannedCode)
+                if result.first(where: { $0.template.id == template.id }) != nil {
+                    return Voucher(id: UUID().uuidString, itemID: voucher.id, type: .depositReturn, scannedCode: scannedCode)
                 }
             }
         }
