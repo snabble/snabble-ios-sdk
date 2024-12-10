@@ -10,7 +10,7 @@ import Foundation
 public enum VoucherType: String, Codable, UnknownCaseRepresentable {
     case unknown
 
-    case depositReturn
+    case depositReturn = "depositReturnVoucher"
 
     public static var unknownCase = VoucherType.unknown
 }
