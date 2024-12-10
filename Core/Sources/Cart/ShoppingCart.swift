@@ -138,6 +138,7 @@ public final class ShoppingCart: Codable {
             self.customerCard = savedCart.customerCard
             self.uuid = savedCart.uuid
             self.coupons = savedCart.coupons
+            self.vouchers = savedCart.vouchers
             self.requiredInformation = savedCart.requiredInformation
             self.requiredInformationData = savedCart.requiredInformationData
 
@@ -209,7 +210,7 @@ public final class ShoppingCart: Codable {
     }
 
     func removeVoucher(with uuid: String) {
-        items.removeAll { $0.uuid == uuid }
+        vouchers.removeAll { $0.uuid == uuid }
         save()
     }
     
@@ -223,12 +224,17 @@ public final class ShoppingCart: Codable {
         save()
     }
 
+    /// delete a `CartItem`
+    public func removeItem(_ item: CartItem) {
+        removeProduct(with: item.uuid)
+    }
+    
     /// delete the entry at position `index`
     public func remove(at index: Int) {
         self.items.remove(at: index)
         self.save()
     }
-
+    
     public func replaceItem(at index: Int, with replacement: CartItem) {
         self.items.remove(at: index)
         self.items.insert(replacement, at: index)
@@ -279,9 +285,13 @@ public final class ShoppingCart: Codable {
 
     func backendItems() -> [Cart.Item] {
         var items = self.items.flatMap { $0.cartItems }
+        
         let coupons = self.coupons.map { $0.cartItem }
         items.append(contentsOf: coupons)
-
+        
+        let vouchers = self.vouchers.map { $0.cartItem }
+        items.append(contentsOf: vouchers)
+        
         return items
     }
 
