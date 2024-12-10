@@ -42,6 +42,8 @@ extension ShoppingCartViewModel {
 //                let itemModel = CouponCartItemModel(cartCoupon: cartCoupon, for: lineItem)
 //                CouponItemView(itemModel: itemModel, showImages: showImages)
             }
+        } else if case .voucher(let voucherItem, _) = item {
+            VoucherItemView(voucher: voucherItem.voucher)
         }
     }
 }
