@@ -429,6 +429,18 @@ extension ShoppingCartViewModel {
         return items
     }
     
+        var vouchers = [(cartVoucher: CartVoucher, lineItem: CheckoutInfo.LineItem?)]()
+
+        for voucher in self.shoppingCart.vouchers {
+            
+            let voucherItem = self.shoppingCart.backendCartInfo?.lineItems.filter { $0.type == LineItemType.depositReturnVoucher && $0.sku == voucher.voucher.itemID && $0.scannedCode == voucher.voucher.scannedCode }.first
+
+            vouchers.append((voucher, voucherItem))
+        }
+        return vouchers
+    }
+}
+
 extension ShoppingCartViewModel {
     // the remaining lineItems
     var remainingItems: [CartEntry] {
