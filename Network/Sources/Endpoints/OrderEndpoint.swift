@@ -35,16 +35,16 @@ extension Endpoints {
         }
         
         public enum Receipts {
-            public static func receipt(forOrder order: SnabbleNetwork.Order) -> Endpoint<URL> {                
+            public static func receipt(forOrder order: SnabbleNetwork.Order) -> Endpoint<Data> {
                 receipt(forTransactionId: order.id, withProjectId: order.projectId)
             }
             
-            public static func receipt(forTransactionId transactionId: String, withProjectId projectId: String) -> Endpoint<URL> {
+            public static func receipt(forTransactionId transactionId: String, withProjectId projectId: String) -> Endpoint<Data> {
                 return .init(
                     path: "/\(projectId)/orders/id/\(transactionId)/receipt",
                     method: .get(nil),
-                    parse: {
-                        try SnabbleNetwork.Order.saveReceipt(forData: $0, withID: transactionId)
+                    parse: { data in
+                        data
                     }
                 )
             }
