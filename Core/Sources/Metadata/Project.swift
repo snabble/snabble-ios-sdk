@@ -262,6 +262,28 @@ public struct TemplateDefinition: Decodable {
     }
 }
 
+public struct DepositReturnVoucher: Decodable {
+    public let id: String
+    public let templates: [TemplateDefinition]
+    
+    enum CodingKeys: String, CodingKey {
+        case id
+        case templates
+    }
+    
+    public init(from decoder: Decoder) throws {
+        let container = try decoder.container(keyedBy: CodingKeys.self)
+        
+        self.id = try container.decode(String.self, forKey: .id)
+        let templates = try container.decodeIfPresent([[String: String]].self, forKey: .templates)
+        if let templates {
+            self.templates = TemplateDefinition.arrayFrom(templates.first)
+        } else {
+            self.templates = []
+        }
+    }
+}
+
 public struct PriceOverrideCode: Decodable {
     public let id: String
     public let template: String
@@ -334,6 +356,7 @@ public struct Project: Decodable, Identifiable {
     public let customerCards: CustomerCardInfo?
 
     public let codeTemplates: [TemplateDefinition]
+    public let depositReturnVouchers: [DepositReturnVoucher]
     public let searchableTemplates: [String]?
 
     public let priceOverrideCodes: [PriceOverrideCode]?
@@ -377,6 +400,7 @@ public struct Project: Decodable, Identifiable {
         case customizationConfig = "appCustomizationConfig"
         case shops, scanFormats, barcodeDetector, expectedBarcodeWidth
         case customerCards, codeTemplates, searchableTemplates, priceOverrideCodes, checkoutLimits
+        case depositReturnVouchers = "depositReturnVoucherProviders"
         case messages = "texts"
         case paymentMethodDescriptors
         case displayNetPrice
@@ -412,6 +436,8 @@ public struct Project: Decodable, Identifiable {
         self.customerCards = try container.decodeIfPresent(CustomerCardInfo.self, forKey: .customerCards)
         let templates = try container.decodeIfPresent([String: String].self, forKey: .codeTemplates)
         self.codeTemplates = TemplateDefinition.arrayFrom(templates)
+        self.depositReturnVouchers = try container.decodeIfPresent([DepositReturnVoucher].self, forKey: .depositReturnVouchers) ?? []
+//        self.depositReturnVouchers = TemplateDefinition.arrayFrom(deposits)
         self.searchableTemplates = try container.decodeIfPresent([String].self, forKey: .searchableTemplates)
         self.priceOverrideCodes = try container.decodeIfPresent([PriceOverrideCode].self, forKey: .priceOverrideCodes)
         self.checkoutLimits = try container.decodeIfPresent(CheckoutLimits.self, forKey: .checkoutLimits)
@@ -452,6 +478,7 @@ public struct Project: Decodable, Identifiable {
         self.expectedBarcodeWidth = nil
         self.customerCards = CustomerCardInfo()
         self.codeTemplates = []
+        self.depositReturnVouchers = []
         self.searchableTemplates = nil
         self.priceOverrideCodes = nil
         self.checkoutLimits = nil
@@ -481,6 +508,7 @@ public struct Project: Decodable, Identifiable {
         self.expectedBarcodeWidth = nil
         self.customerCards = CustomerCardInfo()
         self.codeTemplates = []
+        self.depositReturnVouchers = []
         self.searchableTemplates = nil
         self.priceOverrideCodes = nil
         self.checkoutLimits = nil

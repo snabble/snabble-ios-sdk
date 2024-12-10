@@ -37,7 +37,7 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
     var deletionItemIndex: Int?
     
     @Published public var items = [CartEntry]()
-
+    
     func index(for itemModel: CartItemModel) -> Int? {
         guard let index = items.firstIndex(where: { $0.id == itemModel.id }) else {
             return nil
@@ -108,6 +108,8 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
     private func setupItems(_ cart: ShoppingCart) {
         var newItems = [CartEntry]()
         
+        // all vouchers
+        newItems.append(contentsOf: self.voucherItems)
         // all regular cart items
         newItems.append(contentsOf: self.cartItemEntries)
         // all coupons
@@ -146,14 +148,15 @@ extension ShoppingCartViewModel {
     }
     
     private func updateQuantity(itemModel: ProductItemModel, reload: Bool = true) {
-        guard let index = cartIndex(for: itemModel) else {
+        guard cartIndex(for: itemModel) != nil else {
             return
         }
         
         self.shoppingCartDelegate?.track(.cartAmountChanged)
         
         if reload {
-            self.updateQuantity(itemModel.quantity, at: index)
+            self.shoppingCart.setQuantity(itemModel.quantity, for: itemModel.item)
+            NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
         }
     }
     
@@ -196,10 +199,13 @@ extension ShoppingCartViewModel {
             self.shoppingCartDelegate?.track(.deletedFromCart(item.product.sku))
             
             self.items.remove(at: index)
-            self.shoppingCart.remove(at: index)
+            self.shoppingCart.removeItem(item)
         } else if case .coupon(let coupon, _) = self.items[index] {
             self.items.remove(at: index)
             self.shoppingCart.removeCoupon(coupon.coupon)
+        } else if case .voucher(let voucherItem, _) = self.items[index] {
+            self.items.remove(at: index)
+            self.shoppingCart.removeVoucher(voucherItem.voucher)
         }
         
         NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
@@ -220,6 +226,8 @@ extension ShoppingCartViewModel {
             name = item.product.name
         } else if case .coupon(let cartCoupon, _) = self.items[index] {
             name = cartCoupon.coupon.name
+        } else if case .voucher(let cartVoucher, _) = self.items[index] {
+            name = cartVoucher.voucher.type.rawValue
         }
         guard let name = name else {
             return
@@ -406,6 +414,32 @@ extension ShoppingCartViewModel {
 }
 
 extension ShoppingCartViewModel {
+    var voucherItems: [CartEntry] {
+        var items = [CartEntry]()
+        
+        // all vouchers
+        for voucher in self.vouchers {
+            let item = CartEntry.voucher(voucher.cartVoucher, voucher.lineItem)
+            items.append(item)
+        }
+        return items
+    }
+    
+    // all vouchers
+    var vouchers: [(cartVoucher: CartVoucher, lineItem: CheckoutInfo.LineItem?)] {
+        var vouchers = [(cartVoucher: CartVoucher, lineItem: CheckoutInfo.LineItem?)]()
+
+        for voucher in self.shoppingCart.vouchers {
+            
+            let voucherItem = self.shoppingCart.backendCartInfo?.lineItems.filter { $0.type == LineItemType.depositReturnVoucher && $0.sku == voucher.voucher.itemID && $0.scannedCode == voucher.voucher.scannedCode }.first
+
+            vouchers.append((voucher, voucherItem))
+        }
+        return vouchers
+    }
+}
+
+extension ShoppingCartViewModel {
     // the remaining lineItems
     var remainingItems: [CartEntry] {
         var items = [CartEntry]()
@@ -520,9 +554,18 @@ extension ShoppingCartViewModel {
 }
 
 extension ShoppingCartViewModel {
+    
+    var cartIsEmpty: Bool {
+        self.numberOfItems == 0
+    }
+    var numberOfItems: Int {
+        self.numberOfProducts + self.vouchers.count
+    }
+    
     var numberOfProducts: Int {
         return self.shoppingCart.numberOfProducts
     }
+
     var numberOfProductsString: String {
         return Asset.localizedString(forKey: "Snabble.Shoppingcart.numberOfItems", arguments: self.numberOfProducts)
     }

@@ -83,7 +83,10 @@ public enum LineItemType: String, Codable, UnknownCaseRepresentable {
 
     /// a coupon
     case coupon
-
+    
+    /// a deposit return voucher
+    case depositReturnVoucher
+    
     public static let unknownCase = LineItemType.unknown
 }
 
@@ -446,22 +449,23 @@ public struct Cart: Encodable {
     public let clientID: String
     public let appUserID: String?
     public let requiredInformation: [RequiredInformation]
-
+    
     init(_ cart: ShoppingCart, clientId: String, appUserId: String?) {
         self.session = cart.session
         self.shopID = cart.shopId
         self.customer = Cart.CustomerInfo(loyaltyCard: cart.customerCard)
         self.items = cart.backendItems()
         self.requiredInformation = cart.requiredInformationData
-
+        
         self.clientID = clientId
         self.appUserID = appUserId
     }
-
+    
     public enum Item: Encodable {
         case product(ProductItem)
         case coupon(CouponItem)
-
+        case voucher(VoucherItem)
+        
         public func encode(to encoder: Encoder) throws {
             var container = encoder.singleValueContainer()
             switch self {
@@ -469,29 +473,31 @@ public struct Cart: Encodable {
                 try container.encode(productItem)
             case .coupon(let couponItem):
                 try container.encode(couponItem)
+            case .voucher(let voucherItem):
+                try container.encode(voucherItem)
             }
         }
     }
-
+    
     public struct ProductItem: Encodable {
         public let id: String
         public let sku: String
         public let amount: Int
         public let scannedCode: String
-
+        
         public let price: Int?
         public let weight: Int?
         public let units: Int?
         public let weightUnit: Units?
     }
-
+    
     public struct CouponItem: Encodable {
         public let id: String
         public let couponID: String
         public let refersTo: String?
         public let scannedCode: String?
         public let amount: Int
-
+        
         init(id: String, couponId: String, refersTo: String? = nil, scannedCode: String? = nil, amount: Int = 1) {
             self.id = id
             self.couponID = couponId
@@ -500,10 +506,26 @@ public struct Cart: Encodable {
             self.amount = amount
         }
     }
-
+    
+    public struct VoucherItem: Encodable {
+        public let id: String
+        public let itemID: String
+        public let type: String
+        public let scannedCode: String
+        public let amount: Int
+        
+        public init(id: String, itemId: String, type: String, scannedCode: String, amount: Int = 1) {
+            self.id = id
+            self.itemID = itemId
+            self.type = type
+            self.scannedCode = scannedCode
+            self.amount = amount
+        }
+    }
+    
     public struct CustomerInfo: Encodable {
         public let loyaltyCard: String
-
+        
         init?(loyaltyCard: String?) {
             guard let card = loyaltyCard else {
                 return nil
