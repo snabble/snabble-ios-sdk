@@ -41,11 +41,11 @@ public struct Order: Decodable {
         case isSuccessful
     }
     
-    var receiptPath: String {
-        "/\(projectId)/orders/id/\(id)/receipt"
+    var receiptFileName: String {
+        Self.receiptFileName(forId: id)
     }
     
-    var receiptFileName: String {
+    static func receiptFileName(forId id: String) -> String {
         "snabble-order-\(id).pdf"
     }
     
@@ -60,32 +60,44 @@ public struct Order: Decodable {
         return true
     }
     
-    func saveReceipt(forData data: Data) throws -> URL {
+    static func saveReceipt(forData data: Data, withID id: String) throws -> URL {
         let documentsDirectory = try Self.fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)
-        let fileURL = documentsDirectory.appendingPathComponent(receiptFileName)
+        let fileURL = documentsDirectory.appendingPathComponent(receiptFileName(forId: id))
         try data.write(to: fileURL)
         return fileURL
     }
     
     public func receiptURL() throws -> URL {
+        try Self.receiptURL(forID: id)
+    }
+    
+    public static func receiptURL(forID id: String) throws -> URL {
         let documentDirectory = try Self.fileManager.url(
             for: .documentDirectory,
             in: .userDomainMask,
             appropriateFor: nil,
             create: true
         )
-        return documentDirectory.appendingPathComponent(receiptFileName)
+        return documentDirectory.appendingPathComponent(receiptFileName(forId: id))
     }
     
     public var isReceiptDownloaded: Bool {
-        guard let receiptURL = try? receiptURL() else {
+        Self.isReceiptDownloaded(forID: id)
+    }
+    
+    public static func isReceiptDownloaded(forID id: String) -> Bool {
+        guard let receiptURL = try? receiptURL(forID: id) else {
             return false
         }
         return Self.fileManager.fileExists(atPath: receiptURL.path)
     }
     
     public func deleteLocalReceipt() throws {
-        try Self.fileManager.removeItem(at: receiptURL())
+        try Self.deleteLocalReceipt(forID: id)
+    }
+    
+    public static func deleteLocalReceipt(forID id: String) throws {
+        try Self.fileManager.removeItem(at: try receiptURL(forID: id))
     }
     
     public static func deleteLocalReceipts() throws {
