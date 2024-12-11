@@ -452,6 +452,7 @@ extension ShoppingCart {
         self.save()
     }
 }
+
 // MARK: - Vouchers
 extension ShoppingCart {
     public func addVoucher(_ voucher: Voucher) {

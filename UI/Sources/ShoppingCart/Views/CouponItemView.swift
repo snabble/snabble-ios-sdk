@@ -37,7 +37,7 @@ struct CouponItemView: View {
                     Text(itemModel.cartCoupon.coupon.name)
                     Asset.image(named: "discount-badge")
                 }
-                
+
                 if itemModel.isRedeemed == false {
                     Text(keyed: "Snabble.Coupon.notUsable")
                         .multilineTextAlignment(.center)
