@@ -228,13 +228,13 @@ public final class ShoppingCart: Codable {
     public func removeItem(_ item: CartItem) {
         removeProduct(with: item.uuid)
     }
-    
+
     /// delete the entry at position `index`
     public func remove(at index: Int) {
         self.items.remove(at: index)
         self.save()
     }
-    
+
     public func replaceItem(at index: Int, with replacement: CartItem) {
         self.items.remove(at: index)
         self.items.insert(replacement, at: index)
@@ -462,7 +462,7 @@ extension ShoppingCart {
             self.save()
         }
     }
-    
+
     public func removeVoucher(_ voucher: Voucher) {
         vouchers.removeAll { $0.voucher.id == voucher.id }
         self.save()
