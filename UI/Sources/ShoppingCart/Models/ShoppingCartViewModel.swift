@@ -108,15 +108,16 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
     private func setupItems(_ cart: ShoppingCart) {
         var newItems = [CartEntry]()
         
-        // all vouchers
-        newItems.append(contentsOf: self.voucherItems)
         // all regular cart items
         newItems.append(contentsOf: self.cartItemEntries)
         // all coupons
         newItems.append(contentsOf: self.couponItems)
         // now gather the remaining lineItems. find the main items first
         newItems.append(contentsOf: self.remainingItems)
-        
+
+        // all vouchers
+        newItems.append(contentsOf: self.voucherItems)
+
         // add all discounts (without priceModifiers) for the "total discounts" entry
         if cart.totalCartDiscount != 0 {
             newItems.append(totalDiscountItem)
