@@ -437,7 +437,6 @@ public struct Project: Decodable, Identifiable {
         let templates = try container.decodeIfPresent([String: String].self, forKey: .codeTemplates)
         self.codeTemplates = TemplateDefinition.arrayFrom(templates)
         self.depositReturnVouchers = try container.decodeIfPresent([DepositReturnVoucher].self, forKey: .depositReturnVouchers) ?? []
-//        self.depositReturnVouchers = TemplateDefinition.arrayFrom(deposits)
         self.searchableTemplates = try container.decodeIfPresent([String].self, forKey: .searchableTemplates)
         self.priceOverrideCodes = try container.decodeIfPresent([PriceOverrideCode].self, forKey: .priceOverrideCodes)
         self.checkoutLimits = try container.decodeIfPresent(CheckoutLimits.self, forKey: .checkoutLimits)
