@@ -308,6 +308,7 @@
 "Snabble.Scanner.BundleDialog.headline" = "Csomagolási egység kiválasztása";
 "Snabble.Scanner.Camera.accessDenied" = "Kamera-hozzáférés megtagadva";
 "Snabble.Scanner.Camera.allowAccess" = "A vonalkódok beolvasásához szeretnénk hozzáférni a kamerádhoz. Kérlek, engedélyezd a kamera használatát a beállításokban, és utána lépj vissza ide.";
+"Snabble.Scanner.DepositReturnVoucher.Added" = "Deposit voucher added";
 "Snabble.Scanner.GoToCart.empty" = "Kosár";
 "Snabble.Scanner.addCodeAsIs" = "%@ hozzáadása így";
 "Snabble.Scanner.addToCart" = "A kosárba";
@@ -360,6 +361,8 @@
 "Snabble.Shop.List.Expand.accessibility" = "kinyitni";
 "Snabble.Shop.List.ShowDetails.accessibility" = "Az üzlet adatainak megjelenítése";
 "Snabble.Shopping.title" = "Bevásárlás";
+"Snabble.ShoppingCart.DepositReturn.message" = "To redeem your voucher, fill your shopping basket with the products you wish to purchase.";
+"Snabble.ShoppingCart.DepositReturn.title" = "Deposit voucher";
 "Snabble.ShoppingCart.title" = "Kosár";
 "Snabble.ShoppingList.AddItem.viaScan" = "Termékek szkennelése";
 "Snabble.ShoppingList.AddItem.viaVoice" = "Termékek diktálása";
@@ -460,6 +463,8 @@
 "Snabble.User.zip" = "ZIP";
 "Snabble.UserView.next" = "Next";
 "Snabble.UserView.title" = "User";
+"Snabble.Violations.DepositReturnVoucher.alreadyRedeemed" = "This deposit voucher has already been redeemed.";
+"Snabble.Violations.DepositReturnVoucher.duplicated" = "This deposit voucher has already been added.";
 "Snabble.Violations.couponAlreadyVoided" = "Egy kupon már beváltásra került, és eltávolítottuk a kosárból";
 "Snabble.Violations.couponCurrentlyNotValid" = "Egy kupon pillanatnyilag nem érvényes, és eltávolítottuk a kosárból";
 "Snabble.Violations.couponInvalid" = "Egy kupon nem érvényes, és eltávolítottuk a kosárból";
