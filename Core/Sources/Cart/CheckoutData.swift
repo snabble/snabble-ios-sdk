@@ -143,6 +143,7 @@ public struct CheckoutInfo: Decodable {
         public let type: `Type`
         public let refersTo: String?
         public let message: String
+        public let refersToItems: [String]?
     }
 
     public struct LineItem: Codable {
