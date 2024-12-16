@@ -44,6 +44,13 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
         }
         return index
     }
+    
+    func index(for item: CartEntry) -> Int? {
+        guard let index = items.firstIndex(where: { $0.id == item.id }) else {
+            return nil
+        }
+        return index
+    }
 
     private var knownImages = Set<String>()
     internal var showImages = false
@@ -228,7 +235,7 @@ extension ShoppingCartViewModel {
         } else if case .coupon(let cartCoupon, _) = self.items[index] {
             name = cartCoupon.coupon.name
         } else if case .voucher(let cartVoucher, _) = self.items[index] {
-            name = cartVoucher.voucher.type.rawValue
+            name = cartVoucher.voucher.name
         }
         guard let name = name else {
             return
@@ -246,6 +253,13 @@ extension ShoppingCartViewModel {
         confirmDeletion(at: index)
     }
     
+    private func confirmDeletion(item: CartEntry) {
+        guard let index = index(for: item) else {
+            return
+        }
+        confirmDeletion(at: index)
+    }
+
     func cancelDeletion() {
         deletionMessage = ""
         deletionItemIndex = nil
@@ -264,6 +278,10 @@ extension ShoppingCartViewModel {
 }
 
 extension ShoppingCartViewModel {
+
+    func trash(item: CartEntry) {
+        confirmDeletion(item: item)
+    }
 
     func trash(itemModel: CartItemModel) {
         confirmDeletion(itemModel: itemModel)
@@ -420,21 +438,20 @@ extension ShoppingCartViewModel {
         
         // all vouchers
         for voucher in self.vouchers {
-            let item = CartEntry.voucher(voucher.cartVoucher, voucher.lineItem)
+            let item = CartEntry.voucher(voucher.cartVoucher, voucher.lineItems)
             items.append(item)
         }
         return items
     }
     
     // all vouchers
-    var vouchers: [(cartVoucher: CartVoucher, lineItem: CheckoutInfo.LineItem?)] {
-        var vouchers = [(cartVoucher: CartVoucher, lineItem: CheckoutInfo.LineItem?)]()
+    var vouchers: [(cartVoucher: CartVoucher, lineItems: [CheckoutInfo.LineItem])] {
+        var vouchers = [(cartVoucher: CartVoucher, lineItems: [CheckoutInfo.LineItem])]()
 
         for voucher in self.shoppingCart.vouchers {
             
-            let voucherItem = self.shoppingCart.backendCartInfo?.lineItems.filter { $0.type == LineItemType.depositReturnVoucher && $0.sku == voucher.voucher.itemID && $0.scannedCode == voucher.voucher.scannedCode }.first
-
-            vouchers.append((voucher, voucherItem))
+            let returnItems = self.shoppingCart.backendCartInfo?.lineItems.filter { $0.type == LineItemType.depositReturn && $0.refersTo == voucher.uuid }
+            vouchers.append((voucher, returnItems ?? []))
         }
         return vouchers
     }
