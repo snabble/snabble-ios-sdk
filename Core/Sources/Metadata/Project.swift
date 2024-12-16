@@ -260,6 +260,10 @@ public struct TemplateDefinition: Decodable {
         }
         return result
     }
+    
+    static func arrayFrom(_ templates: [[String: String]]) -> [TemplateDefinition] {
+        templates.flatMap { TemplateDefinition.arrayFrom($0) }
+    }
 }
 
 public struct DepositReturnVoucher: Decodable {
@@ -276,8 +280,9 @@ public struct DepositReturnVoucher: Decodable {
         
         self.id = try container.decode(String.self, forKey: .id)
         let templates = try container.decodeIfPresent([[String: String]].self, forKey: .templates)
+   
         if let templates {
-            self.templates = TemplateDefinition.arrayFrom(templates.first)
+            self.templates = TemplateDefinition.arrayFrom(templates)
         } else {
             self.templates = []
         }
