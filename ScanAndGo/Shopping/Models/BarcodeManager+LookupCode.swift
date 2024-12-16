@@ -88,6 +88,8 @@ extension BarcodeManager {
                 self.shoppingCart.addVoucher(voucher)
                 NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
                 self.tapticFeedback.notificationOccurred(.success)
+                let msg = Asset.localizedString(forKey: "Snabble.Scanner.DepositReturnVoucher.Added")
+                self.processingDelegate?.scanMessage = ScanMessage(msg)
                 return
             }
             
