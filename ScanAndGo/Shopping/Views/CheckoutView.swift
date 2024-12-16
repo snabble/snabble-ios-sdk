@@ -44,6 +44,7 @@ struct CheckoutView: View {
                     Text(totalString)
                         .font(.title2)
                         .fontWeight(.bold)
+                        .foregroundStyle(model.totalPrice ?? 0 >= 0 ? Color.primary : Color.systemRed)
                 }
                 HStack(spacing: 16) {
                     if model.hasValidPayment {
