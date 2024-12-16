@@ -10,10 +10,72 @@ import SwiftUI
 import SnabbleCore
 import SnabbleAssetProviding
 
+extension VoucherType {
+    var name: String {
+        switch self {
+        case .depositReturn:
+            return Asset.localizedString(forKey: "Snabble.ShoppingCart.DepositReturn.title")
+        default:
+            return ""
+        }
+    }
+}
+
+extension Voucher {
+    var name: String {
+        return type.name
+    }
+}
+
 struct VoucherItemView: View {
+    @EnvironmentObject var cartModel: ShoppingCartViewModel
+    
     let voucher: Voucher
+    let lineItems: [CheckoutInfo.LineItem]
+    let onDelete: () -> Void
+        
+    init(voucher: Voucher, lineItems: [CheckoutInfo.LineItem], onDelete: @escaping () -> Void) {
+        self.voucher = voucher
+        self.lineItems = lineItems
+        self.onDelete = onDelete
+    }
     
     var body: some View {
-        Text(keyed: voucher.scannedCode)
+        VStack {
+            HStack {
+                VStack(alignment: .leading) {
+                    Text(voucher.name)
+                    self.regularPriceString
+                }
+                Spacer()
+                Button(action: {
+                    onDelete()
+                }) {
+                    Image(systemName: "trash")
+                }
+                .buttonStyle(BorderedButtonStyle())
+            }
+            .padding(.horizontal)
+            .padding(.vertical, 4)
+            if let total = cartModel.total, total < 0 {
+                Text(keyed: "Snabble.ShoppingCart.DepositReturn.message")
+                    .cartInfo()
+                    .multilineTextAlignment(.center)
+                    .foregroundStyle(Color.systemRed)
+            }
+        }
     }
+    
+    private var regularPrice: Int {
+        lineItems.compactMap { $0.totalPrice }.reduce(0, +)
+    }
+    
+    @ViewBuilder private var regularPriceString: some View {
+        let price = regularPrice
+        if price != 0 {
+            Text(PriceFormatter(SnabbleCI.project).format(price))
+                .bold()
+        }
+    }
+
 }
