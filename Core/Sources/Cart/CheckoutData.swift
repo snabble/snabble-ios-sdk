@@ -139,6 +139,7 @@ public struct CheckoutInfo: Decodable {
             case couponInvalid = "coupon_invalid"
             case couponCurrentlyNotValid = "coupon_currently_not_valid"
             case couponAlreadyVoided = "coupon_already_voided"
+            case depositReturnVoucherDuplicate = "deposit_return_voucher_duplicate"
             case unknown
         }
         public let type: `Type`
