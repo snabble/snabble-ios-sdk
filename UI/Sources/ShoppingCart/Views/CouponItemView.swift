@@ -44,7 +44,7 @@ struct CouponItemView: View {
                         .font(.footnote)
                         .foregroundColor(.secondaryLabel)
                 }
-           }
+            }
             .cartInfo()
         }
         .listRowBackground(Color.clear)
