@@ -20,13 +20,9 @@ extension Endpoints {
             return decoder
         }
         
-        private static func path(forAppUserId appUserId: String) -> String {
-            "/apps/users/\(appUserId)/orders"
-        }
-        
-        public static func get(forAppUserId appUserId: String) -> Endpoint<[SnabbleNetwork.Order]> {
+        public static func get() -> Endpoint<[SnabbleNetwork.Order]> {
             return .init(
-                path: path(forAppUserId: appUserId),
+                path: "/apps/users/me/orders",
                 method: .get(nil),
                 parse: { data in
                     try jsonDecoder.decode(SnabbleNetwork.Orders.self, from: data).orders
