@@ -79,6 +79,22 @@ public struct CartCoupon: Codable {
     }
 }
 
+/// a voucher entry in a shopping cart
+public struct CartVoucher: Codable {
+    public let uuid: String
+    public let voucher: Voucher
+
+    public init(uuid: String, voucher: Voucher) {
+        self.uuid = uuid
+        self.voucher = voucher
+    }
+    
+    public var cartItem: Cart.Item {
+        let voucherItem = Cart.VoucherItem(id: uuid, itemId: voucher.itemID, type: voucher.type.rawValue, scannedCode: voucher.scannedCode)
+        return Cart.Item.voucher(voucherItem)
+    }
+}
+
 /// a product entry in a shopping cart.
 public struct CartItem: Codable {
     /// quantity or weight

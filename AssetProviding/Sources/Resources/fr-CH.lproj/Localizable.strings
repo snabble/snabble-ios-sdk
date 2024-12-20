@@ -308,6 +308,7 @@
 "Snabble.Scanner.BundleDialog.headline" = "Sélectionner l’unité d’emballage";
 "Snabble.Scanner.Camera.accessDenied" = "Accès à la caméra refusé";
 "Snabble.Scanner.Camera.allowAccess" = "Désolé, nous avons besoin d’accéder à ta caméra pour scanner les codes-barres. Merci de permettre l’utilisation dans les paramètres, reviens ici ensuite.";
+"Snabble.Scanner.DepositReturnVoucher.Added" = "Deposit voucher added";
 "Snabble.Scanner.GoToCart.empty" = "Panier";
 "Snabble.Scanner.addCodeAsIs" = "Ajouter %@ tel quel";
 "Snabble.Scanner.addToCart" = "Dans le panier";
@@ -360,6 +361,8 @@
 "Snabble.Shop.List.Expand.accessibility" = "expand";
 "Snabble.Shop.List.ShowDetails.accessibility" = "Show shop details";
 "Snabble.Shopping.title" = "Shopping";
+"Snabble.ShoppingCart.DepositReturn.message" = "To redeem your voucher, fill your shopping basket with the products you wish to purchase.";
+"Snabble.ShoppingCart.DepositReturn.title" = "Deposit voucher";
 "Snabble.ShoppingCart.title" = "Panier";
 "Snabble.ShoppingList.AddItem.viaScan" = "Scan products";
 "Snabble.ShoppingList.AddItem.viaVoice" = "Tell products";
@@ -460,6 +463,8 @@
 "Snabble.User.zip" = "ZIP";
 "Snabble.UserView.next" = "Next";
 "Snabble.UserView.title" = "User";
+"Snabble.Violations.DepositReturnVoucher.alreadyRedeemed" = "This deposit voucher has already been redeemed.";
+"Snabble.Violations.DepositReturnVoucher.duplicated" = "This deposit voucher has already been added.";
 "Snabble.Violations.couponAlreadyVoided" = "A coupon is already redeemed and will be removed from cart";
 "Snabble.Violations.couponCurrentlyNotValid" = "A coupon is currently not valid and will be removed from cart";
 "Snabble.Violations.couponInvalid" = "A coupon is invalid and will be removed from cart";

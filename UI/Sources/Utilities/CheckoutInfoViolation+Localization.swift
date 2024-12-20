@@ -21,6 +21,8 @@ extension CheckoutInfo.Violation {
             return Asset.localizedString(forKey: "Snabble.Violations.couponAlreadyVoided")
         case .couponCurrentlyNotValid:
             return Asset.localizedString(forKey: "Snabble.Violations.couponCurrentlyNotValid")
+        case .depositReturnVoucherDuplicate:
+            return Asset.localizedString(forKey: "Snabble.Violations.DepositReturnVoucher.duplicated")
         }
     }
 }
