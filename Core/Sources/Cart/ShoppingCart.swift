@@ -374,6 +374,8 @@ public final class ShoppingCart: Codable {
 
         self.items.removeAll()
         self.coupons.removeAll()
+        self.vouchers.removeAll()
+        
         self.requiredInformation = []
         self.requiredInformationData = []
 
