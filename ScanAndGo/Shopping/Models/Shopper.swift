@@ -109,6 +109,7 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
         self.cartModel = ShoppingCartViewModel(shoppingCart: shoppingCart)
         self.paymentManager = PaymentMethodManager(shoppingCart: shoppingCart)
         
+        shoppingCart.delegate = self
         self.cartModel.shoppingCartDelegate = self
         self.barcodeManager.processingDelegate = self
         
@@ -264,7 +265,6 @@ extension Shopper: ShoppingCartDelegate {
             process.start(method, detail) { result in
                 switch result {
                 case .success(let viewController):
-                    // self.sendAction(.controller(viewController))
                     self.controller = viewController
                     
                 case .failure(let error):
@@ -288,5 +288,19 @@ extension Shopper: MessageDelegate {
     public func showWarningMessage(_ message: String) {
         logger.debug("showWarningMessage: \(message)")
         sendAction(.toast(Toast(message: message, style: .warning)))
+    }
+}
+
+extension Shopper: InternalShoppingCartDelegate {
+    public func shoppingCart(_ shoppingCart: SnabbleCore.ShoppingCart, didChangeCustomerCard customerCard: String?) {
+        NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
+    }
+    
+    public func shoppingCart(_ shoppingCart: SnabbleCore.ShoppingCart, violationsDetected violations: [SnabbleCore.CheckoutInfo.Violation]) {
+        let alert = Alert(
+            title: Text(Asset.localizedString(forKey: "Snabble.Violations.title")),
+            message: Text(violations.message)
+        )
+        sendAction(.alert(alert))
     }
 }
