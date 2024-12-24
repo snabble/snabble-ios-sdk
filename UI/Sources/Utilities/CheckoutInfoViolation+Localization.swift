@@ -21,12 +21,14 @@ extension CheckoutInfo.Violation {
             return Asset.localizedString(forKey: "Snabble.Violations.couponAlreadyVoided")
         case .couponCurrentlyNotValid:
             return Asset.localizedString(forKey: "Snabble.Violations.couponCurrentlyNotValid")
+        case .depositReturnVoucherDuplicate:
+            return Asset.localizedString(forKey: "Snabble.Violations.DepositReturnVoucher.duplicated")
         }
     }
 }
 
 extension Array where Element == CheckoutInfo.Violation {
-    var message: String {
+    public var message: String {
         self
             .map { $0.text }
             .joined(separator: "\n")
