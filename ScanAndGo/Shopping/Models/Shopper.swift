@@ -217,7 +217,7 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
     }
     /// Indicates whether the scanner is ready to scan.
     public var readyToScan: Bool {
-        scanningActivated && !scanningPaused
+        scanningActivated && !scanningPaused && barcodeManager.barcodeDetector.state != .idle
     }
     
     /// Starts the barcode scanner.
