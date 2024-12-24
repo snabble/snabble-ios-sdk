@@ -63,6 +63,11 @@ public struct ShopperView: View {
             .onDisappear {
                 model.scanningActivated = false
             }
+            .onReceive(model.barcodeManager.barcodeDetector.$state) { state in
+                if state == .ready, model.scanningActivated && !model.scanningPaused {
+                    model.startScanner()
+                }
+            }
             .onReceive(model.$errorMessage) { message in
                 if message != nil {
                     model.startScanner()
