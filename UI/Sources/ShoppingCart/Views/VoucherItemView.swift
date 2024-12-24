@@ -30,6 +30,8 @@ extension Voucher {
 struct VoucherItemView: View {
     @EnvironmentObject var cartModel: ShoppingCartViewModel
     
+    @ScaledMetric var imgSize: CGFloat = 22
+
     let voucher: Voucher
     let lineItems: [CheckoutInfo.LineItem]
     let onDelete: () -> Void
@@ -49,13 +51,18 @@ struct VoucherItemView: View {
                 }
                 Spacer()
                 Button(action: {
-                    onDelete()
+                    withAnimation {
+                        onDelete()
+                    }
                 }) {
                     Image(systemName: "trash")
+                        .foregroundColor(.projectPrimary())
+                        .frame(width: imgSize, height: imgSize)
                 }
                 .buttonStyle(BorderedButtonStyle())
             }
-            .padding(.horizontal)
+            .padding(.leading)
+            .padding(.trailing, 8)
             .padding(.vertical, 4)
             if let total = cartModel.total, total < 0 {
                 Text(keyed: "Snabble.ShoppingCart.DepositReturn.message")
