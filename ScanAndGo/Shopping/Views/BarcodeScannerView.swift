@@ -70,12 +70,14 @@ struct BarcodeScannerView: UIViewControllerRepresentable {
     func makeUIViewController(context: UIViewControllerRepresentableContext<BarcodeScannerView>) -> UIViewController {
         return BarcodeScannerViewController(manager: manager)
     }
+
     // swiftlint:disable:next no_empty_block
     func updateUIViewController(_ uiViewController: UIViewController, context: UIViewControllerRepresentableContext<BarcodeScannerView>) { }
     
     func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
+
     class Coordinator: NSObject {
         var parent: BarcodeScannerView
         private var subscriptions = Set<AnyCancellable>()
