@@ -156,7 +156,7 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
     /// Indicates whether scanning is paused. Stored in UserDefaults.
     @Published public var scanningPaused: Bool = UserDefaults.standard.scanningDisabled {
         didSet {
-            logger.debug("scanningDisabled \(self.scanningPaused)")
+            logger.debug("scanningPaused \(self.scanningPaused)")
             if scanningPaused {
                 stopScanner()
             } else {
