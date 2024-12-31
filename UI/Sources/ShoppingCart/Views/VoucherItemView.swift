@@ -10,23 +10,6 @@ import SwiftUI
 import SnabbleCore
 import SnabbleAssetProviding
 
-extension VoucherType {
-    var name: String {
-        switch self {
-        case .depositReturn:
-            return Asset.localizedString(forKey: "Snabble.ShoppingCart.DepositReturn.title")
-        default:
-            return ""
-        }
-    }
-}
-
-extension Voucher {
-    var name: String {
-        return type.name
-    }
-}
-
 struct VoucherItemView: View {
     @EnvironmentObject var cartModel: ShoppingCartViewModel
     
@@ -73,16 +56,11 @@ struct VoucherItemView: View {
         }
     }
     
-    private var regularPrice: Int {
-        lineItems.compactMap { $0.totalPrice }.reduce(0, +)
-    }
-    
     @ViewBuilder private var regularPriceString: some View {
-        let price = regularPrice
+        let price = lineItems.totalPrice
         if price != 0 {
             Text(PriceFormatter(SnabbleCI.project).format(price))
                 .bold()
         }
     }
-
 }
