@@ -434,26 +434,7 @@ extension ShoppingCartViewModel {
 
 extension ShoppingCartViewModel {
     var voucherItems: [CartEntry] {
-        var items = [CartEntry]()
-        
-        // all vouchers
-        for voucher in self.vouchers {
-            let item = CartEntry.voucher(voucher.cartVoucher, voucher.lineItems)
-            items.append(item)
-        }
-        return items
-    }
-    
-    // all vouchers
-    var vouchers: [(cartVoucher: CartVoucher, lineItems: [CheckoutInfo.LineItem])] {
-        var vouchers = [(cartVoucher: CartVoucher, lineItems: [CheckoutInfo.LineItem])]()
-
-        for voucher in self.shoppingCart.vouchers {
-            
-            let returnItems = self.shoppingCart.backendCartInfo?.lineItems.filter { $0.type == LineItemType.depositReturn && $0.refersTo == voucher.uuid }
-            vouchers.append((voucher, returnItems ?? []))
-        }
-        return vouchers
+        self.shoppingCart.voucherItems
     }
 }
 
@@ -546,23 +527,27 @@ extension ShoppingCartViewModel {
 }
 
 extension ShoppingCartViewModel {    
+
     var regularTotal: Int? {
         guard let total = shoppingCart.total else {
             return nil
         }
         return total
     }
+
     var regularTotalString: String {
         guard let regularTotal = regularTotal else {
             return ""
         }
         return formatter.format(regularTotal)
     }
+
     var total: Int? {
         let cartTotal = SnabbleCI.project.displayNetPrice ? shoppingCart.backendCartInfo?.netPrice : shoppingCart.backendCartInfo?.totalPrice
 
         return cartTotal ?? shoppingCart.total
     }
+
     var totalString: String {
         guard let total = total else {
             return ""
@@ -576,8 +561,9 @@ extension ShoppingCartViewModel {
     var cartIsEmpty: Bool {
         self.numberOfItems == 0
     }
+
     var numberOfItems: Int {
-        self.numberOfProducts + self.vouchers.count
+        self.numberOfProducts + self.voucherItems.count
     }
     
     var numberOfProducts: Int {
