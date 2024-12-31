@@ -276,6 +276,18 @@ extension PaymentProcess {
             
             func checkoutProcess(process: CheckoutProcess) {
                 
+                // if process contains voucherInformation where state == .redeemingFailed,
+                // filter cart.vouchers containing these IDs
+                // and return the VoucherAlertViewController
+                if let voucherIds = process.voucherInformation?.filter( { $0.state == .redeemingFailed }).compactMap(\.refersTo) {
+                    let vouchers = self.cart.vouchers.filter( { voucherIds.contains($0.uuid) })
+                    if !vouchers.isEmpty {
+                        let voucherAlert = VoucherAlertViewController(vouchers: vouchers, shoppingCart: self.cart)
+                        completion(.success(voucherAlert))
+                        return
+                    }
+                }
+                    
                 let checkoutVC = Self.checkoutViewController(for: process,
                                                              shop: self.shop,
                                                              cart: self.cart,
