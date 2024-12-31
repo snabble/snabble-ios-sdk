@@ -298,7 +298,8 @@ public struct CheckoutProcess: Decodable {
     public let currency: String
     public let paymentPreauthInformation: PaymentPreauthInformation?
     public let routingTarget: RoutingTarget
-
+    public let voucherInformation: [VoucherInformation]?
+    
     public var rawPaymentMethod: RawPaymentMethod? {
         RawPaymentMethod(rawValue: paymentMethod)
     }
@@ -334,6 +335,19 @@ public struct CheckoutProcess: Decodable {
         public let mandateIdentification: String? // for PayOneSepa
     }
 
+    public struct VoucherInformation: Decodable {
+        public let refersTo: String
+        public let state: VoucherState
+        
+        public enum VoucherState: String, Decodable {
+            case pending
+            case redeemed
+            case redeemingFailed
+            case rolledback
+            case rollbackFailed
+        }
+    }
+    
     enum CodingKeys: String, CodingKey {
         case id
         case links, aborted
@@ -342,6 +356,7 @@ public struct CheckoutProcess: Decodable {
         case checks, fulfillments, pricing, exitToken
         case currency, paymentPreauthInformation
         case routingTarget
+        case voucherInformation = "depositReturnVouchers"
     }
 
     public init(from decoder: Decoder) throws {
@@ -369,6 +384,7 @@ public struct CheckoutProcess: Decodable {
         self.currency = try container.decode(String.self, forKey: .currency)
         self.paymentPreauthInformation = try container.decodeIfPresent(PaymentPreauthInformation.self, forKey: .paymentPreauthInformation)
         self.routingTarget = try container.decode(RoutingTarget.self, forKey: .routingTarget)
+        self.voucherInformation = try container.decodeIfPresent([VoucherInformation].self, forKey: .voucherInformation)
     }
 
     var requiresExitToken: Bool {
