@@ -363,6 +363,13 @@
 "Snabble.Shopping.title" = "Bevásárlás";
 "Snabble.ShoppingCart.DepositReturn.message" = "To redeem your voucher, fill your shopping basket with the products you wish to purchase.";
 "Snabble.ShoppingCart.DepositReturn.title" = "Deposit voucher";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.button" = "Remove";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.message.plural" = "Unfortunately, these deposit vouchers cannot currently be redeemed in the app:\n\n%@\n\nPlease try for it at the cash desk.";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.message.singular" = "Unfortunately, this deposit voucher cannot currently be redeemed in the app:\n\n%@\n\nPlease try for it at the cash desk.";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.title" = "Invalid deposit voucher";
+"Snabble.ShoppingCart.Product.Invalid.button" = "Remove";
+"Snabble.ShoppingCart.Product.Invalid.title" = "Invalid product";
+"Snabble.ShoppingCart.product" = "Product: %@";
 "Snabble.ShoppingCart.title" = "Kosár";
 "Snabble.ShoppingList.AddItem.viaScan" = "Termékek szkennelése";
 "Snabble.ShoppingList.AddItem.viaVoice" = "Termékek diktálása";
@@ -428,6 +435,7 @@
 "Snabble.Shoppingcart.EmptyState.title" = "A kosarad még üres";
 "Snabble.Shoppingcart.articleRemoved" = "Termék eltávolítva";
 "Snabble.Shoppingcart.buyProducts" = "%1$li termék megvásárlása %2$@-ért";
+"Snabble.Shoppingcart.completePurchase" = "Complete purchase";
 "Snabble.Shoppingcart.coupon" = "Kupon";
 "Snabble.Shoppingcart.coupons" = "Kuponok";
 "Snabble.Shoppingcart.deposit" = "Betétdíj";

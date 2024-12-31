@@ -363,6 +363,13 @@
 "Snabble.Shopping.title" = "Shopping";
 "Snabble.ShoppingCart.DepositReturn.message" = "To redeem your voucher, fill your shopping basket with the products you wish to purchase.";
 "Snabble.ShoppingCart.DepositReturn.title" = "Deposit voucher";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.button" = "Remove";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.message.plural" = "Unfortunately, these deposit vouchers cannot currently be redeemed in the app:\n\n%@\n\nPlease try for it at the cash desk.";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.message.singular" = "Unfortunately, this deposit voucher cannot currently be redeemed in the app:\n\n%@\n\nPlease try for it at the cash desk.";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.title" = "Invalid deposit voucher";
+"Snabble.ShoppingCart.Product.Invalid.button" = "Remove";
+"Snabble.ShoppingCart.Product.Invalid.title" = "Invalid product";
+"Snabble.ShoppingCart.product" = "Product: %@";
 "Snabble.ShoppingCart.title" = "Shopping Cart";
 "Snabble.ShoppingList.AddItem.viaScan" = "Scan products";
 "Snabble.ShoppingList.AddItem.viaVoice" = "Tell products";
@@ -428,6 +435,7 @@
 "Snabble.Shoppingcart.EmptyState.title" = "Your shopping cart is empty";
 "Snabble.Shoppingcart.articleRemoved" = "Product removed";
 "Snabble.Shoppingcart.buyProducts" = "Buy %1$li products for %2$@";
+"Snabble.Shoppingcart.completePurchase" = "Complete purchase";
 "Snabble.Shoppingcart.coupon" = "Coupon";
 "Snabble.Shoppingcart.coupons" = "Coupons";
 "Snabble.Shoppingcart.deposit" = "Deposit";

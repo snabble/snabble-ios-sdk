@@ -363,6 +363,13 @@
 "Snabble.Shopping.title" = "Nakúpiť";
 "Snabble.ShoppingCart.DepositReturn.message" = "To redeem your voucher, fill your shopping basket with the products you wish to purchase.";
 "Snabble.ShoppingCart.DepositReturn.title" = "Deposit voucher";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.button" = "Remove";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.message.plural" = "Unfortunately, these deposit vouchers cannot currently be redeemed in the app:\n\n%@\n\nPlease try for it at the cash desk.";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.message.singular" = "Unfortunately, this deposit voucher cannot currently be redeemed in the app:\n\n%@\n\nPlease try for it at the cash desk.";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.title" = "Invalid deposit voucher";
+"Snabble.ShoppingCart.Product.Invalid.button" = "Remove";
+"Snabble.ShoppingCart.Product.Invalid.title" = "Invalid product";
+"Snabble.ShoppingCart.product" = "Product: %@";
 "Snabble.ShoppingCart.title" = "Košík";
 "Snabble.ShoppingList.AddItem.viaScan" = "Skenovanie produktov";
 "Snabble.ShoppingList.AddItem.viaVoice" = "Diktovanie produktov";
@@ -428,6 +435,7 @@
 "Snabble.Shoppingcart.EmptyState.title" = "Tvoj košík je ešte prázdny";
 "Snabble.Shoppingcart.articleRemoved" = "Položka bola odstránená";
 "Snabble.Shoppingcart.buyProducts" = "Kúpiť %1$li položky/položiek za %2$@";
+"Snabble.Shoppingcart.completePurchase" = "Complete purchase";
 "Snabble.Shoppingcart.coupon" = "Poukážka";
 "Snabble.Shoppingcart.coupons" = "Poukážky";
 "Snabble.Shoppingcart.deposit" = "Záloha";
