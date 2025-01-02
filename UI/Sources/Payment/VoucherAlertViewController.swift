@@ -12,7 +12,7 @@ import Combine
 import SnabbleCore
 import SnabbleAssetProviding
 
-final class VoucherAlertViewController: UIHostingController<VoucherAlertView>  {
+final class VoucherAlertViewController: UIHostingController<VoucherAlertView> {
     var actionPublisher = PassthroughSubject<[String: Any]?, Never>()
     private var cancellables = Set<AnyCancellable>()
 
