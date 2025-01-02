@@ -56,7 +56,4 @@ extension ShoppingCart {
         }
         .joined(separator: "\n")
     }
-    
-    var vouchersDescroption: String { vouchersDescription(vouchers) }
 }
-
