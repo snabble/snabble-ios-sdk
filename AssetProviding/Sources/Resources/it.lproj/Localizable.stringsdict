@@ -92,24 +92,6 @@
         <string>%li stores</string>
       </dict>
     </dict>
-    <key>Snabble.ShoppingCart.Product.Invalid.message</key>
-    <dict>
-      <key>NSStringLocalizedFormatKey</key>
-      <string>%#@format@</string>
-      <key>format</key>
-      <dict>
-        <key>NSStringFormatSpecTypeKey</key>
-        <string>NSStringPluralRuleType</string>
-        <key>NSStringFormatValueTypeKey</key>
-        <string>li</string>
-        <key>zero</key>
-        <string></string>
-        <key>one</key>
-        <string>Unfortunately, this product cannot currently be paid for with the app:\n\n%@\n\nPlease pay for it at the cash desk.</string>
-        <key>other</key>
-        <string>Unfortunately, these products cannot currently be paid for with the app:\n\n%@\n\nPlease pay for it at the cash desk.</string>
-      </dict>
-    </dict>
     <key>Snabble.Shoppingcart.numberOfItems</key>
     <dict>
       <key>NSStringLocalizedFormatKey</key>
