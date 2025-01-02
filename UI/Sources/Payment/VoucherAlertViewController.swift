@@ -68,7 +68,7 @@ struct VoucherAlertView: View {
         .padding()
         .task {
             voucherString = Asset.localizedString(
-                forKey: "Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.message" + (vouchers.count == 1 ? ".singular" : ".plural"),
+                forKey: "Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.message" + (vouchers.count == 1 ? "-singular" : "-plural"),
                 arguments: shoppingCart.vouchersDescription(vouchers)
             )
             .replacingOccurrences(of: "\\n", with: "\n")
