@@ -140,12 +140,22 @@ public struct CheckoutInfo: Decodable {
             case couponCurrentlyNotValid = "coupon_currently_not_valid"
             case couponAlreadyVoided = "coupon_already_voided"
             case depositReturnVoucherDuplicate = "deposit_return_voucher_duplicate"
+            case depositReturnVoucherRedeemingFailed = "redeemingFailed"
+            case invalidItem = "invalid_line_item"
+            
             case unknown
         }
         public let type: `Type`
         public let refersTo: String?
         public let message: String
         public let refersToItems: [String]?
+        
+        public init(type: Type, refersTo: String?, message: String, refersToItems: [String]?) {
+            self.type = type
+            self.refersTo = refersTo
+            self.message = message
+            self.refersToItems = refersToItems
+        }
     }
 
     public struct LineItem: Codable {

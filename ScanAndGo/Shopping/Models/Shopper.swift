@@ -297,10 +297,32 @@ extension Shopper: InternalShoppingCartDelegate {
     }
     
     public func shoppingCart(_ shoppingCart: SnabbleCore.ShoppingCart, violationsDetected violations: [SnabbleCore.CheckoutInfo.Violation]) {
-        let alert = Alert(
-            title: Text(Asset.localizedString(forKey: "Snabble.Violations.title")),
-            message: Text(violations.message)
-        )
+        
+        let alert: Alert
+
+        if violations.count == 1, let violation = violations.first,
+            [.invalidItem, .depositReturnVoucherRedeemingFailed].contains(violation.type) {
+            var args: String = violation.message
+            
+            if let item = shoppingCart.vouchers.first(where: { $0.uuid == violation.refersToItems?.first }) {
+                args = shoppingCart.vouchersDescriptionFor([item])
+            }
+            let message = Asset.localizedString(forKey: violation.type == .invalidItem ? "Snabble.ShoppingCart.Product.Invalid.message-singular" : "Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.message-singular", arguments: args)
+            
+            alert = Alert(
+                title: Text(keyed: violation.text),
+                message: Text(message),
+                dismissButton: .destructive(
+                    Text(keyed: violation.type == .invalidItem ? "Snabble.ShoppingCart.Product.Invalid.button" : "Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.button"),
+                    action: {
+                        if let item = shoppingCart.voucherItems.first(where: { $0.id == violation.refersToItems?.first }) {
+                            self.cartModel.delete(item: item)
+                        }
+                    }
+                ))
+        } else {
+            alert = Alert(title: Text(keyed: "Snabble.Violations.title"), message: Text(violations.message))
+        }
         sendAction(.alert(alert))
     }
 }

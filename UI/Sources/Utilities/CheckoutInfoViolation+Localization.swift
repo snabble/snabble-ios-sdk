@@ -23,6 +23,10 @@ extension CheckoutInfo.Violation {
             return Asset.localizedString(forKey: "Snabble.Violations.couponCurrentlyNotValid")
         case .depositReturnVoucherDuplicate:
             return Asset.localizedString(forKey: "Snabble.Violations.DepositReturnVoucher.duplicated")
+        case .depositReturnVoucherRedeemingFailed:
+            return Asset.localizedString(forKey: "Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.title")
+        case .invalidItem:
+            return Asset.localizedString(forKey: "Snabble.ShoppingCart.Product.Invalid.title")
         }
     }
 }
