@@ -641,6 +641,14 @@ extension ShoppingCart {
                     self.backendCartInfo = nil
                     self.paymentMethods = nil
                     self.lastCheckoutInfoError = error
+                } else if error.type == .invalidCartItem {
+                    let violation = CheckoutInfo.Violation(
+                        type: .invalidItem,
+                        refersTo: nil,
+                        message: error.details?.first?.message ?? "invalid cart item",
+                        refersToItems: error.details?.compactMap(\.id)
+                    )
+                    delegate?.shoppingCart(self, violationsDetected: [violation])
                 }
                 completion(false)
             case .success(let info):
