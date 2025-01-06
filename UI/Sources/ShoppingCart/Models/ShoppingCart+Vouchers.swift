@@ -33,7 +33,7 @@ extension Array where Element == CheckoutInfo.LineItem {
     }
 }
 
-extension ShoppingCart {
+public extension ShoppingCart {
     
     func lineItemsForVoucher(_ voucher: CartVoucher) -> [CheckoutInfo.LineItem]? {
         backendCartInfo?.lineItems.filter { $0.type == LineItemType.depositReturn && $0.refersTo == voucher.uuid }
@@ -46,7 +46,7 @@ extension ShoppingCart {
         }
     }
     
-    func vouchersDescription(_ vouchers: [CartVoucher]) -> String {
+    func vouchersDescriptionFor(_ vouchers: [CartVoucher]) -> String {
         vouchers.compactMap { voucher -> String? in
             if let price = lineItemsForVoucher(voucher)?.totalPrice {
                 let formattedPrice = PriceFormatter(SnabbleCI.project).format(price)
