@@ -120,11 +120,12 @@ public struct ErrorResponse: Decodable, Equatable {
     public let rawType: String
     public let message: String?
     public let sku: String?
+    public let id: String?
     public let details: [ErrorResponse]?
 
     enum CodingKeys: String, CodingKey {
         case rawType = "type"
-        case details, sku, message
+        case details, sku, message, id
     }
 
     init(_ type: String) {
@@ -132,6 +133,7 @@ public struct ErrorResponse: Decodable, Equatable {
         self.details = nil
         self.message = nil
         self.sku = nil
+        self.id = nil
     }
 
     var type: ErrorResponseType {
