@@ -368,8 +368,8 @@
 "Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.message-singular" = "Dieser Leergutbon kann derzeit leider nicht in der App eingelöst werden:\n\n%@\n\nBitte versuche es an der Kasse.";
 "Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.title" = "Ungültiger Leergutbon";
 "Snabble.ShoppingCart.Product.Invalid.button" = "Entfernen";
-"Snabble.ShoppingCart.Product.Invalid.message-plural" = "Diese Produkte können derzeit leider nicht mit der App bezahlt werden:\n\n%@\n\nBitte bezahle diese an der Kassen.";
-"Snabble.ShoppingCart.Product.Invalid.message-singular" = "Dieses Produkt kann derzeit leider nicht mit der App bezahlt werden:\n\n%@\n\nBitte bezahle diese an der Kassen.";
+"Snabble.ShoppingCart.Product.Invalid.message-plural" = "Diese Produkte können derzeit leider nicht mit der App bezahlt werden:\n\n%@\n\nBitte bezahle diese an der Kasse.";
+"Snabble.ShoppingCart.Product.Invalid.message-singular" = "Dieses Produkt kann derzeit leider nicht mit der App bezahlt werden:\n\n%@\n\nBitte bezahle diese an der Kasse.";
 "Snabble.ShoppingCart.Product.Invalid.title" = "Ungültiges Produkt";
 "Snabble.ShoppingCart.product" = "Produkt: %@";
 "Snabble.ShoppingCart.title" = "Warenkorb";
