@@ -60,7 +60,7 @@ struct VoucherItemView: View {
         let price = lineItems.totalPrice
         if price != 0 {
             Text(PriceFormatter(SnabbleCI.project).format(price))
-                .bold()
+                .cartPrice()
         }
     }
 }
