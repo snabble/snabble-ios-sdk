@@ -227,6 +227,13 @@ extension ShoppingCartViewModel {
         delete(at: index)
     }
 
+    public func delete(item: CartEntry) {
+        guard let index = items.firstIndex(where: { $0.id == item.id }) else {
+            return
+        }
+        delete(at: index)
+    }
+
     private func confirmDeletion(at index: Int) {
         var name: String?
         
