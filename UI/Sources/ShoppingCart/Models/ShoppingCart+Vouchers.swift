@@ -13,7 +13,7 @@ extension VoucherType {
         switch self {
         case .depositReturn:
             return Asset.localizedString(forKey: "Snabble.ShoppingCart.DepositReturn.title")
-        default:
+        case .unknown:
             return ""
         }
     }
