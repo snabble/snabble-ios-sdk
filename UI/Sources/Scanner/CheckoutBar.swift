@@ -171,7 +171,7 @@ final class CheckoutBar: UIView {
     }
 
     func updateTotals() {
-        let numProducts = shoppingCart.numberOfProducts
+        let numberOfItems = shoppingCart.numberOfItems
         let formatter = PriceFormatter(SnabbleCI.project)
         let backendCartInfo = shoppingCart.backendCartInfo
 
@@ -194,8 +194,8 @@ final class CheckoutBar: UIView {
             self.totalPriceLabel?.text = ""
         }
 
-        self.itemCountLabel?.text = Asset.localizedString(forKey: "Snabble.Shoppingcart.numberOfItems", arguments: numProducts)
-        self.checkoutButton?.isEnabled = numProducts > 0 && (totalPrice ?? 0) >= 0
+        self.itemCountLabel?.text = Asset.localizedString(forKey: "Snabble.Shoppingcart.numberOfItems", arguments: numberOfItems)
+        self.checkoutButton?.isEnabled = numberOfItems > 0 && (totalPrice ?? 0) >= 0
 
         self.methodSelector?.updateAvailablePaymentMethods()
         updateViewHierarchy(for: self.methodSelector?.selectedPayment?.method)
