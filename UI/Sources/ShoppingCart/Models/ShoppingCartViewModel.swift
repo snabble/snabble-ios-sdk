@@ -569,15 +569,16 @@ extension ShoppingCartViewModel {
         self.numberOfItems == 0
     }
 
+    /// numberOfItems in shoppingCart = numberOfProducts (shoppingCart.items.count) + numberOfVouchers (shoppingCart.vouchers.count)
     var numberOfItems: Int {
-        self.numberOfProducts + self.voucherItems.count
+        self.shoppingCart.numberOfItems
     }
     
     var numberOfProducts: Int {
-        return self.shoppingCart.numberOfProducts
+        self.shoppingCart.numberOfProducts
     }
 
     var numberOfProductsString: String {
-        return Asset.localizedString(forKey: "Snabble.Shoppingcart.numberOfItems", arguments: self.numberOfProducts)
+        Asset.localizedString(forKey: "Snabble.Shoppingcart.numberOfItems", arguments: self.numberOfItems)
     }
 }

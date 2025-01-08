@@ -162,7 +162,7 @@ public final class ShoppingCart: Codable {
     ///
     /// the newly added (or modified) item is moved to the start of the list
     public func add(_ item: CartItem) {
-        if self.items.isEmpty {
+        if self.numberOfItems == 0 {
             self.backupItems = nil
             self.backupSession = nil
         }
@@ -272,7 +272,7 @@ public final class ShoppingCart: Codable {
 
     /// number of separate items in the cart
     public var numberOfItems: Int {
-        return self.items.count
+        return self.items.count + self.vouchers.count
     }
 
     /// number of products in the cart (sum of all quantities)
@@ -391,7 +391,7 @@ public final class ShoppingCart: Codable {
         guard
             let backupItems = self.backupItems,
             !backupItems.isEmpty,
-            self.items.isEmpty
+            self.numberOfItems == 0
         else {
             return
         }
@@ -623,7 +623,7 @@ extension ShoppingCart {
     func createCheckoutInfo(userInitiated: Bool = false, completion: @escaping (Bool) -> Void) {
         guard
             let project = Snabble.shared.project(for: self.projectId),
-            !self.items.isEmpty
+            self.numberOfItems > 0
         else {
             completion(false)
             return
