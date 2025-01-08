@@ -6,7 +6,7 @@
 //
 import UIKit
 
-extension UIScreen {
+public extension UIScreen {
     private static var previousBrightness: CGFloat?
     
     // Set the screen brightness temporarily
