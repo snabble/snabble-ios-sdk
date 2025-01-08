@@ -297,10 +297,13 @@ extension Shopper: InternalShoppingCartDelegate {
     }
     
     public func shoppingCart(_ shoppingCart: SnabbleCore.ShoppingCart, violationsDetected violations: [SnabbleCore.CheckoutInfo.Violation]) {
+        let filteredViolations = violations.filter{ $0.type != .unknown }
+        
+        guard filteredViolations.count > 0 else { return }
         
         let alert: Alert
 
-        if violations.count == 1, let violation = violations.first,
+        if filteredViolations.count == 1, let violation = filteredViolations.first,
             [.invalidItem, .depositReturnVoucherRedeemingFailed].contains(violation.type) {
             var args: String = violation.message
             
@@ -321,7 +324,7 @@ extension Shopper: InternalShoppingCartDelegate {
                     }
                 ))
         } else {
-            alert = Alert(title: Text(keyed: "Snabble.Violations.title"), message: Text(violations.message))
+            alert = Alert(title: Text(keyed: "Snabble.Violations.title"), message: Text(filteredViolations.message))
         }
         sendAction(.alert(alert))
     }
