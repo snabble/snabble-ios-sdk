@@ -16,7 +16,7 @@ public extension ExitToken {
         }
         switch format {
         case .qr:
-            return QRCode.generate(for: value, scale: 4)
+            return QRCode.generate(for: value, scale: 6)
         case .code128:
             return Code128.generate(for: value, scale: 2)
         case .unknown, .ean13, .ean8, .itf14, .code39, .dataMatrix, .pdf417:
