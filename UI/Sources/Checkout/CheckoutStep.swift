@@ -22,6 +22,7 @@ struct CheckoutStep {
     let actionTitle: String?
     let image: UIImage?
     let userInfo: [String: Any]?
+    let fullBrightness: Bool
     
     var kind: Kind {
         if status == nil, detailText == nil, image == nil {
@@ -59,6 +60,7 @@ extension CheckoutStep {
         detailText = nil
         image = nil
         userInfo = nil
+        fullBrightness = false
     }
 }
 
@@ -81,6 +83,7 @@ extension CheckoutStep {
         text = Asset.localizedString(forKey: "Snabble.PaymentStatus.Payment.title")
         image = nil
         userInfo = nil
+        fullBrightness = false
     }
 }
 
@@ -92,7 +95,7 @@ extension CheckoutStep {
         detailText = fulfillment.detailText(for: status!)
         actionTitle = nil
         userInfo = nil
-
+        fullBrightness = false
     }
 
     init(exitToken: ExitToken, paymentState: PaymentState) {
@@ -102,7 +105,7 @@ extension CheckoutStep {
         detailText = image != nil ? Asset.localizedString(forKey: "Snabble.PaymentStatus.ExitCode.openExitGateTimed") : nil
         actionTitle = nil
         userInfo = nil
-
+        fullBrightness = true
     }
 
     init(receiptLink: Link, paymentState: PaymentState) {
@@ -112,6 +115,7 @@ extension CheckoutStep {
         detailText = nil
         actionTitle = nil
         userInfo = ["receiptLink": receiptLink]
+        fullBrightness = false
     }
 
     init(originCandidate: OriginCandidate, savedIbans: Set<String>) {
@@ -126,6 +130,7 @@ extension CheckoutStep {
         image = nil
         detailText = nil
         userInfo = nil
+        fullBrightness = false
     }
 }
 

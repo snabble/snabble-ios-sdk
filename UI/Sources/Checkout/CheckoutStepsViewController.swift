@@ -126,6 +126,9 @@ struct CheckoutView: View {
             .padding([.leading, .trailing], 20)
             .shadow(radius: 8, x: 0, y: 4)
         }
+        .onDisappear {
+            UIScreen.main.resetBrightness()
+        }
     }
     
     var body: some View {
