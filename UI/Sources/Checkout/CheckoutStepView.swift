@@ -13,6 +13,7 @@ protocol CheckoutStepViewModel {
     var actionTitle: String? { get }
     var image: UIImage? { get }
     var userInfo: [String: Any]? { get }
+    var fullBrightness: Bool { get }
 }
 
 struct CheckoutStepView: View {
@@ -47,6 +48,10 @@ struct CheckoutStepView: View {
                         Text(action)
                     }
                 }
+            }
+        }.task {
+            if model.fullBrightness {
+                UIScreen.main.setTemporaryBrightness(to: 1.0)
             }
         }
     }

@@ -132,8 +132,6 @@ final class AssetManager {
 
     private weak var redownloadTimer: Timer?
 
-    private var pendingRequests = [AssetRequest]()
-
     /// Get a named asset, or its local fallback
     /// - Parameters:
     ///   - asset: type of the asset, e.g. `.checkoutOffline`
@@ -143,17 +141,7 @@ final class AssetManager {
     func getAsset(_ asset: ImageAsset, _ bundlePath: String?, _ projectId: Identifier<Project>?, _ completion: @escaping (UIImage?) -> Void) {
         let projectId = projectId ?? SnabbleCI.project.id
         let name = asset.rawValue
-
-        // if the manifest for the project hasn't been loaded yet, save the request for later
-        if lock.reading({ self.manifests[projectId] }) == nil && projectId != Project.none.id {
-            lock.writing {
-                let request = AssetRequest(asset: asset, bundlePath: bundlePath, projectId: projectId, completion: completion)
-                self.pendingRequests.append(request)
-            }
-            completion(nil)
-            return
-        }
-
+        
         if let image = self.getLocallyCachedImage(named: name, projectId) {
             completion(image)
         } else {
@@ -172,7 +160,7 @@ final class AssetManager {
                         }
                     }
                 }
-
+                
                 // check if there is an "opposite" (light vs dark) file that we also need to download
                 downloadOpposite(for: file, projectId, named: name)
             } else {
@@ -312,14 +300,6 @@ final class AssetManager {
                 settings.set(manifestData, forKey: settingsKey)
             } catch {
                 print(error)
-            }
-
-            // execute any pending requests
-            self.lock.writing {
-                self.pendingRequests.forEach {
-                    self.getAsset($0.asset, $0.bundlePath, $0.projectId, $0.completion)
-                }
-                self.pendingRequests = []
             }
 
             completion()
