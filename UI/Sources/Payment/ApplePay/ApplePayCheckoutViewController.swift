@@ -73,8 +73,9 @@ final class ApplePayCheckoutViewController: UIViewController {
             descriptor.id == .applePay && descriptor.providerName == .payone
         }) {
             paymentRequest.requiredBillingContactFields = [.name, .postalAddress]
+        } else {
+            paymentRequest.applicationData = process.id.data(using: .utf8)
         }
-        paymentRequest.applicationData = process.id.data(using: .utf8)
         paymentRequest.merchantIdentifier = merchantId
         paymentRequest.countryCode = countryCode
         paymentRequest.currencyCode = process.currency
