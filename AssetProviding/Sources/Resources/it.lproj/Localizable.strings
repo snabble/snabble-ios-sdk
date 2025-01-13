@@ -364,12 +364,12 @@
 "Snabble.ShoppingCart.DepositReturn.message" = "To redeem your voucher, fill your shopping basket with the products you wish to purchase.";
 "Snabble.ShoppingCart.DepositReturn.title" = "Deposit voucher";
 "Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.button" = "Remove";
-"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.message-plural" = "Unfortunately, these deposit vouchers cannot currently be redeemed in the app:\n\n%@\n\nPlease try for it at the cash desk.";
-"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.message-singular" = "Unfortunately, this deposit voucher cannot currently be redeemed in the app:\n\n%@\n\nPlease try for it at the cash desk.";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.message-plural" = "Unfortunately, these deposit vouchers cannot currently be redeemed in the app:\n\n%@";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.message-singular" = "Unfortunately, this deposit voucher cannot currently be redeemed in the app:\n\n%@";
 "Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.title" = "Invalid deposit voucher";
 "Snabble.ShoppingCart.Product.Invalid.button" = "Remove";
-"Snabble.ShoppingCart.Product.Invalid.message-plural" = "Unfortunately, these products cannot currently be paid for with the app:\n\n%@\n\nPlease pay for it at the cash desk.";
-"Snabble.ShoppingCart.Product.Invalid.message-singular" = "Unfortunately, this product cannot currently be paid for with the app:\n\n%@\n\nPlease pay for it at the cash desk.";
+"Snabble.ShoppingCart.Product.Invalid.message-plural" = "Unfortunately, these products cannot currently be paid for with the app:\n\n%@";
+"Snabble.ShoppingCart.Product.Invalid.message-singular" = "Unfortunately, this product cannot currently be paid for with the app:\n\n%@";
 "Snabble.ShoppingCart.Product.Invalid.title" = "Invalid product";
 "Snabble.ShoppingCart.product" = "Product: %@";
 "Snabble.ShoppingCart.title" = "Carrello";
