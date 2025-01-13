@@ -297,7 +297,7 @@ extension Shopper: InternalShoppingCartDelegate {
     }
     
     public func shoppingCart(_ shoppingCart: SnabbleCore.ShoppingCart, violationsDetected violations: [SnabbleCore.CheckoutInfo.Violation]) {
-        let filteredViolations = violations.filter{ $0.type != .unknown }
+        let filteredViolations = violations.filter{ !($0.type == .unknown && $0.refersToItems == nil) }
         
         guard filteredViolations.count > 0 else { return }
         
