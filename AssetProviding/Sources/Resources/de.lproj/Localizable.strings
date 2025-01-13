@@ -308,6 +308,7 @@
 "Snabble.Scanner.BundleDialog.headline" = "Verpackungseinheit auswählen";
 "Snabble.Scanner.Camera.accessDenied" = "Kamerazugriff verweigert";
 "Snabble.Scanner.Camera.allowAccess" = "Entschuldigung, wir benötigen Zugriff auf deine Kamera, um mit ihr Barcodes zu scannen. Bitte erlaube die Nutzung in den Einstellungen und kehre dann hierher zurück.";
+"Snabble.Scanner.DepositReturnVoucher.Added" = "Leergutbon hinzugefügt";
 "Snabble.Scanner.GoToCart.empty" = "Warenkorb";
 "Snabble.Scanner.addCodeAsIs" = "%@ so hinzufügen";
 "Snabble.Scanner.addToCart" = "In den Warenkorb";
@@ -360,6 +361,17 @@
 "Snabble.Shop.List.Expand.accessibility" = "aufklappen";
 "Snabble.Shop.List.ShowDetails.accessibility" = "Shop-Details anzeigen";
 "Snabble.Shopping.title" = "Einkaufen";
+"Snabble.ShoppingCart.DepositReturn.message" = "Damit der Leergutbon eingelöst werden kann, fülle deinen Warenkorb mit deinen Wunschprodukten.";
+"Snabble.ShoppingCart.DepositReturn.title" = "Leergutbon";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.button" = "Entfernen";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.message-plural" = "Diese Leergutbons können derzeit leider nicht in der App eingelöst werden:\n\n%@";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.message-singular" = "Dieser Leergutbon kann derzeit leider nicht in der App eingelöst werden:\n\n%@";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.title" = "Ungültiger Leergutbon";
+"Snabble.ShoppingCart.Product.Invalid.button" = "Entfernen";
+"Snabble.ShoppingCart.Product.Invalid.message-plural" = "Diese Produkte können derzeit leider nicht mit der App bezahlt werden:\n\n%@";
+"Snabble.ShoppingCart.Product.Invalid.message-singular" = "Dieses Produkt kann derzeit leider nicht mit der App bezahlt werden:\n\n%@";
+"Snabble.ShoppingCart.Product.Invalid.title" = "Ungültiges Produkt";
+"Snabble.ShoppingCart.product" = "Produkt: %@";
 "Snabble.ShoppingCart.title" = "Warenkorb";
 "Snabble.ShoppingList.AddItem.viaScan" = "Produkte scannen";
 "Snabble.ShoppingList.AddItem.viaVoice" = "Produkte diktieren";
@@ -425,6 +437,7 @@
 "Snabble.Shoppingcart.EmptyState.title" = "Dein Warenkorb ist noch leer";
 "Snabble.Shoppingcart.articleRemoved" = "Artikel entfernt";
 "Snabble.Shoppingcart.buyProducts" = "%1$li Artikel für %2$@ kaufen";
+"Snabble.Shoppingcart.completePurchase" = "Einkauf abschließen";
 "Snabble.Shoppingcart.coupon" = "Gutschein";
 "Snabble.Shoppingcart.coupons" = "Gutscheine";
 "Snabble.Shoppingcart.deposit" = "Pfand";
@@ -460,6 +473,8 @@
 "Snabble.User.zip" = "Postleitzahl";
 "Snabble.UserView.next" = "Weiter";
 "Snabble.UserView.title" = "Nutzerinformationen";
+"Snabble.Violations.DepositReturnVoucher.alreadyRedeemed" = "Dieser Leergutbon wurde bereits eingelöst.";
+"Snabble.Violations.DepositReturnVoucher.duplicated" = "Dieser Leergutbon wurde bereits erfasst.";
 "Snabble.Violations.couponAlreadyVoided" = "Ein Coupon wurde bereits eingelöst und wird aus dem Warenkorb entfernt";
 "Snabble.Violations.couponCurrentlyNotValid" = "Ein Coupon ist aktuell ungültig und wird aus dem Warenkorb entfernt";
 "Snabble.Violations.couponInvalid" = "Ein Coupon ist ungültig und wird aus dem Warenkorb entfernt";

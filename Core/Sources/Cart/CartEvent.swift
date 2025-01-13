@@ -35,7 +35,7 @@ public enum CartEvent {
     }
 
     public static func cart(_ cart: ShoppingCart) {
-        if cart.shopId.rawValue.isEmpty || (cart.items.isEmpty && cart.session.isEmpty) {
+        if cart.shopId.rawValue.isEmpty || (cart.numberOfItems == 0 && cart.session.isEmpty) {
             return
         }
 

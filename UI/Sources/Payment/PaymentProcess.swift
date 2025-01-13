@@ -244,6 +244,28 @@ public final class PaymentProcess {
     }
 }
 
+extension CheckoutProcess {
+    var voucherViolation: CheckoutInfo.Violation? {
+        guard let voucherIds = voucherInformation?.filter({ $0.state == .redeemingFailed }).compactMap(\.refersTo) else {
+            return nil
+        }
+        
+        return CheckoutInfo.Violation(
+            type: .depositReturnVoucherRedeemingFailed,
+            refersTo: nil,
+            message: "redeemingFailed",
+            refersToItems: voucherIds
+        )
+    }
+}
+
+extension Array where Element == CartVoucher {
+    func containsUUIDs(from uuids: [String]?) -> Bool {
+        guard let uuids = uuids else { return false }
+        return self.contains(where: { uuids.contains($0.uuid) })
+    }
+}
+
 // MARK: - start payment
 extension PaymentProcess {
     private static let createTimeout: TimeInterval = 25
@@ -274,7 +296,25 @@ extension PaymentProcess {
             UIApplication.shared.sceneKeyWindow?.isUserInteractionEnabled = true
             self.hideBlurOverlay()
             
+            func checkViolation(for process: CheckoutProcess) -> CheckoutInfo.Violation? {
+                
+                guard let violation = process.voucherViolation else {
+                    return nil
+                }
+                
+                if self.cart.vouchers.containsUUIDs(from: violation.refersToItems) {
+                    return violation
+                } else {
+                    return nil
+                }
+            }
+            
             func checkoutProcess(process: CheckoutProcess) {
+                
+                if let violation = checkViolation(for: process) {
+                    self.cart.delegate?.shoppingCart(self.cart, violationsDetected: [violation])
+                    return
+                }
                 
                 let checkoutVC = Self.checkoutViewController(for: process,
                                                              shop: self.shop,

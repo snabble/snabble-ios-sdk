@@ -37,9 +37,16 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
     var deletionItemIndex: Int?
     
     @Published public var items = [CartEntry]()
-
+    
     func index(for itemModel: CartItemModel) -> Int? {
         guard let index = items.firstIndex(where: { $0.id == itemModel.id }) else {
+            return nil
+        }
+        return index
+    }
+    
+    func index(for item: CartEntry) -> Int? {
+        guard let index = items.firstIndex(where: { $0.id == item.id }) else {
             return nil
         }
         return index
@@ -114,7 +121,10 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
         newItems.append(contentsOf: self.couponItems)
         // now gather the remaining lineItems. find the main items first
         newItems.append(contentsOf: self.remainingItems)
-        
+
+        // all vouchers
+        newItems.append(contentsOf: self.voucherItems)
+
         // add all discounts (without priceModifiers) for the "total discounts" entry
         if cart.totalCartDiscount != 0 {
             newItems.append(totalDiscountItem)
@@ -146,14 +156,15 @@ extension ShoppingCartViewModel {
     }
     
     private func updateQuantity(itemModel: ProductItemModel, reload: Bool = true) {
-        guard let index = cartIndex(for: itemModel) else {
+        guard cartIndex(for: itemModel) != nil else {
             return
         }
         
         self.shoppingCartDelegate?.track(.cartAmountChanged)
         
         if reload {
-            self.updateQuantity(itemModel.quantity, at: index)
+            self.shoppingCart.setQuantity(itemModel.quantity, for: itemModel.item)
+            NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
         }
     }
     
@@ -196,10 +207,13 @@ extension ShoppingCartViewModel {
             self.shoppingCartDelegate?.track(.deletedFromCart(item.product.sku))
             
             self.items.remove(at: index)
-            self.shoppingCart.remove(at: index)
+            self.shoppingCart.removeItem(item)
         } else if case .coupon(let coupon, _) = self.items[index] {
             self.items.remove(at: index)
             self.shoppingCart.removeCoupon(coupon.coupon)
+        } else if case .voucher(let voucherItem, _) = self.items[index] {
+            self.items.remove(at: index)
+            self.shoppingCart.removeVoucher(voucherItem.voucher)
         }
         
         NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
@@ -213,6 +227,13 @@ extension ShoppingCartViewModel {
         delete(at: index)
     }
 
+    public func delete(item: CartEntry) {
+        guard let index = items.firstIndex(where: { $0.id == item.id }) else {
+            return
+        }
+        delete(at: index)
+    }
+
     private func confirmDeletion(at index: Int) {
         var name: String?
         
@@ -220,6 +241,8 @@ extension ShoppingCartViewModel {
             name = item.product.name
         } else if case .coupon(let cartCoupon, _) = self.items[index] {
             name = cartCoupon.coupon.name
+        } else if case .voucher(let cartVoucher, _) = self.items[index] {
+            name = cartVoucher.voucher.name
         }
         guard let name = name else {
             return
@@ -237,6 +260,13 @@ extension ShoppingCartViewModel {
         confirmDeletion(at: index)
     }
     
+    private func confirmDeletion(item: CartEntry) {
+        guard let index = index(for: item) else {
+            return
+        }
+        confirmDeletion(at: index)
+    }
+
     func cancelDeletion() {
         deletionMessage = ""
         deletionItemIndex = nil
@@ -255,6 +285,10 @@ extension ShoppingCartViewModel {
 }
 
 extension ShoppingCartViewModel {
+
+    func trash(item: CartEntry) {
+        confirmDeletion(item: item)
+    }
 
     func trash(itemModel: CartItemModel) {
         confirmDeletion(itemModel: itemModel)
@@ -406,6 +440,12 @@ extension ShoppingCartViewModel {
 }
 
 extension ShoppingCartViewModel {
+    var voucherItems: [CartEntry] {
+        self.shoppingCart.voucherItems
+    }
+}
+
+extension ShoppingCartViewModel {
     // the remaining lineItems
     var remainingItems: [CartEntry] {
         var items = [CartEntry]()
@@ -494,23 +534,27 @@ extension ShoppingCartViewModel {
 }
 
 extension ShoppingCartViewModel {    
+
     var regularTotal: Int? {
         guard let total = shoppingCart.total else {
             return nil
         }
         return total
     }
+
     var regularTotalString: String {
         guard let regularTotal = regularTotal else {
             return ""
         }
         return formatter.format(regularTotal)
     }
+
     var total: Int? {
         let cartTotal = SnabbleCI.project.displayNetPrice ? shoppingCart.backendCartInfo?.netPrice : shoppingCart.backendCartInfo?.totalPrice
 
         return cartTotal ?? shoppingCart.total
     }
+
     var totalString: String {
         guard let total = total else {
             return ""
@@ -520,10 +564,21 @@ extension ShoppingCartViewModel {
 }
 
 extension ShoppingCartViewModel {
-    var numberOfProducts: Int {
-        return self.shoppingCart.numberOfProducts
+    
+    var cartIsEmpty: Bool {
+        self.numberOfItems == 0
     }
+
+    /// numberOfItems in shoppingCart = numberOfProducts (shoppingCart.items.count) + numberOfVouchers (shoppingCart.vouchers.count)
+    var numberOfItems: Int {
+        self.shoppingCart.numberOfItems
+    }
+    
+    var numberOfProducts: Int {
+        self.shoppingCart.numberOfProducts
+    }
+
     var numberOfProductsString: String {
-        return Asset.localizedString(forKey: "Snabble.Shoppingcart.numberOfItems", arguments: self.numberOfProducts)
+        Asset.localizedString(forKey: "Snabble.Shoppingcart.numberOfItems", arguments: self.numberOfItems)
     }
 }

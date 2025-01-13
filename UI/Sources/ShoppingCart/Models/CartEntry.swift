@@ -22,6 +22,9 @@ public enum CartEntry: Swift.Identifiable {
         case .coupon(let cartCoupon, _):
             return cartCoupon.uuid
             
+        case .voucher(let voucher, _):
+            return voucher.uuid
+
             // stuff we get from the backend isn't
         case .lineItem(let lineItem, _):
             return lineItem.id
@@ -31,6 +34,7 @@ public enum CartEntry: Swift.Identifiable {
             
         case .giveaway(let lineItem):
             return lineItem.id
+            
         }
     }
     
@@ -39,6 +43,9 @@ public enum CartEntry: Swift.Identifiable {
 
     // a user-added coupon, plus the backend info for it
     case coupon(CartCoupon, CheckoutInfo.LineItem?)
+    
+    // a voucher plus the backend info for it
+    case voucher(CartVoucher, [CheckoutInfo.LineItem])
 
     // a new main item from the backend, plus its additional items.
     case lineItem(CheckoutInfo.LineItem, [CheckoutInfo.LineItem])

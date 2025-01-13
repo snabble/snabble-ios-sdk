@@ -83,7 +83,11 @@ public enum LineItemType: String, Codable, UnknownCaseRepresentable {
 
     /// a coupon
     case coupon
-
+    
+    /// a deposit return voucher
+    case depositReturnVoucher
+    case depositReturn
+    
     public static let unknownCase = LineItemType.unknown
 }
 
@@ -135,11 +139,23 @@ public struct CheckoutInfo: Decodable {
             case couponInvalid = "coupon_invalid"
             case couponCurrentlyNotValid = "coupon_currently_not_valid"
             case couponAlreadyVoided = "coupon_already_voided"
+            case depositReturnVoucherDuplicate = "deposit_return_voucher_duplicate"
+            case depositReturnVoucherRedeemingFailed = "redeemingFailed"
+            case invalidItem = "invalid_line_item"
+            
             case unknown
         }
         public let type: `Type`
         public let refersTo: String?
         public let message: String
+        public let refersToItems: [String]?
+        
+        public init(type: Type, refersTo: String?, message: String, refersToItems: [String]?) {
+            self.type = type
+            self.refersTo = refersTo
+            self.message = message
+            self.refersToItems = refersToItems
+        }
     }
 
     public struct LineItem: Codable {
@@ -292,7 +308,8 @@ public struct CheckoutProcess: Decodable {
     public let currency: String
     public let paymentPreauthInformation: PaymentPreauthInformation?
     public let routingTarget: RoutingTarget
-
+    public let voucherInformation: [VoucherInformation]?
+    
     public var rawPaymentMethod: RawPaymentMethod? {
         RawPaymentMethod(rawValue: paymentMethod)
     }
@@ -328,6 +345,19 @@ public struct CheckoutProcess: Decodable {
         public let mandateIdentification: String? // for PayOneSepa
     }
 
+    public struct VoucherInformation: Decodable {
+        public let refersTo: String
+        public let state: VoucherState
+        
+        public enum VoucherState: String, Decodable {
+            case pending
+            case redeemed
+            case redeemingFailed
+            case rolledback
+            case rollbackFailed
+        }
+    }
+    
     enum CodingKeys: String, CodingKey {
         case id
         case links, aborted
@@ -336,6 +366,7 @@ public struct CheckoutProcess: Decodable {
         case checks, fulfillments, pricing, exitToken
         case currency, paymentPreauthInformation
         case routingTarget
+        case voucherInformation = "depositReturnVouchers"
     }
 
     public init(from decoder: Decoder) throws {
@@ -363,6 +394,7 @@ public struct CheckoutProcess: Decodable {
         self.currency = try container.decode(String.self, forKey: .currency)
         self.paymentPreauthInformation = try container.decodeIfPresent(PaymentPreauthInformation.self, forKey: .paymentPreauthInformation)
         self.routingTarget = try container.decode(RoutingTarget.self, forKey: .routingTarget)
+        self.voucherInformation = try container.decodeIfPresent([VoucherInformation].self, forKey: .voucherInformation)
     }
 
     var requiresExitToken: Bool {
@@ -453,7 +485,7 @@ public struct Cart: Encodable {
         self.customer = Cart.CustomerInfo(loyaltyCard: cart.customerCard)
         self.items = cart.backendItems()
         self.requiredInformation = cart.requiredInformationData
-
+    
         self.clientID = clientId
         self.appUserID = appUserId
     }
@@ -461,6 +493,7 @@ public struct Cart: Encodable {
     public enum Item: Encodable {
         case product(ProductItem)
         case coupon(CouponItem)
+        case voucher(VoucherItem)
 
         public func encode(to encoder: Encoder) throws {
             var container = encoder.singleValueContainer()
@@ -469,6 +502,8 @@ public struct Cart: Encodable {
                 try container.encode(productItem)
             case .coupon(let couponItem):
                 try container.encode(couponItem)
+            case .voucher(let voucherItem):
+                try container.encode(voucherItem)
             }
         }
     }
@@ -496,6 +531,22 @@ public struct Cart: Encodable {
             self.id = id
             self.couponID = couponId
             self.refersTo = refersTo
+            self.scannedCode = scannedCode
+            self.amount = amount
+        }
+    }
+
+    public struct VoucherItem: Encodable {
+        public let id: String
+        public let itemID: String
+        public let type: String
+        public let scannedCode: String
+        public let amount: Int
+        
+        public init(id: String, itemId: String, type: String, scannedCode: String, amount: Int = 1) {
+            self.id = id
+            self.itemID = itemId
+            self.type = type
             self.scannedCode = scannedCode
             self.amount = amount
         }

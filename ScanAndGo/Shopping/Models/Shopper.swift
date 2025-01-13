@@ -109,6 +109,7 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
         self.cartModel = ShoppingCartViewModel(shoppingCart: shoppingCart)
         self.paymentManager = PaymentMethodManager(shoppingCart: shoppingCart)
         
+        shoppingCart.delegate = self
         self.cartModel.shoppingCartDelegate = self
         self.barcodeManager.processingDelegate = self
         
@@ -155,7 +156,7 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
     /// Indicates whether scanning is paused. Stored in UserDefaults.
     @Published public var scanningPaused: Bool = UserDefaults.standard.scanningDisabled {
         didSet {
-            logger.debug("scanningDisabled \(self.scanningPaused)")
+            logger.debug("scanningPaused \(self.scanningPaused)")
             if scanningPaused {
                 stopScanner()
             } else {
@@ -264,7 +265,6 @@ extension Shopper: ShoppingCartDelegate {
             process.start(method, detail) { result in
                 switch result {
                 case .success(let viewController):
-                    // self.sendAction(.controller(viewController))
                     self.controller = viewController
                     
                 case .failure(let error):
@@ -288,5 +288,44 @@ extension Shopper: MessageDelegate {
     public func showWarningMessage(_ message: String) {
         logger.debug("showWarningMessage: \(message)")
         sendAction(.toast(Toast(message: message, style: .warning)))
+    }
+}
+
+extension Shopper: InternalShoppingCartDelegate {
+    public func shoppingCart(_ shoppingCart: SnabbleCore.ShoppingCart, didChangeCustomerCard customerCard: String?) {
+        NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
+    }
+    
+    public func shoppingCart(_ shoppingCart: SnabbleCore.ShoppingCart, violationsDetected violations: [SnabbleCore.CheckoutInfo.Violation]) {
+        let filteredViolations = violations.filter{ !($0.type == .unknown && $0.refersToItems == nil) }
+        
+        guard filteredViolations.count > 0 else { return }
+        
+        let alert: Alert
+
+        if filteredViolations.count == 1, let violation = filteredViolations.first,
+            [.invalidItem, .depositReturnVoucherRedeemingFailed].contains(violation.type) {
+            var args: String = violation.message
+            
+            if let item = shoppingCart.vouchers.first(where: { $0.uuid == violation.refersToItems?.first }) {
+                args = shoppingCart.vouchersDescriptionFor([item])
+            }
+            let message = Asset.localizedString(forKey: violation.type == .invalidItem ? "Snabble.ShoppingCart.Product.Invalid.message-singular" : "Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.message-singular", arguments: args)
+            
+            alert = Alert(
+                title: Text(keyed: violation.text),
+                message: Text(message),
+                dismissButton: .destructive(
+                    Text(keyed: violation.type == .invalidItem ? "Snabble.ShoppingCart.Product.Invalid.button" : "Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.button"),
+                    action: {
+                        if let item = shoppingCart.voucherItems.first(where: { $0.id == violation.refersToItems?.first }) {
+                            self.cartModel.delete(item: item)
+                        }
+                    }
+                ))
+        } else {
+            alert = Alert(title: Text(keyed: "Snabble.Violations.title"), message: Text(filteredViolations.message))
+        }
+        sendAction(.alert(alert))
     }
 }

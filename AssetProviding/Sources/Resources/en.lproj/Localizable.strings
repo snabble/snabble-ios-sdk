@@ -308,6 +308,7 @@
 "Snabble.Scanner.BundleDialog.headline" = "Choose package";
 "Snabble.Scanner.Camera.accessDenied" = "Camera access denied";
 "Snabble.Scanner.Camera.allowAccess" = "Sorry, we'll need to access your camera to scan barcodes. Please allow this in the settings and return here.";
+"Snabble.Scanner.DepositReturnVoucher.Added" = "Deposit voucher added";
 "Snabble.Scanner.GoToCart.empty" = "Cart";
 "Snabble.Scanner.addCodeAsIs" = "Add %@ as-is";
 "Snabble.Scanner.addToCart" = "Add to cart";
@@ -360,6 +361,17 @@
 "Snabble.Shop.List.Expand.accessibility" = "expand";
 "Snabble.Shop.List.ShowDetails.accessibility" = "Show shop details";
 "Snabble.Shopping.title" = "Shopping";
+"Snabble.ShoppingCart.DepositReturn.message" = "To redeem your voucher, fill your shopping basket with the products you wish to purchase.";
+"Snabble.ShoppingCart.DepositReturn.title" = "Deposit voucher";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.button" = "Remove";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.message-plural" = "Unfortunately, these deposit vouchers cannot currently be redeemed in the app:\n\n%@";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.message-singular" = "Unfortunately, this deposit voucher cannot currently be redeemed in the app:\n\n%@";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.title" = "Invalid deposit voucher";
+"Snabble.ShoppingCart.Product.Invalid.button" = "Remove";
+"Snabble.ShoppingCart.Product.Invalid.message-plural" = "Unfortunately, these products cannot currently be paid for with the app:\n\n%@";
+"Snabble.ShoppingCart.Product.Invalid.message-singular" = "Unfortunately, this product cannot currently be paid for with the app:\n\n%@";
+"Snabble.ShoppingCart.Product.Invalid.title" = "Invalid product";
+"Snabble.ShoppingCart.product" = "Product: %@";
 "Snabble.ShoppingCart.title" = "Shopping Cart";
 "Snabble.ShoppingList.AddItem.viaScan" = "Scan products";
 "Snabble.ShoppingList.AddItem.viaVoice" = "Tell products";
@@ -425,6 +437,7 @@
 "Snabble.Shoppingcart.EmptyState.title" = "Your shopping cart is empty";
 "Snabble.Shoppingcart.articleRemoved" = "Product removed";
 "Snabble.Shoppingcart.buyProducts" = "Buy %1$li products for %2$@";
+"Snabble.Shoppingcart.completePurchase" = "Complete purchase";
 "Snabble.Shoppingcart.coupon" = "Coupon";
 "Snabble.Shoppingcart.coupons" = "Coupons";
 "Snabble.Shoppingcart.deposit" = "Deposit";
@@ -460,6 +473,8 @@
 "Snabble.User.zip" = "ZIP";
 "Snabble.UserView.next" = "Next";
 "Snabble.UserView.title" = "User";
+"Snabble.Violations.DepositReturnVoucher.alreadyRedeemed" = "This deposit voucher has already been redeemed.";
+"Snabble.Violations.DepositReturnVoucher.duplicated" = "This deposit voucher has already been added.";
 "Snabble.Violations.couponAlreadyVoided" = "A coupon is already redeemed and will be removed from cart";
 "Snabble.Violations.couponCurrentlyNotValid" = "A coupon is currently not valid and will be removed from cart";
 "Snabble.Violations.couponInvalid" = "A coupon is invalid and will be removed from cart";

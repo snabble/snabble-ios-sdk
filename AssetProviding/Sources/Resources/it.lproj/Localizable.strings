@@ -308,6 +308,7 @@
 "Snabble.Scanner.BundleDialog.headline" = "Seleziona confezione";
 "Snabble.Scanner.Camera.accessDenied" = "Accesso alla fotocamera negato";
 "Snabble.Scanner.Camera.allowAccess" = "Siamo spiacenti, ma abbiamo bisogno di accedere alla tua fotocamera per scansionare i codici a barre. Autorizza l’utilizzo nelle impostazioni, quindi torna a questa schermata.";
+"Snabble.Scanner.DepositReturnVoucher.Added" = "Deposit voucher added";
 "Snabble.Scanner.GoToCart.empty" = "Carrello";
 "Snabble.Scanner.addCodeAsIs" = "Aggiungi %@ così";
 "Snabble.Scanner.addToCart" = "Nel carrello";
@@ -360,6 +361,17 @@
 "Snabble.Shop.List.Expand.accessibility" = "expand";
 "Snabble.Shop.List.ShowDetails.accessibility" = "Show shop details";
 "Snabble.Shopping.title" = "Shopping";
+"Snabble.ShoppingCart.DepositReturn.message" = "To redeem your voucher, fill your shopping basket with the products you wish to purchase.";
+"Snabble.ShoppingCart.DepositReturn.title" = "Deposit voucher";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.button" = "Remove";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.message-plural" = "Unfortunately, these deposit vouchers cannot currently be redeemed in the app:\n\n%@";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.message-singular" = "Unfortunately, this deposit voucher cannot currently be redeemed in the app:\n\n%@";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.title" = "Invalid deposit voucher";
+"Snabble.ShoppingCart.Product.Invalid.button" = "Remove";
+"Snabble.ShoppingCart.Product.Invalid.message-plural" = "Unfortunately, these products cannot currently be paid for with the app:\n\n%@";
+"Snabble.ShoppingCart.Product.Invalid.message-singular" = "Unfortunately, this product cannot currently be paid for with the app:\n\n%@";
+"Snabble.ShoppingCart.Product.Invalid.title" = "Invalid product";
+"Snabble.ShoppingCart.product" = "Product: %@";
 "Snabble.ShoppingCart.title" = "Carrello";
 "Snabble.ShoppingList.AddItem.viaScan" = "Scansiona prodotti";
 "Snabble.ShoppingList.AddItem.viaVoice" = "Detta prodotti";
@@ -425,6 +437,7 @@
 "Snabble.Shoppingcart.EmptyState.title" = "Il tuo carrello è ancora vuoto";
 "Snabble.Shoppingcart.articleRemoved" = "Articolo rimosso";
 "Snabble.Shoppingcart.buyProducts" = "Compra articolo da %1$li a %2$@";
+"Snabble.Shoppingcart.completePurchase" = "Complete purchase";
 "Snabble.Shoppingcart.coupon" = "Buono";
 "Snabble.Shoppingcart.coupons" = "Buoni";
 "Snabble.Shoppingcart.deposit" = "Deposito";
@@ -460,6 +473,8 @@
 "Snabble.User.zip" = "ZIP";
 "Snabble.UserView.next" = "Next";
 "Snabble.UserView.title" = "User";
+"Snabble.Violations.DepositReturnVoucher.alreadyRedeemed" = "This deposit voucher has already been redeemed.";
+"Snabble.Violations.DepositReturnVoucher.duplicated" = "This deposit voucher has already been added.";
 "Snabble.Violations.couponAlreadyVoided" = "A coupon is already redeemed and will be removed from cart";
 "Snabble.Violations.couponCurrentlyNotValid" = "A coupon is currently not valid and will be removed from cart";
 "Snabble.Violations.couponInvalid" = "A coupon is invalid and will be removed from cart";

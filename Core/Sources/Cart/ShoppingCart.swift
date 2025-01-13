@@ -28,6 +28,7 @@ public final class ShoppingCart: Codable {
     
     public private(set) var lastCheckoutInfoError: SnabbleError?
     public private(set) var coupons: [CartCoupon]
+    public private(set) var vouchers: [CartVoucher]
 
     // info that the backend requires
     public private(set) var requiredInformation: [RequiredInformation]
@@ -71,7 +72,7 @@ public final class ShoppingCart: Codable {
 
     enum CodingKeys: String, CodingKey {
         case items, session, lastSaved, backendCartInfo, projectId, shopId
-        case uuid, backupItems, backupSession, customerCard, maxAge, coupons
+        case uuid, backupItems, backupSession, customerCard, maxAge, coupons, vouchers
         case requiredInformation, requiredInformationData
     }
 
@@ -90,6 +91,7 @@ public final class ShoppingCart: Codable {
         self.maxAge = try container.decode(.maxAge)
         self.lastCheckoutInfoError = nil
         self.coupons = try container.decodeIfPresent([CartCoupon].self, forKey: .coupons) ?? []
+        self.vouchers = try container.decodeIfPresent([CartVoucher].self, forKey: .vouchers) ?? []
         self.requiredInformation = try container.decodeIfPresent([RequiredInformation].self, forKey: .requiredInformation) ?? []
         self.requiredInformationData = try container.decodeIfPresent([RequiredInformation].self, forKey: .requiredInformationData) ?? []
     }
@@ -109,6 +111,7 @@ public final class ShoppingCart: Codable {
         try container.encodeIfPresent(self.customerCard, forKey: .customerCard)
         try container.encode(self.maxAge, forKey: .maxAge)
         try container.encode(self.coupons, forKey: .coupons)
+        try container.encode(self.vouchers, forKey: .vouchers)
         try container.encode(self.requiredInformation, forKey: .requiredInformation)
         try container.encode(self.requiredInformationData, forKey: .requiredInformationData)
     }
@@ -124,6 +127,7 @@ public final class ShoppingCart: Codable {
         self.uuid = ""
         self.items = []
         self.coupons = []
+        self.vouchers = []
         self.requiredInformation = []
         self.requiredInformationData = []
         self.generateNewUUID()
@@ -134,6 +138,7 @@ public final class ShoppingCart: Codable {
             self.customerCard = savedCart.customerCard
             self.uuid = savedCart.uuid
             self.coupons = savedCart.coupons
+            self.vouchers = savedCart.vouchers
             self.requiredInformation = savedCart.requiredInformation
             self.requiredInformationData = savedCart.requiredInformationData
 
@@ -157,7 +162,7 @@ public final class ShoppingCart: Codable {
     ///
     /// the newly added (or modified) item is moved to the start of the list
     public func add(_ item: CartItem) {
-        if self.items.isEmpty {
+        if self.numberOfItems == 0 {
             self.backupItems = nil
             self.backupSession = nil
         }
@@ -186,6 +191,8 @@ public final class ShoppingCart: Codable {
                 return item.id == uuid
             case .product(let item):
                 return item.id == uuid
+            case .voucher(let item):
+                return item.id == uuid
             }
         })
     }
@@ -197,9 +204,16 @@ public final class ShoppingCart: Codable {
             removeProduct(with: item.id)
         case .coupon(let item):
             removeCoupon(with: item.id)
+        case .voucher(let item):
+            removeVoucher(with: item.id)
         }
     }
 
+    func removeVoucher(with uuid: String) {
+        vouchers.removeAll { $0.uuid == uuid }
+        save()
+    }
+    
     func removeCoupon(with uuid: String) {
         coupons.removeAll { $0.uuid == uuid }
         save()
@@ -208,6 +222,11 @@ public final class ShoppingCart: Codable {
     func removeProduct(with uuid: String) {
         items.removeAll { $0.uuid == uuid }
         save()
+    }
+
+    /// delete a `CartItem`
+    public func removeItem(_ item: CartItem) {
+        removeProduct(with: item.uuid)
     }
 
     /// delete the entry at position `index`
@@ -253,7 +272,7 @@ public final class ShoppingCart: Codable {
 
     /// number of separate items in the cart
     public var numberOfItems: Int {
-        return self.items.count
+        return self.items.count + self.vouchers.count
     }
 
     /// number of products in the cart (sum of all quantities)
@@ -266,9 +285,13 @@ public final class ShoppingCart: Codable {
 
     func backendItems() -> [Cart.Item] {
         var items = self.items.flatMap { $0.cartItems }
+        
         let coupons = self.coupons.map { $0.cartItem }
         items.append(contentsOf: coupons)
-
+        
+        let vouchers = self.vouchers.map { $0.cartItem }
+        items.append(contentsOf: vouchers)
+        
         return items
     }
 
@@ -351,6 +374,8 @@ public final class ShoppingCart: Codable {
 
         self.items.removeAll()
         self.coupons.removeAll()
+        self.vouchers.removeAll()
+        
         self.requiredInformation = []
         self.requiredInformationData = []
 
@@ -366,7 +391,7 @@ public final class ShoppingCart: Codable {
         guard
             let backupItems = self.backupItems,
             !backupItems.isEmpty,
-            self.items.isEmpty
+            self.numberOfItems == 0
         else {
             return
         }
@@ -426,6 +451,22 @@ extension ShoppingCart {
     public func removeCoupon(_ coupon: Coupon) {
         guard coupon.projectID == projectId else { return }
         coupons.removeAll { $0.coupon.id == coupon.id }
+        self.save()
+    }
+}
+
+// MARK: - Vouchers
+extension ShoppingCart {
+    public func addVoucher(_ voucher: Voucher) {
+        let index = vouchers.firstIndex(where: { $0.voucher.id == voucher.id })
+        if index == nil {
+            vouchers.append(CartVoucher(uuid: UUID().uuidString, voucher: voucher))
+            self.save()
+        }
+    }
+
+    public func removeVoucher(_ voucher: Voucher) {
+        vouchers.removeAll { $0.voucher.id == voucher.id }
         self.save()
     }
 }
@@ -582,7 +623,7 @@ extension ShoppingCart {
     func createCheckoutInfo(userInitiated: Bool = false, completion: @escaping (Bool) -> Void) {
         guard
             let project = Snabble.shared.project(for: self.projectId),
-            !self.items.isEmpty
+            self.numberOfItems > 0
         else {
             completion(false)
             return
@@ -600,6 +641,14 @@ extension ShoppingCart {
                     self.backendCartInfo = nil
                     self.paymentMethods = nil
                     self.lastCheckoutInfoError = error
+                } else if error.type == .invalidCartItem {
+                    let violation = CheckoutInfo.Violation(
+                        type: .invalidItem,
+                        refersTo: nil,
+                        message: error.details?.first?.message ?? "invalid cart item",
+                        refersToItems: error.details?.compactMap(\.id)
+                    )
+                    delegate?.shoppingCart(self, violationsDetected: [violation])
                 }
                 completion(false)
             case .success(let info):

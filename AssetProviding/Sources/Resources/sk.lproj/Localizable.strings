@@ -308,6 +308,7 @@
 "Snabble.Scanner.BundleDialog.headline" = "Výber jednotky balenia";
 "Snabble.Scanner.Camera.accessDenied" = "Prístup k fotoaparátu bol zamietnutý";
 "Snabble.Scanner.Camera.allowAccess" = "Na skenovanie čiarových kódov potrebujeme prístup k fotoaparátu. Povoľ prístup v nastaveniach a vráť sa sem opäť.";
+"Snabble.Scanner.DepositReturnVoucher.Added" = "Deposit voucher added";
 "Snabble.Scanner.GoToCart.empty" = "Košík";
 "Snabble.Scanner.addCodeAsIs" = "Pridať %@ takto";
 "Snabble.Scanner.addToCart" = "Pridať do košíka";
@@ -360,6 +361,17 @@
 "Snabble.Shop.List.Expand.accessibility" = "otvoriť";
 "Snabble.Shop.List.ShowDetails.accessibility" = "Zobraziť detaily obchodu";
 "Snabble.Shopping.title" = "Nakúpiť";
+"Snabble.ShoppingCart.DepositReturn.message" = "To redeem your voucher, fill your shopping basket with the products you wish to purchase.";
+"Snabble.ShoppingCart.DepositReturn.title" = "Deposit voucher";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.button" = "Remove";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.message-plural" = "Unfortunately, these deposit vouchers cannot currently be redeemed in the app:\n\n%@";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.message-singular" = "Unfortunately, this deposit voucher cannot currently be redeemed in the app:\n\n%@";
+"Snabble.ShoppingCart.DepositVoucher.RedemptionFailed.title" = "Invalid deposit voucher";
+"Snabble.ShoppingCart.Product.Invalid.button" = "Remove";
+"Snabble.ShoppingCart.Product.Invalid.message-plural" = "Unfortunately, these products cannot currently be paid for with the app:\n\n%@";
+"Snabble.ShoppingCart.Product.Invalid.message-singular" = "Unfortunately, this product cannot currently be paid for with the app:\n\n%@";
+"Snabble.ShoppingCart.Product.Invalid.title" = "Invalid product";
+"Snabble.ShoppingCart.product" = "Product: %@";
 "Snabble.ShoppingCart.title" = "Košík";
 "Snabble.ShoppingList.AddItem.viaScan" = "Skenovanie produktov";
 "Snabble.ShoppingList.AddItem.viaVoice" = "Diktovanie produktov";
@@ -425,6 +437,7 @@
 "Snabble.Shoppingcart.EmptyState.title" = "Tvoj košík je ešte prázdny";
 "Snabble.Shoppingcart.articleRemoved" = "Položka bola odstránená";
 "Snabble.Shoppingcart.buyProducts" = "Kúpiť %1$li položky/položiek za %2$@";
+"Snabble.Shoppingcart.completePurchase" = "Complete purchase";
 "Snabble.Shoppingcart.coupon" = "Poukážka";
 "Snabble.Shoppingcart.coupons" = "Poukážky";
 "Snabble.Shoppingcart.deposit" = "Záloha";
@@ -460,6 +473,8 @@
 "Snabble.User.zip" = "ZIP";
 "Snabble.UserView.next" = "Next";
 "Snabble.UserView.title" = "User";
+"Snabble.Violations.DepositReturnVoucher.alreadyRedeemed" = "This deposit voucher has already been redeemed.";
+"Snabble.Violations.DepositReturnVoucher.duplicated" = "This deposit voucher has already been added.";
 "Snabble.Violations.couponAlreadyVoided" = "Jeden kupón už bol uplatnený a bude odstránený z nákupného koša";
 "Snabble.Violations.couponCurrentlyNotValid" = "Jeden kupón je momentálne neplatný a bude odstránený z nákupného koša";
 "Snabble.Violations.couponInvalid" = "Jeden kupón je neplatný a bude odstránený z nákupného koša";
