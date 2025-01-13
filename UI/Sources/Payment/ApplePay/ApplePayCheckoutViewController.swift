@@ -74,7 +74,13 @@ final class ApplePayCheckoutViewController: UIViewController {
         }) {
             paymentRequest.requiredBillingContactFields = [.name, .postalAddress]
         }
-        paymentRequest.applicationData = process.id.data(using: .utf8)
+        
+        if project.paymentMethodDescriptors.contains(where: { descriptor in
+            descriptor.id == .applePay && descriptor.providerName == .telecash
+        }) {
+            paymentRequest.applicationData = process.id.data(using: .utf8)
+        }
+        
         paymentRequest.merchantIdentifier = merchantId
         paymentRequest.countryCode = countryCode
         paymentRequest.currencyCode = process.currency
