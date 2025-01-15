@@ -196,6 +196,7 @@ final class CheckoutBar: UIView {
 
         self.itemCountLabel?.text = Asset.localizedString(forKey: "Snabble.Shoppingcart.numberOfItems", arguments: numberOfItems)
         self.checkoutButton?.isEnabled = numberOfItems > 0 && (totalPrice ?? 0) >= 0
+        self.checkoutButton?.setTitle(Asset.localizedString(forKey: totalPrice ?? 0 > 0 ? "Snabble.Shoppingcart.BuyProducts.now" : "Snabble.Shoppingcart.completePurchase"), for: .normal)
 
         self.methodSelector?.updateAvailablePaymentMethods()
         updateViewHierarchy(for: self.methodSelector?.selectedPayment?.method)
