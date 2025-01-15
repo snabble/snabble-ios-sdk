@@ -53,7 +53,7 @@ struct CheckoutView: View {
                         })
                         .frame(width: 88, height: 38)
                         if model.paymentManager.selectedPayment != nil {
-                            PrimaryButtonView(title: Asset.localizedString(forKey: "Snabble.Shoppingcart.BuyProducts.now"),
+                            PrimaryButtonView(title: Asset.localizedString(forKey: model.totalPrice ?? 0 > 0 ? "Snabble.Shoppingcart.BuyProducts.now" : "Snabble.Shoppingcart.completePurchase"),
                                               disabled: $disableCheckout, onAction: {
                                 model.startCheckout()
                             })
