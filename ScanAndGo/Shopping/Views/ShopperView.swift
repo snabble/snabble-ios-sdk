@@ -20,6 +20,8 @@ public struct ShopperView: View {
     @State private var showEditor: Bool = false
     @State private var minHeight: CGFloat = 0
     
+    @SwiftUI.Environment(\.dismiss) var dismiss
+    
     public init(model: Shopper) {
         self.model = model
     }
@@ -97,19 +99,19 @@ public struct ShopperView: View {
                 }
             }
             .toolbar {
-#if DEBUG
                 ToolbarItem(placement: .topBarLeading) {
-                    ShoppingManagerActionView(model: model)
+                    Button(action: {
+                        dismiss()
+                    }, label: {
+                        Text(keyed: "Snabble.done")
+                    })
                 }
-#endif
-                ToolbarItem(placement: .topBarTrailing) {
+                ToolbarItemGroup(placement: .topBarTrailing) {
                     Button(action: {
                         model.flashlight.toggle()
                     }, label: {
                         Image(systemName: model.flashlight == true ? "flashlight.on.fill" : "flashlight.off.fill")
                     })
-                }
-                ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
                         model.stopScanner()
                         showSearch.toggle()
