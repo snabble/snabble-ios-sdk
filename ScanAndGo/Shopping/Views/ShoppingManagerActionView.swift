@@ -33,23 +33,3 @@ extension Shopper {
         }
     }
 }
-
-struct ShoppingManagerActionView: View {
-    @ObservedObject var model: Shopper
-    
-    @State private var detectorImage: SwiftUI.Image = Image(systemName: "questionmark.circle.fill")
-    
-    var body: some View {
-        HStack {
-            model.actionImage
-                .foregroundStyle(.yellow)
-            Spacer()
-            detectorImage
-                .foregroundStyle(.green)
-        }
-        .padding(.horizontal, 8)
-        .onReceive(model.barcodeManager.barcodeDetector.$state) { newState in
-            detectorImage = model.detectorImage(for: newState)
-        }
-    }
-}
