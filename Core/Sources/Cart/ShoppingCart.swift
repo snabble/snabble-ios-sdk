@@ -12,7 +12,8 @@ public protocol InternalShoppingCartDelegate: AnyObject {
 }
 
 /// a ShoppingCart is a collection of CartItem objects
-public final class ShoppingCart: Codable {
+public final class ShoppingCart: Codable, PaymentConsumer {
+    
     public private(set) var items: [CartItem]
     public private(set) var session: String
     public private(set) var lastSaved: Date?
