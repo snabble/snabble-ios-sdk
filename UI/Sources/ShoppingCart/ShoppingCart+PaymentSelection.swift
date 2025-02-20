@@ -45,7 +45,7 @@ final class PaymentMethodSelector {
 
         self.shoppingCart = cart
 
-        self.paymentManager = PaymentMethodManager(shoppingCart: cart)
+        self.paymentManager = PaymentMethodManager(paymentConsumer: cart)
         self.paymentManager.delegate = self
         
         self.methodSelectionView?.isHidden = !self.paymentManager.hasMethodsToSelect
