@@ -29,9 +29,6 @@ final class PaymentMethodSelector {
     private var shoppingCart: ShoppingCart
     weak var delegate: PaymentMethodSelectorDelegate?
     
-    private var project: Project {
-        SnabbleCI.project
-    }
     let paymentManager: PaymentMethodManager
     
     init(_ parentVC: (UIViewController & AnalyticsDelegate)?,
@@ -45,7 +42,7 @@ final class PaymentMethodSelector {
 
         self.shoppingCart = cart
 
-        self.paymentManager = PaymentMethodManager(paymentConsumer: cart)
+        self.paymentManager = PaymentMethodManager(project: SnabbleCI.project, paymentConsumer: cart)
         self.paymentManager.delegate = self
         
         self.methodSelectionView?.isHidden = !self.paymentManager.hasMethodsToSelect

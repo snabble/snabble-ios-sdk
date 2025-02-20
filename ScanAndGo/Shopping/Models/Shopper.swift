@@ -107,7 +107,7 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
         
         self.barcodeManager = barcodeManager
         self.cartModel = ShoppingCartViewModel(shoppingCart: shoppingCart)
-        self.paymentManager = PaymentMethodManager(paymentConsumer: shoppingCart)
+        self.paymentManager = PaymentMethodManager(project: SnabbleCI.project, paymentConsumer: shoppingCart)
         
         shoppingCart.delegate = self
         self.cartModel.shoppingCartDelegate = self
