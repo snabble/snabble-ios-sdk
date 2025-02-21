@@ -10,7 +10,7 @@ import SnabbleAssetProviding
 
 /// global settings for the Snabble UI classes
 public enum SnabbleCI {
-    private(set) static var project: Project = .none
+    public private(set) static var project: Project = .none
 
     /// sets the project to be used
     public static func register(_ project: Project?) {

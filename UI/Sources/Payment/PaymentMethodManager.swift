@@ -30,12 +30,12 @@ public final class PaymentMethodManager: ObservableObject {
     
     var details: [PaymentMethodDetail]
     
-    private var project: Project {
-        SnabbleCI.project
-    }
+    let project: Project
+    
     public weak var delegate: PaymentMethodManagerDelegate?
     
-    public init(paymentConsumer: PaymentConsumer?, delegate: PaymentMethodManagerDelegate? = nil) {
+    public init(project: Project, paymentConsumer: PaymentConsumer?, delegate: PaymentMethodManagerDelegate? = nil) {
+        self.project = project
         self.paymentConsumer = paymentConsumer
         self.delegate = delegate
         
