@@ -8,8 +8,11 @@ name: Snabble Documentation
 jobs:
   docc:
     name: docc
-    runs-on: macos-15
+    runs-on: macos-latest # https://github.com/actions/runner-images
     steps:
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
       - name: Checkout
         uses: actions/checkout@v4
 
