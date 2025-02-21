@@ -7,9 +7,12 @@ on:
 name: Snabble Documentation
 jobs:
   docc:
-    name: DocC
-    runs-on: macos-latest
+    name: docc
+    runs-on: macos-15 # https://github.com/actions/runner-images
     steps:
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -46,7 +49,7 @@ jobs:
   deploy:
     name: Deploy GitHub Page
     runs-on: ubuntu-latest
-    needs: DocC
+    needs: docc
     steps:
       - name: Download Artifacts
         uses: actions/download-artifact@v4
