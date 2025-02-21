@@ -8,7 +8,7 @@ name: Snabble Documentation
 jobs:
   docc:
     name: docc
-    runs-on: macos-latest # https://github.com/actions/runner-images
+    runs-on: macos-15 # https://github.com/actions/runner-images
     steps:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
