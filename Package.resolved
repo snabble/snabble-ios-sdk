@@ -1,5 +1,5 @@
 {
-  "originHash" : "e029cf5f1861fe81553dec02b4b46e248819aa291f5331f6caa4a1a53e5bda4e",
+  "originHash" : "c97862b892c5ebd7ed65062f26bd035cb5e0a8e1a36eac19093308cab40b75db",
   "pins" : [
     {
       "identity" : "devicekit",
@@ -24,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/datatrans/ios-sdk.git",
       "state" : {
-        "revision" : "a935193ca9dda7c4d1a6f15a0a83d2ca62ab6113",
-        "version" : "3.7.1"
+        "revision" : "2c0280bbda7a87500fa5c33b38af89a4895fa04e",
+        "version" : "3.8.0"
       }
     },
     {
