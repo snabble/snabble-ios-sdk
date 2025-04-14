@@ -66,4 +66,8 @@ public protocol FontProviding: AnyObject {
     func font(_ name: String, size: CGFloat?, relativeTo textStyle: Font.TextStyle?, domain: Any?) -> SwiftUI.Font?
 }
 
-public typealias AssetProviding = ImageProviding & ColorProviding & StringProviding & UrlProviding & FontProviding
+public protocol StyleProviding: AnyObject {
+    func shape(domain: Any?) -> (any Shape)?
+}
+
+public typealias AssetProviding = ImageProviding & ColorProviding & StringProviding & UrlProviding & FontProviding & StyleProviding

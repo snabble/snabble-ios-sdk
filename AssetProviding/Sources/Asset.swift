@@ -53,6 +53,9 @@ public enum Asset {
     public static func font(_ name: String, size: CGFloat?, relativeTo textStyle: Font.TextStyle?, domain: Any?) -> SwiftUI.Font? {
         provider?.font(name, size: size, relativeTo: textStyle, domain: domain) ?? nil
     }
+    public static func shape(domain: Any?) -> (any SwiftUI.Shape)? {
+        provider?.shape(domain: domain) ?? nil
+    }
 }
 
 // MARK: SwiftUI - Extensions
