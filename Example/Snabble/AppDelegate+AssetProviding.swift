@@ -13,6 +13,10 @@ import SwiftUI
 import UIKit
 
 extension AppDelegate: AssetProviding {
+    func shape(domain: Any?) -> (any Shape)? {
+        nil
+    }
+    
     func font(_ name: String, size: CGFloat?, relativeTo textStyle: Font.TextStyle?, domain: Any?) -> Font? {
         nil
     }

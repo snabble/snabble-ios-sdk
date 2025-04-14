@@ -47,6 +47,14 @@ extension UIColor {
         Asset.color(named: "onSecondary", domain: domain) ?? projectSecondary(in: domain).contrast!
     }
 
+    public static func projectNavigationBar(in domain: Any? = Asset.domain) -> UIColor {
+        Asset.color(named: "navigationBar", domain: domain) ?? .systemBackground
+    }
+    
+    public static func onProjectNavigationBar(in domain: Any? = Asset.domain) -> UIColor {
+        Asset.color(named: "onNavigationBar", domain: domain) ?? .systemBackground.contrast!
+    }
+
     public static func systemGreen(in domain: Any? = Asset.domain) -> UIColor {
         Asset.color(named: "systemGreen", domain: domain) ?? .systemGreen
     }

@@ -677,6 +677,7 @@ extension PayoneCreditCardEditViewController: WKScriptMessageHandler {
             options: []) else {
             return "{}"
         }
+        // swiftlint:disable:next optional_data_string_conversion
         return String(decoding: jsonData, as: UTF8.self)
     }
 }
