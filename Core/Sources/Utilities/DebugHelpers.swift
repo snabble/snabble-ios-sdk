@@ -25,7 +25,6 @@ extension Data {
 extension Dictionary {
     func printAsJSON() {
         if let theJSONData = try? JSONSerialization.data(withJSONObject: self, options: .prettyPrinted),
-           // swiftlint:disable:next non_optional_string_data_conversion
            let theJSONText = String(data: theJSONData, encoding: .utf8) {
             print("\(theJSONText)")
         }
