@@ -111,6 +111,7 @@ extension Publisher where Failure == Never {
     }
 }
 
+@MainActor
 public final class SepaDataModel: ObservableObject {
 
     public var formatter: IBANFormatter
@@ -379,9 +380,7 @@ extension SepaDataModel {
 
             paymentDetail = detail
 
-            DispatchQueue.main.async {
-                self.objectWillChange.send()
-            }
+            self.objectWillChange.send()
         } else {
             throw PaymentMethodError.encryptionError
         }
