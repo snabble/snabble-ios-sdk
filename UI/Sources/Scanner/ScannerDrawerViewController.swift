@@ -31,7 +31,7 @@ final class ScannerDrawerViewController: UIViewController {
         }
     }
 
-    private let minDrawerHeight: CGFloat = 50
+    private let minDrawerHeight: CGFloat = 86
     private let totalsHeight: CGFloat = 60
     private let cartItemHeight: CGFloat = 50
     private let listItemHeight: CGFloat = 50
