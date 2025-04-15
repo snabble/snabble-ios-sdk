@@ -26,7 +26,6 @@ public struct SecondaryButtonView: View {
             }
         }) {
             Text(title)
-                .fontWeight(.bold)
         }
         .buttonStyle(ProjectSecondaryButtonStyle(disabled: disabled))
         .disabled(disabled)

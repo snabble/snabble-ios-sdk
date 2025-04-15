@@ -24,7 +24,6 @@ public struct PrimaryButtonView: View {
             onAction()
         }) {
             Text(title)
-                .fontWeight(.bold)
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(ProjectPrimaryButtonStyle(disabled: disabled))

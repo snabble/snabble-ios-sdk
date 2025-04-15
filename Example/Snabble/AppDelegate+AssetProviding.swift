@@ -13,6 +13,26 @@ import SwiftUI
 import UIKit
 
 extension AppDelegate: AssetProviding {
+    func primaryButtonBackground(domain: Any?) -> (any View)? {
+        return nil
+    }
+    
+    func primaryBorderedButtonBackground(domain: Any?) -> (any View)? {
+        return nil
+    }
+    
+    func secondaryButtonBackground(domain: Any?) -> (any View)? {
+        return nil
+    }
+    
+    func primaryButtonRadius(domain: Any?) -> CGFloat? {
+        return nil
+    }
+    
+    func buttonFontWeight(domain: Any?) -> Font.Weight? {
+        return nil
+    }
+    
     func shape(domain: Any?) -> (any Shape)? {
         nil
     }
