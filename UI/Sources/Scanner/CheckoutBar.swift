@@ -78,7 +78,7 @@ final class CheckoutBar: UIView {
         methodSelectionStackView.layoutMargins = UIEdgeInsets(top: 0, left: 12, bottom: 0, right: 12)
         methodSelectionStackView.backgroundColor = .systemBackground
         methodSelectionStackView.layer.masksToBounds = true
-        methodSelectionStackView.layer.cornerRadius = 8
+        methodSelectionStackView.layer.cornerRadius = CGFloat.primaryButtonRadius()
         methodSelectionStackView.layer.borderColor = UIColor.systemGray6.cgColor
         methodSelectionStackView.layer.borderWidth = 1 / UIScreen.main.scale
 
@@ -105,9 +105,10 @@ final class CheckoutBar: UIView {
         checkoutButton.setTitle(Asset.localizedString(forKey: "Snabble.Shoppingcart.BuyProducts.now"), for: .normal)
         let disabledColor = UIColor.onProjectPrimary().withAlphaComponent(0.5)
         checkoutButton.setTitleColor(disabledColor, for: .disabled)
-        checkoutButton.titleLabel?.font = .preferredFont(forTextStyle: .headline)
+        checkoutButton.titleLabel?.font = .preferredFont(forTextStyle: .body, weight: UIFont.buttonWeight())
         checkoutButton.titleLabel?.adjustsFontForContentSizeCategory = true
         checkoutButton.makeSnabbleButton()
+
         checkoutButton.isEnabled = true
         checkoutButton.isUserInteractionEnabled = true
         checkoutButton.addTarget(self, action: #selector(checkoutTapped(_:)), for: .touchUpInside)

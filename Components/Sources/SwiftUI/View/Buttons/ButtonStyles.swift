@@ -21,11 +21,10 @@ public struct ProjectPrimaryButtonStyle: ButtonStyle {
 
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .fontWeight(Font.buttonWeight())
             .padding([.top, .bottom], verticalPadding)
             .padding([.leading, .trailing], 20)
-            .background(RoundedRectangle(cornerRadius: 12)
-                .fill(Color.projectPrimary())
-            )
+            .background(Asset.primaryButtonBackground(domain: nil))
             .foregroundStyle(Color.onProjectPrimary()
                 .opacity(disabled ? 0.5 : 1.0)
             )
@@ -52,13 +51,10 @@ public struct ProjectBorderedPrimaryButtonStyle: ButtonStyle {
 
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .fontWeight(Font.buttonWeight())
             .padding([.top, .bottom], 13)
             .padding([.leading, .trailing], 8)
-            .background(RoundedRectangle(cornerRadius: 8)
-                .fill(.regularMaterial)
-                .strokeBorder(Color.gray, style: StrokeStyle(lineWidth: 0.5, lineCap: .round, lineJoin: .round))
-                .foregroundStyle(Color.projectPrimary())
-            )
+            .background(Asset.primaryBorderedButtonBackground(domain: nil))
     }
 }
 
@@ -79,8 +75,10 @@ public struct ProjectSecondaryButtonStyle: ButtonStyle {
 
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .fontWeight(Font.buttonWeight())
             .padding([.top, .bottom], 15)
             .padding([.leading, .trailing], 20)
+            .background(Asset.secondaryButtonBackground(domain: nil))
             .foregroundStyle(Color.projectPrimary())
             .disabled(disabled)
     }

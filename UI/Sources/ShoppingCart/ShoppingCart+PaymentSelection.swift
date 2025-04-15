@@ -77,7 +77,7 @@ final class PaymentMethodSelector {
     }
 }
 
-extension PaymentMethodSelector: PaymentMethodManagerDelegate {
+extension PaymentMethodSelector: @preconcurrency PaymentMethodManagerDelegate {
     func paymentMethodManager(didSelectPayment payment: Payment?) {
         let method = payment?.method
         let detail = payment?.detail
@@ -98,6 +98,7 @@ extension PaymentMethodSelector: PaymentMethodManagerDelegate {
         delegate?.paymentMethodSelector(self, didSelectMethod: payment?.method)
     }
     
+    @MainActor
     func paymentMethodManager(didSelectItem item: PaymentMethodItem) {
         guard item.selectable else {
             return

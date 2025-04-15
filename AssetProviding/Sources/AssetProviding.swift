@@ -67,7 +67,12 @@ public protocol FontProviding: AnyObject {
 }
 
 public protocol StyleProviding: AnyObject {
-    func shape(domain: Any?) -> (any Shape)?
+    func primaryButtonBackground(domain: Any?) -> (any View)?
+    func primaryBorderedButtonBackground(domain: Any?) -> (any View)?
+    func secondaryButtonBackground(domain: Any?) -> (any View)?
+
+    func primaryButtonRadius(domain: Any?) -> CGFloat?
+    func buttonFontWeight(domain: Any?) -> Font.Weight?
 }
 
 public typealias AssetProviding = ImageProviding & ColorProviding & StringProviding & UrlProviding & FontProviding & StyleProviding

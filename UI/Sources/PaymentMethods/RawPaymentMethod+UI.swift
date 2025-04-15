@@ -49,6 +49,7 @@ extension RawPaymentMethod {
         return Asset.image(named: "SnabbleSDK/payment/" + self.imageName)
     }
 
+    @MainActor
     public func editViewController(with projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
         switch self {
         case .deDirectDebit:
@@ -86,7 +87,7 @@ extension RawPaymentMethod {
         return nil
     }
 
-    private func sepaEditViewController(_ projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
+    @MainActor private func sepaEditViewController(_ projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
         guard
             let projectId = projectId,
             let project = Snabble.shared.project(for: projectId),

@@ -50,11 +50,48 @@ public enum Asset {
     public static func url(forResource name: String?, withExtension ext: String?, domain: Any? = domain, bundle: Bundle? = nil) -> URL? {
         provider?.url(forResource: name, withExtension: ext, domain: domain) ?? Bundle.module.url(forResource: name, withExtension: ext)
     }
+
     public static func font(_ name: String, size: CGFloat?, relativeTo textStyle: Font.TextStyle?, domain: Any?) -> SwiftUI.Font? {
         provider?.font(name, size: size, relativeTo: textStyle, domain: domain) ?? nil
     }
-    public static func shape(domain: Any?) -> (any SwiftUI.Shape)? {
-        provider?.shape(domain: domain) ?? nil
+
+    @ViewBuilder
+    public static func primaryButtonBackground(domain: Any?) -> some View {
+        if let view = provider?.primaryButtonBackground(domain: domain) {
+            AnyView(view)
+        } else {
+            RoundedRectangle(cornerRadius: 12)
+                .fill(Color.projectPrimary())
+        }
+    }
+
+    @ViewBuilder
+    public static func primaryBorderedButtonBackground(domain: Any?) -> some View {
+        if let view = provider?.primaryBorderedButtonBackground(domain: domain) {
+            AnyView(view)
+        } else {
+            RoundedRectangle(cornerRadius: 8)
+                .fill(.regularMaterial)
+                .strokeBorder(Color.gray, style: StrokeStyle(lineWidth: 0.5, lineCap: .round, lineJoin: .round))
+                .foregroundStyle(Color.projectPrimary())
+        }
+    }
+
+    @ViewBuilder
+    public static func secondaryButtonBackground(domain: Any?) -> some View {
+        if let view = provider?.secondaryButtonBackground(domain: domain) {
+            AnyView(view)
+        } else {
+            Color.clear
+        }
+    }
+    
+    public static func primaryButtonRadius(domain: Any?) -> CGFloat? {
+        provider?.primaryButtonRadius(domain: domain) 
+    }
+
+    public static func buttonFontWeight(domain: Any?) -> Font.Weight? {
+        provider?.buttonFontWeight(domain: domain)
     }
 }
 
@@ -70,5 +107,11 @@ extension Text {
     public init(keyed key: String) {
         let value = Asset.localizedString(forKey: key)
         self.init(value)
+    }
+}
+
+extension CGFloat {
+    public static func primaryButtonRadius(domain: Any? = nil) -> CGFloat {
+        Asset.primaryButtonRadius(domain: domain ?? Asset.domain) ?? 8
     }
 }
