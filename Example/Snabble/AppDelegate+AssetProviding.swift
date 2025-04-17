@@ -13,6 +13,14 @@ import SwiftUI
 import UIKit
 
 extension AppDelegate: AssetProviding {
+    func primaryButtonConfiguration(domain: Any?) -> UIButton.Configuration? {
+        nil
+    }
+    
+    func secondaryButtonConfiguration(domain: Any?) -> UIButton.Configuration? {
+        nil
+    }
+    
     func primaryButtonBackground(domain: Any?) -> (any View)? {
         return nil
     }

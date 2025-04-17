@@ -93,6 +93,14 @@ public enum Asset {
     public static func buttonFontWeight(domain: Any?) -> Font.Weight? {
         provider?.buttonFontWeight(domain: domain)
     }
+    
+    public static func primaryButtonConfiguration(domain: Any?) -> UIButton.Configuration? {
+        provider?.primaryButtonConfiguration(domain: domain)
+    }
+    
+    public static func secondaryButtonConfiguration(domain: Any?) -> UIButton.Configuration? {
+        provider?.secondaryButtonConfiguration(domain: domain)
+    }
 }
 
 // MARK: SwiftUI - Extensions
@@ -113,5 +121,15 @@ extension Text {
 extension CGFloat {
     public static func primaryButtonRadius(domain: Any? = nil) -> CGFloat {
         Asset.primaryButtonRadius(domain: domain ?? Asset.domain) ?? 8
+    }
+}
+
+extension UIButton {
+    public static func primaryButtonConfiguration(domain: Any? = nil) -> UIButton.Configuration? {
+        Asset.primaryButtonConfiguration(domain: domain ?? Asset.domain)
+    }
+    
+    public static func secondaryButtonConfiguration(domain: Any? = nil) -> UIButton.Configuration? {
+        Asset.secondaryButtonConfiguration(domain: domain ?? Asset.domain)
     }
 }

@@ -16,9 +16,10 @@ public struct UserProfileView: View {
     @Binding var editUser: Bool
     @Binding var changePhoneNumber: Bool
     
-    public init(user: SnabbleUser.User,
-                editUser: Binding<Bool>,
-                changePhoneNumber: Binding<Bool>
+    public init(
+        user: SnabbleUser.User,
+        editUser: Binding<Bool>,
+        changePhoneNumber: Binding<Bool>
     ) {
         self.user = user
         self._editUser = editUser
@@ -81,7 +82,7 @@ public struct UserProfileView: View {
             }
             
         }
-        .frame(maxWidth: .infinity, minHeight: 190)
+        .frame(maxWidth: .infinity, minHeight: 180)
         .padding([.leading, .trailing])
     }
 }

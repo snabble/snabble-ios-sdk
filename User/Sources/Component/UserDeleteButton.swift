@@ -49,8 +49,7 @@ public struct UserDeleteButton: View {
                   message: Text(keyed: "Snabble.Account.Delete.Dialog.message"),
                   primaryButton: .destructive(Text(keyed: "Snabble.Account.Delete.Dialog.continue")) {
                 delete()
-            },
-                  secondaryButton: .cancel())
+            }, secondaryButton: .cancel())
         }
     }
 
