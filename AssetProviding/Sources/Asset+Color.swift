@@ -47,6 +47,14 @@ extension UIColor {
         Asset.color(named: "onSecondary", domain: domain) ?? projectSecondary(in: domain).contrast!
     }
 
+    public static func faq(in domain: Any? = Asset.domain) -> UIColor {
+        Asset.color(named: "faq", domain: domain) ?? .lightGray
+    }
+    
+    public static func onFaq(in domain: Any? = Asset.domain) -> UIColor {
+        Asset.color(named: "onFaq", domain: domain) ?? .black
+    }
+
     public static func projectNavigationBar(in domain: Any? = Asset.domain) -> UIColor {
         Asset.color(named: "navigationBar", domain: domain) ?? .systemBackground
     }

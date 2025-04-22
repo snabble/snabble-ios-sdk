@@ -313,15 +313,23 @@ public struct CustomizationConfig: Decodable {
     public let colorHexOnPrimaryLight: String?
     public let colorHexSecondaryLight: String?
     public let colorHexOnSecondaryLight: String?
+    
     public let colorHexNavigationBarLight: String?
     public let colorHexOnNavigationBarLight: String?
+    
+    public let colorHexFaqLight: String?
+    public let colorHexOnFaqLight: String?
 
     public let colorHexPrimaryDark: String?
     public let colorHexOnPrimaryDark: String?
     public let colorHexSecondaryDark: String?
     public let colorHexOnSecondaryDark: String?
+    
     public let colorHexNavigationBarDark: String?
     public let colorHexOnNavigationBarDark: String?
+    
+    public let colorHexFaqDark: String?
+    public let colorHexOnFaqDark: String?
 
     public let landingPageImagePathLight: String?
     public let landingPageImagePathDark: String?
@@ -333,6 +341,8 @@ public struct CustomizationConfig: Decodable {
         case colorHexOnSecondaryLight = "colorOnSecondary_light"
         case colorHexNavigationBarLight = "colorAppBar_light"
         case colorHexOnNavigationBarLight = "colorOnAppBar_light"
+        case colorHexFaqLight = "colorFaq_light"
+        case colorHexOnFaqLight = "colorOnFaq_light"
 
         case colorHexPrimaryDark = "colorPrimary_dark"
         case colorHexOnPrimaryDark = "colorOnPrimary_dark"
@@ -340,6 +350,8 @@ public struct CustomizationConfig: Decodable {
         case colorHexOnSecondaryDark = "colorOnSecondary_dark"
         case colorHexNavigationBarDark = "colorAppBar_dark"
         case colorHexOnNavigationBarDark = "colorOnAppBar_dark"
+        case colorHexFaqDark = "colorFaq_dark"
+        case colorHexOnFaqDark = "colorOnFaq_dark"
 
         case landingPageImagePathLight = "landingPageImageURL_light"
         case landingPageImagePathDark = "landingPageImageURL_dark"
