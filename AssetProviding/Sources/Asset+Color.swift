@@ -47,11 +47,11 @@ extension UIColor {
         Asset.color(named: "onSecondary", domain: domain) ?? projectSecondary(in: domain).contrast!
     }
 
-    public static func faq(in domain: Any? = Asset.domain) -> UIColor {
+    public static func projectFaq(in domain: Any? = Asset.domain) -> UIColor {
         Asset.color(named: "faq", domain: domain) ?? .lightGray
     }
     
-    public static func onFaq(in domain: Any? = Asset.domain) -> UIColor {
+    public static func onProjectFaq(in domain: Any? = Asset.domain) -> UIColor {
         Asset.color(named: "onFaq", domain: domain) ?? .black
     }
 
@@ -108,6 +108,22 @@ extension SwiftUI.Color {
     
     public static func onProjectSecondary(in domain: Any? = Asset.domain) -> SwiftUI.Color {
         .init(uiColor: UIColor.onProjectSecondary(in: domain))
+    }
+    
+    public static func projectFaq(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        .init(uiColor: UIColor.projectFaq(in: domain))
+    }
+    
+    public static func onProjectFaq(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        .init(uiColor: UIColor.onProjectFaq(in: domain))
+    }
+
+    public static func projectNavigationBar(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        .init(uiColor: UIColor.projectNavigationBar(in: domain))
+    }
+    
+    public static func onProjectNavigationBar(in domain: Any? = Asset.domain) -> SwiftUI.Color {
+        .init(uiColor: UIColor.onProjectNavigationBar(in: domain))
     }
 
     public static func systemGreen(in domain: Any? = Asset.domain) -> SwiftUI.Color {
