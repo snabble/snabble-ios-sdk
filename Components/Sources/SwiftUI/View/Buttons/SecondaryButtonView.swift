@@ -26,6 +26,7 @@ public struct SecondaryButtonView: View {
             }
         }) {
             Text(title)
+                .frame(maxWidth: .infinity)
         }
         .buttonStyle(ProjectSecondaryButtonStyle(disabled: disabled))
         .disabled(disabled)
