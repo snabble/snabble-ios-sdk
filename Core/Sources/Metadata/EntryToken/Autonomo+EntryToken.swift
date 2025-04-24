@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import Defaults
 
 public enum Autonomo {
     public enum State: String, Codable {
@@ -24,7 +25,7 @@ public enum Autonomo {
         case paymentFailed = "payment_failed"
         case failed
     }
-    public struct Session: Codable, Identifiable {
+    public struct Session: Codable, Identifiable, Defaults.Serializable {
         public let id: Identifier<Session>
         public let entryToken: EntryToken?
         public let state: State
