@@ -16,6 +16,10 @@ extension SwiftUI.Font {
     public static func buttonWeight(domain: Any? = Asset.domain) -> Font.Weight {
         return Asset.buttonFontWeight(domain: domain) ?? .bold
     }
+
+    public static func buttonFont(domain: Any? = Asset.domain) -> Font {
+        return Asset.buttonFont(domain: domain) ?? .body
+    }
 }
 
 extension UIFont {

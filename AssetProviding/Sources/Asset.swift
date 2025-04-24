@@ -93,7 +93,11 @@ public enum Asset {
     public static func buttonFontWeight(domain: Any?) -> Font.Weight? {
         provider?.buttonFontWeight(domain: domain)
     }
-    
+
+    public static func buttonFont(domain: Any?) -> SwiftUI.Font? {
+        provider?.buttonFont(domain: domain)
+    }
+
     public static func primaryButtonConfiguration(domain: Any?) -> UIButton.Configuration? {
         provider?.primaryButtonConfiguration(domain: domain)
     }

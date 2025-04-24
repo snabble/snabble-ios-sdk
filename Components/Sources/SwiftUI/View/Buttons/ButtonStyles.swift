@@ -21,13 +21,12 @@ public struct ProjectPrimaryButtonStyle: ButtonStyle {
 
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .font(Font.buttonFont())
             .fontWeight(Font.buttonWeight())
             .padding([.top, .bottom], verticalPadding)
             .padding([.leading, .trailing], 20)
             .background(Asset.primaryButtonBackground(domain: nil))
-            .foregroundStyle(Color.onProjectPrimary()
-                .opacity(disabled ? 0.5 : 1.0)
-            )
+            .foregroundStyle(Color.onProjectPrimary().opacity(disabled ? 0.5 : 1.0))
             .disabled(disabled)
             .scaleEffect(configuration.isPressed ? 1.05 : 1)
             .animation(.easeOut, value: configuration.isPressed)
@@ -51,10 +50,12 @@ public struct ProjectBorderedPrimaryButtonStyle: ButtonStyle {
 
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .font(Font.buttonFont())
             .fontWeight(Font.buttonWeight())
             .padding([.top, .bottom], 13)
             .padding([.leading, .trailing], 8)
             .background(Asset.primaryBorderedButtonBackground(domain: nil))
+            .foregroundStyle(Color.projectPrimary())
     }
 }
 
@@ -75,11 +76,12 @@ public struct ProjectSecondaryButtonStyle: ButtonStyle {
 
     public func makeBody(configuration: Configuration) -> some View {
         configuration.label
+            .font(Font.buttonFont())
             .fontWeight(Font.buttonWeight())
             .padding([.top, .bottom], 15)
             .padding([.leading, .trailing], 20)
             .background(Asset.secondaryButtonBackground(domain: nil))
-            .foregroundStyle(Color.projectPrimary())
+            .foregroundStyle(Color.projectPrimary().opacity(disabled ? 0.5 : 1.0))
             .disabled(disabled)
     }
 }

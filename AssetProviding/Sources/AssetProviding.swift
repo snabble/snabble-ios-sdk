@@ -73,6 +73,7 @@ public protocol StyleProviding: AnyObject {
 
     func primaryButtonRadius(domain: Any?) -> CGFloat?
     func buttonFontWeight(domain: Any?) -> Font.Weight?
+    func buttonFont(domain: Any?) -> Font?
     
     func primaryButtonConfiguration(domain: Any?) -> UIButton.Configuration?
     func secondaryButtonConfiguration(domain: Any?) -> UIButton.Configuration?
