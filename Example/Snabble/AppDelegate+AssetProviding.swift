@@ -37,6 +37,10 @@ extension AppDelegate: AssetProviding {
         return nil
     }
     
+    func buttonFont(domain: Any?) -> Font? {
+        nil
+    }
+
     func buttonFontWeight(domain: Any?) -> Font.Weight? {
         return nil
     }

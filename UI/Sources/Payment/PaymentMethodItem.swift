@@ -130,7 +130,7 @@ extension PaymentMethodItem {
                     method: method,
                     methodDetail: nil,
                     selectable: true,
-                    active: false
+                    active: true
                 )]
             } else {
                 return [PaymentMethodItem(
