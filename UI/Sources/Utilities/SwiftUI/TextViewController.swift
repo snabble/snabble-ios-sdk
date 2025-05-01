@@ -35,8 +35,9 @@ extension String {
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.alignment = .center
 
+        let font = UIFont.preferredFont(forTextStyle: .body)
         let attributes: [NSAttributedString.Key: Any] = [
-            .font: UIFont.preferredFont(forTextStyle: .subheadline),
+            .font: font,
             .paragraphStyle: paragraphStyle,
             .foregroundColor: UIColor.label
         ]
@@ -49,10 +50,14 @@ extension String {
                 links.append(range)
             }
         }
-
+        let descriptor = font.fontDescriptor.withSymbolicTraits(.traitBold)
+        let boldFont = descriptor.map { UIFont(descriptor: $0, size: 0) } ?? font
         for range in links {
-            attributedString.addAttributes([.foregroundColor: UIColor.projectPrimary(),
-                                            .underlineStyle: 0], range: range)
+            attributedString.addAttributes([
+                .foregroundColor: UIColor.projectPrimary(),
+                .font: boldFont,
+                .underlineStyle: 0
+            ], range: range)
 
         }
 
