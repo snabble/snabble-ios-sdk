@@ -95,7 +95,15 @@ extension CouponsViewController {
 // MARK: - UICollectionViewDelegateFlowLayout
 extension CouponsViewController: UICollectionViewDelegateFlowLayout {
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, sizeForItemAt indexPath: IndexPath) -> CGSize {
-        .init(width: 265, height: 355)
+        let itemCount = collectionView.numberOfItems(inSection: indexPath.section)
+
+        if itemCount == 1 {
+            let horizontalPadding: CGFloat = 25
+            let fullWidth = collectionView.bounds.width - horizontalPadding * 2
+            return CGSize(width: fullWidth, height: 355)
+        } else {
+            return CGSize(width: 265, height: 355)
+        }
     }
 
     public func collectionView(_ collectionView: UICollectionView, layout collectionViewLayout: UICollectionViewLayout, minimumLineSpacingForSectionAt section: Int) -> CGFloat {
