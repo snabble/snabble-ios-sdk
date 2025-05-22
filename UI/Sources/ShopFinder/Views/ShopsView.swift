@@ -9,7 +9,7 @@ import SwiftUI
 import SnabbleAssetProviding
 
 public struct ShopsView: View {
-    @ObservedObject public var viewModel: ShopsViewModel
+    @State public var viewModel: ShopsViewModel
 
     public init(shops: [ShopProviding]) {
         self.viewModel = ShopsViewModel(shops: shops)
