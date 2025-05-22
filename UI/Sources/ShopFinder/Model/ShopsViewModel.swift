@@ -15,8 +15,9 @@ public protocol ShopViewModelDelegate: AnyObject {
     func shopViewModel(_ model: ShopsViewModel, didUpdateDistances: [Identifier<Shop>: Double])
 }
 
-/// ShopFinderViewModel for objects implermenting the ShopInfoProvider protocol
-public final class ShopsViewModel: NSObject, ObservableObject {
+/// ShopsViewModel for objects implermenting the ShopProviding protocol
+@Observable
+public final class ShopsViewModel: NSObject {
     public init(shops: [ShopProviding]) {
         self.shops = shops
         self.distances = [:]
@@ -29,10 +30,10 @@ public final class ShopsViewModel: NSObject, ObservableObject {
     }
 
     /// All available shops
-    @Published public private(set) var shops: [ShopProviding]
+    public private(set) var shops: [ShopProviding]
 
     /// Current check-in shop
-    @Published public var shop: ShopProviding?
+    public var shop: ShopProviding?
 
     /// distances in meter to a shop by id
     private(set) var distances: [Identifier<Shop>: Double]

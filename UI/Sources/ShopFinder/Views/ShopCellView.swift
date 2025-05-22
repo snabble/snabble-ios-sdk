@@ -13,7 +13,7 @@ import SnabbleComponents
 
 public struct ShopCellView: View {
     let shop: ShopProviding
-    @ObservedObject var viewModel: ShopsViewModel
+    @State var viewModel: ShopsViewModel
     
     public var body: some View {
         HStack {

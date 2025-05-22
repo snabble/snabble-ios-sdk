@@ -14,7 +14,7 @@ public struct ShopView: View {
     
     var shop: ShopProviding
 
-    @ObservedObject var viewModel: ShopsViewModel
+    @State var viewModel: ShopsViewModel
     @State private var showingAlert = false
 
     @ViewBuilder
