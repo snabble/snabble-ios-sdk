@@ -176,12 +176,11 @@ public struct ShopMapView: View {
     }
     
     public var body: some View {
-        ZStack(alignment: .topTrailing) {
-            mapView
-            locationControl
-                .padding()
-                .zIndex(1)
-        }
+        mapView
+            .overlay(alignment: .topTrailing) {
+                locationControl
+                    .padding()
+            }
     }
 }
 
