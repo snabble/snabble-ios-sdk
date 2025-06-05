@@ -33,6 +33,10 @@ public struct Order: Decodable {
         }
     }
     
+    public var href: String? {
+        links.receipt?.href
+    }
+    
     enum CodingKeys: String, CodingKey {
         case projectId = "project"
         case id, date, shopName, price
@@ -42,7 +46,7 @@ public struct Order: Decodable {
     }
     
     public var hasReceipt: Bool {
-        guard let href = links.receipt?.href, !href.isEmpty else {
+        guard let href, !href.isEmpty else {
             return false
         }
         return true
