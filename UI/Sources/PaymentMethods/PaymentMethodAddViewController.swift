@@ -87,6 +87,7 @@ public final class PaymentMethodAddViewController: UITableViewController {
     private func projectEntries(for brandId: Identifier<Brand>) -> [[MethodEntry]] {
         let projectsEntries = Snabble.shared.projects
             .filter { $0.brandId == brandId }
+            .filter { $0.paymentMethods.firstIndex { $0.dataRequired } != nil }
             .sorted { $0.name < $1.name }
             .map { MethodEntry(project: $0, count: self.methodCount(for: $0.id)) }
 
