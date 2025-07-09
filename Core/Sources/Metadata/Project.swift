@@ -342,25 +342,25 @@ public struct CustomizationConfig: Decodable {
 
     public struct Teaser: Decodable, Swift.Identifiable {
         public let id: UUID = UUID()
-        public let de_title: String?
-        public let de_subtitle: String?
-        public let en_title: String?
-        public let en_subtitle: String?
+        public let titleDE: String?
+        public let subtitleDE: String?
+        public let titleEN: String?
+        public let subtitleEN: String?
         public let imageUrl: String?
         public let url: String?
         
         enum CodingKeys: String, CodingKey {
-            case de_title = "de_title"
-            case de_subtitle = "de_subtitle"
-            case en_title = "en_title"
-            case en_subtitle = "en_subtitle"
+            case titleDE = "de_title"
+            case subtitleDE = "de_subtitle"
+            case titleEN = "en_title"
+            case subtitleEN = "en_subtitle"
             case imageUrl = "imageUrl"
             case url = "url"
         }
         
         var hasContent: Bool {
-            return de_title != nil || de_subtitle != nil ||
-            en_title != nil || en_subtitle != nil ||
+            return titleDE != nil || subtitleDE != nil ||
+            titleEN != nil || subtitleEN != nil ||
             imageUrl != nil || url != nil
         }
     }
@@ -405,22 +405,22 @@ extension CustomizationConfig.Teaser {
     public func title(for language: String) -> String {
         switch language.lowercased() {
         case "de":
-            return de_title ?? en_title ?? ""
+            return titleDE ?? titleEN ?? ""
         case "en":
-            return en_title ?? de_title ?? ""
+            return titleEN ?? titleDE ?? ""
         default:
-            return de_title ?? en_title ?? ""
+            return titleDE ?? titleEN ?? ""
         }
     }
     
     public func subtitle(for language: String) -> String {
         switch language.lowercased() {
         case "de":
-            return de_subtitle ?? en_subtitle ?? ""
+            return subtitleDE ?? subtitleEN ?? ""
         case "en":
-            return en_subtitle ?? de_subtitle ?? ""
+            return subtitleEN ?? subtitleDE ?? ""
         default:
-            return de_subtitle ?? en_subtitle ?? ""
+            return subtitleDE ?? subtitleEN ?? ""
         }
     }
     
