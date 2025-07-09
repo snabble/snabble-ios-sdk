@@ -334,6 +334,43 @@ public struct CustomizationConfig: Decodable {
     public let landingPageImagePathLight: String?
     public let landingPageImagePathDark: String?
 
+    private let teaser1: Teaser?
+    private let teaser2: Teaser?
+    private let teaser3: Teaser?
+    private let teaser4: Teaser?
+    private let teaser5: Teaser?
+
+    public struct Teaser: Decodable, Swift.Identifiable {
+        public let id: UUID = UUID()
+        public let titleDE: String?
+        public let subtitleDE: String?
+        public let titleEN: String?
+        public let subtitleEN: String?
+        public let imageUrl: String?
+        public let url: String?
+        
+        enum CodingKeys: String, CodingKey {
+            case titleDE = "de_title"
+            case subtitleDE = "de_subtitle"
+            case titleEN = "en_title"
+            case subtitleEN = "en_subtitle"
+            case imageUrl = "imageUrl"
+            case url = "url"
+        }
+        
+        var hasContent: Bool {
+            return titleDE != nil || subtitleDE != nil ||
+            titleEN != nil || subtitleEN != nil ||
+            imageUrl != nil || url != nil
+        }
+    }
+    
+    public var teasers: [Teaser] {
+        return [teaser1, teaser2, teaser3, teaser4, teaser5]
+            .compactMap { $0 }
+            .filter { $0.hasContent }
+    }
+
     enum CodingKeys: String, CodingKey {
         case colorHexPrimaryLight = "colorPrimary_light"
         case colorHexOnPrimaryLight = "colorOnPrimary_light"
@@ -355,6 +392,46 @@ public struct CustomizationConfig: Decodable {
 
         case landingPageImagePathLight = "landingPageImageURL_light"
         case landingPageImagePathDark = "landingPageImageURL_dark"
+        
+        case teaser1 = "teaser1"
+        case teaser2 = "teaser2"
+        case teaser3 = "teaser3"
+        case teaser4 = "teaser4"
+        case teaser5 = "teaser5"
+    }
+}
+
+extension CustomizationConfig.Teaser {
+    public func title(for language: String) -> String {
+        switch language.lowercased() {
+        case "de":
+            return titleDE ?? titleEN ?? ""
+        case "en":
+            return titleEN ?? titleDE ?? ""
+        default:
+            return titleDE ?? titleEN ?? ""
+        }
+    }
+    
+    public func subtitle(for language: String) -> String {
+        switch language.lowercased() {
+        case "de":
+            return subtitleDE ?? subtitleEN ?? ""
+        case "en":
+            return subtitleEN ?? subtitleDE ?? ""
+        default:
+            return subtitleDE ?? subtitleEN ?? ""
+        }
+    }
+    
+    public var localizedTitle: String {
+        let currentLanguage = Locale.current.language.languageCode?.identifier ?? "de"
+        return title(for: currentLanguage)
+    }
+    
+    public var localizedSubtitle: String {
+        let currentLanguage = Locale.current.language.languageCode?.identifier ?? "de"
+        return subtitle(for: currentLanguage)
     }
 }
 
