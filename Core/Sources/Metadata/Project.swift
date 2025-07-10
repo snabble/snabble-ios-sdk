@@ -339,6 +339,24 @@ public struct CustomizationConfig: Decodable {
     private let teaser3: Teaser?
     private let teaser4: Teaser?
     private let teaser5: Teaser?
+    
+    public var teasers: [Teaser] {
+        return [teaser1, teaser2, teaser3, teaser4, teaser5]
+            .compactMap { $0 }
+            .filter { $0.hasContent }
+    }
+    
+    /// Returns all valid teasers for the current date
+    public var validTeasers: [Teaser] {
+        return teasers.filter { $0.isValid }
+    }
+    
+    /// Returns all valid teasers for a specific date
+    /// - Parameter date: The date to check validity against
+    /// - Returns: Array of valid teasers
+    public func validTeasers(at date: Date) -> [Teaser] {
+        return teasers.filter { $0.isValid(at: date) }
+    }
 
     public struct Teaser: Decodable, Swift.Identifiable {
         public let id: UUID = UUID()
@@ -348,6 +366,8 @@ public struct CustomizationConfig: Decodable {
         public let subtitleEN: String?
         public let imageUrl: String?
         public let url: String?
+        public let validFrom: Date?
+        public let validTo: Date?
         
         enum CodingKeys: String, CodingKey {
             case titleDE = "de_title"
@@ -356,6 +376,8 @@ public struct CustomizationConfig: Decodable {
             case subtitleEN = "en_subtitle"
             case imageUrl = "imageUrl"
             case url = "url"
+            case validFrom = "validFrom"
+            case validTo = "validTo"
         }
         
         var hasContent: Bool {
@@ -363,14 +385,39 @@ public struct CustomizationConfig: Decodable {
             titleEN != nil || subtitleEN != nil ||
             imageUrl != nil || url != nil
         }
+        
+        /// Checks if the teaser is valid for the current date
+        var isValid: Bool {
+            return isValid(at: Date())
+        }
+        
+        /// Checks if the teaser is valid for a specific date
+        /// - Parameter date: The date to check validity against
+        /// - Returns: true if the teaser is valid, false otherwise
+        func isValid(at date: Date) -> Bool {
+            let calendar = Calendar.current
+            let startOfDay = calendar.startOfDay(for: date)
+            
+            // If validFrom is set, date must be >= validFrom
+            if let validFrom = validFrom {
+                let validFromStart = calendar.startOfDay(for: validFrom)
+                if startOfDay < validFromStart {
+                    return false
+                }
+            }
+            
+            // If validTo is set, date must be <= validTo
+            if let validTo = validTo {
+                let validToStart = calendar.startOfDay(for: validTo)
+                if startOfDay > validToStart {
+                    return false
+                }
+            }
+            
+            return true
+        }
     }
     
-    public var teasers: [Teaser] {
-        return [teaser1, teaser2, teaser3, teaser4, teaser5]
-            .compactMap { $0 }
-            .filter { $0.hasContent }
-    }
-
     enum CodingKeys: String, CodingKey {
         case colorHexPrimaryLight = "colorPrimary_light"
         case colorHexOnPrimaryLight = "colorOnPrimary_light"
