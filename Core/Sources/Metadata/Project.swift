@@ -362,8 +362,14 @@ public struct CustomizationConfig: Decodable {
         public let id: UUID = UUID()
         public let titleDE: String?
         public let subtitleDE: String?
+        public let detailTitleDE: String?
+        public let detailSubtitleDE: String?
+
         public let titleEN: String?
         public let subtitleEN: String?
+        public let detailTitleEN: String?
+        public let detailSubtitleEN: String?
+
         public let imageUrl: String?
         public let url: String?
         public let validFrom: Date?
@@ -372,8 +378,14 @@ public struct CustomizationConfig: Decodable {
         enum CodingKeys: String, CodingKey {
             case titleDE = "de_title"
             case subtitleDE = "de_subtitle"
+            case detailTitleDE = "de_details_title"
+            case detailSubtitleDE = "de_details_subtitle"
+            
             case titleEN = "en_title"
             case subtitleEN = "en_subtitle"
+            case detailTitleEN = "en_details_title"
+            case detailSubtitleEN = "en_details_subtitle"
+
             case imageUrl = "imageUrl"
             case url = "url"
             case validFrom = "validFrom"
@@ -381,9 +393,7 @@ public struct CustomizationConfig: Decodable {
         }
         
         var hasContent: Bool {
-            return titleDE != nil || subtitleDE != nil ||
-            titleEN != nil || subtitleEN != nil ||
-            imageUrl != nil || url != nil
+            return titleDE != nil && subtitleDE != nil && imageUrl != nil
         }
         
         /// Checks if the teaser is valid for the current date
@@ -471,6 +481,28 @@ extension CustomizationConfig.Teaser {
         }
     }
     
+    public func detailTitle(for language: String) -> String {
+        switch language.lowercased() {
+        case "de":
+            return detailTitleDE ?? detailTitleEN ?? ""
+        case "en":
+            return detailTitleEN ?? detailTitleDE ?? ""
+        default:
+            return detailTitleDE ?? detailTitleEN ?? ""
+        }
+    }
+    
+    public func detailSubtitle(for language: String) -> String {
+        switch language.lowercased() {
+        case "de":
+            return detailSubtitleDE ?? detailSubtitleEN ?? ""
+        case "en":
+            return detailSubtitleEN ?? detailSubtitleDE ?? ""
+        default:
+            return detailSubtitleDE ?? detailSubtitleEN ?? ""
+        }
+    }
+
     public var localizedTitle: String {
         let currentLanguage = Locale.current.language.languageCode?.identifier ?? "de"
         return title(for: currentLanguage)
@@ -479,6 +511,16 @@ extension CustomizationConfig.Teaser {
     public var localizedSubtitle: String {
         let currentLanguage = Locale.current.language.languageCode?.identifier ?? "de"
         return subtitle(for: currentLanguage)
+    }
+
+    public var localizedDetailTitle: String {
+        let currentLanguage = Locale.current.language.languageCode?.identifier ?? "de"
+        return detailTitle(for: currentLanguage)
+    }
+    
+    public var localizedDetailSubtitle: String {
+        let currentLanguage = Locale.current.language.languageCode?.identifier ?? "de"
+        return detailSubtitle(for: currentLanguage)
     }
 }
 
