@@ -481,6 +481,28 @@ extension CustomizationConfig.Teaser {
         }
     }
     
+    public func detailTitle(for language: String) -> String {
+        switch language.lowercased() {
+        case "de":
+            return detailTitleDE ?? detailTitleEN ?? ""
+        case "en":
+            return detailTitleEN ?? detailTitleDE ?? ""
+        default:
+            return detailTitleDE ?? detailTitleEN ?? ""
+        }
+    }
+    
+    public func detailSubtitle(for language: String) -> String {
+        switch language.lowercased() {
+        case "de":
+            return detailSubtitleDE ?? detailSubtitleEN ?? ""
+        case "en":
+            return detailSubtitleEN ?? detailSubtitleDE ?? ""
+        default:
+            return detailSubtitleDE ?? detailSubtitleEN ?? ""
+        }
+    }
+
     public var localizedTitle: String {
         let currentLanguage = Locale.current.language.languageCode?.identifier ?? "de"
         return title(for: currentLanguage)
@@ -489,6 +511,16 @@ extension CustomizationConfig.Teaser {
     public var localizedSubtitle: String {
         let currentLanguage = Locale.current.language.languageCode?.identifier ?? "de"
         return subtitle(for: currentLanguage)
+    }
+
+    public var localizedDetailTitle: String {
+        let currentLanguage = Locale.current.language.languageCode?.identifier ?? "de"
+        return detailTitle(for: currentLanguage)
+    }
+    
+    public var localizedDetailSubtitle: String {
+        let currentLanguage = Locale.current.language.languageCode?.identifier ?? "de"
+        return detailSubtitle(for: currentLanguage)
     }
 }
 
