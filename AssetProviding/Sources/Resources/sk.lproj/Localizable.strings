@@ -457,6 +457,8 @@
 "Snabble.Taxation.Consume.takeaway" = "zobrať so sebou";
 "Snabble.Taxation.consumeWhere" = "Chceš svoj nákup";
 "Snabble.Taxation.pleaseChoose" = "Vyber niektorú možnosť";
+"Snabble.Teaser.moreButtonTitle" = "Show more";
+"Snabble.Teaser.title" = "Latest news";
 "Snabble.Textfield.HidePassword.Accessibility" = "Hide password";
 "Snabble.Textfield.ShowPassword.Accessibility" = "Show password";
 "Snabble.User.Country.title" = "Select a Country";
@@ -482,6 +484,7 @@
 "Snabble.addDiscount" = "Zadať zľavu";
 "Snabble.askForPermission" = "Žiadať o povolenie";
 "Snabble.cancel" = "Zrušiť";
+"Snabble.close" = "Zatvoriť";
 "Snabble.delete" = "Vymazať";
 "Snabble.done" = "Hotovo";
 "Snabble.edit" = "Upraviť";

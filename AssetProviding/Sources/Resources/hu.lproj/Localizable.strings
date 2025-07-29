@@ -457,6 +457,8 @@
 "Snabble.Taxation.Consume.takeaway" = "magaddal vinni";
 "Snabble.Taxation.consumeWhere" = "Szeretnéd a bevásárlásodat";
 "Snabble.Taxation.pleaseChoose" = "Kérlek, válassz";
+"Snabble.Teaser.moreButtonTitle" = "Show more";
+"Snabble.Teaser.title" = "Latest news";
 "Snabble.Textfield.HidePassword.Accessibility" = "Hide password";
 "Snabble.Textfield.ShowPassword.Accessibility" = "Show password";
 "Snabble.User.Country.title" = "Select a Country";
@@ -482,6 +484,7 @@
 "Snabble.addDiscount" = "Árengedmény megadása";
 "Snabble.askForPermission" = "Engedély kéréséhez";
 "Snabble.cancel" = "Mégsem";
+"Snabble.close" = "Bezárás";
 "Snabble.delete" = "Törlés";
 "Snabble.done" = "Kész";
 "Snabble.edit" = "Szerkesztés";

@@ -457,6 +457,8 @@
 "Snabble.Taxation.Consume.takeaway" = "Take with me";
 "Snabble.Taxation.consumeWhere" = "Will you be eating here or is this to go?";
 "Snabble.Taxation.pleaseChoose" = "Please choose";
+"Snabble.Teaser.moreButtonTitle" = "Show more";
+"Snabble.Teaser.title" = "Latest news";
 "Snabble.Textfield.HidePassword.Accessibility" = "Hide password";
 "Snabble.Textfield.ShowPassword.Accessibility" = "Show password";
 "Snabble.User.Country.title" = "Select a Country";
@@ -482,6 +484,7 @@
 "Snabble.addDiscount" = "Enter discount";
 "Snabble.askForPermission" = "Ask for permission";
 "Snabble.cancel" = "Cancel";
+"Snabble.close" = "Close";
 "Snabble.delete" = "Delete";
 "Snabble.done" = "Done";
 "Snabble.edit" = "Edit";
