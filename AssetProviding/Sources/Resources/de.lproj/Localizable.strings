@@ -457,6 +457,8 @@
 "Snabble.Taxation.Consume.takeaway" = "mitnehmen";
 "Snabble.Taxation.consumeWhere" = "Möchtest du deinen Einkauf";
 "Snabble.Taxation.pleaseChoose" = "Bitte wählen";
+"Snabble.Teaser.moreButtonTitle" = "Mehr anzeigen";
+"Snabble.Teaser.title" = "Aktuelle Neuigkeiten";
 "Snabble.Textfield.HidePassword.Accessibility" = "Passwort verbergen";
 "Snabble.Textfield.ShowPassword.Accessibility" = "Passwort anzeigen";
 "Snabble.User.Country.title" = "Land wählen";
@@ -482,6 +484,7 @@
 "Snabble.addDiscount" = "Rabatt eingeben";
 "Snabble.askForPermission" = "Um Erlaubnis fragen";
 "Snabble.cancel" = "Abbrechen";
+"Snabble.close" = "Schließen";
 "Snabble.delete" = "Löschen";
 "Snabble.done" = "Fertig";
 "Snabble.edit" = "Bearbeiten";

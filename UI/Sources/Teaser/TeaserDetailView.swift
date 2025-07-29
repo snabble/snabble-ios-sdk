@@ -1,0 +1,93 @@
+//
+//  TeaserDetailView.swift
+//  teo
+//
+//  Created by Uwe Tilemann on 09.07.25.
+//
+
+import UIKit
+import SwiftUI
+
+import SnabbleCore
+import SnabbleComponents
+import SnabbleAssetProviding
+
+public struct TeaserDetailView: View {
+    @Environment(\.openURL) var openURL
+
+    public let model: TeaserModel
+    public let teaser: CustomizationConfig.Teaser
+    @State public var image: UIImage?
+    
+    @State private var isLoading: Bool = false
+    
+    public var body: some View {
+        ScrollView {
+            VStack(alignment: .leading, spacing: 25) {
+                HStack {
+                    if let image {
+                        SwiftUI.Image(uiImage: image)
+                            .resizable()
+                            .scaledToFit()
+                            .overlay(
+                                ProgressView()
+                                    .opacity(isLoading ? 1.0 : 0.0)
+                            )
+                        
+                    }
+                }
+                .frame(maxWidth: .infinity)
+
+                VStack(alignment: .leading, spacing: 16) {
+                    Text(!teaser.localizedDetailTitle.isEmpty ? teaser.localizedDetailTitle : teaser.localizedTitle)
+                        .font(.font("SnabbleUI.CustomFont.header", size: 20, relativeTo: .body, domain: nil))
+                    
+                    Text(!teaser.localizedDetailSubtitle.isEmpty ? teaser.localizedDetailSubtitle : teaser.localizedSubtitle)
+                    
+                    if let urlString = teaser.url, let url = URL(string: urlString) {
+                        Button(action: {
+                            openURL(url)
+                        }) {
+                            Text(Asset.localizedString(forKey: "Snabble.Teaser.moreButtonTitle"))
+                                .font(.subheadline)
+                                .foregroundColor(Color.projectPrimary())
+                                .frame(maxWidth: .infinity)
+                        }
+                        .buttonStyle(ProjectBorderedPrimaryButtonStyle())
+                        .padding(.horizontal, 64)
+                        .padding(.top, 16)
+                    }
+                    
+                }
+                .padding(.horizontal, 25)
+
+                Spacer()
+            }
+        }
+        .task {
+            await loadImage()
+        }
+        .scrollBounceBehavior(.basedOnSize, axes: [.vertical])
+        .font(.font("SnabbleUI.CustomFont.teaser", size: 17, relativeTo: .body, domain: nil))
+        .navigationTitle(Asset.localizedString(forKey: "Snabble.Teaser.title"))
+    }
+    
+    @MainActor
+    private func loadImage() async {
+        guard let imageUrl = teaser.detailImageUrl,
+              let projectId = model.shop?.projectId,
+              let project = Snabble.shared.project(for: projectId) else {
+            return
+        }
+        isLoading = true
+
+        let urlString = "\(Snabble.shared.environment.apiURLString)\(imageUrl)"
+        project.fetchImage(urlString: urlString) { image in
+            withAnimation {
+                self.image = image
+                isLoading = false
+            }
+       }
+    }
+
+}
