@@ -371,6 +371,7 @@ public struct CustomizationConfig: Decodable {
         public let detailSubtitleEN: String?
 
         public let imageUrl: String?
+        public let detailImageUrl: String?
         public let url: String?
         public let validFrom: Date?
         public let validTo: Date?
@@ -387,6 +388,7 @@ public struct CustomizationConfig: Decodable {
             case detailSubtitleEN = "en_details_subtitle"
 
             case imageUrl = "imageUrl"
+            case detailImageUrl = "detailsImageUrl"
             case url = "url"
             case validFrom = "validFrom"
             case validTo = "validTo"
