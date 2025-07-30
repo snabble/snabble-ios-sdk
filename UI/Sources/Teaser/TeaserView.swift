@@ -63,6 +63,7 @@ public struct TeaserView: View {
                     }
                     .scrollTargetLayout()
                 }
+                .scrollBounceBehavior(.basedOnSize, axes: [.horizontal])
                 .scrollTargetBehavior(.viewAligned)
                 .scrollPosition(id: $activePage)
                 .scrollIndicators(.never)
