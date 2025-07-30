@@ -14,10 +14,7 @@
 		607FACE01AFB9204008FA782 /* LaunchScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 607FACDE1AFB9204008FA782 /* LaunchScreen.xib */; };
 		7605C47328AC9794000105A8 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7605C47528AC9794000105A8 /* Localizable.strings */; };
 		7605C5BF28AE4383000105A8 /* ShopsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7605C5BE28AE4383000105A8 /* ShopsViewController.swift */; };
-		760D85472BF77A3200D4ED9A /* SnabbleAssetProviding in Frameworks */ = {isa = PBXBuildFile; productRef = 760D85462BF77A3200D4ED9A /* SnabbleAssetProviding */; };
-		761DD42A2C0DA7C0006DD1F6 /* SnabbleNetwork in Frameworks */ = {isa = PBXBuildFile; productRef = 761DD4292C0DA7C0006DD1F6 /* SnabbleNetwork */; };
-		761DD42C2C0DA7C0006DD1F6 /* SnabblePhoneAuth in Frameworks */ = {isa = PBXBuildFile; productRef = 761DD42B2C0DA7C0006DD1F6 /* SnabblePhoneAuth */; };
-		761DD4302C0DA7C5006DD1F6 /* SnabbleUser in Frameworks */ = {isa = PBXBuildFile; productRef = 761DD42F2C0DA7C5006DD1F6 /* SnabbleUser */; };
+		767300F42E3A565D00087CA7 /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = 767300F32E3A565D00087CA7 /* Snabble */; };
 		769BBED62AE2E5CC001DB2EF /* ReceiptsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 769BBED52AE2E5CC001DB2EF /* ReceiptsViewController.swift */; };
 		76AD21B128D42513003D865A /* privacy.html in Resources */ = {isa = PBXBuildFile; fileRef = 76AD21B028D42513003D865A /* privacy.html */; };
 		76AD21B328D4331A003D865A /* terms.html in Resources */ = {isa = PBXBuildFile; fileRef = 76AD21B228D4331A003D865A /* terms.html */; };
@@ -28,10 +25,6 @@
 		E161B0EE28B76DD9005061C4 /* Onboarding.json in Resources */ = {isa = PBXBuildFile; fileRef = E161B0EB28B76357005061C4 /* Onboarding.json */; };
 		E16A6EA62AB846E800E6096D /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E16A6EA52AB8449300E6096D /* Settings.bundle */; };
 		E1786CBF28BF351400CB7AF0 /* Dashboard.json in Resources */ = {isa = PBXBuildFile; fileRef = E1786CBE28BF351400CB7AF0 /* Dashboard.json */; };
-		E1AABF0829E53A2D00D83490 /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = E1AABF0729E53A2D00D83490 /* Snabble */; };
-		E1AABF0A29E53A2D00D83490 /* SnabbleCore in Frameworks */ = {isa = PBXBuildFile; productRef = E1AABF0929E53A2D00D83490 /* SnabbleCore */; };
-		E1AABF0C29E53A2D00D83490 /* SnabbleDatatrans in Frameworks */ = {isa = PBXBuildFile; productRef = E1AABF0B29E53A2D00D83490 /* SnabbleDatatrans */; };
-		E1AABF0E29E53A2D00D83490 /* SnabbleUI in Frameworks */ = {isa = PBXBuildFile; productRef = E1AABF0D29E53A2D00D83490 /* SnabbleUI */; };
 		E1BEF67128B79B4900549104 /* imprint.html in Resources */ = {isa = PBXBuildFile; fileRef = E1BEF67028B79B4900549104 /* imprint.html */; };
 		E1DA445E28B3668C0034427D /* AppDelegate+AssetProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DA445D28B3668C0034427D /* AppDelegate+AssetProviding.swift */; };
 		E1DA449C28B3A2BD0034427D /* LoadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DA449B28B3A2BD0034427D /* LoadingViewController.swift */; };
@@ -84,14 +77,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				E1AABF0829E53A2D00D83490 /* Snabble in Frameworks */,
-				760D85472BF77A3200D4ED9A /* SnabbleAssetProviding in Frameworks */,
-				E1AABF0C29E53A2D00D83490 /* SnabbleDatatrans in Frameworks */,
-				761DD4302C0DA7C5006DD1F6 /* SnabbleUser in Frameworks */,
-				E1AABF0E29E53A2D00D83490 /* SnabbleUI in Frameworks */,
-				761DD42C2C0DA7C0006DD1F6 /* SnabblePhoneAuth in Frameworks */,
-				E1AABF0A29E53A2D00D83490 /* SnabbleCore in Frameworks */,
-				761DD42A2C0DA7C0006DD1F6 /* SnabbleNetwork in Frameworks */,
+				767300F42E3A565D00087CA7 /* Snabble in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -238,14 +224,7 @@
 			);
 			name = SnabbleSampleApp;
 			packageProductDependencies = (
-				E1AABF0729E53A2D00D83490 /* Snabble */,
-				E1AABF0929E53A2D00D83490 /* SnabbleCore */,
-				E1AABF0B29E53A2D00D83490 /* SnabbleDatatrans */,
-				E1AABF0D29E53A2D00D83490 /* SnabbleUI */,
-				760D85462BF77A3200D4ED9A /* SnabbleAssetProviding */,
-				761DD4292C0DA7C0006DD1F6 /* SnabbleNetwork */,
-				761DD42B2C0DA7C0006DD1F6 /* SnabblePhoneAuth */,
-				761DD42F2C0DA7C5006DD1F6 /* SnabbleUser */,
+				767300F32E3A565D00087CA7 /* Snabble */,
 			);
 			productName = Snabble;
 			productReference = 607FACD01AFB9204008FA782 /* SnabbleSampleApp.app */;
@@ -569,7 +548,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 53K7JS449L;
 				INFOPLIST_FILE = Snabble/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -591,7 +570,7 @@
 				CODE_SIGN_STYLE = Automatic;
 				DEVELOPMENT_TEAM = 53K7JS449L;
 				INFOPLIST_FILE = Snabble/Info.plist;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -620,7 +599,7 @@
 				DEVELOPMENT_TEAM = 53K7JS449L;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				MARKETING_VERSION = 1.0;
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
@@ -649,7 +628,7 @@
 				DEVELOPMENT_TEAM = 53K7JS449L;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				PRODUCT_BUNDLE_IDENTIFIER = io.snabble.SnabbleSampleAppTests;
@@ -694,37 +673,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCSwiftPackageProductDependency section */
-		760D85462BF77A3200D4ED9A /* SnabbleAssetProviding */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SnabbleAssetProviding;
-		};
-		761DD4292C0DA7C0006DD1F6 /* SnabbleNetwork */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SnabbleNetwork;
-		};
-		761DD42B2C0DA7C0006DD1F6 /* SnabblePhoneAuth */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SnabblePhoneAuth;
-		};
-		761DD42F2C0DA7C5006DD1F6 /* SnabbleUser */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SnabbleUser;
-		};
-		E1AABF0729E53A2D00D83490 /* Snabble */ = {
+		767300F32E3A565D00087CA7 /* Snabble */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Snabble;
-		};
-		E1AABF0929E53A2D00D83490 /* SnabbleCore */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SnabbleCore;
-		};
-		E1AABF0B29E53A2D00D83490 /* SnabbleDatatrans */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SnabbleDatatrans;
-		};
-		E1AABF0D29E53A2D00D83490 /* SnabbleUI */ = {
-			isa = XCSwiftPackageProductDependency;
-			productName = SnabbleUI;
 		};
 /* End XCSwiftPackageProductDependency section */
 	};
