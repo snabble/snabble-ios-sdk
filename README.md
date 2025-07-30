@@ -163,4 +163,4 @@ snabble GmbH, Bonn
 
 ## License
 
-snabble is (c) 2021-2024 snabble GmbH, Bonn. The SDK is made available under the [MIT License](https://github.com/snabble/iOS-SDK/blob/main/LICENSE).
+snabble is (c) 2021-2025 snabble GmbH, Bonn. The SDK is made available under the [MIT License](https://github.com/snabble/iOS-SDK/blob/main/LICENSE).
