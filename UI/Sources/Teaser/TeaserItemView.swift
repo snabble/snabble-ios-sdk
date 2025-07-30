@@ -35,25 +35,27 @@ public struct TeaserItemView: View {
                         )
                 }
             }
-            .frame(height: 124)
         }
     }
     
     public var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             imageView
-            
+                .frame(height: 124)
+
             VStack(alignment: .leading, spacing: 0) {
                 Text(teaser.localizedTitle)
                     .font(.subheadline)
                     .fontWeight(.bold)
+                    .lineLimit(1)
                     .padding(.bottom, 4)
                 Text(teaser.localizedSubtitle)
                     .font(.footnote)
                     .lineLimit(2)
+                Spacer(minLength: 12)
             }
             .padding(.horizontal, 16)
-            .padding(.vertical, 12)
+            .padding(.top, 12)
         }
         .contentShape(Rectangle())
         .onTapGesture {
@@ -66,17 +68,10 @@ public struct TeaserItemView: View {
     
     @MainActor
     private func loadImage() async {
-        guard let imageUrl = teaser.imageUrl,
-              let projectId = model.shop?.projectId,
-              let project = Snabble.shared.project(for: projectId) else {
-            return
-        }
-        isLoading = true
+        guard let imageUrl = teaser.imageUrl else { return }
 
-        let urlString = "\(Snabble.shared.environment.apiURLString)\(imageUrl)"
-        project.fetchImage(urlString: urlString) { image in
-            self.image = image
-            isLoading = false
-       }
+        isLoading = true
+        image = await model.loadImage(from: imageUrl)
+        isLoading = false
     }
 }
