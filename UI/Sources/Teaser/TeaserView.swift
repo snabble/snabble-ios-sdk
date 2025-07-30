@@ -21,11 +21,19 @@ extension CustomizationConfig.Teaser: Hashable {
 }
 
 public struct TeaserView: View {
-    @State var model: TeaserModel
-    
-    public let onNavigationPublisher = PassthroughSubject<(teaser: CustomizationConfig.Teaser, image: UIImage?), Never>()
-    
-    @State private var activePage: CustomizationConfig.Teaser?
+    @State public var model: TeaserModel
+    @State public var activePage: CustomizationConfig.Teaser?
+
+    public let onNavigationPublisher: PassthroughSubject<(teaser: CustomizationConfig.Teaser, image: UIImage?), Never>
+
+    public init(
+        model: TeaserModel,
+        activePage: CustomizationConfig.Teaser? = nil,
+        actionPublisher: PassthroughSubject<(teaser: CustomizationConfig.Teaser, image: UIImage?), Never> = .init()) {
+        self.model = model
+        self.activePage = activePage
+        self.onNavigationPublisher = actionPublisher
+    }
 
     public var body: some View {
         VStack {

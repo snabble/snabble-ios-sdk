@@ -17,16 +17,24 @@ public struct TeaserDetailView: View {
 
     public let model: TeaserModel
     public let teaser: CustomizationConfig.Teaser
-    @State public var image: UIImage?
+    public let initialImage: UIImage?
+
+    @State private var image: UIImage?
     
     @State private var isLoading: Bool = false
+    
+    public init(model: TeaserModel, teaser: CustomizationConfig.Teaser, image: UIImage?) {
+        self.model = model
+        self.teaser = teaser
+        self.initialImage = image
+    }
     
     public var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 25) {
                 HStack {
-                    if let image {
-                        SwiftUI.Image(uiImage: image)
+                    if let displayImage = image ?? initialImage {
+                        SwiftUI.Image(uiImage: displayImage)
                             .resizable()
                             .scaledToFit()
                             .overlay(
@@ -65,7 +73,17 @@ public struct TeaserDetailView: View {
             }
         }
         .task {
-            await loadImage()
+            if image == nil {
+                image = initialImage
+            }
+
+            if let urlString = teaser.detailImageUrl {
+                await loadImage(urlString)
+            } else {
+                if image == nil, let urlString = teaser.imageUrl {
+                    await loadImage(urlString)
+                }
+            }
         }
         .scrollBounceBehavior(.basedOnSize, axes: [.vertical])
         .font(.font("SnabbleUI.CustomFont.teaser", size: 17, relativeTo: .body, domain: nil))
@@ -73,8 +91,8 @@ public struct TeaserDetailView: View {
     }
     
     @MainActor
-    private func loadImage() async {
-        guard let imageUrl = teaser.detailImageUrl,
+    private func loadImage(_ urlString: String?) async {
+        guard let imageUrl = urlString,
               let projectId = model.shop?.projectId,
               let project = Snabble.shared.project(for: projectId) else {
             return

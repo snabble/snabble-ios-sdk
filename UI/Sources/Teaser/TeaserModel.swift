@@ -15,7 +15,11 @@ public final class TeaserModel {
     private(set) var shop: Shop?
     
     public var teasers: [CustomizationConfig.Teaser] = []
-        
+    
+    public init(shop: Shop? = nil) {
+        load(for: shop)
+    }
+
     public func load(for shop: Shop?) {
         self.shop = shop
 
