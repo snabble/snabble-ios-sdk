@@ -58,7 +58,6 @@ public struct TeaserView: View {
                             )
                         }
                         .padding(.horizontal, 25)
-                        .frame(height: 210)
                         .containerRelativeFrame(.horizontal, count: 1, spacing: 0)
                     }
                     .scrollTargetLayout()
