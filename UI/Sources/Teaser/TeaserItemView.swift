@@ -57,6 +57,7 @@ public struct TeaserItemView: View {
             .padding(.horizontal, 16)
             .padding(.top, 12)
         }
+        .animation(.default, value: image)
         .contentShape(Rectangle())
         .onTapGesture {
             action(image)

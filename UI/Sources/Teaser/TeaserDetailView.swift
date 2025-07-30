@@ -45,6 +45,7 @@ public struct TeaserDetailView: View {
                     }
                 }
                 .frame(maxWidth: .infinity)
+                .animation(.default, value: image)
 
                 VStack(alignment: .leading, spacing: 16) {
                     Text(!teaser.localizedDetailTitle.isEmpty ? teaser.localizedDetailTitle : teaser.localizedTitle)
