@@ -66,17 +66,10 @@ public struct TeaserItemView: View {
     
     @MainActor
     private func loadImage() async {
-        guard let imageUrl = teaser.imageUrl,
-              let projectId = model.shop?.projectId,
-              let project = Snabble.shared.project(for: projectId) else {
-            return
-        }
-        isLoading = true
+        guard let imageUrl = teaser.imageUrl else { return }
 
-        let urlString = "\(Snabble.shared.environment.apiURLString)\(imageUrl)"
-        project.fetchImage(urlString: urlString) { image in
-            self.image = image
-            isLoading = false
-       }
+        isLoading = true
+        image = await model.loadImage(from: imageUrl)
+        isLoading = false
     }
 }

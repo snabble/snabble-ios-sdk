@@ -92,20 +92,10 @@ public struct TeaserDetailView: View {
     
     @MainActor
     private func loadImage(_ urlString: String?) async {
-        guard let imageUrl = urlString,
-              let projectId = model.shop?.projectId,
-              let project = Snabble.shared.project(for: projectId) else {
-            return
-        }
+        guard let imageUrl = urlString else { return }
+        
         isLoading = true
-
-        let urlString = "\(Snabble.shared.environment.apiURLString)\(imageUrl)"
-        project.fetchImage(urlString: urlString) { image in
-            withAnimation {
-                self.image = image
-                isLoading = false
-            }
-       }
+        image = await model.loadImage(from: imageUrl)
+        isLoading = false
     }
-
 }
