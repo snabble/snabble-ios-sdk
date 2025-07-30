@@ -50,6 +50,7 @@ public struct TeaserDetailView: View {
                 VStack(alignment: .leading, spacing: 16) {
                     Text(!teaser.localizedDetailTitle.isEmpty ? teaser.localizedDetailTitle : teaser.localizedTitle)
                         .font(.font("SnabbleUI.CustomFont.header", size: 20, relativeTo: .body, domain: nil))
+                        .fontWeight(.bold)
                     
                     Text(!teaser.localizedDetailSubtitle.isEmpty ? teaser.localizedDetailSubtitle : teaser.localizedSubtitle)
                     
