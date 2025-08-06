@@ -373,6 +373,7 @@ public struct CustomizationConfig: Decodable {
         public let imageUrl: String?
         public let detailImageUrl: String?
         public let url: String?
+        public let videoUrl: String?
         public let validFrom: Date?
         public let validTo: Date?
         
