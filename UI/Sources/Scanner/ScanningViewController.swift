@@ -5,9 +5,34 @@
 //
 
 import UIKit
+import SwiftUI
 import AVFoundation
 import SnabbleCore
 import SnabbleAssetProviding
+import CameraZoomWheel
+
+public final class ZoomWheelController: UIHostingController<ZoomControl> {
+    public init(zoomLevel: Binding<CGFloat>, steps: [ZoomStep]) {
+        super.init(rootView: ZoomControl(zoomLevel: zoomLevel, steps: steps))
+    }
+
+    @MainActor required dynamic init?(coder aDecoder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    public override func viewDidLoad() {
+        super.viewDidLoad()
+        
+        view.backgroundColor = .clear
+        view.layer.zPosition = 1
+    }
+
+    public override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+
+        view.invalidateIntrinsicContentSize()
+    }
+}
 
 public extension Notification.Name {
     static let snabbleShowScanConfirmation = Notification.Name("snabbleShowScanConfirmation")
@@ -48,6 +73,15 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
         return -(bottom?.distance ?? 0) - 16
     }
 
+    private var visibleWheelOffset: CGFloat {
+        if self.pulleyViewController?.drawerPosition == .closed {
+            return -134
+        }
+
+        let bottom = self.pulleyViewController?.drawerDistanceFromBottom
+        return -(bottom?.distance ?? 0) - 134
+    }
+
     private var keyboardObserver: KeyboardObserver!
     private var barcodeDetector: BarcodeDetector
     private var torchButton: UIBarButtonItem?
@@ -56,6 +90,22 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
     private weak var messageTimer: Timer?
 
     public weak var scannerDelegate: ScannerDelegate?
+
+    public weak var zoomController: ZoomWheelController?
+    private var zoomLevel: CGFloat {
+        get {
+            if UserDefaults.standard.object(forKey: BarcodeDetector.zoomValueKey) != nil {
+                return CGFloat(UserDefaults.standard.float(forKey: BarcodeDetector.zoomValueKey))
+            } else {
+                return barcodeDetector.zoomFactor ?? 1.0
+            }
+        }
+        set {
+            barcodeDetector.zoomFactor = newValue
+        }
+    }
+    
+    private var wheelViewBottom: NSLayoutConstraint?
 
     public init(forCart cart: ShoppingCart, forShop shop: Shop, withDetector detector: BarcodeDetector) {
         let project = shop.project ?? .none
@@ -110,10 +160,28 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
         let msgTap = UITapGestureRecognizer(target: self, action: #selector(self.messageTapped(_:)))
         messageView.addGestureRecognizer(msgTap)
 
+        let zoomSteps: [ZoomStep]
+        
+        if let camera = AVCaptureDevice.default(.builtInWideAngleCamera, for: .video, position: .back) {
+            zoomSteps = camera.zoomSteps
+        } else {
+            zoomSteps = ZoomStep.defaultSteps
+        }
+        let controller = ZoomWheelController(
+            zoomLevel: Binding(get: { self.zoomLevel }, set: { self.zoomLevel = $0}),
+            steps: zoomSteps)
+
+        controller.view.translatesAutoresizingMaskIntoConstraints = false
+        addChild(controller)
+
         view.addSubview(spinner)
         view.addSubview(scanConfirmationView)
         view.addSubview(messageView)
-
+        view.addSubview(controller.view)
+        
+        controller.didMove(toParent: self)
+        self.zoomController = controller
+        
         self.spinner = spinner
         self.messageView = messageView
         self.scanConfirmationView = scanConfirmationView
@@ -127,7 +195,12 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
             scanConfirmationView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).usingVariable(&scanConfirmationViewBottom),
             messageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             messageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            messageView.topAnchor.constraint(equalTo: view.topAnchor).usingVariable(&messageTopDistance)
+            messageView.topAnchor.constraint(equalTo: view.topAnchor).usingVariable(&messageTopDistance),
+            
+            controller.view.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            controller.view.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            controller.view.heightAnchor.constraint(equalToConstant: 130),
+            controller.view.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).usingVariable(&wheelViewBottom)
         ])
 
         self.view = view
@@ -140,7 +213,8 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
         
         scanConfirmationView?.delegate = self
         scanConfirmationViewBottom?.constant = hiddenConfirmationOffset
-
+        wheelViewBottom?.constant = visibleWheelOffset
+        
         self.messageTopDistance?.constant = -150
         messageView?.isHidden = true
 
@@ -172,6 +246,10 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
         }
         if let messageView = messageView {
             self.view.bringSubviewToFront(messageView)
+        }
+        self.zoomLevel = barcodeDetector.zoomFactor ?? 1
+        if let zoomWheel = zoomController?.view {
+            self.view.bringSubviewToFront(zoomWheel)
         }
         if !self.confirmationVisible && self.pulleyViewController?.drawerPosition != .open {
             self.barcodeDetector.resumeScanning()
