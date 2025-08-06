@@ -29,24 +29,44 @@ public struct TeaserDetailView: View {
         self.initialImage = image
     }
     
+    @ViewBuilder
+    var imageView: some View {
+        HStack {
+            if let displayImage = image ?? initialImage {
+                SwiftUI.Image(uiImage: displayImage)
+                    .resizable()
+                    .scaledToFit()
+                    .overlay(
+                        ProgressView()
+                            .opacity(isLoading ? 1.0 : 0.0)
+                    )
+                
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .animation(.default, value: image)
+    }
+
+    @ViewBuilder
+    var videoView: some View {
+        HStack {
+            if let videoURL = teaser.videoUrl, let videoID = videoURL.extractYouTubeID {
+                YouTubeView(videoID: videoID)
+            }
+        }
+        .frame(maxWidth: .infinity)
+        .frame(height: 280)
+    }
+
     public var body: some View {
         ScrollView {
             VStack(alignment: .leading, spacing: 25) {
-                HStack {
-                    if let displayImage = image ?? initialImage {
-                        SwiftUI.Image(uiImage: displayImage)
-                            .resizable()
-                            .scaledToFit()
-                            .overlay(
-                                ProgressView()
-                                    .opacity(isLoading ? 1.0 : 0.0)
-                            )
-                        
-                    }
-                }
-                .frame(maxWidth: .infinity)
-                .animation(.default, value: image)
 
+                if teaser.videoUrl != nil {
+                    videoView
+                } else {
+                    imageView
+                }
                 VStack(alignment: .leading, spacing: 16) {
                     Text(!teaser.localizedDetailTitle.isEmpty ? teaser.localizedDetailTitle : teaser.localizedTitle)
                         .font(.font("SnabbleUI.CustomFont.header", size: 20, relativeTo: .body, domain: nil))
