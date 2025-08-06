@@ -6,8 +6,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/utilem/CameraZoomWheel.git",
       "state" : {
-        "revision" : "7e2c4083ca6325ff275d0773fd15966c2e96e6df",
-        "version" : "1.0.2"
+        "revision" : "01c75462d675adc137cbe9100e77b51cf3f9bbae",
+        "version" : "1.0.3"
       }
     },
     {
