@@ -50,21 +50,29 @@ public protocol BarcodeDetectorMessageDelegate: AnyObject {
     func dismiss()
 }
 
+public protocol Zoomable {
+    var zoomFactor: CGFloat? { get set }
+}
+
 // Base class for the barcode detectors (iOS builtin and CortexDecoder)
 
 // NOTE that this class is not really a part of the public API of the Snabble SDK - it and its properties are only marked
 // `public`/`open` to support implementing `CortexDecoderBarcodeDetector` in its separate module
 
-open class BarcodeDetector: NSObject {
+open class BarcodeDetector: NSObject, Zoomable {
+    
     public static var batterySaverTimeout: TimeInterval { 90 }
     public static var batterySaverKey: String { "io.snabble.sdk.batterySaver" }
+    public static var zoomValueKey: String { "io.snabble.sdk.zoomValue" }
 
     /// the scan formats that should be detected, must be set before `scannerWillAppear()` is called.
     open var scanFormats: [ScanFormat]
 
     /// the expected width of a "standard" barcode, must be set before `scannerWillAppear()` is called.
     public var expectedBarcodeWidth: Int?
-
+    
+    public var zoomFactor: CGFloat?
+    
     public weak var delegate: BarcodeDetectorDelegate?
     public weak var messageDelegate: BarcodeDetectorMessageDelegate?
 

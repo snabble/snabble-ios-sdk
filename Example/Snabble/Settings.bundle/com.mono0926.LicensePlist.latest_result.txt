@@ -1,3 +1,41 @@
+name: LicensePlist, nameSpecified: , owner: mono0926, version: 3.27.1, source: https://github.com/mono0926/LicensePlist
+
+name: SwiftLint, nameSpecified: , owner: realm, version: 0.59.0, source: https://github.com/realm/SwiftLint
+
+name: CameraZoomWheel, nameSpecified: CameraZoomWheel, owner: utilem, version: 1.0.2, source: https://github.com/utilem/CameraZoomWheel
+
+name: DeviceKit, nameSpecified: DeviceKit, owner: devicekit, version: 5.6.0, source: https://github.com/devicekit/DeviceKit
+
+name: GRDB.swift, nameSpecified: GRDB.swift, owner: groue, version: 6.29.3, source: https://github.com/groue/GRDB.swift
+
+name: ios-sdk, nameSpecified: Datatrans, owner: datatrans, version: 3.8.0, source: https://github.com/datatrans/ios-sdk
+
+name: KeychainAccess, nameSpecified: KeychainAccess, owner: kishikawakatsumi, version: 4.2.2, source: https://github.com/kishikawakatsumi/KeychainAccess
+
+name: Pulley, nameSpecified: Pulley, owner: snabble, version: 2.9.2, source: https://github.com/snabble/Pulley
+
+name: SDCAlertView, nameSpecified: SDCAlertView, owner: sberrevoets, version: 12.0.5, source: https://github.com/sberrevoets/SDCAlertView
+
+name: swift-asn1, nameSpecified: swift-asn1, owner: apple, version: 1.4.0, source: https://github.com/apple/swift-asn1
+
+name: swift-crypto, nameSpecified: swift-crypto, owner: apple, version: 3.13.3, source: https://github.com/apple/swift-crypto
+
+name: swift-log, nameSpecified: swift-log, owner: apple, version: 1.6.4, source: https://github.com/apple/swift-log
+
+name: swift-tagged, nameSpecified: swift-tagged, owner: pointfreeco, version: 0.10.0, source: https://github.com/pointfreeco/swift-tagged
+
+name: SwiftOTP, nameSpecified: SwiftOTP, owner: lachlanbell, version: 3.0.2, source: https://github.com/lachlanbell/SwiftOTP
+
+name: WCAG-Colors, nameSpecified: WCAG-Colors, owner: chrs1885, version: 1.0.0, source: https://github.com/chrs1885/WCAG-Colors
+
+name: WindowKit, nameSpecified: WindowKit, owner: divadretlaw, version: 2.6.1, source: https://github.com/divadretlaw/WindowKit
+
+name: WindowReader, nameSpecified: WindowReader, owner: divadretlaw, version: 3.0.0, source: https://github.com/divadretlaw/WindowReader
+
+name: WindowSceneReader, nameSpecified: WindowSceneReader, owner: divadretlaw, version: 3.2.0, source: https://github.com/divadretlaw/WindowSceneReader
+
+name: ZIPFoundation, nameSpecified: ZIPFoundation, owner: weichsel, version: 0.9.19, source: https://github.com/weichsel/ZIPFoundation
+
 add-version-numbers: false
 
 LicensePlist Version: 3.27.1
