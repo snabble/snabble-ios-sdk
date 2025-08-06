@@ -391,23 +391,24 @@ public struct CustomizationConfig: Decodable {
             case imageUrl = "imageUrl"
             case detailImageUrl = "detailsImageUrl"
             case url = "url"
+            case videoUrl = "videoUrl"
             case validFrom = "validFrom"
             case validTo = "validTo"
         }
         
-        var hasContent: Bool {
+        public var hasContent: Bool {
             return titleDE != nil && subtitleDE != nil && imageUrl != nil
         }
         
         /// Checks if the teaser is valid for the current date
-        var isValid: Bool {
+        public var isValid: Bool {
             return isValid(at: Date())
         }
         
         /// Checks if the teaser is valid for a specific date
         /// - Parameter date: The date to check validity against
         /// - Returns: true if the teaser is valid, false otherwise
-        func isValid(at date: Date) -> Bool {
+        public func isValid(at date: Date) -> Bool {
             let calendar = Calendar.current
             let startOfDay = calendar.startOfDay(for: date)
             
