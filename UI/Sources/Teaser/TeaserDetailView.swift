@@ -43,7 +43,7 @@ struct YouTubeView: UIViewRepresentable {
             <style>body { margin: 0; padding: 0; }</style>
         </head>
         <body>
-            <iframe width="100%" height="100%" src="https://www.youtube.com/embed/\(videoID)?playsinline=1" frameborder="0" allowfullscreen></iframe>
+            <iframe width="100%" height="280px" src="https://www.youtube.com/embed/\(videoID)?playsinline=1" frameborder="0" allowfullscreen></iframe>
         </body>
         </html>
         """
@@ -94,7 +94,7 @@ public struct TeaserDetailView: View {
             }
         }
         .frame(maxWidth: .infinity)
-        .animation(.default, value: image)
+        .frame(height: 280)
     }
 
     public var body: some View {
