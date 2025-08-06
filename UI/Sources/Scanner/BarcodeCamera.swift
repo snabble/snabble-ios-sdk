@@ -59,6 +59,26 @@ open class BarcodeCamera: BarcodeDetector {
     private let videoDataOutput: AVCaptureVideoDataOutput
     public weak var bufferDelegate: BarcodeBufferDelegate?
     
+    public override var zoomFactor: CGFloat? {
+        didSet {
+            guard let camera, let newValue = zoomFactor else {
+                return
+            }
+            guard newValue >= camera.minAvailableVideoZoomFactor else { return }
+            guard newValue <= camera.maxAvailableVideoZoomFactor else { return }
+
+            do {
+                try camera.lockForConfiguration()
+                camera.ramp(toVideoZoomFactor: newValue, withRate: 4)
+                camera.unlockForConfiguration()
+                
+                UserDefaults.standard.set(Float(newValue), forKey: Self.zoomValueKey)
+            } catch {
+                print("error ramping zoom: \(error)")
+            }
+        }
+    }
+
     override public init(detectorArea: BarcodeDetectorArea) {
         captureSession = AVCaptureSession()
         
@@ -219,14 +239,13 @@ open class BarcodeCamera: BarcodeDetector {
             return
         }
 
-        let zoomFactor = RecommendedZoom.factor(for: videoInput, codeWidth: expectedBarcodeWidth)
-        do {
-            try videoInput.device.lockForConfiguration()
-            videoInput.device.videoZoomFactor = CGFloat(zoomFactor)
-            videoInput.device.unlockForConfiguration()
-        } catch {
-            print("Could not lock for configuration: \(error)")
+        let zoomFactor: Float
+        if UserDefaults.standard.object(forKey: Self.zoomValueKey) != nil {
+            zoomFactor = UserDefaults.standard.float(forKey: Self.zoomValueKey)
+        } else {
+            zoomFactor = RecommendedZoom.factor(for: videoInput, codeWidth: expectedBarcodeWidth)
         }
+        self.zoomFactor = CGFloat(zoomFactor)
     }
     
     private var lastScannedTime: Date?

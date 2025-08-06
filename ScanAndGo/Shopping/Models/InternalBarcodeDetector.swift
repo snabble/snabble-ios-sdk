@@ -36,10 +36,11 @@ extension InternalBarcodeDetector.State: CustomStringConvertible {
     }
 }
 
-open class InternalBarcodeDetector: NSObject, ObservableObject {
+open class InternalBarcodeDetector: NSObject, ObservableObject, Zoomable {
     public static var batterySaverTimeout: TimeInterval { 90 }
     public static var batterySaverKey: String { "io.snabble.sdk.batterySaver" }
-    
+    public static var zoomValueKey: String { "io.snabble.sdk.zoomValue" }
+
     let logger = Logger(subsystem: "ScanAndGo", category: "InternalBarcodeDetector")
     
     /// the scan formats that should be detected, must be set before `scannerWillAppear()` is called.
@@ -48,6 +49,24 @@ open class InternalBarcodeDetector: NSObject, ObservableObject {
     /// the expected width of a "standard" barcode, must be set before `scannerWillAppear()` is called.
     public var expectedBarcodeWidth: Int?
     
+    public var zoomFactor: CGFloat? {
+        didSet {
+            guard let camera, let newValue = zoomFactor else {
+                return
+            }
+            guard newValue >= camera.minAvailableVideoZoomFactor else { return }
+            guard newValue <= camera.maxAvailableVideoZoomFactor else { return }
+
+            do {
+                try camera.lockForConfiguration()
+                camera.ramp(toVideoZoomFactor: newValue, withRate: 4)
+                camera.unlockForConfiguration()
+            } catch {
+                print("error ramping zoom: \(error)")
+            }
+        }
+    }
+
     @Published public var torchOn = false
     @Published public var message: String?
     @Published var scannedBarcode: BarcodeResult?
@@ -289,13 +308,7 @@ open class InternalBarcodeDetector: NSObject, ObservableObject {
         }
         
         let zoomFactor = RecommendedZoom.factor(for: videoInput, codeWidth: expectedBarcodeWidth)
-        do {
-            try videoInput.device.lockForConfiguration()
-            videoInput.device.videoZoomFactor = CGFloat(zoomFactor)
-            videoInput.device.unlockForConfiguration()
-        } catch {
-            logger.error("Could not lock for configuration: \(error)")
-        }
+        self.zoomFactor = CGFloat(zoomFactor)
     }
     
     private var lastScannedTime: Date?
