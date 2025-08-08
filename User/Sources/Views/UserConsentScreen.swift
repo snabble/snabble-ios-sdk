@@ -65,25 +65,31 @@ public struct UserConsentScreen: View {
     let networkManager: NetworkManager
     
     let userConsent: User.Consent
+    let userConsentMessage: AttributedString?
     
     @State var urlResource: URL?
     @State var opacityValue: Double = 0
     
     let onCompletion: (_ userConsent: User.Consent) -> Void
     
-    public init(networkManager: NetworkManager, userConsent: User.Consent, onCompletion: @escaping (_ userConsent: User.Consent) -> Void) {
+    public init(networkManager: NetworkManager, userConsent: User.Consent, message: AttributedString? = nil, onCompletion: @escaping (_ userConsent: User.Consent) -> Void) {
         self.networkManager = networkManager
         self.userConsent = userConsent
         self.onCompletion = onCompletion
+        self.userConsentMessage = message
     }
     
     @ViewBuilder
     var attributedText: some View {
-        let description = Asset.localizedString(forKey: "Consent.description")
-        if let attributedString = try? AttributedString(markdown: description) {
-            Text(attributedString)
+        if let message = self.userConsentMessage {
+            Text(message)
         } else {
-            Text(description)
+            let description = Asset.localizedString(forKey: "Consent.description")
+            if let attributedString = try? AttributedString(markdown: description) {
+                Text(attributedString)
+            } else {
+                Text(description)
+            }
         }
     }
     
