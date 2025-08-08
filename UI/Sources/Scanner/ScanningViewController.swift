@@ -75,11 +75,11 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
 
     private var visibleWheelOffset: CGFloat {
         if self.pulleyViewController?.drawerPosition == .closed {
-            return -134
+            return 12
         }
 
         let bottom = self.pulleyViewController?.drawerDistanceFromBottom
-        return -(bottom?.distance ?? 0) - 134
+        return -(bottom?.distance ?? 0) + 12
     }
 
     private var keyboardObserver: KeyboardObserver!
@@ -287,6 +287,7 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
     // MARK: - called by the drawer
     func setOverlayOffset(_ offset: CGFloat) {
         self.barcodeDetector.setOverlayOffset(offset)
+        wheelViewBottom?.constant = visibleWheelOffset
     }
 
     func resumeScanning() {
@@ -330,6 +331,7 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
 
         self.confirmationVisible = !hidden
 
+        self.zoomController?.view.isHidden = !hidden
         self.scanConfirmationView?.isHidden = false
 
         if setBottomOffset {
