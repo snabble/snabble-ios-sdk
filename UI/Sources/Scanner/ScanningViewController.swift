@@ -314,7 +314,12 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
 
         self.scanConfirmationView?.present(withProduct: scannedProduct, withCode: scannedCode, forCart: self.shoppingCart)
 
-        self.displayScanConfirmationView(hidden: false, setBottomOffset: self.productType != .userMustWeigh)
+        if self.scanConfirmationView?.needsPresentation ?? false {
+            self.displayScanConfirmationView(hidden: false, setBottomOffset: self.productType != .userMustWeigh)
+        } else {
+            self.confirmationVisible = false
+            self.scanConfirmationView?.addToCart()
+        }
 
         NotificationCenter.default.post(name: .snabbleShowScanConfirmation, object: nil)
     }
@@ -422,6 +427,13 @@ extension ScanningViewController: AnalyticsDelegate {
 // MARK: - scanning confirmation delegate
 extension ScanningViewController: ScanConfirmationViewDelegate {
     func closeConfirmation(forItem item: CartItem?) {
+        guard self.scanConfirmationView?.needsPresentation ?? false else {
+            if self.pulleyViewController?.drawerPosition != .open {
+                self.barcodeDetector.resumeScanning()
+            }
+            return
+        }
+        
         let reopen = reopenDrawer
         
         self.displayScanConfirmationView(hidden: true)
