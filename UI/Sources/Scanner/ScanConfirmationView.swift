@@ -306,9 +306,9 @@ final class ScanConfirmationView: UIView {
             self.priceLabel?.isHidden = true
             self.plusButton?.isHidden = true
             self.minusButton?.isHidden = true
-            self.quantityField?.isEnabled = false
+            self.quantityField?.isEnabled = product.type == .userMustWeigh ? true : false
         }
-        needsPresentation = hasPrice
+        needsPresentation = hasPrice || product.type == .userMustWeigh || !project.manualCoupons.isEmpty
     }
 
     private func showQuantity(updateTextField: Bool) {
