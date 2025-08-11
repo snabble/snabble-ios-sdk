@@ -40,14 +40,16 @@ public struct ShopperView: View {
                 Text(model.errorMessage ?? "No errorMessage! This should not happen! 😳")
             }
             .windowDialog(isPresented: $showEditor) {
-                ScannedItemEditorView(model: model) { cartItem in
-                    showEditor.toggle()
-                    if let cartItem {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                            model.updateCartItem(cartItem)
-                        }
-                    }
-                }
+                ContentUnavailableView("TODO: Remove Scan Confimation View", systemImage: "xmark.circle.fill")
+
+//                ScannedItemEditorView(model: model) { cartItem in
+//                    showEditor.toggle()
+//                    if let cartItem {
+//                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+//                            model.updateCartItem(cartItem)
+//                        }
+//                    }
+//                }
             }
             .keyboardHeightEnvironmentValue()
             .sheet(isPresented: $showSearch) {
