@@ -79,7 +79,7 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
         }
 
         let bottom = self.pulleyViewController?.drawerDistanceFromBottom
-        return -(bottom?.distance ?? 0) + 12
+        return -((bottom?.distance ?? 0) - (bottom?.bottomSafeArea ?? 0)) + 12
     }
 
     private var keyboardObserver: KeyboardObserver!
