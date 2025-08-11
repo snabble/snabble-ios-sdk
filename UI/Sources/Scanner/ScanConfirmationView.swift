@@ -37,6 +37,8 @@ final class ScanConfirmationView: UIView {
 
     weak var delegate: ScanConfirmationViewDelegate?
 
+    public var needsPresentation: Bool = false
+    
     override var isFirstResponder: Bool {
         guard let textField = self.quantityField else { return false }
         return textField.isFirstResponder
@@ -306,6 +308,7 @@ final class ScanConfirmationView: UIView {
             self.minusButton?.isHidden = true
             self.quantityField?.isEnabled = false
         }
+        needsPresentation = hasPrice
     }
 
     private func showQuantity(updateTextField: Bool) {
@@ -349,6 +352,10 @@ final class ScanConfirmationView: UIView {
         NotificationCenter.default.post(name: .snabbleHideScanConfirmation, object: nil)
     }
 
+    public func addToCart() {
+        cartButtonTapped(self)
+    }
+    
     @objc private func cartButtonTapped(_ sender: Any) {
         let cart = self.shoppingCart!
 
