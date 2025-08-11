@@ -44,9 +44,6 @@ extension Shopper {
         
         let initialQuantity = scannedProduct.specifiedQuantity ?? 1
         var quantity = cartQuantity + initialQuantity
-        if product.type == .userMustWeigh {
-            quantity = 0
-        }
         
         if let embed = cartItem.scannedCode.embeddedData, product.referenceUnit?.hasDimension == true {
             quantity = embed

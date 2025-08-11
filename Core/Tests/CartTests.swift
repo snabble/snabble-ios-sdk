@@ -45,12 +45,6 @@ struct Mock {
                                      nil, .up)
 
 
-    /// user-weighed product, 256g at 23,56g/kg, 6,04€
-    static let userWeighedItem = CartItem(256,
-                                          Product(sku: "7", name: "7", listPrice: 2356, type: .userMustWeigh, referenceUnit: .kilogram, encodingUnit: .gram),
-                                          ScannedCode(scannedCode: "12345", encodingUnit: .gram, templateId: "ean13_instore", lookupCode: "12345"),
-                                          nil, .up)
-
     /// 0 pieces at 19ct/pc, price depends on quantity
     static let piece0Item = CartItem(0,
                                      Product(sku: "8", name: "8", listPrice: 19, type: .singleItem, referenceUnit: .piece, encodingUnit: .piece),
@@ -134,7 +128,6 @@ class ShoppingCartTests: XCTestCase {
         XCTAssertFalse(Mock.pieceItem.canMerge)
         XCTAssertFalse(Mock.piece0Item.canMerge)
         XCTAssertFalse(Mock.pricedItem.canMerge)
-        XCTAssertFalse(Mock.userWeighedItem.canMerge)
         XCTAssertFalse(Mock.discountItem.canMerge)
         XCTAssertFalse(Mock.globusWeighItem.canMerge)
     }
@@ -148,7 +141,6 @@ class ShoppingCartTests: XCTestCase {
         XCTAssertFalse(Mock.pieceItem.editable)
         XCTAssertTrue(Mock.piece0Item.editable)
         XCTAssertFalse(Mock.pricedItem.editable)
-        XCTAssertTrue(Mock.userWeighedItem.editable)
         XCTAssertFalse(Mock.discountItem.editable)
         XCTAssertFalse(Mock.globusWeighItem.editable)
     }
@@ -257,14 +249,6 @@ class ShoppingCartTests: XCTestCase {
         XCTAssertEqual(cart.numberOfProducts, 4)
         XCTAssertEqual(cart.numberOfItems, 2)
 
-        cart.add(Mock.userWeighedItem)
-        XCTAssertEqual(cart.numberOfProducts, 5)
-        XCTAssertEqual(cart.numberOfItems, 3)
-
-        cart.add(Mock.userWeighedItem)
-        XCTAssertEqual(cart.numberOfProducts, 6)
-        XCTAssertEqual(cart.numberOfItems, 4)
-
         cart.add(Mock.pieceItem)
         XCTAssertEqual(cart.numberOfProducts, 7)
         XCTAssertEqual(cart.numberOfItems, 5)
@@ -320,7 +304,6 @@ class ShoppingCartTests: XCTestCase {
         XCTAssertEqual(Mock.pricedItem.price, 1234)
         XCTAssertEqual(Mock.pieceItem.price, 228)
         XCTAssertEqual(Mock.preWeighedItem.price, 250)
-        XCTAssertEqual(Mock.userWeighedItem.price, 604)
         XCTAssertEqual(Mock.discountItem.price, 321)
         XCTAssertEqual(Mock.globusWeighItem.price, 180)
         XCTAssertEqual(Mock.globusPieceItem.price, 2016)
@@ -379,19 +362,6 @@ class ShoppingCartTests: XCTestCase {
         XCTAssertEqual(bci.weightUnit, .price)
     }
 
-    func testCart_backenddata_userWeighed() {
-        guard case let Cart.Item.product(bci) = Mock.userWeighedItem.cartItems[0] else {
-            return XCTFail("not a product")
-        }
-        XCTAssertEqual(bci.sku, "7")
-        XCTAssertEqual(bci.amount, 1)
-        XCTAssertEqual(bci.scannedCode, "2123450002566")
-        XCTAssertEqual(bci.price, nil)
-        XCTAssertEqual(bci.weight, 256)
-        XCTAssertEqual(bci.units, nil)
-        XCTAssertEqual(bci.weightUnit, .gram)
-    }
-
     func testCart_backenddata_piece0() {
         let cart = Mock.shoppingCart()
         cart.add(Mock.piece0Item)
@@ -423,8 +393,6 @@ class ShoppingCartTests: XCTestCase {
 
     func testCart_backenddata_coupon() {
         var simpleItem = Mock.simpleItem1
-
-        simpleItem.manualCoupon = Coupon(id: "foo", externalID: nil, name: "bar", type: .manual, code: nil, codes: nil, projectID: Project.none.id, colors: nil, description: nil, promotionDescription: nil, disclaimer: nil, image: nil, validFrom: nil, validUntil: nil, percentage: nil)
 
         XCTAssertEqual(simpleItem.cartItems.count, 2)
         var itemUUID = "" // for now, we assume that product items are first in the array
@@ -472,104 +440,6 @@ class ShoppingCartTests: XCTestCase {
         XCTAssertEqual(bci.weightUnit, .gram)
     }
 
-    // MARK: - price display tests
-    func testCart_pricedisplay_simple() {
-        let cart = Mock.shoppingCart()
-        cart.add(Mock.simpleItem1)
-        let formatter = Mock.formatter
-        XCTAssertEqual(cart.items[0].quantityDisplay(), "1")
-        XCTAssertEqual(cart.items[0].priceDisplay(formatter), "0,42 €")
-
-        cart.setQuantity(10, at: 0)
-        XCTAssertEqual(cart.items[0].quantityDisplay(), "10")
-        XCTAssertEqual(cart.items[0].priceDisplay(formatter), "× 0,42 € = 4,20 €")
-    }
-
-    func testCart_pricedisplay_simple_deposit() {
-        let cart = Mock.shoppingCart()
-        cart.add(Mock.depositItem)
-        let formatter = Mock.formatter
-        XCTAssertEqual(cart.items[0].quantityDisplay(), "1")
-        XCTAssertEqual(cart.items[0].priceDisplay(formatter), "× 1,00 € + 0,15 € = 1,15 €")
-
-        cart.setQuantity(3, at: 0)
-        XCTAssertEqual(cart.items[0].quantityDisplay(), "3")
-        XCTAssertEqual(cart.items[0].priceDisplay(formatter), "× 1,00 € + 0,45 € = 3,45 €")
-    }
-
-    func testCart_pricedisplay_preWeighed() {
-        let cart = Mock.shoppingCart()
-        cart.add(Mock.preWeighedItem)
-        let formatter = Mock.formatter
-        XCTAssertEqual(cart.items[0].quantityDisplay(), "125g")
-        XCTAssertEqual(cart.items[0].priceDisplay(formatter), "× 20,00 €/kg = 2,50 €")
-    }
-
-    func testCart_pricedisplay_piece() {
-        let cart = Mock.shoppingCart()
-        cart.add(Mock.pieceItem)
-        let formatter = Mock.formatter
-        XCTAssertEqual(cart.items[0].quantityDisplay(), "1")
-        XCTAssertEqual(cart.items[0].priceDisplay(formatter), "2,28 €")
-    }
-
-    func testCart_pricedisplay_priced() {
-        let cart = Mock.shoppingCart()
-        cart.add(Mock.pricedItem)
-        let formatter = Mock.formatter
-        XCTAssertEqual(cart.items[0].quantityDisplay(), "1")
-        XCTAssertEqual(cart.items[0].priceDisplay(formatter), "12,34 €")
-    }
-
-    func testCart_pricedisplay_userweighed() {
-        let cart = Mock.shoppingCart()
-        cart.add(Mock.userWeighedItem)
-        let formatter = Mock.formatter
-        XCTAssertEqual(cart.items[0].quantityDisplay(), "256g")
-        XCTAssertEqual(cart.items[0].priceDisplay(formatter), "× 23,56 €/kg = 6,04 €")
-    }
-
-    func testCart_pricedisplay_piece0() {
-        let cart = Mock.shoppingCart()
-        cart.add(Mock.piece0Item)
-        cart.setQuantity(9, at: 0)
-        let formatter = Mock.formatter
-        XCTAssertEqual(cart.items[0].quantityDisplay(), "9")
-        XCTAssertEqual(cart.items[0].priceDisplay(formatter), "× 0,19 € = 1,71 €")
-    }
-
-    func testCart_pricedisplay_discount() {
-        let cart = Mock.shoppingCart()
-        cart.add(Mock.discountItem)
-        let formatter = Mock.formatter
-        XCTAssertEqual(cart.items[0].quantityDisplay(), "1")
-        XCTAssertEqual(cart.items[0].priceDisplay(formatter), "3,21 €")
-    }
-
-    func testCart_pricedisplay_globusPiece() {
-        let cart = Mock.shoppingCart()
-        cart.add(Mock.globusPieceItem)
-        let formatter = Mock.formatter
-        XCTAssertEqual(cart.items[0].quantityDisplay(), "42")
-        XCTAssertEqual(cart.items[0].priceDisplay(formatter), "× 0,48 € = 20,16 €")
-    }
-
-    func testCart_pricedisplay_globusWeigh() {
-        let cart = Mock.shoppingCart()
-        cart.add(Mock.globusWeighItem)
-        let formatter = Mock.formatter
-        XCTAssertEqual(cart.items[0].quantityDisplay(), "150g")
-        XCTAssertEqual(cart.items[0].priceDisplay(formatter), "× 12,00 €/kg = 1,80 €")
-    }
-
-    func testCart_demo() {
-        XCTAssertEqual(Mock.pricedItem.price, 1234)
-        XCTAssertEqual(Mock.pricedItem.priceDisplay(Mock.formatter), "12,34 €")
-
-        XCTAssertEqual(Mock.demoItem.price, 249)
-        XCTAssertEqual(Mock.demoItem.priceDisplay(Mock.formatter), "2,49 €")
-    }
-
     // MARK: - qr code tests
     func testCart_codesForQR() {
         XCTAssertTrue(Mock.simpleItem1.cartItems[0] == QRCodeData(1, "1234567890123"))
@@ -579,7 +449,6 @@ class ShoppingCartTests: XCTestCase {
         XCTAssertTrue(Mock.pieceItem.cartItems[0] == QRCodeData(1, "2000000000121"))
         XCTAssertTrue(Mock.piece0Item.cartItems[0] == QRCodeData(1, "2123450000005"))
         XCTAssertTrue(Mock.pricedItem.cartItems[0] == QRCodeData(1, "2000000012346"))
-        XCTAssertTrue(Mock.userWeighedItem.cartItems[0] == QRCodeData(1, "2123450002566"))
         XCTAssertTrue(Mock.discountItem.cartItems[0] == QRCodeData(1, "96xxxx"))
         XCTAssertTrue(Mock.globusWeighItem.cartItems[0] == QRCodeData(1, "98xxxx"))
         XCTAssertTrue(Mock.globusPieceItem.cartItems[0] == QRCodeData(1, "98xxxx"))

@@ -167,7 +167,6 @@ public struct CartItem: Codable {
     public var canMerge: Bool {
         // yes if it is a single products with a price and we don't have any overrides from the scanned code
         return self.product.type == .singleItem
-            && self.product.price(self.customerCard) != 0
             && self.encodingUnit == nil
             && self.scannedCode.priceOverride == nil
             && self.scannedCode.referencePriceOverride == nil
@@ -184,7 +183,7 @@ public struct CartItem: Codable {
         if self.scannedCode.priceOverride != nil || self.scannedCode.referencePriceOverride != nil {
             allowEdit = false
         }
-        return (self.product.type == .singleItem || self.product.type == .userMustWeigh) && allowEdit
+        return self.product.type == .singleItem && allowEdit
     }
 
     /// encodingUnit from the code or the product
@@ -210,14 +209,6 @@ public struct CartItem: Codable {
             return self.roundedPrice(price, quantity, encodingUnit, referenceUnit)
         }
 
-        if self.product.type == .userMustWeigh {
-            // if we get here but have no units, fall back to our previous default of kilograms/grams
-            let referenceUnit = product.referenceUnit ?? .kilogram
-            let encodingUnit = self.encodingUnit ?? .gram
-
-            return self.roundedPrice(self.product.price(self.customerCard), self.quantity, encodingUnit, referenceUnit)
-        }
-
         let productPrice = self.quantity * self.product.price(customerCard)
         let deposit = self.quantity * (self.product.deposit ?? 0)
         return productPrice + deposit
@@ -228,49 +219,6 @@ public struct CartItem: Codable {
         let total = Decimal(quantity) * unitPrice
 
         return total.rounded(mode: self.roundingMode).intValue
-    }
-
-    /// formatted price display, e.g. for the confirmation dialog.
-    /// returns a String like `"x 2,99€ = 5,98€"`. NB: `quantity` is not part of the string!
-    ///
-    /// - Parameter formatter: the formatter to use
-    /// - Returns: the formatted price
-    /// - See Also: `quantityDisplay`
-    public func priceDisplay(_ formatter: PriceFormatter) -> String {
-        let total = formatter.format(self.price)
-
-        let showUnit = self.product.referenceUnit?.hasDimension == true || self.product.type == .userMustWeigh
-        if showUnit {
-            let price = self.scannedCode.referencePriceOverride ?? self.product.price(self.customerCard)
-            let single = formatter.format(price)
-            let unit = self.product.referenceUnit?.display ?? ""
-            return "× \(single)/\(unit) = \(total)"
-        }
-
-        if let deposit = self.product.deposit {
-            let price = self.scannedCode.priceOverride ?? self.product.price(self.customerCard)
-            let itemPrice = formatter.format(price)
-            let depositPrice = formatter.format(deposit * self.quantity)
-            return "× \(itemPrice) + \(depositPrice) = \(total)"
-        }
-
-        if self.effectiveQuantity == 1 {
-            return total
-        } else {
-            let price = self.scannedCode.referencePriceOverride ?? self.scannedCode.priceOverride ?? self.product.price(self.customerCard)
-            let single = formatter.format(price)
-            return "× \(single) = \(total)"
-        }
-    }
-
-    /// formatted quantity display, e.g. for the confirmation dialog and the shopping cart table cell.
-    /// returns a String like `42g`
-    ///
-    /// - Returns: the formatted price
-    /// - See Also: `priceDisplay`
-    public func quantityDisplay() -> String {
-        let symbol = self.encodingUnit?.display ?? ""
-        return "\(self.effectiveQuantity)\(symbol)"
     }
 
     /// the effective quantity of this cart item.
@@ -292,14 +240,6 @@ public struct CartItem: Codable {
         var weight: Int?
         var code = self.scannedCode.code
         let encodingUnit = self.encodingUnit
-
-        if self.product.type == .userMustWeigh {
-            if let newCode = CodeMatcher.createInstoreEan(self.scannedCode.templateId, self.scannedCode.lookupCode, quantity) {
-                code = newCode
-            }
-            weight = quantity
-            quantity = 1
-        }
 
         if self.product.type == .preWeighed && self.encodingUnit?.hasDimension == true {
             weight = quantity
@@ -356,30 +296,15 @@ extension CheckoutInfo.LineItem {
     }
     
     public func quantity(for product: Product) -> Int {
-        if product.type == .userMustWeigh {
-            return weight ?? 0 * amount
-        } else {
-            return quantity
-        }
-    }
+        return quantity
+   }
 }
 
 extension CartItem {
     public func discounted(price: Int, for lineItem: CheckoutInfo.LineItem) -> Int {
         let quantity = lineItem.quantity(for: product)
         
-        if product.type == .userMustWeigh {
-            // if we get here but have no units, fall back to our previous default of kilograms/grams
-            let referenceUnit = product.referenceUnit ?? .kilogram
-            let weightUnit = lineItem.weightUnit ?? .gram
-            
-            let factor = Units.convert(quantity, from: weightUnit, to: referenceUnit)
-            let total = Decimal(price) * factor
-            
-            return total.rounded(mode: self.roundingMode).intValue
-        } else {
-            return quantity * price
-        }
+        return quantity * price
     }
 }
 
