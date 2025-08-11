@@ -20,11 +20,8 @@ extension CartItem: Equatable {
 extension CartItem {
     var quantityValue: Int {
         var quantity = effectiveQuantity
-        let product = product
-        
-        if quantity < 1 && product.type != .userMustWeigh {
-            quantity = 1
-        } else if quantity > ShoppingCart.maxAmount {
+
+        if quantity > ShoppingCart.maxAmount {
             quantity = ShoppingCart.maxAmount
         }
         return quantity
