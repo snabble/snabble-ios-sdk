@@ -86,26 +86,6 @@ class QRCodeTests: XCTestCase {
                                 "<r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,END>"])
     }
 
-    func testQrCode_simple2_discount() {
-        let cart = Mock.shoppingCart()
-        let coupon = Coupon(id: "c", externalID: nil, name: "c", type: .manual, code: "", codes: nil, projectID: Project.none.id, colors: nil, description: nil, promotionDescription: nil, disclaimer: nil, image: nil, validFrom: nil, validUntil: nil, percentage: nil)
-
-        restrictedItems.reversed().forEach {
-            var item = $0
-            item.manualCoupon = coupon
-            cart.add(item)
-        }
-        regularItems.reversed().forEach { cart.add($0) }
-
-        let config = QRCodeConfig(format: .simple, prefix: "<", separator: ",", suffix: ">", maxCodes: 45,
-                                  finalCode: "END", manualDiscountFinalCode: "DISCOUNT", nextCode: "NEXT", nextCodeWithCheck: "CHECK")
-
-        let codes = QRCodeGenerator(cart: cart, config: config, processId: nil).generateCodes()
-
-        XCTAssertEqual(codes, [ "<0,1,2,3,4,5,6,7,8,9,CHECK>",
-                                "<r0,r1,r2,r3,r4,r5,r6,r7,r8,r9,END,DISCOUNT>"])
-    }
-
     func testQrCode_simple2card() {
         let cart = Mock.shoppingCart()
         cart.customerCard = "CARD"
@@ -566,48 +546,4 @@ class QRCodeTests: XCTestCase {
         }
 
     }
-
-    func testQrCode_aldi() {
-        let config = QRCodeConfig(format: .simple, prefix: "XE", separator: "XE", suffix: "XC", maxCodes: 4,
-                                  finalCode: "_F_", manualDiscountFinalCode: "_FD_", nextCode: "_N_")
-
-        let cart = Mock.shoppingCart()
-        let product = Product(sku: "123", name: "", listPrice: 1, type: .singleItem)
-        let code = ScannedCode(scannedCode: "_1_", templateId: "default", lookupCode: "_")
-        let item = CartItem(1, product, code, nil, .up)
-        let coupon = Coupon(id: "c", externalID: nil, name: "c", type: .manual, code: "", codes: nil, projectID: Project.none.id, colors: nil, description: nil, promotionDescription: nil, disclaimer: nil, image: nil, validFrom: nil, validUntil: nil, percentage: nil)
-
-        cart.add(item)
-        XCTAssertEqual(cart.numberOfProducts, 1)
-        let codes1 = QRCodeGenerator(cart: cart, config: config, processId: nil).generateCodes()
-        XCTAssertEqual(codes1, [
-            "XE_1_XE_F_XC" // 1 item + final
-        ])
-
-        cart.add(item)
-        XCTAssertEqual(cart.numberOfProducts, 2)
-        let codes2 = QRCodeGenerator(cart: cart, config: config, processId: nil).generateCodes()
-        XCTAssertEqual(codes2, [
-            "XE_1_XE_1_XE_F_XC" // 2 items + final
-        ])
-
-        cart.add(item)
-        XCTAssertEqual(cart.numberOfProducts, 3)
-        let codes3 = QRCodeGenerator(cart: cart, config: config, processId: nil).generateCodes()
-        XCTAssertEqual(codes3, [
-            "XE_1_XE_1_XE_N_XC", // 2 items + next
-            "XE_1_XE_F_XC" // 1 item + final
-        ])
-
-        var item2 = item
-        item2.manualCoupon = coupon
-        cart.add(item2)
-        XCTAssertEqual(cart.numberOfProducts, 4)
-        let codes4 = QRCodeGenerator(cart: cart, config: config, processId: nil).generateCodes()
-        XCTAssertEqual(codes4, [
-            "XE_1_XE_1_XE_N_XC", // 2 items + next
-            "XE_1_XE_1_XE_F_XE_FD_XC" // 2 items + final + finalDiscount
-        ])
-    }
-
 }

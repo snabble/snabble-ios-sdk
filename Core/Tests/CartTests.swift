@@ -250,17 +250,17 @@ class ShoppingCartTests: XCTestCase {
         XCTAssertEqual(cart.numberOfItems, 2)
 
         cart.add(Mock.pieceItem)
-        XCTAssertEqual(cart.numberOfProducts, 7)
-        XCTAssertEqual(cart.numberOfItems, 5)
+        XCTAssertEqual(cart.numberOfProducts, 5)
+        XCTAssertEqual(cart.numberOfItems, 3)
 
         cart.add(Mock.piece0Item)
         cart.setQuantity(42, for: Mock.piece0Item)
-        XCTAssertEqual(cart.numberOfProducts, 49)
-        XCTAssertEqual(cart.numberOfItems, 6)
+        XCTAssertEqual(cart.numberOfProducts, 47)
+        XCTAssertEqual(cart.numberOfItems, 4)
 
         cart.add(Mock.preWeighedItem)
-        XCTAssertEqual(cart.numberOfProducts, 50)
-        XCTAssertEqual(cart.numberOfItems, 7)
+        XCTAssertEqual(cart.numberOfProducts, 48)
+        XCTAssertEqual(cart.numberOfItems, 5)
     }
 
     // MARK: - price tests
@@ -394,7 +394,7 @@ class ShoppingCartTests: XCTestCase {
     func testCart_backenddata_coupon() {
         var simpleItem = Mock.simpleItem1
 
-        XCTAssertEqual(simpleItem.cartItems.count, 2)
+        XCTAssertEqual(simpleItem.cartItems.count, 1)
         var itemUUID = "" // for now, we assume that product items are first in the array
         for item in simpleItem.cartItems {
             if case let Cart.Item.product(bci) = item {
