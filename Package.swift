@@ -67,7 +67,7 @@ let package = Package(
         .package(url: "https://github.com/pointfreeco/swift-tagged", from: "0.10.0"),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.6.1"),
         .package(url: "https://github.com/divadretlaw/WindowKit", from: "2.5.2"),
-        .package(url: "https://github.com/utilem/CameraZoomWheel.git", from: "1.0.2")
+        .package(url: "https://github.com/utilem/CameraZoomWheel.git", from: "1.0.4")
     ],
     targets: [
         .target(
