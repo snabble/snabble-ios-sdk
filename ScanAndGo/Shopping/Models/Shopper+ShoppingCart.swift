@@ -73,6 +73,11 @@ extension Shopper {
             AppEvent(key: "Add to cart distance to shop", value: "\(shop.id.rawValue);\(shop.distance(to: location))m", project: barcodeManager.project, shopId: shop.id).post()
         }
     }
+    
+    public func addScannedItem(_ item: BarcodeManager.ScannedItem) {
+        let result = self.cartItem(for: item)
+        updateCartItem(result.cartItem)
+    }
 }
 
 extension Shopper {
