@@ -12,6 +12,7 @@ import SnabbleCore
 import SnabbleUI
 
 import SnabbleAssetProviding
+import CameraZoomWheel
 
 struct ScannerOverlay: View {
     @Binding var offset: CGFloat
@@ -34,12 +35,17 @@ struct ShoppingScannerView: View {
     
     @State private var topMargin: CGFloat = ScannerCartView.TopMargin
     @State private var showHud: Bool = false
-    
+    @State private var zoomLevel: CGFloat = 1
+    @State private var zoomSteps: [ZoomStep] = ZoomStep.defaultSteps
+    @State private var position: CGFloat = 0
+
     var body: some View {
         ZStack(alignment: .top) {
             BarcodeScannerView(manager: model.barcodeManager)
             ScannerOverlay(offset: $minHeight)
-            PullOverView(minHeight: $minHeight, expanded: $model.scanningPaused, paddingTop: $topMargin) {
+            ZoomControl(zoomLevel: $zoomLevel, steps: zoomSteps)
+                .offset(x: 0, y: position - 114)
+            PullOverView(minHeight: $minHeight, expanded: $model.scanningPaused, paddingTop: $topMargin, position: $position) {
                 ScannerCartView(model: model, minHeight: $minHeight)
             }
             if model.processing {
@@ -48,6 +54,17 @@ struct ShoppingScannerView: View {
         }
         .hud(isPresented: $showHud) {
             ScanMessageView(message: model.scanMessage, isPresented: $showHud)
+        }
+        .task {
+            if let zoomFactor = model.barcodeManager.barcodeDetector.zoomFactor {
+                zoomLevel = zoomFactor
+            }
+            if let steps = model.barcodeManager.barcodeDetector.zoomSteps {
+                zoomSteps = steps
+            }
+        }
+        .onChange(of: zoomLevel) {
+            model.barcodeManager.barcodeDetector.zoomFactor = CGFloat(zoomLevel)
         }
         .onChange(of: showHud) {
             if !showHud {
