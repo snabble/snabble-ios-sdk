@@ -17,7 +17,6 @@ public struct ShopperView: View {
     
     @State private var showSearch: Bool = false
     @State private var showError: Bool = false
-    @State private var showEditor: Bool = false
     @State private var minHeight: CGFloat = 0
     
     @SwiftUI.Environment(\.dismiss) var dismiss
@@ -39,19 +38,6 @@ public struct ShopperView: View {
             } message: {
                 Text(model.errorMessage ?? "No errorMessage! This should not happen! 😳")
             }
-            .windowDialog(isPresented: $showEditor) {
-                ContentUnavailableView("TODO: Remove Scan Confimation View", systemImage: "xmark.circle.fill")
-
-//                ScannedItemEditorView(model: model) { cartItem in
-//                    showEditor.toggle()
-//                    if let cartItem {
-//                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-//                            model.updateCartItem(cartItem)
-//                        }
-//                    }
-//                }
-            }
-            .keyboardHeightEnvironmentValue()
             .sheet(isPresented: $showSearch) {
                 BarcodeSearchView(model: model.barcodeManager) { code, format, template in
                     self.showSearch.toggle()
@@ -81,16 +67,12 @@ public struct ShopperView: View {
                 }
             }
             .onReceive(model.$scannedItem) { item in
-                if item != nil {
-                    withAnimation {
-                        showEditor = true
-                    }
-                }
-            }
-            .onChange(of: showEditor) {
-                if !showEditor {
-                    model.scannedItem = nil
-                    model.startScanner()
+                if let item {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                        model.addScannedItem(item)
+                        model.scannedItem = nil
+                        model.startScanner()
+                   }
                 }
             }
             .onChange(of: showSearch) {
@@ -122,7 +104,5 @@ public struct ShopperView: View {
                     })
                 }
             }
-            .toolbarBackground(Material.thick, for: .tabBar)
-            .toolbarBackground(.visible, for: .tabBar)
     }
 }
