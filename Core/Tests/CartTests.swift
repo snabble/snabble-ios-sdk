@@ -392,7 +392,7 @@ class ShoppingCartTests: XCTestCase {
     }
 
     func testCart_backenddata_coupon() {
-        var simpleItem = Mock.simpleItem1
+        let simpleItem = Mock.simpleItem1
 
         XCTAssertEqual(simpleItem.cartItems.count, 1)
         var itemUUID = "" // for now, we assume that product items are first in the array
