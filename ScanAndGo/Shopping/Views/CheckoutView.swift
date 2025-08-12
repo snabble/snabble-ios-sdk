@@ -52,6 +52,7 @@ struct CheckoutView: View {
                             showPaymentSelector = true
                         })
                         .frame(width: 88, height: 38)
+                        
                         if model.paymentManager.selectedPayment != nil {
                             PrimaryButtonView(title: Asset.localizedString(forKey: model.totalPrice ?? 0 > 0 ? "Snabble.Shoppingcart.BuyProducts.now" : "Snabble.Shoppingcart.completePurchase"),
                                               disabled: $disableCheckout, onAction: {
@@ -85,7 +86,13 @@ struct CheckoutView: View {
         }
         .task {
             update()
-        }
+            let items = model.project.paymentItems(for: model.supportedShoppingCartPayments)
+                .filter({ model.projectPayments.contains($0.method) && $0.active == true && $0.methodDetail != nil })
+            
+            if let firstPayment = items.first {
+                model.paymentManager.setSelectedPaymentItem(firstPayment)
+            }
+       }
         .onReceive(NotificationCenter.default.publisher(for: .snabbleCartUpdated)) { _ in
             update()
         }
