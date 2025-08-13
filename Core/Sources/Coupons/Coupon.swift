@@ -9,7 +9,6 @@ import Foundation
 public enum CouponType: String, Codable, UnknownCaseRepresentable {
     case unknown
 
-    case manual
     case printed
     case digital
 

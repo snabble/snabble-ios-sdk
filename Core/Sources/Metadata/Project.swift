@@ -576,7 +576,6 @@ public struct Project: Decodable, Identifiable {
     // these properties may be updated after the original metadata document has been loaded
     private struct UpdateableProperties {
         var shops = [Shop]()
-        var manualCoupons = [Coupon]()
         var printedCoupons = [Coupon]()
         var digitalCoupons = [Coupon]()
     }
@@ -584,7 +583,6 @@ public struct Project: Decodable, Identifiable {
     private let updateLock = ReadWriteLock()
 
     public var shops: [Shop] { updateLock.reading { updateable.shops } }
-    public var manualCoupons: [Coupon] { updateLock.reading { updateable.manualCoupons } }
     public var printedCoupons: [Coupon] { updateLock.reading { updateable.printedCoupons } }
     public var digitalCoupons: [Coupon] { updateLock.reading { updateable.digitalCoupons } }
 
@@ -742,7 +740,6 @@ public struct Project: Decodable, Identifiable {
 
     mutating func setCoupons(_ coupons: [Coupon]) {
         updateLock.writing {
-            self.updateable.manualCoupons = coupons.filter { $0.type == .manual }
             self.updateable.printedCoupons = coupons.filter { $0.type == .printed }
             self.updateable.digitalCoupons = coupons.filter { $0.type == .digital }
         }

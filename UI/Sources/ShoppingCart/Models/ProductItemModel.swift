@@ -35,11 +35,7 @@ open class ProductItemModel: CartItemModel, ShoppingCartItemCounting {
         super.init(title: defaultItem?.name ?? product.name, showImages: showImages)
         
         if item.editable {
-            if product.type == .userMustWeigh {
-                self.rightDisplay = .weightEntry
-            } else {
-                self.rightDisplay = .buttons
-            }
+            self.rightDisplay = .buttons
         } else if product.type == .preWeighed {
             self.rightDisplay = .weightDisplay
         }
@@ -50,7 +46,7 @@ open class ProductItemModel: CartItemModel, ShoppingCartItemCounting {
 
 extension ProductItemModel {
     var showWeight: Bool {
-        return item.product.referenceUnit?.hasDimension == true || item.product.type == .userMustWeigh
+        return item.product.referenceUnit?.hasDimension == true
     }
     var showQuantity: Bool {
         return item.product.type == .singleItem || showWeight

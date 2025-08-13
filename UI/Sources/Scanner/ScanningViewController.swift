@@ -34,11 +34,6 @@ public final class ZoomWheelController: UIHostingController<ZoomControl> {
     }
 }
 
-public extension Notification.Name {
-    static let snabbleShowScanConfirmation = Notification.Name("snabbleShowScanConfirmation")
-    static let snabbleHideScanConfirmation = Notification.Name("snabbleHideScanConfirmation")
-}
-
 private enum ScannerLookup {
     case product(ScannedProduct)
     case coupon(Coupon, String)
@@ -51,27 +46,13 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
     private var messageView: ScanningMessageView?
     private var messageTopDistance: NSLayoutConstraint?
 
-    private var scanConfirmationView: ScanConfirmationView?
-    private var scanConfirmationViewBottom: NSLayoutConstraint?
-
     private let tapticFeedback = UINotificationFeedbackGenerator()
 
     private let productProvider: ProductProviding
     private let shoppingCart: ShoppingCart
     private let shop: Shop
 
-    private var confirmationVisible = false
     private var productType: ProductType?
-
-    private let hiddenConfirmationOffset: CGFloat = 310
-    private var visibleConfirmationOffset: CGFloat {
-        if self.pulleyViewController?.drawerPosition == .closed {
-            return -16
-        }
-
-        let bottom = self.pulleyViewController?.drawerDistanceFromBottom
-        return -(bottom?.distance ?? 0) - 16
-    }
 
     private var visibleWheelOffset: CGFloat {
         if self.pulleyViewController?.drawerPosition == .closed {
@@ -79,10 +60,9 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
         }
 
         let bottom = self.pulleyViewController?.drawerDistanceFromBottom
-        return -(bottom?.distance ?? 0) + 12
+        return -((bottom?.distance ?? 0) - (bottom?.bottomSafeArea ?? 0)) + 12
     }
 
-    private var keyboardObserver: KeyboardObserver!
     private var barcodeDetector: BarcodeDetector
     private var torchButton: UIBarButtonItem?
 
@@ -151,10 +131,6 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
         spinner.color = .systemGray
         spinner.hidesWhenStopped = true
 
-        let scanConfirmationView = ScanConfirmationView(frame: .zero)
-        scanConfirmationView.translatesAutoresizingMaskIntoConstraints = false
-        scanConfirmationView.isHidden = true
-
         let messageView = ScanningMessageView(frame: .zero)
         messageView.translatesAutoresizingMaskIntoConstraints = false
         let msgTap = UITapGestureRecognizer(target: self, action: #selector(self.messageTapped(_:)))
@@ -175,7 +151,6 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
         addChild(controller)
 
         view.addSubview(spinner)
-        view.addSubview(scanConfirmationView)
         view.addSubview(messageView)
         view.addSubview(controller.view)
         
@@ -184,15 +159,10 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
         
         self.spinner = spinner
         self.messageView = messageView
-        self.scanConfirmationView = scanConfirmationView
 
         NSLayoutConstraint.activate([
             spinner.topAnchor.constraint(equalTo: view.layoutMarginsGuide.topAnchor, constant: 40),
             spinner.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            scanConfirmationView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            scanConfirmationView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            scanConfirmationView.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            scanConfirmationView.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor).usingVariable(&scanConfirmationViewBottom),
             messageView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
             messageView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
             messageView.topAnchor.constraint(equalTo: view.topAnchor).usingVariable(&messageTopDistance),
@@ -211,8 +181,6 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
 
         self.view.backgroundColor = .systemGray
         
-        scanConfirmationView?.delegate = self
-        scanConfirmationViewBottom?.constant = hiddenConfirmationOffset
         wheelViewBottom?.constant = visibleWheelOffset
         
         self.messageTopDistance?.constant = -150
@@ -235,14 +203,10 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
 
     override public func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        self.keyboardObserver = KeyboardObserver(handler: self)
 
         self.scannerDelegate?.track(.viewScanner)
         if let spinner = spinner {
             self.view.bringSubviewToFront(spinner)
-        }
-        if let confirmationView = self.scanConfirmationView {
-            self.view.bringSubviewToFront(confirmationView)
         }
         if let messageView = messageView {
             self.view.bringSubviewToFront(messageView)
@@ -251,7 +215,7 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
         if let zoomWheel = zoomController?.view {
             self.view.bringSubviewToFront(zoomWheel)
         }
-        if !self.confirmationVisible && self.pulleyViewController?.drawerPosition != .open {
+        if self.pulleyViewController?.drawerPosition != .open {
             self.barcodeDetector.resumeScanning()
         }
     }
@@ -277,8 +241,6 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
         
         self.barcodeDetector.pauseScanning()
         self.barcodeDetector.scannerWillDisappear()
-
-        self.keyboardObserver = nil
 
         UIApplication.shared.isIdleTimerDisabled = false
         hideMessage()
@@ -306,51 +268,6 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
 
     @objc private func searchTapped(_ sender: Any) {
         self.enterBarcode()
-    }
-
-    // MARK: - scan confirmation views
-    private func showConfirmation(for scannedProduct: ScannedProduct, withCode scannedCode: String) {
-        self.confirmationVisible = true
-
-        self.scanConfirmationView?.present(withProduct: scannedProduct, withCode: scannedCode, forCart: self.shoppingCart)
-
-        self.displayScanConfirmationView(hidden: false, setBottomOffset: self.productType != .userMustWeigh)
-
-        NotificationCenter.default.post(name: .snabbleShowScanConfirmation, object: nil)
-    }
-
-    private var reopenDrawer: Bool = false
-    
-    private func displayScanConfirmationView(hidden: Bool, setBottomOffset: Bool = true) {
-        if !hidden {
-            reopenDrawer = self.pulleyViewController?.drawerPosition == .open
-        }
-
-        self.pulleyViewController?.setDrawerPosition(position: hidden ? .collapsed : .closed, animated: false)
-        self.pulleyViewController?.allowsUserDrawerPositionChange = hidden
-
-        self.confirmationVisible = !hidden
-
-        self.zoomController?.view.isHidden = !hidden
-        self.scanConfirmationView?.isHidden = false
-
-        if setBottomOffset {
-            self.scanConfirmationViewBottom?.constant = hidden ? self.hiddenConfirmationOffset : self.visibleConfirmationOffset
-            UIView.animate(withDuration: 0.25,
-                           delay: 0,
-                           usingSpringWithDamping: 0.8,
-                           initialSpringVelocity: 0,
-                           options: .curveEaseInOut,
-                           animations: {
-                                self.view.layoutIfNeeded()
-                           },
-                           completion: { _ in
-                                self.scanConfirmationView?.isHidden = hidden
-                           }
-            )
-        } else {
-            self.scanConfirmationView?.isHidden = hidden
-        }
     }
 }
 
@@ -419,32 +336,71 @@ extension ScanningViewController: AnalyticsDelegate {
     }
 }
 
-// MARK: - scanning confirmation delegate
-extension ScanningViewController: ScanConfirmationViewDelegate {
-    func closeConfirmation(forItem item: CartItem?) {
-        let reopen = reopenDrawer
+// MARK: - add product to shoppingCart
+extension ScanningViewController {
+    private func addProduct(_ scannedProduct: ScannedProduct, withCode scannedCode: String) {
+
+        let project = SnabbleCI.project
+        let product = scannedProduct.product
+
+        let scannedCode = ScannedCode(
+            scannedCode: scannedCode,
+            transmissionCode: scannedProduct.transmissionCode,
+            embeddedData: scannedProduct.embeddedData,
+            encodingUnit: scannedProduct.encodingUnit,
+            priceOverride: scannedProduct.priceOverride,
+            referencePriceOverride: scannedProduct.referencePriceOverride,
+            templateId: scannedProduct.templateId ?? CodeTemplate.defaultName,
+            transmissionTemplateId: scannedProduct.transmissionTemplateId,
+            lookupCode: scannedProduct.lookupCode)
+
+        var cartItem = CartItem(1, product, scannedCode, self.shoppingCart.customerCard, project.roundingMode)
+        let cartQuantity = cartItem.canMerge ? self.shoppingCart.quantity(of: cartItem) : 0
+
+        let initialQuantity = scannedProduct.specifiedQuantity ?? 1
+        var quantity = cartQuantity + initialQuantity
+
+        if let embed = cartItem.scannedCode.embeddedData, product.referenceUnit?.hasDimension == true {
+            quantity = embed
+        }
+        cartItem.setQuantity(quantity)
         
-        self.displayScanConfirmationView(hidden: true)
-
-        if let item = item {
-            var messages = [ScanMessage]()
-            if let msg = self.ageCheckRequired(for: item) {
-                messages.append(msg)
-            }
-            if let msg = self.scannerDelegate?.scanMessage(for: SnabbleCI.project, self.shop, item.product) {
-                messages.append(msg)
-            }
-
-            self.showMessages(messages)
-
-            if let drawer = self.pulleyViewController?.drawerContentViewController as? ScannerDrawerViewController {
-                drawer.markScannedProduct(item.product)
-            }
+        let tapticFeedback = UINotificationFeedbackGenerator()
+        tapticFeedback.notificationOccurred(.success)
+        
+        if cartQuantity == 0 || !cartItem.canMerge {
+            let item = cartItem
+            Log.info("adding to cart: \(item.quantity) x \(item.product.name), scannedCode = \(item.scannedCode.code), embed=\(String(describing: item.scannedCode.embeddedData))")
+            self.shoppingCart.add(cartItem)
+        } else {
+            Log.info("updating cart: set qty=\(cartItem.quantity) for \(cartItem.product.name)")
+            self.shoppingCart.setQuantity(cartItem.quantity, for: cartItem)
         }
 
-        if reopen {
-            self.pulleyViewController?.setDrawerPosition(position: .open, animated: true)
-        } else {
+        NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
+        
+        self.track(.productAddedToCart(cartItem.product.sku))
+        if let shop = Snabble.shared.checkInManager.shop,
+           let project = shop.project,
+           let location = Snabble.shared.checkInManager.locationManager.location {
+            AppEvent(key: "Add to cart distance to shop", value: "\(shop.id.rawValue);\(shop.distance(to: location))m", project: project, shopId: shop.id).post()
+        }
+        
+        var messages = [ScanMessage]()
+        if let msg = self.ageCheckRequired(for: cartItem) {
+            messages.append(msg)
+        }
+        if let msg = self.scannerDelegate?.scanMessage(for: SnabbleCI.project, self.shop, cartItem.product) {
+            messages.append(msg)
+        }
+        
+        self.showMessages(messages)
+        
+        if let drawer = self.pulleyViewController?.drawerContentViewController as? ScannerDrawerViewController {
+            drawer.markScannedProduct(cartItem.product)
+        }
+
+        if self.pulleyViewController?.drawerPosition != .open {
             self.barcodeDetector.resumeScanning()
         }
     }
@@ -542,7 +498,7 @@ extension ScanningViewController {
             self.productType = product.type
 
             if product.bundles.isEmpty || scannedProduct.priceOverride != nil {
-                self.showConfirmation(for: scannedProduct, withCode: scannedCode)
+                self.addProduct(scannedProduct, withCode: scannedCode)
             } else {
                 self.showBundleSelection(for: scannedProduct, withCode: scannedCode)
             }
@@ -605,7 +561,7 @@ extension ScanningViewController {
 
         let product = scannedProduct.product
         alert.addAction(UIAlertAction(title: product.name, style: .default) { _ in
-            self.showConfirmation(for: scannedProduct, withCode: scannedCode)
+            self.addProduct(scannedProduct, withCode: scannedCode)
         })
 
         for bundle in product.bundles {
@@ -620,7 +576,7 @@ extension ScanningViewController {
                 if self.isSaleProhibited(of: scannedBundle.product, scannedCode: scannedCode) {
                     return
                 }
-                self.showConfirmation(for: scannedBundle, withCode: transmissionCode ?? scannedCode)
+                self.addProduct(scannedBundle, withCode: transmissionCode ?? scannedCode)
             })
         }
 
@@ -847,23 +803,6 @@ extension ScanningViewController {
             case .failure(let error):
                 completion(.failure(error))
             }
-        }
-    }
-
-}
-
-extension ScanningViewController: KeyboardHandling {
-    public func keyboardWillShow(_ info: KeyboardInfo) {
-        self.scanConfirmationViewBottom?.constant = -(info.keyboardHeight - 48)
-        UIView.animate(withDuration: info.animationDuration) {
-            self.view.layoutIfNeeded()
-        }
-    }
-
-    public func keyboardWillHide(_ info: KeyboardInfo) {
-        self.scanConfirmationViewBottom?.constant = self.confirmationVisible ? self.visibleConfirmationOffset : self.hiddenConfirmationOffset
-        UIView.animate(withDuration: info.animationDuration) {
-            self.view.layoutIfNeeded()
         }
     }
 

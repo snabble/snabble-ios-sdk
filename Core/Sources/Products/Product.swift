@@ -10,7 +10,6 @@ import Foundation
 public enum ProductType: Int, Codable, UnknownCaseRepresentable {
     case singleItem
     case preWeighed
-    case userMustWeigh
 
     public static let unknownCase = ProductType.singleItem
 }

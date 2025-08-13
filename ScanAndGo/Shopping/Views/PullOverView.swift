@@ -56,25 +56,31 @@ struct PullOverView<Content>: View where Content: View {
     @Binding var minHeight: CGFloat
     @Binding var expanded: Bool
     @Binding var paddingTop: CGFloat
+    @Binding var position: CGFloat
     let content: () -> Content
     
     init(minHeight: Binding<CGFloat>, 
          expanded: Binding<Bool>,
          paddingTop: Binding<CGFloat>,
+         position: Binding<CGFloat>,
          content: @escaping () -> Content
     ) {
         self._minHeight = minHeight
         self._expanded = expanded
         self._paddingTop = paddingTop
+        self._position = position
         self.content = content
     }
     
     public var body: some View {
-        ModifiedContent(content: self.content(), 
-                        modifier: PullView(minHeight: $minHeight,
-                                           expanded: $expanded,
-                                           paddingTop: $paddingTop
-                                          )
+        ModifiedContent(
+            content: self.content(),
+            modifier: PullView(
+                minHeight: $minHeight,
+                expanded: $expanded,
+                paddingTop: $paddingTop,
+                position: $position
+            )
         )
     }
 }
@@ -85,10 +91,10 @@ struct PullView: ViewModifier {
     @Binding var minHeight: CGFloat
     @Binding var expanded: Bool
     @Binding var paddingTop: CGFloat
-    
+    @Binding var position: CGFloat
+
     @State private var dragging = false
     @GestureState private var dragTracker = CGSize.zero
-    @State private var position: CGFloat = 0
     @State private var minYPosition: CGFloat = 0
     
     func maxHeight(_ geom: GeometryProxy) -> CGFloat {
@@ -112,7 +118,7 @@ struct PullView: ViewModifier {
             }
             .frame(minWidth: UIScreen.main.bounds.width)
             .background(.regularMaterial)
-            .clipShape(CardShape(radius: 32))
+            .clipShape(CardShape(radius: 24))
             .onAppear {
                 setupMinHeight(geom: geom)
             }

@@ -13,15 +13,16 @@ import SnabbleAssetProviding
 import SnabbleUI
 
 struct ScannerCartView: View {
-    static let BarHeight = CGFloat(74)
-    static let VisibleRowHeight = CGFloat(80)
     static let TopMargin = CGFloat(20)
-    
+
     @ObservedObject var model: Shopper
     @Binding var minHeight: CGFloat
     
     @State private var compactMode: Bool = true
     
+    @ScaledMetric private var barHeight = CGFloat(74)
+    @ScaledMetric private var visibleRowHeight = CGFloat(58)
+
     init(model: Shopper,
          minHeight: Binding<CGFloat>
     ) {
@@ -47,9 +48,9 @@ struct ScannerCartView: View {
     
     func update() {
         let count = model.barcodeManager.shoppingCart.numberOfItems
-        let avg = Self.VisibleRowHeight
+        let avg = visibleRowHeight
         
         // swiftlint:disable:next empty_count
-        minHeight = Self.BarHeight + (count == 0 ? 0 : (count > 1 ? avg + avg / 2 : avg))
+        minHeight = barHeight + (count == 0 ? 0 : (count > 1 ? avg + avg : avg))
     }
 }

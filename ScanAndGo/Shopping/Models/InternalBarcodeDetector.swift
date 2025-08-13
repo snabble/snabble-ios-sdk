@@ -13,6 +13,7 @@ import AVFoundation
 import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleUI
+import CameraZoomWheel
 
 public protocol BarcodeCameraDelegate: AnyObject {
     func requestCameraPermission(currentStatus: AVAuthorizationStatus)
@@ -61,12 +62,20 @@ open class InternalBarcodeDetector: NSObject, ObservableObject, Zoomable {
                 try camera.lockForConfiguration()
                 camera.ramp(toVideoZoomFactor: newValue, withRate: 4)
                 camera.unlockForConfiguration()
+                
+                UserDefaults.standard.set(Float(newValue), forKey: Self.zoomValueKey)
             } catch {
                 print("error ramping zoom: \(error)")
             }
         }
     }
-
+    public var zoomSteps: [ZoomStep]? {
+        guard let camera else {
+            return nil
+        }
+        return camera.zoomSteps
+    }
+    
     @Published public var torchOn = false
     @Published public var message: String?
     @Published var scannedBarcode: BarcodeResult?
@@ -306,8 +315,12 @@ open class InternalBarcodeDetector: NSObject, ObservableObject, Zoomable {
         guard let videoInput = self.input else {
             return
         }
-        
-        let zoomFactor = RecommendedZoom.factor(for: videoInput, codeWidth: expectedBarcodeWidth)
+        let zoomFactor: Float
+        if UserDefaults.standard.object(forKey: Self.zoomValueKey) != nil {
+            zoomFactor = UserDefaults.standard.float(forKey: Self.zoomValueKey)
+        } else {
+            zoomFactor = RecommendedZoom.factor(for: videoInput, codeWidth: expectedBarcodeWidth)
+        }
         self.zoomFactor = CGFloat(zoomFactor)
     }
     
