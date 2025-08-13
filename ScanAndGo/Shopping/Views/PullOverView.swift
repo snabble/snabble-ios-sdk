@@ -118,7 +118,7 @@ struct PullView: ViewModifier {
             }
             .frame(minWidth: UIScreen.main.bounds.width)
             .background(.regularMaterial)
-            .clipShape(CardShape(radius: 32))
+            .clipShape(CardShape(radius: 24))
             .onAppear {
                 setupMinHeight(geom: geom)
             }
