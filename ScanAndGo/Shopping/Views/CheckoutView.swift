@@ -14,6 +14,8 @@ import SnabbleComponents
 import SnabbleUI
 
 struct CheckoutView: View {
+    @AppStorage("io.snabble.sdk.scanAndGo.paymentMethod") private var paymentMethod: String?
+    
     @ObservedObject var model: Shopper
     
     @State private var disableCheckout: Bool = true
@@ -72,6 +74,9 @@ struct CheckoutView: View {
                                          supportedPayments: model.supportedShoppingCartPayments) { paymentItem in
                         if let paymentItem {
                             model.paymentManager.setSelectedPaymentItem(paymentItem)
+                            if let name = paymentItem.methodDetail?.displayName {
+                                paymentMethod = name
+                            }
                         }
                         showPaymentSelector = false
                     }
@@ -88,8 +93,12 @@ struct CheckoutView: View {
             update()
             let items = model.project.paymentItems(for: model.supportedShoppingCartPayments)
                 .filter({ model.projectPayments.contains($0.method) && $0.active == true && $0.methodDetail != nil })
-            
-            if let firstPayment = items.first {
+            if let name = paymentMethod, !items.isEmpty {
+                if let index = items.firstIndex(where: { $0.methodDetail?.displayName == name }) {
+                    model.paymentManager.setSelectedPaymentItem(items[index])
+                }
+            }
+            if model.paymentManager.selectedPayment == nil, let firstPayment = items.first {
                 model.paymentManager.setSelectedPaymentItem(firstPayment)
             }
        }
