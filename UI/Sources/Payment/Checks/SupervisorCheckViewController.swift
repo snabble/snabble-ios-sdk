@@ -28,6 +28,8 @@ final class SupervisorViewModel: BaseCheckViewModel {
 struct SupervisorView: View {
     @ObservedObject var model: SupervisorViewModel
 
+    @State private var disableButton: Bool = false
+
     @ViewBuilder
     var content: some View {
         Group {
@@ -49,12 +51,15 @@ struct SupervisorView: View {
             }
             Spacer()
             Button(action: {
+                disableButton = true
                 model.checkModel.cancelPayment()
             }) {
                 Text(keyed: Asset.localizedString(forKey: "Snabble.cancel"))
                     .fontWeight(.bold)
                     .foregroundColor(Color.projectPrimary())
-            }.frame(alignment: .bottom)
+            }
+            .frame(alignment: .bottom)
+            .disabled(disableButton)
         }
     }
     var body: some View {

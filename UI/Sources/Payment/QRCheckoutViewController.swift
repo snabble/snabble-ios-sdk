@@ -234,8 +234,12 @@ final class QRCheckoutViewController: UIViewController {
     }
 
     @objc private func cancelButtonTapped(_ sender: UIButton) {
+        guard self.poller != nil else { return }
+        
         self.poller?.stop()
         self.poller = nil
+
+        sender.isEnabled = false
 
         self.process.abort(SnabbleCI.project) { result in
             switch result {
@@ -255,6 +259,7 @@ final class QRCheckoutViewController: UIViewController {
                                               preferredStyle: .alert)
                 alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { _ in
                     self.startPoller()
+                    sender.isEnabled = true
                 })
                 self.present(alert, animated: true)
             }

@@ -125,9 +125,11 @@ public final class CheckModel: CheckoutProcessing, CheckModelDelegate {
     }
     
     public func cancelPayment() {
+        guard processTimer != nil else { return }
+        
         self.paymentDelegate?.track(.paymentCancelled)
         self.stopTimer()
-        
+
         self.checkoutProcess.abort(SnabbleCI.project) { result in
             switch result {
             case .success(let process):
