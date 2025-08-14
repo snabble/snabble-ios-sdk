@@ -82,6 +82,8 @@ struct GatekeeperView: View {
     @ObservedObject var model: GatekeeperViewModel
     @Environment(\.presentationMode) var presentationMode
 
+    @State private var disableButton: Bool = false
+    
     @ViewBuilder
     var content: some View {
         VStack(spacing: 8) {
@@ -103,13 +105,15 @@ struct GatekeeperView: View {
                 .padding(.top, 10)
             Spacer()
             Button(action: {
+                disableButton = true
                 model.checkModel.cancelPayment()
                 presentationMode.wrappedValue.dismiss()
-           }) {
+            }) {
                 Text(keyed: Asset.localizedString(forKey: "Snabble.cancel"))
                     .fontWeight(.bold)
                     .foregroundColor(Color.projectPrimary())
             }
+            .disabled(disableButton)
         }
     }
     var body: some View {
