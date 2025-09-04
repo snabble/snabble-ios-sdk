@@ -14,7 +14,7 @@ import SnabbleAssetProviding
 
 class BarcodeScannerViewController: UIViewController {
     let manager: BarcodeManager
-    let logger = Logger(subsystem: "ScanAndGo", category: "BarcodeScannerViewController")
+    let logger = Logger(subsystem: "io.snabble.sdk.ScanAndGo", category: "BarcodeScannerViewController")
     
     private var subscriptions = Set<AnyCancellable>()
     
