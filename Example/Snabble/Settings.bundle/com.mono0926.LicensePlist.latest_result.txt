@@ -2,7 +2,7 @@ name: LicensePlist, nameSpecified: , owner: mono0926, version: 3.27.1, source: h
 
 name: SwiftLint, nameSpecified: , owner: realm, version: 0.59.0, source: https://github.com/realm/SwiftLint
 
-name: CameraZoomWheel, nameSpecified: CameraZoomWheel, owner: utilem, version: 1.0.4, source: https://github.com/utilem/CameraZoomWheel
+name: CameraZoomWheel, nameSpecified: CameraZoomWheel, owner: utilem, version: 1.1.0, source: https://github.com/utilem/CameraZoomWheel
 
 name: DeviceKit, nameSpecified: DeviceKit, owner: devicekit, version: 5.6.0, source: https://github.com/devicekit/DeviceKit
 
