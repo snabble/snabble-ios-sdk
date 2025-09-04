@@ -251,6 +251,11 @@ open class InternalBarcodeDetector: NSObject, Zoomable {
         camera?.torchMode = switchedOn ? .on : .off
     }
     
+    open func toggleTorch() -> Bool {
+        setTorch(!torchOn)
+        return torchOn
+    }
+
     /// Sets the region of interrest
     open func setROI(rect roi: CGRect) {
         DispatchQueue.main.async { [self] in
