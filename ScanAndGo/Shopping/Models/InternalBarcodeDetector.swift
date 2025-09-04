@@ -46,7 +46,7 @@ open class InternalBarcodeDetector: NSObject, Zoomable {
     let logger = Logger(subsystem: "io.snabble.sdk.ScanAndGo", category: "InternalBarcodeDetector")
     
     /// the scan formats that should be detected, must be set before `scannerWillAppear()` is called.
-    open var scanFormats: [ScanFormat] = []
+    public var scanFormats: [ScanFormat] = []
     
     /// the expected width of a "standard" barcode, must be set before `scannerWillAppear()` is called.
     public var expectedBarcodeWidth: Int?
@@ -77,10 +77,11 @@ open class InternalBarcodeDetector: NSObject, Zoomable {
         return camera.zoomSteps
     }
     
-    @Published public var torchOn = false
-    @Published public var message: String?
-    @Published var scannedBarcode: BarcodeResult?
-    
+    public var torchOn = false
+    public var message: String?
+
+    public let barcodePublisher = PassthroughSubject<BarcodeResult, Never>()
+
     public enum State {
         case idle
         case ready
