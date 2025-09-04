@@ -8,6 +8,7 @@
 import Foundation
 import OSLog
 import SwiftUI
+import Combine
 import AVFoundation
 
 import SnabbleCore
@@ -90,12 +91,14 @@ open class InternalBarcodeDetector: NSObject, Zoomable {
         case batterySaving
     }
     /// the current `state` of the detector
-    @Published public var state: State = .idle {
+    public var state: State = .idle {
         didSet {
             logger.debug("detector changed from \(oldValue) -> \(self.state)")
+            statePublisher.send(self.state)
         }
     }
-    
+    public let statePublisher = PassthroughSubject<InternalBarcodeDetector.State, Never>()
+
     public var previewLayer: AVCaptureVideoPreviewLayer?
     public var permissionGranted = false // Flag for permission
     
@@ -333,7 +336,7 @@ open class InternalBarcodeDetector: NSObject, Zoomable {
             return
         }
         lastScannedTime = .now
-        scannedBarcode = result
+        barcodePublisher.send(result)
         logger.debug("handleBarCodeResult \(result.description)")
     }
 }
