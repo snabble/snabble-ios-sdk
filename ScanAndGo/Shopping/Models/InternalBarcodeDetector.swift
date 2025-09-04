@@ -8,6 +8,7 @@
 import Foundation
 import OSLog
 import SwiftUI
+import Combine
 import AVFoundation
 
 import SnabbleCore
@@ -37,15 +38,16 @@ extension InternalBarcodeDetector.State: CustomStringConvertible {
     }
 }
 
-open class InternalBarcodeDetector: NSObject, ObservableObject, Zoomable {
+@Observable
+open class InternalBarcodeDetector: NSObject, Zoomable {
     public static var batterySaverTimeout: TimeInterval { 90 }
     public static var batterySaverKey: String { "io.snabble.sdk.batterySaver" }
     public static var zoomValueKey: String { "io.snabble.sdk.zoomValue" }
 
-    let logger = Logger(subsystem: "ScanAndGo", category: "InternalBarcodeDetector")
+    let logger = Logger(subsystem: "io.snabble.sdk.ScanAndGo", category: "InternalBarcodeDetector")
     
     /// the scan formats that should be detected, must be set before `scannerWillAppear()` is called.
-    open var scanFormats: [ScanFormat] = []
+    public var scanFormats: [ScanFormat] = []
     
     /// the expected width of a "standard" barcode, must be set before `scannerWillAppear()` is called.
     public var expectedBarcodeWidth: Int?
@@ -76,10 +78,11 @@ open class InternalBarcodeDetector: NSObject, ObservableObject, Zoomable {
         return camera.zoomSteps
     }
     
-    @Published public var torchOn = false
-    @Published public var message: String?
-    @Published var scannedBarcode: BarcodeResult?
-    
+    public var torchOn = false
+    public var message: String?
+
+    public let barcodePublisher = PassthroughSubject<BarcodeResult, Never>()
+
     public enum State {
         case idle
         case ready
@@ -88,12 +91,14 @@ open class InternalBarcodeDetector: NSObject, ObservableObject, Zoomable {
         case batterySaving
     }
     /// the current `state` of the detector
-    @Published public var state: State = .idle {
+    public var state: State = .idle {
         didSet {
             logger.debug("detector changed from \(oldValue) -> \(self.state)")
+            statePublisher.send(self.state)
         }
     }
-    
+    public let statePublisher = PassthroughSubject<InternalBarcodeDetector.State, Never>()
+
     public var previewLayer: AVCaptureVideoPreviewLayer?
     public var permissionGranted = false // Flag for permission
     
@@ -246,6 +251,11 @@ open class InternalBarcodeDetector: NSObject, ObservableObject, Zoomable {
         camera?.torchMode = switchedOn ? .on : .off
     }
     
+    open func toggleTorch() -> Bool {
+        setTorch(!torchOn)
+        return torchOn
+    }
+
     /// Sets the region of interrest
     open func setROI(rect roi: CGRect) {
         DispatchQueue.main.async { [self] in
@@ -331,7 +341,7 @@ open class InternalBarcodeDetector: NSObject, ObservableObject, Zoomable {
             return
         }
         lastScannedTime = .now
-        scannedBarcode = result
+        barcodePublisher.send(result)
         logger.debug("handleBarCodeResult \(result.description)")
     }
 }

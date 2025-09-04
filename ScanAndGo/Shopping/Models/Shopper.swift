@@ -91,7 +91,7 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
         return nil
     }
 
-    let logger = Logger(subsystem: "ScanAndGo", category: "Shopper")
+    let logger = Logger(subsystem: "io.snabble.sdk.ScanAndGo", category: "Shopper")
     private var subscriptions = Set<AnyCancellable>()
     
     /// Initializes a new Shopper with the specified shop and barcode detector.

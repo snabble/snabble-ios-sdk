@@ -10,16 +10,18 @@ import OSLog
 import SwiftUI
 import AVFoundation
 import Combine
+
 import SnabbleAssetProviding
+import SnabbleUI
 
 class BarcodeScannerViewController: UIViewController {
-    let manager: BarcodeManager
-    let logger = Logger(subsystem: "ScanAndGo", category: "BarcodeScannerViewController")
+    let detector: InternalBarcodeDetector
+    let logger = Logger(subsystem: "io.snabble.sdk.ScanAndGo", category: "BarcodeScannerViewController")
     
     private var subscriptions = Set<AnyCancellable>()
     
-    init(manager: BarcodeManager) {
-        self.manager = manager
+    init(detector: InternalBarcodeDetector) {
+        self.detector = detector
         super.init(nibName: nil, bundle: nil)
     }
     public required init?(coder aDecoder: NSCoder) {
@@ -34,7 +36,7 @@ class BarcodeScannerViewController: UIViewController {
         super.viewDidLoad()
         self.view.backgroundColor = .systemGray
         
-        if let previewLayer = manager.barcodeDetector.previewLayer {
+        if let previewLayer = detector.previewLayer {
             addLayer(previewLayer, to: self)
         } else {
             logger.warning("camera preview is not available")
@@ -62,44 +64,173 @@ class BarcodeScannerViewController: UIViewController {
     }
 }
 
-struct BarcodeScannerView: UIViewControllerRepresentable {
+public struct BarcodeScannerView: UIViewControllerRepresentable {
     @SwiftUI.Environment(\.safeAreaInsets) var insets
     
-    let manager: BarcodeManager
+    public let detector: InternalBarcodeDetector
     
-    func makeUIViewController(context: UIViewControllerRepresentableContext<BarcodeScannerView>) -> UIViewController {
-        return BarcodeScannerViewController(manager: manager)
+    public init(detector: InternalBarcodeDetector = .init(detectorArea: .rectangle)) {
+        self.detector = detector
+    }
+    
+    public func makeUIViewController(context: UIViewControllerRepresentableContext<BarcodeScannerView>) -> UIViewController {
+        return BarcodeScannerViewController(detector: detector)
     }
 
     // swiftlint:disable:next no_empty_block
-    func updateUIViewController(_ uiViewController: UIViewController, context: UIViewControllerRepresentableContext<BarcodeScannerView>) { }
+    public func updateUIViewController(_ uiViewController: UIViewController, context: UIViewControllerRepresentableContext<BarcodeScannerView>) { }
     
-    func makeCoordinator() -> Coordinator {
+    public func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
 
-    class Coordinator: NSObject {
+    public class Coordinator: NSObject {
         var parent: BarcodeScannerView
         private var subscriptions = Set<AnyCancellable>()
         
         init(_ parent: BarcodeScannerView) {
             self.parent = parent
-            let manager = parent.manager
+            let detector = parent.detector
             
-            if !manager.barcodeDetector.hasCamera {
-                manager.barcodeDetector.setup()
+            if !detector.hasCamera {
+                detector.setup()
             }
-            self.parent.manager.barcodeDetector.$state
+            self.parent.detector.statePublisher
                 .sink { state in
                     switch state {
                     case .idle:
                         /// setup camera, can be called more than once
-                        manager.barcodeDetector.setup()
+                        detector.setup()
                     case .ready, .scanning, .pausing, .batterySaving:
                         break
                     }
                 }
                 .store(in: &subscriptions)
+        }
+    }
+}
+
+// MARK: - Barcode Scanner View
+public struct BarcodeScanner: UIViewRepresentable {
+    public let detector: InternalBarcodeDetector
+    
+    public init(detector: InternalBarcodeDetector = .init(detectorArea: .rectangle)) {
+        self.detector = detector
+    }
+    
+    public func makeUIView(context: Context) -> ScannerContainerView {
+        let containerView = ScannerContainerView()
+        
+        if let preview = detector.previewLayer {
+            containerView.setupPreviewLayer(preview)
+        } else {
+            let layer = CAGradientLayer()
+            layer.colors = [UIColor.projectPrimary().cgColor, UIColor.white.cgColor]
+            containerView.setupPreviewLayer(layer)
+        }
+        
+        return containerView
+    }
+    
+    public func updateUIView(_ uiView: ScannerContainerView, context: Context) {
+        guard uiView.bounds.width > 0 && uiView.bounds.height > 0 else {
+            return
+        }
+        
+        uiView.updatePreviewLayerFrame()
+    }
+    
+    public func makeCoordinator() -> Coordinator {
+        Coordinator(self)
+    }
+
+    public class Coordinator: NSObject {
+        var parent: BarcodeScanner
+        private var subscriptions = Set<AnyCancellable>()
+        
+        init(_ parent: BarcodeScanner) {
+            self.parent = parent
+            let detector = parent.detector
+            
+            if !detector.hasCamera {
+                detector.setup()
+            }
+            
+            self.parent.detector.statePublisher
+                .sink { state in
+                    switch state {
+                    case .idle:
+                        detector.setup()
+                    case .ready, .scanning, .pausing, .batterySaving:
+                        break
+                    }
+                }
+                .store(in: &subscriptions)
+        }
+    }
+}
+
+// MARK: - Container View mit Layout-Management
+public class ScannerContainerView: UIView {
+    private var previewLayer: CALayer?
+    private var hasSetInitialFrame = false
+    
+    func setupPreviewLayer(_ layer: CALayer) {
+        self.previewLayer = layer
+        self.layer.addSublayer(layer)
+        
+        // Initial frame setzen (wird später aktualisiert)
+        layer.frame = self.bounds
+    }
+    
+    func updatePreviewLayerFrame() {
+        guard let previewLayer = previewLayer else { return }
+        
+        // Frame nur aktualisieren wenn sich die Größe geändert hat
+        let newFrame = self.bounds
+        if !previewLayer.frame.equalTo(newFrame) {
+            
+            // Animation für smooth Übergänge
+            CATransaction.begin()
+            CATransaction.setDisableActions(false)
+            CATransaction.setAnimationDuration(0.2)
+            
+            previewLayer.frame = newFrame
+            
+            CATransaction.commit()
+        }
+    }
+    
+    override public func layoutSubviews() {
+        super.layoutSubviews()
+        
+        // Zusätzliche Sicherheit: Frame auch in layoutSubviews setzen
+        updatePreviewLayerFrame()
+    }
+}
+
+private struct BarcodeScannerInternal: UIViewRepresentable {
+    let detector: InternalBarcodeDetector
+    let size: CGSize
+    
+    func makeUIView(context: Context) -> UIView {
+        let view = UIView()
+        
+        if let preview = detector.previewLayer {
+            preview.frame = CGRect(origin: .zero, size: size)
+            view.layer.addSublayer(preview)
+        }
+        
+        return view
+    }
+    
+    func updateUIView(_ uiView: UIView, context: Context) {
+        if let previewLayer = uiView.layer.sublayers?.first as? AVCaptureVideoPreviewLayer {
+            let newFrame = CGRect(origin: .zero, size: size)
+            
+            if !previewLayer.frame.equalTo(newFrame) {
+                previewLayer.frame = newFrame
+            }
         }
     }
 }
