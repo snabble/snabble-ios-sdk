@@ -91,13 +91,11 @@ public final class BarcodeManager: ObservableObject {
         self.barcodeDetector = detector
         self.barcodeDetector.scanFormats = project.scanFormats
         
-        self.barcodeDetector.$scannedBarcode
+        self.barcodeDetector.barcodePublisher
             .receive(on: RunLoop.main)
             .sink { [unowned self] barcode in
-                if let barcode {
-                    self.logger.debug("received barcode: \(barcode.description)")
-                    self.handleScannedCode(barcode.code, withFormat: barcode.format)
-                }
+                self.logger.debug("received barcode: \(barcode.description)")
+                self.handleScannedCode(barcode.code, withFormat: barcode.format)
             }
             .store(in: &subscriptions)
     }
