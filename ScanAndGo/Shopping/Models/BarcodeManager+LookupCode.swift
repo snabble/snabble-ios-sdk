@@ -11,7 +11,7 @@ import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleUI
 
-enum ScannerLookup {
+public enum ScannerLookup {
     case product(ScannedProduct)
     case coupon(Coupon, String)
     case voucher(Voucher)
