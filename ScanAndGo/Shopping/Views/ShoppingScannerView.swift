@@ -14,11 +14,16 @@ import SnabbleUI
 import SnabbleAssetProviding
 import CameraZoomWheel
 
-struct ScannerOverlay: View {
-    @Binding var offset: CGFloat
+public struct ScannerOverlay: View {
+    @Binding public var offset: CGFloat
+    
     @State var overlay: SwiftUI.Image = Asset.image(named: "SnabbleSDK/barcode-overlay")!
     
-    var body: some View {
+    public init(offset: Binding<CGFloat>) {
+        self._offset = offset
+    }
+    
+    public var body: some View {
         VStack {
             Spacer()
             overlay
@@ -41,7 +46,7 @@ struct ShoppingScannerView: View {
 
     var body: some View {
         ZStack(alignment: .top) {
-            BarcodeScannerView(manager: model.barcodeManager)
+            BarcodeScannerView(detector: model.barcodeManager.barcodeDetector)
             ScannerOverlay(offset: $minHeight)
             ZoomControl(zoomLevel: $zoomLevel, steps: zoomSteps)
                 .offset(x: 0, y: position - 114)
