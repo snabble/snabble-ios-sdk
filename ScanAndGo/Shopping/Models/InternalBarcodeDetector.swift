@@ -42,7 +42,7 @@ open class InternalBarcodeDetector: NSObject, ObservableObject, Zoomable {
     public static var batterySaverKey: String { "io.snabble.sdk.batterySaver" }
     public static var zoomValueKey: String { "io.snabble.sdk.zoomValue" }
 
-    let logger = Logger(subsystem: "ScanAndGo", category: "InternalBarcodeDetector")
+    let logger = Logger(subsystem: "io.snabble.sdk.ScanAndGo", category: "InternalBarcodeDetector")
     
     /// the scan formats that should be detected, must be set before `scannerWillAppear()` is called.
     open var scanFormats: [ScanFormat] = []

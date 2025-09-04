@@ -82,7 +82,7 @@ struct ActionItem: Swift.Identifiable, Equatable {
 public final class ActionManager: ObservableObject {
     public static let shared = ActionManager()
     
-    let logger = Logger(subsystem: "ScanAndGo", category: "ActionManager")
+    let logger = Logger(subsystem: "io.snabble.sdk.ScanAndGo", category: "ActionManager")
     public let actionPublisher = PassthroughSubject<ActionType, Never>()
     
     /// The current state of the action being handled.

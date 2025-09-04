@@ -41,7 +41,7 @@ public final class BarcodeManager: ObservableObject {
     let shoppingCart: ShoppingCart
     let project: Project
     let productProvider: ProductProviding
-    let logger = Logger(subsystem: "ScanAndGo", category: "ShoppingManager")
+    let logger = Logger(subsystem: "io.snabble.sdk.ScanAndGo", category: "ShoppingManager")
     
     /// Represents a scanned item.
     public struct ScannedItem: Equatable {
