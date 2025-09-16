@@ -11,7 +11,7 @@ import SwiftUI
 import SnabbleAssetProviding
 import SnabbleComponents
 
-protocol LoadableObject: ObservableObject {
+protocol LoadableObject {
     associatedtype Output
     var state: LoadingState<Output> { get }
     func load()
@@ -26,7 +26,7 @@ enum LoadingState<Value> {
 }
 
 struct AsyncContentView<Source: LoadableObject, Content: View, Empty: View, ErrorView: View>: View {
-    @ObservedObject var source: Source
+    let source: Source
     var content: (Source.Output) -> Content
     var empty: (() -> Empty)?
     var errorView: ((_ error: Error) -> ErrorView)?
@@ -71,7 +71,8 @@ struct AsyncContentView<Source: LoadableObject, Content: View, Empty: View, Erro
                 VStack(spacing: 16) {
                     Text(Asset.localizedString(forKey: "Snabble.Error.defaultMessage"))
                         .multilineTextAlignment(.center)
-                    SecondaryButtonView(title: Asset.localizedString(forKey: "Snabble.Error.retry")) {                            self.source.load()
+                    SecondaryButtonView(title: Asset.localizedString(forKey: "Snabble.Error.retry")) {
+                        self.source.load()
                     }
                 }
                 .padding()

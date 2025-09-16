@@ -36,7 +36,7 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
             }
             .store(in: &cancellables)
         
-        viewModel.$numberOfUnloaded
+        viewModel.numberOfUnloadedPublisher
             .sink { [unowned self] value in
                 self.update(unloaded: value)
             }

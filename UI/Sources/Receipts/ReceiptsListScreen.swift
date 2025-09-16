@@ -6,37 +6,10 @@
 //
 
 import SwiftUI
-import SnabbleCore
 import Combine
+
+import SnabbleCore
 import SnabbleAssetProviding
-
-public extension PurchaseProviding {
-    var dateString: String? {
-        let dateFormatter = DateFormatter()
-        dateFormatter.dateStyle = .medium
-        dateFormatter.timeStyle = .short
-        dateFormatter.doesRelativeDateFormatting = true
-        return dateFormatter.string(for: date)
-    }
-}
-
-private struct BadgeCount: ViewModifier {
-    let badgeCount: Int
-    
-    func body(content: Content) -> some View {
-        if #available(iOS 15.0, *) {
-            content
-                .badge(badgeCount)
-        } else {
-            content
-        }
-    }
-}
-extension View {
-    func badgeCount(_ count: Int) -> some View {
-        modifier(BadgeCount(badgeCount: count))
-    }
-}
 
 public struct ReceiptsItemView: View {
     public let provider: PurchaseProviding
@@ -52,7 +25,7 @@ public struct ReceiptsItemView: View {
     @ViewBuilder
     var stateView: some View {
         Circle()
-            .fill((showReadState && !provider.loaded) ? Color.badge() : .clear)
+            .fill((showReadState && !provider.isRead) ? Color.badge() : .clear)
             .frame(width: 10, height: 10)
     }
 
@@ -69,6 +42,7 @@ public struct ReceiptsItemView: View {
                     .font(.headline)
                 Text(provider.dateString ?? "")
                         .font(.footnote)
+                        .foregroundColor(.secondary)
             }
             Spacer()
             if let amount = provider.amount {
@@ -82,52 +56,53 @@ public struct ReceiptsItemView: View {
     }
 }
 
-private struct RefreshAction: ViewModifier {
-    let action: () -> Void
-    
-    func body(content: Content) -> some View {
-        if #available(iOS 15, *) {
-            content
-                .refreshable {
-                    action()
-                }
-        } else {
-            // TODO: we need something here
-            content
-        }
-    }
-}
-
-extension View {
-    func refreshAction(completion: @escaping () -> Void) -> some View {
-        modifier(RefreshAction(action: completion))
-    }
-}
-
 public struct ReceiptsListScreen: View {
-    @ObservedObject var viewModel: PurchasesViewModel
+    @State var viewModel: PurchasesViewModel
     @ViewProvider(.receiptsEmpty) var emptyView
 
     public init(model: PurchasesViewModel = .init()) {
-        self.viewModel = model
+        self._viewModel = State(initialValue: model)
     }
 
     public var body: some View {
         AsyncContentView(source: viewModel, content: { output in
             VStack {
                 List {
-                    ForEach(output, id: \.id) { provider in
+                    ForEach(output, id: \.combinedID) { provider in
                         ReceiptsItemView(provider: provider, image: viewModel.imageFor(projectId: provider.projectId))
                             .contentShape(Rectangle())
                             .onTapGesture {
+                                viewModel.markAsRead(receiptId: provider.id)
                                 viewModel.actionPublisher.send(provider)
+                            }
+                            .contextMenu {
+                                Button(action: {
+                                    viewModel.markAllAsRead()
+                                }) {
+                                    Label("Alle als gelesen markieren", systemImage: "envelope.open")
+                                }
+                                .disabled(viewModel.numberOfUnread == 0)
+                                
+                                Divider()
+
+                                Button(action: {
+                                    if provider.isRead {
+                                        viewModel.markAsUnread(receiptId: provider.id)
+                                    } else {
+                                        viewModel.markAsRead(receiptId: provider.id)
+                                    }
+                                }) {
+                                    Label(provider.isRead ? "Als ungelesen markieren" : "Als gelesen markieren",
+                                          systemImage: provider.isRead ? "envelope.badge" : "envelope.badge.fill")
+                                }
                             }
                     }
                     .listRowInsets(EdgeInsets(top: 10, leading: 4, bottom: 10, trailing: 16))
                 }
+                .id(viewModel.listRefreshTrigger)
                 .listStyle(.plain)
-                .refreshAction {
-                    viewModel.load()
+                .refreshable {
+                    viewModel.refresh()
                 }
             }
         }, empty: {
@@ -136,7 +111,27 @@ public struct ReceiptsListScreen: View {
         .onAppear {
             viewModel.reset()
         }
-        .badgeCount(viewModel.numberOfUnloaded)
+        .toolbar {
+            ToolbarItem(placement: .navigationBarTrailing) {
+                Menu {
+                    Button(action: {
+                        viewModel.markAllAsRead()
+                    }) {
+                        Label("Alle als gelesen markieren", systemImage: "envelope.open")
+                    }
+                    .disabled(viewModel.numberOfUnread == 0)
+                } label: {
+                    Image(systemName: "ellipsis.circle") // Standard "More" Icon
+                }
+            }
+        }
+        .badge(viewModel.numberOfUnread)
         .navigationTitle(Asset.localizedString(forKey: "Snabble.Receipts.title"))
+
+    }
+}
+extension PurchaseProviding {
+    var combinedID: String {
+        return "\(id)_\(isRead ? "read" : "unread")"
     }
 }
