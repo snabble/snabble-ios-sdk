@@ -23,7 +23,6 @@ private extension Order {
     }
 }
 
-
 extension Order: PurchaseProviding {
     public var loaded: Bool {
         return self.hasReceipt()

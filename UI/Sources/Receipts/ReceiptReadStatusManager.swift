@@ -5,8 +5,8 @@
 //  Created by Uwe Tilemann on 12.09.25.
 //
 
-
 import Foundation
+
 import SnabbleCore
 
 /// Manager for persistent storage of the "read" status of receipts

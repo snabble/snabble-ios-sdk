@@ -181,4 +181,3 @@ extension PurchasesViewModel {
         return imageCache[projectId]
     }
 }
-
