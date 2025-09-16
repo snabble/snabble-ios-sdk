@@ -276,6 +276,9 @@
 "Snabble.Receipt.errorDownload" = "Nebolo možné stiahnuť potvrdenie";
 "Snabble.Receipt.pdfReaderUnavailable" = "Nenašla sa žiadna vhodná aplikácia na zobrazenie PDF";
 "Snabble.Receipts.loading" = "(načítava sa)";
+"Snabble.Receipts.markAllAsRead" = "Označiť všetko ako prečítané";
+"Snabble.Receipts.markAsRead" = "Označiť ako prečítané";
+"Snabble.Receipts.markAsUnread" = "Označiť ako neprečítané";
 "Snabble.Receipts.noReceipts" = "Ešte si nenakupoval/a s aplikáciou Snabble";
 "Snabble.Receipts.oClock" = "Čas";
 "Snabble.Receipts.title" = "Predchádzajúce nákupy";

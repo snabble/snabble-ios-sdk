@@ -276,6 +276,9 @@
 "Snabble.Receipt.errorDownload" = "Quittung konnte nicht heruntergeladen werden";
 "Snabble.Receipt.pdfReaderUnavailable" = "Keine geeignete PDF-Reader-Anwendung gefunden";
 "Snabble.Receipts.loading" = "(wird geladen)";
+"Snabble.Receipts.markAllAsRead" = "Alle als gelesen markieren";
+"Snabble.Receipts.markAsRead" = "Als gelesen markieren";
+"Snabble.Receipts.markAsUnread" = "Als ungelesen markieren";
 "Snabble.Receipts.noReceipts" = "Du hast noch nicht mit Snabble eingekauft";
 "Snabble.Receipts.oClock" = "Uhr";
 "Snabble.Receipts.title" = "Vorherige Einkäufe";

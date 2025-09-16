@@ -276,6 +276,9 @@
 "Snabble.Receipt.errorDownload" = "Receipt could not be downloaded";
 "Snabble.Receipt.pdfReaderUnavailable" = "No suitable PDF reader application found";
 "Snabble.Receipts.loading" = "(loading)";
+"Snabble.Receipts.markAllAsRead" = "Mark all as read";
+"Snabble.Receipts.markAsRead" = "Mark as read";
+"Snabble.Receipts.markAsUnread" = "Mark as unread";
 "Snabble.Receipts.noReceipts" = "No Receipts found";
 "Snabble.Receipts.oClock" = "o'clock";
 "Snabble.Receipts.title" = "Receipts";

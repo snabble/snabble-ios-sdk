@@ -276,6 +276,9 @@
 "Snabble.Receipt.errorDownload" = "Le reçu n'a pas pu être téléchargé";
 "Snabble.Receipt.pdfReaderUnavailable" = "Aucune application de lecture de PDF appropriée trouvée";
 "Snabble.Receipts.loading" = "(en cours de chargement)";
+"Snabble.Receipts.markAllAsRead" = "Marquer tout comme lu";
+"Snabble.Receipts.markAsRead" = "Marquer comme lu";
+"Snabble.Receipts.markAsUnread" = "Marquer comme non lu";
 "Snabble.Receipts.noReceipts" = "Vous n'avez pas encore fait vos courses avec Snabble";
 "Snabble.Receipts.oClock" = "Heure";
 "Snabble.Receipts.title" = "Achats précédents";
