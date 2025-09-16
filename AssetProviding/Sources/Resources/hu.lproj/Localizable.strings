@@ -276,6 +276,9 @@
 "Snabble.Receipt.errorDownload" = "A nyugtát nem lehetett letölteni";
 "Snabble.Receipt.pdfReaderUnavailable" = "Nem található megfelelő PDF-olvasó";
 "Snabble.Receipts.loading" = "(Betöltés alatt)";
+"Snabble.Receipts.markAllAsRead" = "Minden elolvasottként jelölés";
+"Snabble.Receipts.markAsRead" = "Olvasottként jelölés";
+"Snabble.Receipts.markAsUnread" = "Olvasatlannak jelölés";
 "Snabble.Receipts.noReceipts" = "Még nem vásároltál a Snabble segítségével";
 "Snabble.Receipts.oClock" = "Óra";
 "Snabble.Receipts.title" = "Korábbi bevásárlások";

@@ -79,7 +79,7 @@ public struct ReceiptsListScreen: View {
                                 Button(action: {
                                     viewModel.markAllAsRead()
                                 }) {
-                                    Label("Alle als gelesen markieren", systemImage: "envelope.open")
+                                    Label(Asset.localizedString(forKey: "Snabble.Receipts.markAllAsRead"), systemImage: "envelope.open")
                                 }
                                 .disabled(viewModel.numberOfUnread == 0)
                                 
@@ -92,7 +92,7 @@ public struct ReceiptsListScreen: View {
                                         viewModel.markAsRead(receiptId: provider.id)
                                     }
                                 }) {
-                                    Label(provider.isRead ? "Als ungelesen markieren" : "Als gelesen markieren",
+                                    Label(Asset.localizedString(forKey: provider.isRead ? "Snabble.Receipts.markAsUnread" : "Snabble.Receipts.markAsRead"),
                                           systemImage: provider.isRead ? "envelope.badge" : "envelope.badge.fill")
                                 }
                             }
@@ -117,7 +117,7 @@ public struct ReceiptsListScreen: View {
                     Button(action: {
                         viewModel.markAllAsRead()
                     }) {
-                        Label("Alle als gelesen markieren", systemImage: "envelope.open")
+                        Label(Asset.localizedString(forKey: "Snabble.Receipts.markAllAsRead"), systemImage: "envelope.open")
                     }
                     .disabled(viewModel.numberOfUnread == 0)
                 } label: {
