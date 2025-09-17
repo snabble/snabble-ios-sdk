@@ -301,10 +301,16 @@ extension CheckoutInfo.LineItem {
 }
 
 extension CartItem {
-    public func discounted(price: Int, for lineItem: CheckoutInfo.LineItem) -> Int {
+    public func discountedPrice(withModifier priceModifier: CheckoutInfo.LineItem.PriceModifier, for lineItem: CheckoutInfo.LineItem) -> Int {
         let quantity = lineItem.quantity(for: product)
-        
-        return quantity * price
+
+        let discount: Int
+        if priceModifier.action == .replace, let price = lineItem.price {
+            discount = quantity * (price - priceModifier.price)
+        } else {
+            discount = quantity * priceModifier.price
+        }
+        return discount
     }
 }
 
