@@ -64,9 +64,9 @@ struct CartItemView: View {
     var price: some View {
         if itemModel.hasDiscount {
             HStack {
-                Text(itemModel.reducedPriceString)
-                    .cartPrice()
                 Text(itemModel.regularPriceString ?? "")
+                    .cartPrice()
+                Text(itemModel.reducedPriceString)
                     .strikethroughPrice()
             }
             
