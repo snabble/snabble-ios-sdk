@@ -188,8 +188,18 @@ public struct CheckoutInfo: Decodable {
             return (self.units ?? 1) * price
         }
 
+        public enum Action: String, Codable, UnknownCaseRepresentable {
+            public static var unknownCase: Self = .unknown
+            
+            case add
+            case replace
+            
+            case unknown
+        }
+
         public struct PriceModifier: Codable {
             public let name: String
+            public let action: Action?
             public let price: Int
         }
     }

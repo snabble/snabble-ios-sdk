@@ -43,6 +43,8 @@ extension Domain {
 
 extension Domain: Equatable {}
 
+extension URL: @retroactive ExpressibleByExtendedGraphemeClusterLiteral {}
+extension URL: @retroactive ExpressibleByUnicodeScalarLiteral {}
 extension URL: Swift.ExpressibleByStringLiteral {
     public init(stringLiteral value: StaticString) {
         self = URL(string: "\(value)")!
