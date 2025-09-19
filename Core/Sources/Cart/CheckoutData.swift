@@ -158,7 +158,11 @@ public struct CheckoutInfo: Decodable {
         }
     }
 
-    public struct LineItem: Codable {
+    public struct LineItem: Codable, Swift.Identifiable, Equatable {
+        public static func == (lhs: CheckoutInfo.LineItem, rhs: CheckoutInfo.LineItem) -> Bool {
+            lhs.id == rhs.id && lhs.amount == rhs.amount
+        }
+        
         public let id: String
         public let sku: String?
         public let name: String?

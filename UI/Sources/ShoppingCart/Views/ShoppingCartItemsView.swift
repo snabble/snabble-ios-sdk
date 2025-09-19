@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import SnabbleCore
 import SnabbleAssetProviding
 
 struct HiddenScrollView: ViewModifier {
@@ -25,13 +26,12 @@ extension View {
     }
 }
 
+
 extension ShoppingCartViewModel {
     @ViewBuilder
     func view(for item: CartEntry) -> some View {
-        if case .cartItem(let item, let lineItems) = item {
-            let discounts: [ShoppingCartItemDiscount] = discountItems(item: item, for: lineItems)
-            let itemModel = ProductItemModel(item: item, for: lineItems, discounts: discounts, showImages: showImages)
-            CartItemView(itemModel: itemModel)
+        if case .cartItem(_, _) = item {
+            CartItemView(cartEntry: item)
         } else if case .discount(let int) = item {
             DiscountItemView(amount: int, description: totalDiscountDescription, showImages: showImages)
                 .deleteDisabled(true)
@@ -48,6 +48,7 @@ extension ShoppingCartViewModel {
             }
         }
     }
+
 }
 
 extension ShoppingCartViewModel {
@@ -81,7 +82,7 @@ extension ShoppingCartViewModel {
 }
 
 public struct ShoppingCartItemsView<Footer: View>: View {
-    @ObservedObject var cartModel: ShoppingCartViewModel
+    @Environment(ShoppingCartViewModel.self) var cartModel
     var footer: Footer
     var asList: Bool = true
     
@@ -96,7 +97,7 @@ public struct ShoppingCartItemsView<Footer: View>: View {
                 Section(footer: footer) {
                     ForEach(cartModel.items, id: \.id) { item in
                         cartModel.view(for: item)
-                            .environmentObject(cartModel)
+                            .environment(cartModel)
                     }
                     .onDelete(perform: delete)
                     .listRowInsets(EdgeInsets(top: 4, leading: 10, bottom: 4, trailing: 4))
@@ -111,10 +112,10 @@ public struct ShoppingCartItemsView<Footer: View>: View {
 
     public var body: some View {
         content
-            .alert(isPresented: $cartModel.productError) {
+            .alert(isPresented: .constant(cartModel.productError)) {
                 cartModel.productErrorAlert
             }
-            .alert(isPresented: $cartModel.confirmDeletion) {
+            .alert(isPresented: .constant(cartModel.confirmDeletion)) {
                 cartModel.confirmDeletionAlert
             }
     }

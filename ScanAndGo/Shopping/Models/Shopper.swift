@@ -46,27 +46,28 @@ public protocol ShoppingProvider: AnyObject {
 /// let shopper = Shopper(shop: shop)
 /// shopper.startScanner()
 /// ```
+@Observable
 @dynamicMemberLookup
-public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
+public final class Shopper: BarcodeProcessing, Equatable {
     public static func == (lhs: Shopper, rhs: Shopper) -> Bool {
         lhs.barcodeManager.shop == rhs.barcodeManager.shop
     }
     
     /// Manages the barcode scanning process.
     /// The `barcodeManager` is responsible for handling scanned barcodes, managing the scanner state, and processing scanned items.
-    @ObservedObject public var barcodeManager: BarcodeManager
+    public var barcodeManager: BarcodeManager
     
     /// Manages the shopping cart.
     /// The `cartModel` handles the items in the shopping cart, including adding, removing, and updating items.
-    @ObservedObject public var cartModel: ShoppingCartViewModel
+    public var cartModel: ShoppingCartViewModel
     
     /// Manages the available payment methods.
     /// The `paymentManager` keeps track of available and selected payment methods for the current shopping session.
-    @Published public var paymentManager: PaymentMethodManager
+    public var paymentManager: PaymentMethodManager
     
     /// Indicates whether the shopper has a valid payment method.
     /// This property is set to `true` when a valid payment method is selected, and `false` otherwise.
-    @Published public var hasValidPayment: Bool = false
+    public var hasValidPayment: Bool = false
     
     /// A list of payment methods that are restricted for the shopper.
     public var restrictedPayments: [RawPaymentMethod] = []
@@ -115,17 +116,19 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
         
         self.paymentManager.delegate = self
         
-        self.paymentManager.$selectedPayment
+        self.paymentManager.selectedPaymentPublisher
             .receive(on: RunLoop.main)
             .sink { [unowned self] payment in
                 self.verifyPayment(payment)
             }
             .store(in: &subscriptions)
-        
-        ActionManager.shared.$actionState
+
+        ActionManager.shared.actionStatePublisher
             .receive(on: RunLoop.main)
             .sink { [unowned self] action in
-                self.handleAction(action)
+                Task {
+                    await self.handleAction(action)
+                }
             }
             .store(in: &subscriptions)
     }
@@ -133,6 +136,7 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
     /// Handles actions based on the new state.
     ///
     /// - Parameter newState: The new action state.
+    @MainActor
     private func handleAction(_ newState: ActionType) {
         if case .idle = newState {
             startScanner()
@@ -142,7 +146,7 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
     }
     
     /// Indicates whether scanning is activated.
-    @Published public var scanningActivated: Bool = false {
+    public var scanningActivated: Bool = false {
         didSet {
             logger.debug("scanningActivated \(self.scanningActivated)")
             if scanningActivated {
@@ -154,7 +158,7 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
     }
     
     /// Indicates whether scanning is paused. Stored in UserDefaults.
-    @Published public var scanningPaused: Bool = UserDefaults.standard.scanningDisabled {
+    public var scanningPaused: Bool = UserDefaults.standard.scanningDisabled {
         didSet {
             logger.debug("scanningPaused \(self.scanningPaused)")
             if scanningPaused {
@@ -166,10 +170,10 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
         }
     }
     /// Indicates whether the Shopper is currently processing.
-    @Published public var processing: Bool = false
+    public var processing: Bool = false
     
     /// The scanned item recognized by the BarcodeManager.
-    @Published public var scannedItem: BarcodeManager.ScannedItem? {
+    public var scannedItem: BarcodeManager.ScannedItem? {
         didSet {
             if scannedItem != nil {
                 stopScanner()
@@ -178,20 +182,20 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
         }
     }
     /// A list of scanned items.
-    @Published public var bundles: [BarcodeManager.ScannedItem] = []
+    public var bundles: [BarcodeManager.ScannedItem] = []
     
     /// The scan message received from BarcodeProcessing.
-    @Published public var scanMessage: ScanMessage?
+    public var scanMessage: ScanMessage?
     
     /// The error message received from BarcodeProcessing.
-    @Published public var errorMessage: String?
+    public var errorMessage: String?
     
-    @Published public var flashlight: Bool = false {
+    public var flashlight: Bool = false {
         didSet {
             barcodeManager.barcodeDetector.setTorch(flashlight)
         }
     }
-    @Published public var isNavigating: Bool = false {
+    public var isNavigating: Bool = false {
         didSet {
             if !isNavigating {
                 controller = nil
@@ -199,7 +203,7 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
             }
         }
     }
-    @Published public var controller: UIViewController? {
+    public var controller: UIViewController? {
         didSet {
             if controller != nil {
                 self.stopScanner()
@@ -221,19 +225,21 @@ public final class Shopper: ObservableObject, BarcodeProcessing, Equatable {
     }
     
     /// Starts the barcode scanner.
-    @MainActor
     public func startScanner() {
         guard readyToScan, barcodeManager.barcodeDetector.state != .scanning else {
             return
         }
         self.reset()
-        barcodeManager.barcodeDetector.start()
+        Task { @MainActor in
+            barcodeManager.barcodeDetector.start()
+        }
     }
     
     /// Stops the barcode scanner.
-    @MainActor
     public func stopScanner() {
-        barcodeManager.barcodeDetector.stop()
+        Task { @MainActor in
+            barcodeManager.barcodeDetector.stop()
+        }
     }
 }
 

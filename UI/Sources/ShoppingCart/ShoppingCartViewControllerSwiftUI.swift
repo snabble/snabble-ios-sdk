@@ -16,19 +16,21 @@ public protocol ShoppingCartViewControllerDelegate: AnyObject {
 }
 
 /// A UIViewController wrapping SwiftUI's ShoppingCartView
-open class ShoppingCartViewController: UIHostingController<ShoppingCartView> {
+open class ShoppingCartViewController: UIHostingController<AnyView> {
+    public let viewModel: ShoppingCartViewModel
+
     public weak var shoppingCartDelegate: ShoppingCartDelegate? {
         didSet {
             self.viewModel.shoppingCartDelegate = shoppingCartDelegate
         }
     }
 
-    public var viewModel: ShoppingCartViewModel {
-        rootView.cartModel
-    }
-
     public init(shoppingCart: ShoppingCart, compactMode: Bool = false) {
-        let rootView = ShoppingCartView(shoppingCart: shoppingCart, compactMode: compactMode)
+        self.viewModel = ShoppingCartViewModel(shoppingCart: shoppingCart)
+        let rootView = AnyView(
+            ShoppingCartView(compactMode: compactMode)
+                .environment(viewModel)
+        )
         super.init(rootView: rootView)
     }
     

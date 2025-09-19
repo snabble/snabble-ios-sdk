@@ -7,6 +7,8 @@
 
 import UIKit
 import SDCAlertView
+import Observation
+import Combine
 
 import SnabbleCore
 import SnabbleAssetProviding
@@ -22,9 +24,17 @@ public protocol PaymentMethodManagerDelegate: AnyObject {
     func paymentMethodManager(didSelectPayment: Payment?)
 }
 
-public final class PaymentMethodManager: ObservableObject {
-    @Published public var selectedPayment: Payment?
-    @Published public var hasMethodsToSelect: Bool = true
+@Observable
+public final class PaymentMethodManager {
+    public var selectedPayment: Payment? {
+        didSet {
+            selectedPaymentPublisher.send(selectedPayment)
+        }
+    }
+    public var hasMethodsToSelect: Bool = true
+
+    // Publisher for Combine compatibility
+    public let selectedPaymentPublisher = CurrentValueSubject<Payment?, Never>(nil)
     
     let paymentConsumer: PaymentConsumer?
     

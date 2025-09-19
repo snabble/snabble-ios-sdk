@@ -24,7 +24,7 @@ extension Shopper {
     }
 }
 
-extension Shopper: PaymentMethodManagerDelegate {
+extension Shopper: @preconcurrency PaymentMethodManagerDelegate {
     
     private func setAlertProvider(_ provider: AlertProviding) {
         let alertController = provider.alertController { _ in }
@@ -45,7 +45,7 @@ extension Shopper: PaymentMethodManagerDelegate {
         hasValidPayment = acceptPayment(method: payment.method, detail: payment.detail)
     }
     
-    public func paymentMethodManager(didSelectItem item: SnabbleUI.PaymentMethodItem) {
+    @MainActor public func paymentMethodManager(didSelectItem item: SnabbleUI.PaymentMethodItem) {
         logger.debug("didSelectItem: \(item.title)")
         guard item.selectable else {
             return

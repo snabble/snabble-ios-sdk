@@ -266,7 +266,7 @@ final class ScannerDrawerViewController: UIViewController {
     }
 
     @objc private func shoppingCartUpdated(_ notification: Notification) {
-        checkoutBar?.updateTotals()
+        checkoutBar?.updateTotals(updating: notification.object is ShoppingCartViewModel)
     }
 
     func updateTotals() {

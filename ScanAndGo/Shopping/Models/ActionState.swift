@@ -79,26 +79,31 @@ struct ActionItem: Swift.Identifiable, Equatable {
 /// The `ActionManager` is a singleton class responsible for managing the different types of actions that can be triggered
 /// throughout the application. It publishes action states and provides a mechanism for views to observe and respond to these
 /// states.
-public final class ActionManager: ObservableObject {
+@Observable
+public final class ActionManager {
     public static let shared = ActionManager()
     
     let logger = Logger(subsystem: "io.snabble.sdk.ScanAndGo", category: "ActionManager")
     public let actionPublisher = PassthroughSubject<ActionType, Never>()
-    
+
     /// The current state of the action being handled.
     /// Updates to this property will trigger corresponding UI changes in subscribed views.
-   @Published var actionState: ActionType = .idle {
+    var actionState: ActionType = .idle {
         didSet {
             logger.debug("handleAction: \(oldValue) -> \(self.actionState)")
+            actionStatePublisher.send(actionState)
         }
     }
+
+    // Publisher for Combine compatibility
+    public let actionStatePublisher = CurrentValueSubject<ActionType, Never>(.idle)
     /// The currently active action item.
     /// This property holds the details of the current action, including its type and domain.
-    @Published var currentAction: ActionItem?
+    var currentAction: ActionItem?
 
     /// Indicates whether an action is currently presented.
     /// This property helps in managing the presentation state of different actions.
-    @Published var isPresented: Bool = false
+    var isPresented: Bool = false
     
     private var subscriptions = Set<AnyCancellable>()
     

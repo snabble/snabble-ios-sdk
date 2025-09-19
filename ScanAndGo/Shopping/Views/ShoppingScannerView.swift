@@ -35,7 +35,7 @@ public struct ScannerOverlay: View {
 
 struct ShoppingScannerView: View {
     @SwiftUI.Environment(\.safeAreaInsets) var insets
-    @ObservedObject var model: Shopper
+    @Environment(Shopper.self) var model
     @Binding var minHeight: CGFloat
     
     @State private var topMargin: CGFloat = ScannerCartView.TopMargin
@@ -50,8 +50,8 @@ struct ShoppingScannerView: View {
             ScannerOverlay(offset: $minHeight)
             ZoomControl(zoomLevel: $zoomLevel, steps: zoomSteps)
                 .offset(x: 0, y: position - 114)
-            PullOverView(minHeight: $minHeight, expanded: $model.scanningPaused, paddingTop: $topMargin, position: $position) {
-                ScannerCartView(model: model, minHeight: $minHeight)
+            PullOverView(minHeight: $minHeight, expanded: Binding(get: { model.scanningPaused }, set: { model.scanningPaused = $0 }) , paddingTop: $topMargin, position: $position) {
+                ScannerCartView(minHeight: $minHeight)
             }
             if model.processing {
                 ScannerProcessingView()
@@ -83,8 +83,8 @@ struct ShoppingScannerView: View {
                 }
             }
         }
-        .onReceive(model.$scanMessage) { scanMessage in
-            if scanMessage != nil {
+        .onChange(of: model.scanMessage) {
+            if model.scanMessage != nil {
                 model.startScanner()
                 withAnimation {
                     showHud = true

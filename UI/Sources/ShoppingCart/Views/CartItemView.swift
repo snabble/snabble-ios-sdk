@@ -53,79 +53,78 @@ struct BadgeTextView: View {
 }
 
 struct CartItemView: View {
-    @ObservedObject var itemModel: ProductItemModel
+    let cartEntry: CartEntry
+    @Environment(ShoppingCartViewModel.self) var cartModel
     @ScaledMetric var scale: CGFloat = 1
-    
-    init(itemModel: ProductItemModel) {
-        self.itemModel = itemModel
+
+    init(cartEntry: CartEntry) {
+        self.cartEntry = cartEntry
     }
     
     @ViewBuilder
     var price: some View {
-        if itemModel.hasDiscount {
+        if cartModel.hasDiscount(for: cartEntry) {
             HStack {
-                Text(itemModel.regularPriceString ?? "")
+                Text(cartModel.regularPriceString(for: cartEntry))
                     .cartPrice()
-                Text(itemModel.reducedPriceString)
+                Text(cartModel.reducedPriceString(for: cartEntry))
                     .strikethroughPrice()
             }
-            
+
         } else {
-            Text(itemModel.regularPriceString ?? "")
+            Text(cartModel.regularPriceString(for: cartEntry))
                 .cartPrice()
         }
     }
-    
+
     @ViewBuilder
     var leftView: some View {
         ZStack(alignment: .topLeading) {
-            if itemModel.showImages {
-                if let image = itemModel.image {
-                    image
-                        .cartImageModifier()
-                } else if itemModel.leftDisplay == .emptyImage {
-                    SwiftUI.Image(systemName: "basket")
-                        .cartImageModifier(padding: 10)
-                }
+            let leftDisplay = cartModel.leftDisplay(for: cartEntry)
+
+            if leftDisplay == .emptyImage {
+                SwiftUI.Image(systemName: "basket")
+                    .cartImageModifier(padding: 10)
             }
-            if let badgeText = itemModel.badgeText {
+
+            if let badgeText = cartModel.badgeText(for: cartEntry) {
                 BadgeTextView(badgeText: badgeText)
             }
         }
     }
-    
+
     @ViewBuilder
     var rightView: some View {
-        switch itemModel.rightDisplay {
+        switch cartModel.rightDisplay(for: cartEntry) {
         case .buttons:
-            CartStepperView(itemModel: itemModel)
-            
+            CartStepperView(cartEntry: cartEntry)
+
         case .weightEntry:
-            CartWeightView(itemModel: itemModel, editable: true)
-            
+            CartWeightView(cartEntry: cartEntry, editable: true)
+
         case .weightDisplay:
-            CartWeightView(itemModel: itemModel)
+            CartWeightView(cartEntry: cartEntry)
 
         default:
             EmptyView()
         }
     }
-    
+
     @ViewBuilder
     var additionalInfo: some View {
-        if let depositInfo = itemModel.depositDetailString {
+        if let depositInfo = cartModel.depositDetailString(for: cartEntry) {
             Text(depositInfo)
                 .cartInfo()
         }
 
-        ForEach(itemModel.discounts) { discount in
+        ForEach(cartModel.discounts(for: cartEntry)) { discount in
             HStack(alignment: .top) {
                 if discount.discount != 0 {
-                    Text(itemModel.formatter.format(discount.discount))
+                    Text(cartModel.formatter.format(discount.discount))
                 }
                 Spacer()
                 Text(discount.name)
-                
+
                 if let image = discount.image {
                     image
                         .resizable()
@@ -136,14 +135,14 @@ struct CartItemView: View {
             .cartInfo()
         }
     }
-    
+
     var body: some View {
         HStack {
             leftView
             VStack(alignment: .leading, spacing: 2) {
                 HStack {
                     VStack(alignment: .leading, spacing: 2) {
-                        Text(itemModel.title)
+                        Text(cartModel.title(for: cartEntry))
                         price
                     }
                     Spacer(minLength: 4)

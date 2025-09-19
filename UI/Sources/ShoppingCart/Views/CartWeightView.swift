@@ -12,30 +12,27 @@ import SnabbleAssetProviding
 import SnabbleComponents
 
 extension ShoppingCartViewModel {
-    func updateQuantity(_ string: Binding<String>, for itemModel: ProductItemModel) {
-        guard let index = cartIndex(for: itemModel) else {
-            return
-        }
+    func updateQuantity(_ string: Binding<String>, for cartEntry: CartEntry) {
         guard let quantity = Int(string.wrappedValue), quantity > 0 else {
-            string.wrappedValue = "\(itemModel.quantity)"
+            string.wrappedValue = "\(self.quantity(for: cartEntry))"
             return
         }
-        self.updateQuantity(quantity, at: index)
+        self.updateQuantity(quantity, for: cartEntry)
     }
 }
 
 struct CartWeightView: View {
     @SwiftUI.Environment(\.projectTrait) private var project
-    
-    @ObservedObject var itemModel: ProductItemModel
+
+    let cartEntry: CartEntry
     let editable: Bool
-    @EnvironmentObject var cartModel: ShoppingCartViewModel
+    @Environment(ShoppingCartViewModel.self) var cartModel
     @ScaledMetric var scale: CGFloat = 1
 
     @State private var weightText: String = ""
-    
-    init(itemModel: ProductItemModel, editable: Bool = false) {
-        self.itemModel = itemModel
+
+    init(cartEntry: CartEntry, editable: Bool = false) {
+        self.cartEntry = cartEntry
         self.editable = editable
     }
     
@@ -56,13 +53,13 @@ struct CartWeightView: View {
                            tag: ShoppingCart.textFieldMagic,
                            font: UIFont.systemFont(ofSize: 13 * scale, weight: .semibold),
                            onSubmit: {
-                cartModel.updateQuantity($weightText, for: itemModel)
+                cartModel.updateQuantity($weightText, for: cartEntry)
             },
                            content: {
                 Text("")
             })
             .frame(maxWidth: 80 * scale, maxHeight: 26 * scale)
-        } else if let value = itemModel.quantityText {
+        } else if let value = cartModel.quantityText(for: cartEntry) {
             Text(value)
                 .font(Font.system(size: 13 * scale, weight: .semibold))
         }
@@ -71,13 +68,13 @@ struct CartWeightView: View {
     var body: some View {
         HStack(spacing: 8 * scale) {
             valueView
-            
-            Text(itemModel.unitString ?? "")
+
+            Text(cartModel.unitString(for: cartEntry) ?? "")
                 .font(Font.system(size: 13 * scale, weight: .semibold))
-                
+
             Button( action: {
                 withAnimation {
-                    cartModel.trash(itemModel: itemModel)
+                    cartModel.trash(cartEntry: cartEntry)
                 }
             }) {
                 minusImage
@@ -85,7 +82,7 @@ struct CartWeightView: View {
             .buttonStyle(BorderedButtonStyle())
         }
         .onAppear {
-            weightText = "\(itemModel.quantity)"
+            weightText = "\(cartModel.quantity(for: cartEntry))"
         }
     }
 }

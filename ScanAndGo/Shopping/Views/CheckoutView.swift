@@ -16,19 +16,17 @@ import SnabbleUI
 struct CheckoutView: View {
     @AppStorage("io.snabble.sdk.scanAndGo.paymentMethod") private var paymentMethod: String?
     
-    @ObservedObject var model: Shopper
-    
+    @Environment(Shopper.self) var model
+
     @State private var disableCheckout: Bool = true
-    
+
     @State private var countString: String = ""
     @State private var totalString: String = ""
     @State private var showPaymentSelector: Bool = false
-    
+
     @State var cancellables = Set<AnyCancellable>()
-    
-    init(model: Shopper) {
-        self.model = model
-        
+
+    init() {
         NotificationCenter.default.publisher(for: .snabbleCartUpdated)
             .receive(on: RunLoop.main)
             .sink(receiveValue: { _ in
@@ -50,7 +48,7 @@ struct CheckoutView: View {
                 }
                 HStack(spacing: 16) {
                     if model.hasValidPayment {
-                        PaymentButtonView(model: model, onAction: {
+                        PaymentButtonView(onAction: {
                             showPaymentSelector = true
                         })
                         .frame(width: 88, height: 38)
@@ -62,7 +60,7 @@ struct CheckoutView: View {
                             })
                         }
                     } else {
-                        PaymentButtonView(model: model, onAction: {
+                        PaymentButtonView(onAction: {
                             showPaymentSelector = true
                         })
                         .frame(minWidth: 88, maxWidth: .infinity)

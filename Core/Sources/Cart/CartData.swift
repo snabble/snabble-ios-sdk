@@ -300,7 +300,13 @@ extension CheckoutInfo.LineItem {
    }
 }
 
-extension CartItem {
+extension CartItem: Equatable {
+    public static func == (lhs: CartItem, rhs: CartItem) -> Bool {
+        return lhs.uuid == rhs.uuid &&
+               lhs.quantity == rhs.quantity &&
+               lhs.product.sku == rhs.product.sku
+    }
+
     public func discountedPrice(withModifier priceModifier: CheckoutInfo.LineItem.PriceModifier, for lineItem: CheckoutInfo.LineItem) -> Int {
         let quantity = lineItem.quantity(for: product)
 

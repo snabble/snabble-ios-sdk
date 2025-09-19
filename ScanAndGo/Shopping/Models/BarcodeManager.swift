@@ -36,7 +36,8 @@ public protocol BarcodeProcessing: AnyObject, AnalyticsDelegate {
 /// let detector = InternalBarcodeDetector(...)
 /// let barcodeManager = BarcodeManager(shop: shop, shoppingCart: shoppingCart, detector: detector)
 /// ```
-public final class BarcodeManager: ObservableObject {
+@Observable
+public final class BarcodeManager {
     let shop: Shop
     let shoppingCart: ShoppingCart
     let project: Project
