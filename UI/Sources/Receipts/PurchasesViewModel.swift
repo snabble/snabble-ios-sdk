@@ -152,7 +152,10 @@ public class PurchasesViewModel: LoadableObject {
             return 
         }
         
-        numberOfUnread = purchases.filter { !$0.isRead }.count
+        let readIDs = readStatusManager.allReceiptIds
+        let allIDs = Set(purchases.map { $0.id })
+
+        numberOfUnread = allIDs.subtracting(readIDs).count
     }
 
 }

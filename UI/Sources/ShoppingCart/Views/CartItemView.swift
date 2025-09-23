@@ -121,7 +121,7 @@ struct CartItemView: View {
         ForEach(itemModel.discounts) { discount in
             HStack(alignment: .top) {
                 if discount.discount != 0 {
-                    Text(itemModel.formatter.format(discount.discount))
+                    Text(itemModel.formatter.format(discount.discount * (discount.discount > 0 ? -1 : 1)))
                 }
                 Spacer()
                 Text(discount.name)
