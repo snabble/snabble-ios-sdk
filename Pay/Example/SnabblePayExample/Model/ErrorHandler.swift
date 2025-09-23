@@ -8,6 +8,7 @@
 import Foundation
 import SnabblePay
 import Combine
+import Observation
 
 struct ErrorInfo: Identifiable, Equatable {
     let id = UUID()
@@ -34,8 +35,9 @@ struct ErrorInfo: Identifiable, Equatable {
     }
 }
 
-class ErrorHandler: ObservableObject {
+@Observable
+class ErrorHandler {
     static let shared = ErrorHandler()
-    
-    @Published var error: ErrorInfo?
+
+    var error: ErrorInfo?
 }

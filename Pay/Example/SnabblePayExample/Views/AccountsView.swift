@@ -11,8 +11,8 @@ import Combine
 import BetterSafariView
 
 struct AccountsView: View {
-    @ObservedObject var viewModel: AccountsViewModel = .init()
-    @ObservedObject var errorHandler: ErrorHandler = .shared
+    @Environment(AccountsViewModel.self) private var viewModel
+    @State var errorHandler: ErrorHandler = .shared
 
     @State private var reset: Bool = false
 
@@ -52,7 +52,7 @@ struct AccountsView: View {
     private func cardView(account: Account) -> some View {
         if viewModel.selectedAccount == account, let model = viewModel.selectedAccountModel {
                 NavigationLink {
-                    AccountView(accountsModel: viewModel)
+                    AccountView()
                 } label: {
                     CardView(model: model)
                 }
@@ -66,13 +66,15 @@ struct AccountsView: View {
         VStack {
             Image("Title")
             Text("The Future of Mobile Payment")
-                .foregroundColor(.primary())
+                .foregroundColor(.primary)
         }
         .shadow(radius: 3)
         .shadow(radius: 3)
     }
 
     var body: some View {
+        @Bindable var viewModel = viewModel
+        
         NavigationStack {
             if let ordered = viewModel.ordered, !ordered.isEmpty {
                 ZStack {
@@ -100,8 +102,8 @@ struct AccountsView: View {
                         viewModel.loadAccounts()
                     }
                 }
-                .onChange(of: animationStarted) { value in
-                    if value == true {
+                .onChange(of: animationStarted) {
+                    if animationStarted {
                         DispatchQueue.main.asyncAfter(deadline: .now() + inTime + 0.1) {
                             withAnimation(.easeOut(duration: outTime)) {
                                 animationStarted = false
@@ -115,7 +117,6 @@ struct AccountsView: View {
                         }
                     }
                 }
-                
                 .toolbar {
                     if errorHandler.error != nil {
                         ToolbarItem(placement: .navigationBarTrailing) {
@@ -149,11 +150,11 @@ struct AccountsView: View {
                         header
                             .padding(.top, 80)
                         
-                        AddFirstAccount(viewModel: viewModel)
+                        AddFirstAccount()
                             .padding(.top, 100)
-
+                        
                         Spacer()
-                   }
+                    }
                 }
                 .toolbar {
                     ToolbarItem(placement: .navigationBarTrailing) {
@@ -169,7 +170,7 @@ struct AccountsView: View {
                 }
             }
         }
-        .onChange(of: errorHandler.error) { error in
+        .onChange(of: errorHandler.error) { _, error in
             if error != nil {
                 showError = true
             }

@@ -89,11 +89,9 @@ extension ShoppingCartViewModel {
         confirmDeletion(item: item)
     }
 
-
     func trash(at offset: IndexSet) {
         let index = offset[offset.startIndex]
         confirmDeletion(at: index)
     }
     
 }
-

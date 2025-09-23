@@ -15,17 +15,15 @@ extension AccountViewModel {
 }
 
 struct AccountView: View {
-    @ObservedObject var accountsModel: AccountsViewModel
-    @ObservedObject var viewModel: AccountViewModel
+    @Environment(AccountsViewModel.self) private var accountsModel
     @Environment(\.presentationMode) var presentationMode
-    
+
     @State private var edit = false
     @State private var delete = false
     @State private var name: String = ""
 
-    init(accountsModel: AccountsViewModel) {
-        self.accountsModel = accountsModel
-        self.viewModel = accountsModel.selectedAccountModel!
+    private var viewModel: AccountViewModel {
+        accountsModel.selectedAccountModel!
     }
 
     var body: some View {
@@ -50,7 +48,7 @@ struct AccountView: View {
             .onAppear {
                 viewModel.createMandate()
             }
-            .onChange(of: viewModel.needsReload) { newReload in
+            .onChange(of: viewModel.needsReload) { _, newReload in
                 if newReload {
                     accountsModel.loadAccounts()
                 }

@@ -6,15 +6,17 @@
 //
 import Foundation
 import Combine
+import Observation
 import SnabblePay
 import SnabbleLogger
 
-class AccountsViewModel: ObservableObject {
+@Observable
+class AccountsViewModel {
     private var snabblePay: SnabblePay {
         return .shared
     }
 
-    @Published var accounts: [Account]? {
+    var accounts: [Account]? {
         didSet {
             if let selectedID = UserDefaults.selectedAccount, let account = accounts?.first(where: { $0.id.rawValue == selectedID }) {
                 selectedAccount = account
@@ -25,8 +27,8 @@ class AccountsViewModel: ObservableObject {
             }
         }
     }
-    @Published var accountCheck: Account.Check?
-    @Published var ordered: [Account]?
+    var accountCheck: Account.Check?
+    var ordered: [Account]?
     
     private func accountStack() -> [Account]? {
         guard let selected = selectedAccount else {
@@ -40,7 +42,7 @@ class AccountsViewModel: ObservableObject {
         return array.reversed()
     }
 
-    @Published var selectedAccountModel: AccountViewModel? {
+    var selectedAccountModel: AccountViewModel? {
         willSet {
             if let model = selectedAccountModel {
                 model.autostart = false

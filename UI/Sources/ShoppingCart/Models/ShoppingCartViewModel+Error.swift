@@ -22,4 +22,3 @@ extension ShoppingCartViewModel {
         productError.toggle()
     }
 }
-

@@ -8,10 +8,12 @@
 import Foundation
 import SwiftUI
 import Combine
+import Observation
 import SnabbleCore
 
-private class StartShoppingViewModel: ObservableObject {
-    @Published var widget: WidgetButton?
+@Observable
+private class StartShoppingViewModel {
+    var widget: WidgetButton?
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -37,12 +39,12 @@ public struct WidgetStartShoppingView: View {
     let widget: WidgetStartShopping
     let action: (WidgetStartShopping) -> Void
 
-    @ObservedObject private var viewModel: StartShoppingViewModel
+    @State private var viewModel: StartShoppingViewModel
 
     init(widget: WidgetStartShopping, action: @escaping (WidgetStartShopping) -> Void) {
         self.widget = widget
         self.action = action
-        self.viewModel = StartShoppingViewModel(widget: widget)
+        self._viewModel = State(initialValue: StartShoppingViewModel(widget: widget))
     }
 
     public var body: some View {

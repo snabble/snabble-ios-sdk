@@ -26,11 +26,10 @@ extension View {
     }
 }
 
-
 extension ShoppingCartViewModel {
     @ViewBuilder
     func view(for item: CartEntry) -> some View {
-        if case .cartItem(_, _) = item {
+        if case .cartItem = item {
             CartItemView(cartEntry: item)
         } else if case .discount(let int) = item {
             DiscountItemView(amount: int, description: totalDiscountDescription, showImages: showImages)
@@ -123,5 +122,4 @@ public struct ShoppingCartItemsView<Footer: View>: View {
     private func delete(at offset: IndexSet) {
         cartModel.trash(at: offset)
     }
-
 }

@@ -36,7 +36,7 @@ public protocol ShoppingProvider: AnyObject {
 /// manages the shopping cart, payment methods, and coordinates with the `BarcodeManager` to handle
 /// barcode scanning and product identification.
 ///
-/// The class conforms to `ObservableObject` to support SwiftUI views and implements the
+/// The class conforms to `@Observable` to support SwiftUI views and implements the
 /// `BarcodeProcessing` and `Equatable` protocols. It handles actions such as starting and stopping
 /// the barcode scanner, processing scanned items, and managing payment methods.
 ///

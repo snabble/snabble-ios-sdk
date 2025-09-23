@@ -55,4 +55,3 @@ extension ShoppingCartViewModel {
         formatter.format(totalDiscount)
     }
 }
-

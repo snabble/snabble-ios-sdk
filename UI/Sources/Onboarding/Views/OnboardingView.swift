@@ -10,11 +10,7 @@
 import SwiftUI
 
 public struct OnboardingView: View {
-    @ObservedObject public var viewModel: OnboardingViewModel
-
-    public init(viewModel: OnboardingViewModel) {
-        self.viewModel = viewModel
-    }
+    @Environment(OnboardingViewModel.self) private var viewModel
     
     @ViewBuilder
     public var header: some View {

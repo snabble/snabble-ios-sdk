@@ -9,7 +9,7 @@ import SwiftUI
 import SnabblePay
 
 struct AddFirstAccount: View {
-    @ObservedObject var viewModel: AccountsViewModel
+    @Environment(AccountsViewModel.self) private var viewModel
 
     var body: some View {
         VStack(spacing: 10) {

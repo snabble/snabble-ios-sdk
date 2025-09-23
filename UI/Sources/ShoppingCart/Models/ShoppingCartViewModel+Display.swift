@@ -165,4 +165,3 @@ extension ShoppingCartViewModel {
         return defaultItem?.name ?? item.product.name
     }
 }
-
