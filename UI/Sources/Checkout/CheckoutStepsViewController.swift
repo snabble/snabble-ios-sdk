@@ -7,10 +7,12 @@
 import SnabbleCore
 import SwiftUI
 import Combine
+import Observation
 import SnabbleAssetProviding
 import SnabbleComponents
 
-final class CheckoutModel: ObservableObject {
+@Observable
+final class CheckoutModel {
 
     weak var paymentDelegate: PaymentDelegate? {
         didSet {
@@ -19,9 +21,9 @@ final class CheckoutModel: ObservableObject {
     }
     var actionPublisher = PassthroughSubject<[String: Any]?, Never>()
 
-    @Published var stepsModel: CheckoutStepsViewModel
-    @Published var isComplete: Bool = false
-    @Published var checkoutSteps: [CheckoutStep] = []
+    var stepsModel: CheckoutStepsViewModel
+    var isComplete: Bool = false
+    var checkoutSteps: [CheckoutStep] = []
 
     var isSuccessful: Bool {
         guard let paymentState = stepsModel.checkoutProcess?.paymentState else {
@@ -88,10 +90,10 @@ private struct ViewHeightKey: PreferenceKey {
 }
 
 struct CheckoutView: View {
-    @ObservedObject var model: CheckoutModel
+    @State var model: CheckoutModel
     @Environment(\.presentationMode) var presentationMode
     @ViewProvider(.successCheckout) var customView
-    
+
     @State private var height1: CGFloat = .zero
     @State private var height2: CGFloat = .zero
 
@@ -112,7 +114,7 @@ struct CheckoutView: View {
             LazyVStack(alignment: .leading, spacing: 0) {
                 ForEach(model.checkoutSteps, id: \.self) { step in
                     CheckoutStepRow(step: step)
-                        .environmentObject(model)
+                        .environment(model)
                         .padding(10)
                     
                     if !model.isLast(step: step) {

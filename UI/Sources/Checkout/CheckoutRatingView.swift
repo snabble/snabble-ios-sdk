@@ -9,6 +9,7 @@ import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleComponents
 import Combine
+import Observation
 
 struct RatingItem: Swift.Identifiable, Equatable {
     var id: String { rating.rawValue }
@@ -17,7 +18,8 @@ struct RatingItem: Swift.Identifiable, Equatable {
     var image: SwiftUI.Image { isActive ? rating.imageSelect : rating.image }
 }
 
-public final class RatingModel: ObservableObject {
+@Observable
+public final class RatingModel {
     public let shop: Shop
     public weak var analyticsDelegate: AnalyticsDelegate?
 
@@ -86,9 +88,9 @@ public final class RatingModel: ObservableObject {
         }
     }
 
-    @Published var ratingItems = [RatingItem(rating: .low), RatingItem(rating: .medium), RatingItem(rating: .high)]
-    @Published var selectionIndex: Int?
-    @Published var hasFeedbackSend: Bool = false
+    var ratingItems = [RatingItem(rating: .low), RatingItem(rating: .medium), RatingItem(rating: .high)]
+    var selectionIndex: Int?
+    var hasFeedbackSend: Bool = false
     
     var selectedRating: RatingItem? {
         guard let index = selectionIndex else { return nil }
@@ -149,7 +151,7 @@ struct RatingButton: View {
 }
 
 struct CheckoutRatingView: View {
-    @ObservedObject var model: RatingModel
+    @State var model: RatingModel
     @ViewProvider(.ratingAccessory) var customView
     
     @State private var message: String = ""

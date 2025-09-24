@@ -18,7 +18,7 @@ protocol CheckoutStepViewModel {
 
 struct CheckoutStepView: View {
     var model: CheckoutStepViewModel
-    @EnvironmentObject var checkoutModel: CheckoutModel
+    @Environment(CheckoutModel.self) private var checkoutModel
 
     init(model: CheckoutStepViewModel) {
         self.model = model
