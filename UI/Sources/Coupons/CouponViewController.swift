@@ -12,8 +12,8 @@ import SnabbleAssetProviding
 import SnabbleComponents
 
 public struct CouponView: View {
-    @ObservedObject var couponModel: CouponViewModel
-    
+    @State public var couponModel: CouponViewModel
+
     public init(coupon: Coupon) {
         self.couponModel = CouponViewModel(coupon: coupon)
     }

@@ -9,13 +9,15 @@ import Foundation
 import SnabbleCore
 import Combine
 import SwiftUI
+import Observation
 import SnabbleAssetProviding
 
 protocol CouponViewModelDelegate: AnyObject {
     func couponViewModel(_ couponViewModel: CouponViewModel, shouldActivateCoupon coupon: Coupon) -> Bool
 }
 
-class CouponViewModel: ObservableObject {
+@Observable
+public class CouponViewModel {
     let coupon: Coupon
 
     var title: String { coupon.name }
@@ -23,7 +25,7 @@ class CouponViewModel: ObservableObject {
     var text: String? { coupon.promotionDescription }
     var disclaimer: String? { coupon.disclaimer }
     
-    @Published var image: UIImage?
+    var image: UIImage?
 
     weak var delegate: CouponViewModelDelegate?
     private weak var imageTask: URLSessionDataTask?
@@ -119,6 +121,6 @@ extension CouponViewModel {
         } else {
             activateCoupon()
         }
-        objectWillChange.send()
+        // @Observable automatically handles change notifications
     }
 }
