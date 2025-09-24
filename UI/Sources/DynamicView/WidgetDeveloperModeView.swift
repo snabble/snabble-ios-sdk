@@ -35,6 +35,8 @@ public struct WidgetDeveloperModeView: View {
             NavigationLink(destination: {
                 List {
                     WidgetContainer(widgets: widget.items)
+                        .environment(viewModel)
+                        .environment(developerModel)
                 }
                 .listStyle(.grouped)
             }) {
