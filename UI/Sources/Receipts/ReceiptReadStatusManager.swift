@@ -52,6 +52,10 @@ public final class ReceiptReadStatusManager {
         userDefaults.removeObject(forKey: readStatusKey)
     }
     
+    public var allReceiptIds: Set<String> {
+        getReadStatus()
+    }
+    
     // MARK: - Private Methods
     
     private func getReadStatus() -> Set<String> {

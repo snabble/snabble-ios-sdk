@@ -121,7 +121,7 @@ public struct ReceiptsListScreen: View {
                     }
                     .disabled(viewModel.numberOfUnread == 0)
                 } label: {
-                    Image(systemName: "ellipsis.circle") // Standard "More" Icon
+                    Image(systemName: "ellipsis")
                 }
             }
         }
