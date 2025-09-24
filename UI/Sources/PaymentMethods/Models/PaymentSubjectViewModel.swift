@@ -7,18 +7,27 @@
 
 import Foundation
 import Combine
+import Observation
 
-public class PaymentSubjectViewModel: ObservableObject {
-    @Published public var subject: String?
-    @Published public var isValid: Bool = false
+@Observable
+public class PaymentSubjectViewModel {
+    public var subject: String? {
+        didSet {
+            subjectSubject.send(subject)
+        }
+    }
+    public var isValid: Bool = false
     
     public var debounce: RunLoop.SchedulerTimeType.Stride = 0.5
     public var minimumInputCount: Int = 4
     
     private var cancellables = Set<AnyCancellable>()
 
+    // Internal subject for Combine compatibility with @Observable
+    private let subjectSubject = CurrentValueSubject<String?, Never>(nil)
+
     private var isSubjectValidPublisher: AnyPublisher<Bool, Never> {
-        $subject
+        subjectSubject
             .debounce(for: debounce, scheduler: RunLoop.main)
             .minimumOptional(minimumInputCount)
             .removeDuplicates()

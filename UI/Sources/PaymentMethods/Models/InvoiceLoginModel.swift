@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import Observation
 import SnabbleCore
 import SnabbleAssetProviding
 
@@ -61,23 +62,18 @@ extension Project {
 }
 
 public final class InvoiceLoginModel: LoginViewModel {
-    @Published public var isLoggedIn = false
+    public var isLoggedIn = false
 
     private var paymentDetail: PaymentMethodDetail?
-    
-    @Published public var loginInfo: InvoiceLoginInfo? {
-        willSet {
-            DispatchQueue.main.async {
-                self.objectWillChange.send()
-            }
-        }
+
+    public var loginInfo: InvoiceLoginInfo? {
         didSet {
             if let info = loginInfo, info.isValid(username: username) {
                 isLoggedIn = true
             } else {
                 isLoggedIn = false
             }
-       }
+        }
     }
     
     var project: Project?
@@ -146,14 +142,15 @@ extension InvoiceLoginModel {
 }
 
 /// InvoiceLoginProcessor provides the logic to get customer card info using a login service
-public final class InvoiceLoginProcessor: LoginProcessing, ObservableObject {
-    
+@Observable
+public final class InvoiceLoginProcessor: LoginProcessing {
+
     var loginModel: Loginable? {
         return self.invoiceLoginModel
     }
-        
-    @Published public var invoiceLoginModel: InvoiceLoginModel
-    @Published public var isWaiting = false
+
+    public var invoiceLoginModel: InvoiceLoginModel
+    public var isWaiting = false
     
     var cancellables = Set<AnyCancellable>()
 

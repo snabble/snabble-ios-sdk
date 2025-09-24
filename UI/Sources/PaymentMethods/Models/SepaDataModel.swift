@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import Observation
 import SnabbleCore
 import SnabbleAssetProviding
 
@@ -112,20 +113,40 @@ extension Publisher where Failure == Never {
 }
 
 @MainActor
-public final class SepaDataModel: ObservableObject {
+@Observable
+public final class SepaDataModel {
 
     public var formatter: IBANFormatter
 
-    @Published public var ibanCountry: String {
+    // Internal subjects for Combine compatibility
+    private let ibanCountrySubject = CurrentValueSubject<String, Never>("")
+    private let ibanNumberSubject = CurrentValueSubject<String, Never>("")
+    private let lastnameSubject = CurrentValueSubject<String, Never>("")
+    private let citySubject = CurrentValueSubject<String, Never>("")
+
+    public var ibanCountry: String {
         didSet {
             if !ibanCountry.isEmpty {
                 self.formatter = IBANFormatter(country: ibanCountry)
             }
+            ibanCountrySubject.send(ibanCountry)
         }
     }
-    @Published public var ibanNumber: String
-    @Published public var lastname: String
-    @Published public var city: String
+    public var ibanNumber: String {
+        didSet {
+            ibanNumberSubject.send(ibanNumber)
+        }
+    }
+    public var lastname: String {
+        didSet {
+            lastnameSubject.send(lastname)
+        }
+    }
+    public var city: String {
+        didSet {
+            citySubject.send(city)
+        }
+    }
 
     public var mandateReference: String?
     public var mandateMarkup: String?
@@ -158,9 +179,7 @@ public final class SepaDataModel: ObservableObject {
 
     private var paymentDetail: PaymentMethodDetail? {
         didSet {
-            DispatchQueue.main.async {
-                self.objectWillChange.send()
-            }
+            // @Observable automatically handles change notifications
         }
     }
 
@@ -197,15 +216,29 @@ public final class SepaDataModel: ObservableObject {
     }
     public private(set) var policy: Policy = .simple
 
-    // output
-    @Published public var hintMessage = ""
-    @Published public var errorMessage: String = ""
+    // Internal subjects for output properties
+    private let hintMessageSubject = CurrentValueSubject<String, Never>("")
+    private let errorMessageSubject = CurrentValueSubject<String, Never>("")
+    private let isValidSubject = CurrentValueSubject<Bool, Never>(false)
 
-    @Published public var isValid = false {
+    // output
+    public var hintMessage = "" {
+        didSet {
+            hintMessageSubject.send(hintMessage)
+        }
+    }
+    public var errorMessage: String = "" {
+        didSet {
+            errorMessageSubject.send(errorMessage)
+        }
+    }
+
+    public var isValid = false {
         didSet {
             if isValid == true, errorMessage.isEmpty == false {
                 self.errorMessage = ""
             }
+            isValidSubject.send(isValid)
         }
     }
 
@@ -214,43 +247,43 @@ public final class SepaDataModel: ObservableObject {
 
     private var cancellables = Set<AnyCancellable>()
 
-    private lazy var isLastnameValidPublisher: AnyPublisher<Bool, Never> = {
-        $lastname
+    private var isLastnameValidPublisher: AnyPublisher<Bool, Never> {
+        lastnameSubject
             .debounce(for: debounce, scheduler: RunLoop.main)
             .minimum(minimumInputCount)
             .removeDuplicates()
             .eraseToAnyPublisher()
-    }()
+    }
 
-    private lazy var isIbanCountryValidPublisher: AnyPublisher<Bool, Never> = {
-        $ibanCountry
+    private var isIbanCountryValidPublisher: AnyPublisher<Bool, Never> {
+        ibanCountrySubject
             .debounce(for: debounce, scheduler: RunLoop.main)
             .removeDuplicates()
             .map { code in
                 return IBAN.length(code.uppercased()) != nil
             }
             .eraseToAnyPublisher()
-    }()
+    }
 
-    private lazy var isIbanNumberValidPublisher: AnyPublisher<Bool, Never> = {
-        $ibanNumber
+    private var isIbanNumberValidPublisher: AnyPublisher<Bool, Never> {
+        ibanNumberSubject
             .debounce(for: debounce, scheduler: RunLoop.main)
             .removeDuplicates()
             .map { _ in
                 return self.countryIsValid && (self.ibanIsValid || !self.hasIbanLength)
             }
             .eraseToAnyPublisher()
-    }()
+    }
 
-    private lazy var isCityValidPublisher: AnyPublisher<Bool, Never> = {
-        $city
+    private var isCityValidPublisher: AnyPublisher<Bool, Never> {
+        citySubject
             .debounce(for: debounce, scheduler: RunLoop.main)
             .minimum(3)
             .removeDuplicates()
             .eraseToAnyPublisher()
-    }()
+    }
 
-    private lazy var isFormValidPublisher: AnyPublisher<Bool, Never> = {
+    private var isFormValidPublisher: AnyPublisher<Bool, Never> {
         Publishers.CombineLatest4(isLastnameValidPublisher, isIbanCountryValidPublisher, isIbanNumberValidPublisher, isCityValidPublisher)
             .map { lastnameIsValid, ibanCountryIsValid, ibanNumberIsValid, cityIsValid in
                 guard self.hasIbanLength else {
@@ -259,7 +292,7 @@ public final class SepaDataModel: ObservableObject {
                 return lastnameIsValid && ibanCountryIsValid && ibanNumberIsValid && (cityIsValid || self.policy == .simple)
             }
             .eraseToAnyPublisher()
-    }()
+    }
 
     private func setupPublishers() {
         guard isEditable else {
@@ -380,7 +413,7 @@ extension SepaDataModel {
 
             paymentDetail = detail
 
-            self.objectWillChange.send()
+            // @Observable automatically handles change notifications
         } else {
             throw PaymentMethodError.encryptionError
         }

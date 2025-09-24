@@ -6,9 +6,11 @@
 //
 
 import Combine
+import Observation
 import SnabbleCore
 
-public final class SepaAcceptModel: ObservableObject {
+@Observable
+public final class SepaAcceptModel {
     /// subscribe to this Publisher to  process
     public var actionPublisher = PassthroughSubject<[String: Any]?, Never>()
     

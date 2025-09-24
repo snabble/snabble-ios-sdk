@@ -66,7 +66,7 @@ private func getLocales() -> [Country] {
 }
 
 struct IBANHintView: View {
-    @ObservedObject var model: SepaDataModel
+    @State var model: SepaDataModel
     @State private var attributedString: NSAttributedString
 
     init(model: SepaDataModel) {
@@ -152,7 +152,7 @@ struct IBANHintView: View {
 }
 
 struct IBANErrorView: View {
-    @ObservedObject var model: SepaDataModel
+    @State var model: SepaDataModel
 
     @ViewBuilder
     var content: some View {
@@ -182,7 +182,7 @@ public struct CountryPicker: View {
 }
 
 public struct IbanCountryPicker: View {
-    @ObservedObject var model: SepaDataModel
+    @State var model: SepaDataModel
 
     public var body: some View {
         if model.countries.count == 1, let country = model.countries.first {
@@ -200,7 +200,7 @@ public struct IbanCountryPicker: View {
 }
 
 public struct SepaDataEditorView: View {
-    @ObservedObject var model: SepaDataModel
+    @State var model: SepaDataModel
     @State private var country: String
 
     public init(model: SepaDataModel) {
@@ -287,7 +287,7 @@ public struct SepaDataEditorView: View {
 }
 
 public struct SepaDataDisplayView: View {
-    @ObservedObject var model: SepaDataModel
+    @State var model: SepaDataModel
 
     public init(model: SepaDataModel) {
         self.model = model
@@ -349,7 +349,7 @@ public struct SepaDataDisplayView: View {
 }
 
 public struct SepaDataView: View {
-    @ObservedObject var model: SepaDataModel
+    @State var model: SepaDataModel
 
     public init(model: SepaDataModel) {
         self.model = model
