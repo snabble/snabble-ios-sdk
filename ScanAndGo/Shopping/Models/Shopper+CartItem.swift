@@ -11,12 +11,12 @@ import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleUI
 
-extension CartItem: Equatable {
-    public static func == (lhs: SnabbleCore.CartItem, rhs: SnabbleCore.CartItem) -> Bool {
-        lhs.uuid == rhs.uuid &&
-        lhs.quantity == rhs.quantity
-    }
-}
+//extension CartItem: Equatable {
+//    public static func == (lhs: SnabbleCore.CartItem, rhs: SnabbleCore.CartItem) -> Bool {
+//        lhs.uuid == rhs.uuid &&
+//        lhs.quantity == rhs.quantity
+//    }
+//}
 
 extension CartItem {
     var quantityValue: Int {

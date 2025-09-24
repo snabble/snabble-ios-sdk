@@ -10,10 +10,10 @@
 import SwiftUI
 
 public struct OnboardingView: View {
-    @ObservedObject public var viewModel: OnboardingViewModel
-
+    @State public var viewModel: OnboardingViewModel
+    
     public init(viewModel: OnboardingViewModel) {
-        self.viewModel = viewModel
+        self._viewModel = State(initialValue: viewModel)
     }
     
     @ViewBuilder
@@ -32,6 +32,8 @@ public struct OnboardingView: View {
 
     @ViewBuilder
     public var page: some View {
+        @Bindable var viewModel = viewModel
+        
         PageViewController(
             pages: viewModel.items.map { OnboardingItemView(item: $0) },
             currentPage: $viewModel.currentPage

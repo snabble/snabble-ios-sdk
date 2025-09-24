@@ -26,7 +26,7 @@ final class SupervisorViewModel: BaseCheckViewModel {
 }
 
 struct SupervisorView: View {
-    @ObservedObject var model: SupervisorViewModel
+    @State var model: SupervisorViewModel
 
     @State private var disableButton: Bool = false
 

@@ -7,6 +7,7 @@
 
 import Foundation
 import Combine
+import Observation
 
 public struct DynamicAction {
     public let widget: Widget
@@ -18,7 +19,8 @@ public struct DynamicAction {
     }
 }
 
-public class DynamicViewModel: NSObject, Decodable, ObservableObject {
+@Observable
+public class DynamicViewModel: NSObject, Decodable {
     public var configuration: DynamicViewConfiguration
     public var widgets: [Widget]
 

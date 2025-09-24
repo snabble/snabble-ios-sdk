@@ -9,6 +9,7 @@ import Foundation
 import UIKit
 import SwiftUI
 import Combine
+import Observation
 
 /// Methods for managing completion of onboarding
 public protocol OnboardingViewControllerDelegate: AnyObject {
@@ -28,13 +29,12 @@ public final class OnboardingViewController: UIHostingController<OnboardingView>
     private var cancellables = Set<AnyCancellable>()
 
     /// The used viewModel to show onboarding details
-    public var viewModel: OnboardingViewModel {
-        rootView.viewModel
-    }
+    public let viewModel: OnboardingViewModel
 
     /// Creates and returns an onboarding view controller with the specified viewModel
     /// - Parameter viewModel: A view model that specifies the details to be shown. Default value is `.default`
     public init(viewModel: OnboardingViewModel) {
+        self.viewModel = viewModel
         super.init(rootView: OnboardingView(viewModel: viewModel))
         isModalInPresentation = true
         modalPresentationStyle = .overFullScreen
@@ -46,12 +46,14 @@ public final class OnboardingViewController: UIHostingController<OnboardingView>
 
     public override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.$isDone
-            .sink { [weak self] in
-                if $0 {
+        withObservationTracking {
+            _ = viewModel.isDone
+        } onChange: { [weak self] in
+            Task { @MainActor in
+                if self?.viewModel.isDone == true {
                     self?.delegate?.onboardingViewControllerDidFinish(self!)
                 }
             }
-            .store(in: &cancellables)
+        }
     }
 }

@@ -7,12 +7,14 @@ import UIKit
 import SwiftUI
 import SnabbleCore
 import Combine
+import Observation
 import SnabbleAssetProviding
 
-open class BaseCheckViewModel: ObservableObject, CheckViewModel {
-    @Published public var checkModel: CheckModel
-    @Published public var codeImage: UIImage?
-    @Published public var headerImage: UIImage?
+@Observable
+open class BaseCheckViewModel: CheckViewModel {
+    public var checkModel: CheckModel
+    public var codeImage: UIImage?
+    public var headerImage: UIImage?
     
     public weak var paymentDelegate: PaymentDelegate? {
         didSet {

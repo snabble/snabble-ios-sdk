@@ -9,7 +9,7 @@ import SwiftUI
 import SnabblePay
 
 struct CardView: View {
-    @ObservedObject var model: AccountViewModel
+    @State var model: AccountViewModel
     @Environment(\.scenePhase) var scenePhase
     @Environment(\.colorScheme) var colorScheme
 
@@ -87,7 +87,7 @@ struct CardView: View {
         }
         .foregroundColor(Color.black)
         .cardStyle(top: model.autostart)
-        .onChange(of: scenePhase) { newPhase in
+        .onChange(of: scenePhase) { _, newPhase in
             guard model.autostart else {
                 return
             }
@@ -113,7 +113,7 @@ struct CardView: View {
                 self.toggleSize = self.expand || self.model.token != nil
             }
         }
-        .onChange(of: model.sessionUpdated) { _ in
+        .onChange(of: model.sessionUpdated) {
             withAnimation {
                 toggleSize = model.autostart
             }

@@ -1,13 +1,22 @@
 {
-  "originHash" : "c97862b892c5ebd7ed65062f26bd035cb5e0a8e1a36eac19093308cab40b75db",
+  "originHash" : "032a267fce85a6fea14448aeb76ecf8db004fe086b269830841eafb48f4d67e2",
   "pins" : [
+    {
+      "identity" : "camerazoomwheel",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/utilem/CameraZoomWheel.git",
+      "state" : {
+        "revision" : "35b49953e2a16d50756d73898b600e33fc959df0",
+        "version" : "1.1.0"
+      }
+    },
     {
       "identity" : "devicekit",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/devicekit/DeviceKit.git",
       "state" : {
-        "revision" : "7ff5331960151aec74fb422e1d45f54ef6cc086d",
-        "version" : "5.5.0"
+        "revision" : "581df61650bc457ec00373a592a84be3e7468eb1",
+        "version" : "5.7.0"
       }
     },
     {
@@ -24,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/datatrans/ios-sdk.git",
       "state" : {
-        "revision" : "2c0280bbda7a87500fa5c33b38af89a4895fa04e",
-        "version" : "3.8.0"
+        "revision" : "748fdc5b6d0b09cd94e3e0adec3488fb6c222616",
+        "version" : "3.9.0"
       }
     },
     {
@@ -51,8 +60,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/sberrevoets/SDCAlertView.git",
       "state" : {
-        "revision" : "47014c1b6b629761874bb7585951f0c0d90d7823",
-        "version" : "12.0.4"
+        "revision" : "eda84764885b55b30c334384afee5f8f06ac48de",
+        "version" : "12.0.5"
       }
     },
     {
@@ -60,8 +69,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-asn1.git",
       "state" : {
-        "revision" : "7faebca1ea4f9aaf0cda1cef7c43aecd2311ddf6",
-        "version" : "1.3.0"
+        "revision" : "f70225981241859eb4aa1a18a75531d26637c8cc",
+        "version" : "1.4.0"
       }
     },
     {
@@ -69,8 +78,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-crypto.git",
       "state" : {
-        "revision" : "21f7878f2b39d46fd8ba2b06459ccb431cdf876c",
-        "version" : "3.8.1"
+        "revision" : "95ba0316a9b733e92bb6b071255ff46263bbe7dc",
+        "version" : "3.15.1"
       }
     },
     {
@@ -78,8 +87,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-log.git",
       "state" : {
-        "revision" : "9cb486020ebf03bfa5b5df985387a14a98744537",
-        "version" : "1.6.1"
+        "revision" : "ce592ae52f982c847a4efc0dd881cc9eb32d29f2",
+        "version" : "1.6.4"
       }
     },
     {
@@ -114,8 +123,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/divadretlaw/WindowKit",
       "state" : {
-        "revision" : "d9a7d0fffaf1ddf390f88f5a0d1cd970df8d0309",
-        "version" : "2.5.2"
+        "revision" : "2e689d5ebf019ed3e7abffa4e6ddb06287f231e9",
+        "version" : "2.6.1"
       }
     },
     {
@@ -123,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/divadretlaw/WindowReader",
       "state" : {
-        "revision" : "295d4e6c1aacd3c6a79e47c70f7b2745b8e0399e",
-        "version" : "2.0.1"
+        "revision" : "58ff2db81e17fd39d40c325dafd8b962c363ad5f",
+        "version" : "3.1.0"
       }
     },
     {
@@ -132,8 +141,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/divadretlaw/WindowSceneReader",
       "state" : {
-        "revision" : "1f37f310e15a9a58014f2dbfce29526e5f3f4567",
-        "version" : "3.1.2"
+        "revision" : "35441047ff4134838a884a30d613cfbd6291a5fa",
+        "version" : "3.3.0"
       }
     },
     {

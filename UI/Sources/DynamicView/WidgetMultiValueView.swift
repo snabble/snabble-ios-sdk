@@ -6,15 +6,15 @@
 //
 
 import SwiftUI
-import Combine
 
-public class MultiValueViewModel: ObservableObject {
-    
+@Observable
+public class MultiValueViewModel {
+
     public var key: String {
         return widget.id
     }
-    
-    @Published var widget: WidgetMultiValue
+
+    var widget: WidgetMultiValue
     
     var selectedValue: String? {
         get {
@@ -26,7 +26,7 @@ public class MultiValueViewModel: ObservableObject {
             } else {
                 UserDefaults.standard.removeObject(forKey: key)
             }
-            objectWillChange.send()
+            // @Observable automatically handles change notifications
         }
     }
     var titleForSelectedValue: String? {
@@ -56,13 +56,13 @@ extension WidgetMultiValue.WidgetValue {
 public struct WidgetMultiValueView: View {
     var widget: WidgetMultiValue
     let action: (DynamicAction) -> Void
-    @ObservedObject private var viewModel: MultiValueViewModel
+    @State private var viewModel: MultiValueViewModel
 
     init(widget: WidgetMultiValue, action: @escaping (DynamicAction) -> Void) {
         self.widget = widget
         self.action = action
 
-        self.viewModel = .init(widget: widget)
+        self._viewModel = State(initialValue: MultiValueViewModel(widget: widget))
     }
 
     @ViewBuilder

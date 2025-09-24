@@ -12,24 +12,26 @@ import SnabbleComponents
 
 /// A view that manages the shopping session for a user, integrating with the Shopper model to handle barcode scanning, displaying scan messages, and error handling.
 public struct ShopperView: View {
-    @ObservedObject public var model: Shopper
+    @State public var model: Shopper
     @AppStorage(UserDefaults.scanningDisabledKey) var expanded: Bool = false
     
     @State private var showSearch: Bool = false
     @State private var showError: Bool = false
     @State private var minHeight: CGFloat = 0
+    @State private var isPresenting: Bool = false
     
     @SwiftUI.Environment(\.dismiss) var dismiss
     
     public init(model: Shopper) {
-        self.model = model
+        self._model = State(initialValue: model)
     }
     
     public var body: some View {
-        ShoppingScannerView(model: model, minHeight: $minHeight)
+        ShoppingScannerView(minHeight: $minHeight)
+            .environment(model)
             .animation(.easeInOut, value: model.scannedItem)
-            .navigationDestination(isPresented: $model.isNavigating) {
-                model.navigationDestination(isPresented: $model.isNavigating)
+            .navigationDestination(isPresented: $isPresenting) {
+                model.navigationDestination(isPresented: $isPresenting)
             }
             .alert(Asset.localizedString(forKey: "Snabble.SaleStop.ErrorMsg.title"), isPresented: $showError) {
                 Button(Asset.localizedString(forKey: "Snabble.ok")) {
@@ -58,7 +60,10 @@ public struct ShopperView: View {
                     model.startScanner()
                 }
             }
-            .onReceive(model.$errorMessage) { message in
+            .onChange(of: model.isNavigating) { old, isNavigating in
+                isPresenting = isNavigating
+            }
+            .onChange(of: model.errorMessage) { old, message in
                 if message != nil {
                     model.startScanner()
                     withAnimation {
@@ -66,7 +71,7 @@ public struct ShopperView: View {
                     }
                 }
             }
-            .onReceive(model.$scannedItem) { item in
+            .onChange(of: model.scannedItem) { old, item in
                 if let item {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
                         model.addScannedItem(item)

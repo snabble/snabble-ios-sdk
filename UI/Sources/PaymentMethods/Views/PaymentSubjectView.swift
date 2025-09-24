@@ -12,7 +12,7 @@ import SnabbleAssetProviding
 import SnabbleComponents
 
 public struct PaymentSubjectView: View {
-    @ObservedObject var viewModel: PaymentSubjectViewModel
+    @State var viewModel: PaymentSubjectViewModel
     @State private var subject: String = ""
     
     private func subjectLimit() -> Int? {

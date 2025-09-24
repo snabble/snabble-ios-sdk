@@ -9,7 +9,7 @@ import SwiftUI
 import SnabbleComponents
 
 public struct SepaAcceptView: View {
-    @ObservedObject public var model: SepaAcceptModel
+    @State public var model: SepaAcceptModel
 
     public init(model: SepaAcceptModel) {
         self.model = model

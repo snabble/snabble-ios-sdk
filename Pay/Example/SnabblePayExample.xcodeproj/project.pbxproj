@@ -27,31 +27,11 @@
 		E193765A2941E7AA001C8866 /* SnabblePayExampleApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19376592941E7AA001C8866 /* SnabblePayExampleApp.swift */; };
 		E193765E2941E7AB001C8866 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E193765D2941E7AB001C8866 /* Assets.xcassets */; };
 		E19376612941E7AB001C8866 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = E19376602941E7AB001C8866 /* Preview Assets.xcassets */; };
-		E193766B2941E7AB001C8866 /* SnabblePayExampleTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E193766A2941E7AB001C8866 /* SnabblePayExampleTests.swift */; };
-		E19376752941E7AB001C8866 /* SnabblePayExampleUITests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19376742941E7AB001C8866 /* SnabblePayExampleUITests.swift */; };
-		E19376772941E7AB001C8866 /* SnabblePayExampleUITestsLaunchTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E19376762941E7AB001C8866 /* SnabblePayExampleUITestsLaunchTests.swift */; };
 		E1C20596297FC70E00D4F894 /* AccountsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C20595297FC70E00D4F894 /* AccountsView.swift */; };
 		E1C205A92982700E00D4F894 /* SnabblePay+Shared.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C205A82982700E00D4F894 /* SnabblePay+Shared.swift */; };
 		E1C205AB2982A6EC00D4F894 /* QRCodeView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1C205AA2982A6EC00D4F894 /* QRCodeView.swift */; };
 		E1F9993A29A62F2B00904912 /* AccountView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1F9993929A62F2B00904912 /* AccountView.swift */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		E19376672941E7AB001C8866 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E193764E2941E7AA001C8866 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = E19376552941E7AA001C8866;
-			remoteInfo = SnabblePayExample;
-		};
-		E19376712941E7AB001C8866 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E193764E2941E7AA001C8866 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = E19376552941E7AA001C8866;
-			remoteInfo = SnabblePayExample;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		76344CFC29A86FAC00211A1B /* BackgroundView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BackgroundView.swift; sourceTree = "<group>"; };
@@ -76,11 +56,6 @@
 		E19376592941E7AA001C8866 /* SnabblePayExampleApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnabblePayExampleApp.swift; sourceTree = "<group>"; };
 		E193765D2941E7AB001C8866 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		E19376602941E7AB001C8866 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		E19376662941E7AB001C8866 /* SnabblePayExampleTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SnabblePayExampleTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E193766A2941E7AB001C8866 /* SnabblePayExampleTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnabblePayExampleTests.swift; sourceTree = "<group>"; };
-		E19376702941E7AB001C8866 /* SnabblePayExampleUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SnabblePayExampleUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E19376742941E7AB001C8866 /* SnabblePayExampleUITests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnabblePayExampleUITests.swift; sourceTree = "<group>"; };
-		E19376762941E7AB001C8866 /* SnabblePayExampleUITestsLaunchTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnabblePayExampleUITestsLaunchTests.swift; sourceTree = "<group>"; };
 		E1C20595297FC70E00D4F894 /* AccountsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountsView.swift; sourceTree = "<group>"; };
 		E1C205A82982700E00D4F894 /* SnabblePay+Shared.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "SnabblePay+Shared.swift"; sourceTree = "<group>"; };
 		E1C205AA2982A6EC00D4F894 /* QRCodeView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = QRCodeView.swift; sourceTree = "<group>"; };
@@ -94,20 +69,6 @@
 			files = (
 				E17B754E2975474E00392861 /* BetterSafariView in Frameworks */,
 				E126AB7D2BFDDBA7004F7694 /* SnabblePay in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		E19376632941E7AB001C8866 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		E193766D2941E7AB001C8866 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -156,8 +117,6 @@
 			children = (
 				E126AB7B2BFDDAB4004F7694 /* snabble-ios-sdk */,
 				E19376582941E7AA001C8866 /* SnabblePayExample */,
-				E19376692941E7AB001C8866 /* SnabblePayExampleTests */,
-				E19376732941E7AB001C8866 /* SnabblePayExampleUITests */,
 				E19376572941E7AA001C8866 /* Products */,
 				E19376842941E7CA001C8866 /* Frameworks */,
 			);
@@ -167,8 +126,6 @@
 			isa = PBXGroup;
 			children = (
 				E19376562941E7AA001C8866 /* SnabblePayExample.app */,
-				E19376662941E7AB001C8866 /* SnabblePayExampleTests.xctest */,
-				E19376702941E7AB001C8866 /* SnabblePayExampleUITests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -196,23 +153,6 @@
 				E19376602941E7AB001C8866 /* Preview Assets.xcassets */,
 			);
 			path = "Preview Content";
-			sourceTree = "<group>";
-		};
-		E19376692941E7AB001C8866 /* SnabblePayExampleTests */ = {
-			isa = PBXGroup;
-			children = (
-				E193766A2941E7AB001C8866 /* SnabblePayExampleTests.swift */,
-			);
-			path = SnabblePayExampleTests;
-			sourceTree = "<group>";
-		};
-		E19376732941E7AB001C8866 /* SnabblePayExampleUITests */ = {
-			isa = PBXGroup;
-			children = (
-				E19376742941E7AB001C8866 /* SnabblePayExampleUITests.swift */,
-				E19376762941E7AB001C8866 /* SnabblePayExampleUITestsLaunchTests.swift */,
-			);
-			path = SnabblePayExampleUITests;
 			sourceTree = "<group>";
 		};
 		E19376842941E7CA001C8866 /* Frameworks */ = {
@@ -255,42 +195,6 @@
 			productReference = E19376562941E7AA001C8866 /* SnabblePayExample.app */;
 			productType = "com.apple.product-type.application";
 		};
-		E19376652941E7AB001C8866 /* SnabblePayExampleTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = E193767D2941E7AB001C8866 /* Build configuration list for PBXNativeTarget "SnabblePayExampleTests" */;
-			buildPhases = (
-				E19376622941E7AB001C8866 /* Sources */,
-				E19376632941E7AB001C8866 /* Frameworks */,
-				E19376642941E7AB001C8866 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				E19376682941E7AB001C8866 /* PBXTargetDependency */,
-			);
-			name = SnabblePayExampleTests;
-			productName = SnabblePayExampleTests;
-			productReference = E19376662941E7AB001C8866 /* SnabblePayExampleTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
-		E193766F2941E7AB001C8866 /* SnabblePayExampleUITests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = E19376802941E7AB001C8866 /* Build configuration list for PBXNativeTarget "SnabblePayExampleUITests" */;
-			buildPhases = (
-				E193766C2941E7AB001C8866 /* Sources */,
-				E193766D2941E7AB001C8866 /* Frameworks */,
-				E193766E2941E7AB001C8866 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				E19376722941E7AB001C8866 /* PBXTargetDependency */,
-			);
-			name = SnabblePayExampleUITests;
-			productName = SnabblePayExampleUITests;
-			productReference = E19376702941E7AB001C8866 /* SnabblePayExampleUITests.xctest */;
-			productType = "com.apple.product-type.bundle.ui-testing";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -299,18 +203,10 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1410;
-				LastUpgradeCheck = 1420;
+				LastUpgradeCheck = 2600;
 				TargetAttributes = {
 					E19376552941E7AA001C8866 = {
 						CreatedOnToolsVersion = 14.1;
-					};
-					E19376652941E7AB001C8866 = {
-						CreatedOnToolsVersion = 14.1;
-						TestTargetID = E19376552941E7AA001C8866;
-					};
-					E193766F2941E7AB001C8866 = {
-						CreatedOnToolsVersion = 14.1;
-						TestTargetID = E19376552941E7AA001C8866;
 					};
 				};
 			};
@@ -332,8 +228,6 @@
 			projectRoot = "";
 			targets = (
 				E19376552941E7AA001C8866 /* SnabblePayExample */,
-				E19376652941E7AB001C8866 /* SnabblePayExampleTests */,
-				E193766F2941E7AB001C8866 /* SnabblePayExampleUITests */,
 			);
 		};
 /* End PBXProject section */
@@ -346,20 +240,6 @@
 				E19376612941E7AB001C8866 /* Preview Assets.xcassets in Resources */,
 				76344D0029A8BE3000211A1B /* Localizable.strings in Resources */,
 				E193765E2941E7AB001C8866 /* Assets.xcassets in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		E19376642941E7AB001C8866 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		E193766E2941E7AB001C8866 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -414,37 +294,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		E19376622941E7AB001C8866 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				E193766B2941E7AB001C8866 /* SnabblePayExampleTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		E193766C2941E7AB001C8866 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				E19376772941E7AB001C8866 /* SnabblePayExampleUITestsLaunchTests.swift in Sources */,
-				E19376752941E7AB001C8866 /* SnabblePayExampleUITests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		E19376682941E7AB001C8866 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = E19376552941E7AA001C8866 /* SnabblePayExample */;
-			targetProxy = E19376672941E7AB001C8866 /* PBXContainerItemProxy */;
-		};
-		E19376722941E7AB001C8866 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = E19376552941E7AA001C8866 /* SnabblePayExample */;
-			targetProxy = E19376712941E7AB001C8866 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		76344D0229A8BE3000211A1B /* Localizable.strings */ = {
@@ -464,6 +314,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -495,8 +346,10 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = dwarf;
+				DEVELOPMENT_TEAM = 53K7JS449L;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -525,6 +378,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
 				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
@@ -556,8 +410,10 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				DEVELOPMENT_TEAM = 53K7JS449L;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -584,7 +440,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_ASSET_PATHS = "\"SnabblePayExample/Preview Content\"";
-				DEVELOPMENT_TEAM = 53K7JS449L;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SnabblePayExample/Info.plist;
@@ -594,6 +449,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -618,7 +474,6 @@
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 13;
 				DEVELOPMENT_ASSET_PATHS = "\"SnabblePayExample/Preview Content\"";
-				DEVELOPMENT_TEAM = 53K7JS449L;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SnabblePayExample/Info.plist;
@@ -628,6 +483,7 @@
 				INFOPLIST_KEY_UISupportedInterfaceOrientations = UIInterfaceOrientationPortrait;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown";
 				INFOPLIST_KEY_UIUserInterfaceStyle = Dark;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -641,82 +497,6 @@
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = 1;
-			};
-			name = Release;
-		};
-		E193767E2941E7AB001C8866 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 53K7JS449L;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.snabble.SnabblePayExampleTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SnabblePayExample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SnabblePayExample";
-			};
-			name = Debug;
-		};
-		E193767F2941E7AB001C8866 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 53K7JS449L;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 16.1;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.snabble.SnabblePayExampleTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SnabblePayExample.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/SnabblePayExample";
-			};
-			name = Release;
-		};
-		E19376812941E7AB001C8866 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 53K7JS449L;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.snabble.SnabblePayExampleUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = SnabblePayExample;
-			};
-			name = Debug;
-		};
-		E19376822941E7AB001C8866 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				ALWAYS_EMBED_SWIFT_STANDARD_LIBRARIES = YES;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 53K7JS449L;
-				GENERATE_INFOPLIST_FILE = YES;
-				MARKETING_VERSION = 1.0;
-				PRODUCT_BUNDLE_IDENTIFIER = io.snabble.SnabblePayExampleUITests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_TARGET_NAME = SnabblePayExample;
 			};
 			name = Release;
 		};
@@ -737,24 +517,6 @@
 			buildConfigurations = (
 				E193767B2941E7AB001C8866 /* Debug */,
 				E193767C2941E7AB001C8866 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		E193767D2941E7AB001C8866 /* Build configuration list for PBXNativeTarget "SnabblePayExampleTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				E193767E2941E7AB001C8866 /* Debug */,
-				E193767F2941E7AB001C8866 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		E19376802941E7AB001C8866 /* Build configuration list for PBXNativeTarget "SnabblePayExampleUITests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				E19376812941E7AB001C8866 /* Debug */,
-				E19376822941E7AB001C8866 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

@@ -5,6 +5,7 @@
 //
 
 import Foundation
+import Combine
 
 public protocol InternalShoppingCartDelegate: AnyObject {
     func shoppingCart(_ shoppingCart: ShoppingCart, didChangeCustomerCard customerCard: String?)
@@ -13,13 +14,16 @@ public protocol InternalShoppingCartDelegate: AnyObject {
 
 /// a ShoppingCart is a collection of CartItem objects
 public final class ShoppingCart: Codable, PaymentConsumer {
-    
+
+//    public let cartDidChange = PassthroughSubject<Void, Never>()
+
     public private(set) var items: [CartItem]
     public private(set) var session: String
     public private(set) var lastSaved: Date?
     public private(set) var backendCartInfo: BackendCartInfo? {
         didSet {
             self.updateDiscounts()
+//            self.cartDidChange.send()
         }
     }
     public private(set) var paymentMethods: [PaymentMethodDescription]?

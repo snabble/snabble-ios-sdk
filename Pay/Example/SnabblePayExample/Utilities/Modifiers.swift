@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct ParallaxMotionModifier: ViewModifier {
-    @ObservedObject var manager: MotionManager
+    var manager: MotionManager
     var magnitude: Double
     
     func body(content: Content) -> some View {
@@ -52,7 +52,7 @@ struct CardStyle: ViewModifier {
     static let topMaterial: Material = .ultraThinMaterial
     static let regularMaterial: Material = .ultraThickMaterial
 
-    @ObservedObject var motionManager = MotionManager.shared
+    @State var motionManager = MotionManager.shared
 
     init(top: Bool = true) {
         self.top = top

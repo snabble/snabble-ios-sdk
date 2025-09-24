@@ -9,6 +9,7 @@
 
 import Foundation
 import Combine
+import Observation
 
 public enum Onboarding {
     private static let checkKey = "io.snabble.onboarding.wasPerformed"
@@ -23,7 +24,8 @@ public enum Onboarding {
 }
 
 /// OnboardingViewModel describing the Onboading configuration
-public final class OnboardingViewModel: ObservableObject, Codable {
+@Observable
+public final class OnboardingViewModel: Codable {
     /// the configuration
     public let configuration: OnboardingConfiguration
     /// All items to be shown in Onboarding
@@ -56,7 +58,7 @@ public final class OnboardingViewModel: ObservableObject, Codable {
     }
 
     /// Current shown item
-    @Published public var item: OnboardingItem? {
+    public var item: OnboardingItem? {
         didSet {
             guard let item = item else {
                 return currentPage = 0
@@ -66,7 +68,7 @@ public final class OnboardingViewModel: ObservableObject, Codable {
     }
     /// Switched to `true` as soon as onboarding is completed.
     /// - Important: You are responsible to dismiss the associated view
-    @Published public var isDone: Bool = false {
+    public var isDone: Bool = false {
         didSet {
             if isDone {
                 Onboarding.wasPerformed()
@@ -75,7 +77,7 @@ public final class OnboardingViewModel: ObservableObject, Codable {
     }
 
     /// Current shown page
-    @Published public var currentPage: Int = 0
+    public var currentPage: Int = 0
 
     func isLast(item: OnboardingItem) -> Bool {
         items.last == item

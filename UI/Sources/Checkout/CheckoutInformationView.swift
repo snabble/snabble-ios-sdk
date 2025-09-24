@@ -15,7 +15,7 @@ protocol CheckoutInformationViewModel {
 
 struct CheckoutInformationView: View {
     var model: CheckoutInformationViewModel
-    @EnvironmentObject var checkoutModel: CheckoutModel
+    @Environment(CheckoutModel.self) private var checkoutModel
 
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {

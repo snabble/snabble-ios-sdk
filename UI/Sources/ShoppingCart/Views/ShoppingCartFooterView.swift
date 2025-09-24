@@ -9,7 +9,7 @@ import SwiftUI
 import SnabbleAssetProviding
 
 public struct ShoppingCartFooterView: View {
-    @ObservedObject var cartModel: ShoppingCartViewModel
+    @Environment(ShoppingCartViewModel.self) var cartModel
     
     @State var total: Int?
     @State var regularTotal: Int?

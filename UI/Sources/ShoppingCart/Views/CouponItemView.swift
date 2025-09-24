@@ -11,7 +11,7 @@ import SnabbleCore
 import SnabbleAssetProviding
 
 struct CouponItemView: View {
-    @ObservedObject var itemModel: CouponCartItemModel
+    let itemModel: CouponCartItemModel
     let showImages: Bool
     
     init(itemModel: CouponCartItemModel, showImages: Bool = true) {

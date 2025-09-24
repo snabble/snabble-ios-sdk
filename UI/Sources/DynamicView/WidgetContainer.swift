@@ -9,13 +9,13 @@ import SwiftUI
 
 public struct WidgetView: View {
     public var widget: Widget
-    @ObservedObject var viewModel: DynamicViewModel
+    @Environment(DynamicViewModel.self) private var viewModel
 
     public var body: some View {
         if widget.type == .section, let widget = widget as? WidgetSection {
-            WidgetSectionView(widget: widget, viewModel: viewModel)
+            WidgetSectionView(widget: widget)
         } else if widget.type == .developerMode, let widget = widget as? WidgetDeveloperMode {
-            WidgetDeveloperModeView(widget: widget, viewModel: viewModel)
+            WidgetDeveloperModeView(widget: widget)
        } else {
             Group {
                 switch widget.type {
@@ -211,17 +211,16 @@ public struct WidgetView: View {
 }
 
 public struct WidgetContainer: View {
-    @ObservedObject public var viewModel: DynamicViewModel
+    @Environment(DynamicViewModel.self) private var viewModel
     public let widgets: [Widget]
-      
-    public init(viewModel: DynamicViewModel, widgets: [Widget]) {
-        self.viewModel = viewModel
+
+    public init(widgets: [Widget]) {
         self.widgets = widgets
     }
     
     public var body: some View {
         ForEach(widgets, id: \.id) { widget in
-            WidgetView(widget: widget, viewModel: viewModel)
+            WidgetView(widget: widget)
         }
     }
 }

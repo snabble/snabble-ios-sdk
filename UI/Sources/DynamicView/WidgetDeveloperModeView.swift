@@ -5,17 +5,17 @@
 //
 
 import SwiftUI
-import Combine
 
-public class DeveloperModeViewModel: NSObject, ObservableObject {
+@Observable
+public class DeveloperModeViewModel {
     public private(set) var widget = WidgetText(
         id: "io.snabble.developerMode",
         text: "Profile.developerMode",
         showDisclosure: false
     )
-    @Published public private(set) var isEnabled: Bool = false
+    public private(set) var isEnabled: Bool = false
 
-    override init() {
+    init() {
         self.isEnabled = DeveloperMode.isEnabled
     }
 }
@@ -23,20 +23,20 @@ public class DeveloperModeViewModel: NSObject, ObservableObject {
 public struct WidgetDeveloperModeView: View {
     let widget: WidgetDeveloperMode
 
-    @ObservedObject private var developerModel: DeveloperModeViewModel
-    @ObservedObject private var viewModel: DynamicViewModel
+    @State private var developerModel = DeveloperModeViewModel()
+    @Environment(DynamicViewModel.self) private var viewModel
 
-    init(widget: WidgetDeveloperMode, viewModel: DynamicViewModel) {
+    init(widget: WidgetDeveloperMode) {
         self.widget = widget
-        self.viewModel = viewModel
-        self.developerModel = .init()
     }
 
     public var body: some View {
         if self.developerModel.isEnabled {
             NavigationLink(destination: {
                 List {
-                    WidgetContainer(viewModel: self.viewModel, widgets: widget.items)
+                    WidgetContainer(widgets: widget.items)
+                        .environment(viewModel)
+                        .environment(developerModel)
                 }
                 .listStyle(.grouped)
             }) {

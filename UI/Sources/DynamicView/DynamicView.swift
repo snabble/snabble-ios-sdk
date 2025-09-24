@@ -9,20 +9,19 @@ import Combine
 import SwiftUI
 
 public struct DynamicView: View {
-    @ObservedObject public var viewModel: DynamicViewModel
-    @State private var refresher: AnyCancellable
+    @State public var viewModel: DynamicViewModel
     
+    @State private var refresher: AnyCancellable = UserDefaults.standard
+        .publisher(for: \.developerMode)
+        .handleEvents(receiveOutput: { _ in
+            // @Observable automatically handles change notifications
+        })
+        .sink { _ in }
+
     public init(viewModel: DynamicViewModel) {
-        self.viewModel = viewModel
-        
-        self.refresher = UserDefaults.standard
-            .publisher(for: \.developerMode)
-            .handleEvents(receiveOutput: { _ in
-                viewModel.objectWillChange.send()
-            })
-            .sink { _ in }
+        self._viewModel = State(initialValue: viewModel)
     }
-        
+
     @ViewBuilder
     var teaser: some View {
         if let image = viewModel.configuration.image {
@@ -45,20 +44,21 @@ public struct DynamicView: View {
             case .scroll:
                 ScrollView(.vertical) {
                     VStack(alignment: .center) {
-                        WidgetContainer(viewModel: viewModel, widgets: viewModel.widgets)
+                        WidgetContainer(widgets: viewModel.widgets)
                     }
                     .padding(viewModel.configuration.padding?.edgeInsets ?? .init())
                 }
             case .list:
                 List {
-                    WidgetContainer(viewModel: viewModel, widgets: viewModel.widgets)
+                    WidgetContainer(widgets: viewModel.widgets)
                 }
                 .padding(viewModel.configuration.padding?.edgeInsets ?? .init())
                 .listStyle(.grouped)
             }
         }
+        .environment(viewModel)
         .onAppear {
-            viewModel.objectWillChange.send()
+            // @Observable automatically handles change notifications
         }
     }
 }

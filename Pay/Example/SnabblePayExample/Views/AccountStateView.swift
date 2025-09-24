@@ -9,7 +9,7 @@ import SwiftUI
 import SnabblePay
 
 struct AccountStateView: View {
-    @ObservedObject var viewModel: AccountViewModel
+    @State var viewModel: AccountViewModel
     @State private var showMandate = false
     
     var canToggleHTML: Bool {

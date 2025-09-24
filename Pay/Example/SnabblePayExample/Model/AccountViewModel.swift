@@ -6,10 +6,12 @@
 //
 import Foundation
 import Combine
+import Observation
 import SnabblePay
 import SnabbleLogger
 
-class AccountViewModel: ObservableObject {
+@Observable
+class AccountViewModel {
     private let snabblePay: SnabblePay = .shared
 
     let account: Account
@@ -53,14 +55,14 @@ class AccountViewModel: ObservableObject {
         self.needsReload = false
     }
 
-    @Published var mandate: Account.Mandate? {
+    var mandate: Account.Mandate? {
         didSet {
             if let mandateID = mandate?.id.rawValue, let html = mandate?.htmlText {
                 UserDefaults.standard.set(html, forKey: mandateID)
             }
         }
     }
-    @Published var needsReload: Bool
+    var needsReload: Bool
     
     var mandateState: Account.Mandate.State {
         guard let mandate = mandate else {
@@ -70,15 +72,15 @@ class AccountViewModel: ObservableObject {
     }
     
     private var session: Session?
-    @Published var token: Session.Token? {
+    var token: Session.Token? {
         didSet {
             resetTimer()
             sessionUpdated.toggle()
         }
     }
-        
-    @Published var sessionUpdated = false
-    @Published var customName: String {
+
+    var sessionUpdated = false
+    var customName: String {
         didSet {
             if !customName.isEmpty {
                 UserDefaults.standard.set(customName, forKey: account.id.rawValue)
@@ -104,7 +106,7 @@ class AccountViewModel: ObservableObject {
                 if mandate.state != .pending {
                     needsReload.toggle()
                 }
-                self.objectWillChange.send()
+//                self.objectWillChange.send()
             }
             
         case .failure(let error):

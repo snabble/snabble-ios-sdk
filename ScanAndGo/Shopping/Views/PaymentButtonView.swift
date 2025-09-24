@@ -12,7 +12,7 @@ import SnabbleUI
 import SnabbleAssetProviding
 
 struct PaymentButtonView: View {
-    @ObservedObject var model: Shopper
+    @Environment(Shopper.self) var model
     let onAction: () -> Void
     
     var body: some View {

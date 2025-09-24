@@ -9,7 +9,22 @@ import SnabbleCore
 
 extension CartEntry: Equatable {
     public static func == (lhs: CartEntry, rhs: CartEntry) -> Bool {
-        lhs.id == rhs.id
+        switch (lhs, rhs) {
+        case (.cartItem(let lItem, let lLineItems), .cartItem(let rItem, let rLineItems)):
+            return lItem == rItem && lLineItems == rLineItems
+        case (.coupon(let lCoupon, let lLineItem), .coupon(let rCoupon, let rLineItem)):
+            return lCoupon.uuid == rCoupon.uuid && lLineItem == rLineItem
+        case (.voucher(let lVoucher, let lLineItems), .voucher(let rVoucher, let rLineItems)):
+            return lVoucher.uuid == rVoucher.uuid && lLineItems == rLineItems
+        case (.lineItem(let lLineItem, let lAdditionalItems), .lineItem(let rLineItem, let rAdditionalItems)):
+            return lLineItem == rLineItem && lAdditionalItems == rAdditionalItems
+        case (.giveaway(let lLineItem), .giveaway(let rLineItem)):
+            return lLineItem == rLineItem
+        case (.discount(let lDiscount), .discount(let rDiscount)):
+            return lDiscount == rDiscount
+        default:
+            return false
+        }
     }
 }
 

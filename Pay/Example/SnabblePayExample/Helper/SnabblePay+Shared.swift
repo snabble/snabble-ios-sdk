@@ -38,7 +38,7 @@ extension SnabblePay {
     }
 }
 
-extension SnabblePay: SnabblePayDelegate {
+extension SnabblePay: @retroactive SnabblePayDelegate {
     public func snabblePay(_ snabblePay: SnabblePay, didUpdateCredentials credentials: Credentials?) {
         if let encoded = try? JSONEncoder().encode(credentials) {
             UserDefaults.credentials = encoded

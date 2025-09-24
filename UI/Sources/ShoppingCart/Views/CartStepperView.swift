@@ -30,14 +30,15 @@ struct BorderedButtonStyle: ButtonStyle {
 
 struct CartStepperView: View {
     @SwiftUI.Environment(\.projectTrait) private var project
-    
-    @ObservedObject var itemModel: ProductItemModel
-    @EnvironmentObject var cartModel: ShoppingCartViewModel
+    @Environment(ShoppingCartViewModel.self) var cartModel
+
+    let cartEntry: CartEntry
+
     @ScaledMetric var scale: CGFloat = 1
 
     @ViewBuilder
     var minusImage: some View {
-        Image(systemName: itemModel.quantity == 1 ? "trash" : "minus")
+        Image(systemName: cartModel.quantity(for: cartEntry) == 1 ? "trash" : "minus")
             .foregroundColor(.projectPrimary())
             .frame(width: 22 * scale, height: 22 * scale)
     }
@@ -50,7 +51,7 @@ struct CartStepperView: View {
 
     var body: some View {
         HStack(spacing: 4) {
-            
+
             Button( action: {
                 withAnimation {
                     self.minus()
@@ -60,7 +61,7 @@ struct CartStepperView: View {
             }
             .buttonStyle(BorderedButtonStyle())
 
-            Text("\(itemModel.quantity)")
+            Text("\(cartModel.quantity(for: cartEntry))")
                 .font(.footnote)
                 .fontWeight(.bold)
                 .frame(minWidth: 20 * scale)
@@ -76,9 +77,9 @@ struct CartStepperView: View {
         }
     }
     func plus() {
-        cartModel.increment(itemModel: itemModel)
+        cartModel.increment(cartEntry: cartEntry)
     }
     func minus() {
-        cartModel.decrement(itemModel: itemModel)
+        cartModel.decrement(cartEntry: cartEntry)
     }
 }

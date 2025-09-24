@@ -21,8 +21,8 @@ extension InvoiceLoginModel {
 }
 
 public struct InvoiceLoginView: View {
-    @ObservedObject var model: InvoiceLoginProcessor
-    @StateObject private var loginModel: InvoiceLoginModel
+    @State var model: InvoiceLoginProcessor
+    @State private var loginModel: InvoiceLoginModel
 
     @State private var canLogin = false
     @State private var username = ""
@@ -34,7 +34,7 @@ public struct InvoiceLoginView: View {
     
     public init(model: InvoiceLoginProcessor) {
         self.model = model
-        self._loginModel = StateObject(wrappedValue: model.invoiceLoginModel)
+        self._loginModel = State(wrappedValue: model.invoiceLoginModel)
     }
 
     @ViewBuilder
@@ -113,7 +113,7 @@ public struct InvoiceLoginView: View {
 }
 
 public struct InvoiceDetailView: View {
-    @ObservedObject private var loginModel: InvoiceLoginModel
+    @State private var loginModel: InvoiceLoginModel
     @Environment(\.presentationMode) var presentationMode
     let domain = "Snabble.Payment.ExternalBilling"
 
@@ -154,13 +154,12 @@ public struct InvoiceDetailView: View {
 }
 
 public struct InvoiceView: View {
-    @ObservedObject var loginProcessor: InvoiceLoginProcessor
-    @StateObject private var loginModel: InvoiceLoginModel
-    
+    @State var loginProcessor: InvoiceLoginProcessor
+    @State private var loginModel: InvoiceLoginModel
+
     init(model: InvoiceLoginProcessor) {
         self.loginProcessor = model
-        self._loginModel = StateObject(wrappedValue: model.invoiceLoginModel)
-
+        self.loginModel = model.invoiceLoginModel
     }
     @ViewBuilder
     var content: some View {

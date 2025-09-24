@@ -10,26 +10,11 @@ import Combine
 import SnabbleCore
 import SwiftUI
 
-public enum LeftDisplay {
-    case none
-    case image
-    case emptyImage
-    case badge
-}
-
-public enum RightDisplay {
-    case none
-    case buttons
-    case weightEntry
-    case weightDisplay
-    case trash
-}
-
 public protocol ShoppingCartItem: Swift.Identifiable {
     var id: String { get }
     var title: String { get }
-    var leftDisplay: LeftDisplay { get }
-    var rightDisplay: RightDisplay { get }
+    var leftDisplay: CartItemModel.LeftDisplay { get }
+    var rightDisplay: CartItemModel.RightDisplay { get }
     var image: SwiftUI.Image? { get }
     var showImages: Bool { get set }
 }
@@ -43,7 +28,7 @@ public protocol ShoppingCartItemDiscounting: Swift.Identifiable {
     var name: String { get }
 }
 
-public struct ShoppingCartItemDiscount: ShoppingCartItemDiscounting {
+public struct ShoppingCartItemDiscount: ShoppingCartItemDiscounting, Equatable {
     public enum DiscountType: String {
         case unknown
         case priceModifier
@@ -123,16 +108,33 @@ public extension ShoppingCartItemBadging {
     }
 }
 
-open class CartItemModel: ObservableObject, ShoppingCartItem {
+@Observable
+open class CartItemModel: ShoppingCartItem {
     public var id: String {
         return UUID().uuidString
     }
     
-    @Published public var title: String
-    @Published public var leftDisplay: LeftDisplay
-    @Published public var rightDisplay: RightDisplay
+    public var title: String
+    
+    public enum LeftDisplay {
+        case none
+        case image
+        case emptyImage
+        case badge
+    }
 
-    @Published public var image: SwiftUI.Image?
+    public enum RightDisplay {
+        case none
+        case buttons
+        case weightEntry
+        case weightDisplay
+        case trash
+    }
+
+    public var leftDisplay: LeftDisplay
+    public var rightDisplay: RightDisplay
+
+    public var image: SwiftUI.Image?
     
     public var showImages: Bool
     init(title: String, leftDisplay: LeftDisplay = .none, rightDisplay: RightDisplay = .none, image: SwiftUI.Image? = nil, showImages: Bool = false) {

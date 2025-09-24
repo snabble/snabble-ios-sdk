@@ -9,30 +9,23 @@ import SwiftUI
 import SnabbleCore
 
 public struct ShoppingCartView: View {
-    @ObservedObject var cartModel: ShoppingCartViewModel
+    @Environment(ShoppingCartViewModel.self) var cartModel
     let compactMode: Bool
     let listMode: Bool
-    
-    public init(cartModel: ShoppingCartViewModel, 
-                compactMode: Bool = false,
+
+    public init(compactMode: Bool = false,
                 listMode: Bool = true) {
-        self.cartModel = cartModel
         self.compactMode = compactMode
         self.listMode = listMode
     }
 
-    public init(shoppingCart: ShoppingCart, 
-                compactMode: Bool = false,
-                listMode: Bool = true) {
-        self.cartModel = ShoppingCartViewModel(shoppingCart: shoppingCart)
-        self.compactMode = compactMode
-        self.listMode = listMode
-    }
+    // Environment-based approach: ShoppingCartViewModel should be provided via .environment()
+    // If you need to create a cartModel from ShoppingCart, do it outside and inject via environment
 
     @ViewBuilder
     var footer: some View {
         if !compactMode {
-            ShoppingCartFooterView(cartModel: cartModel)
+            ShoppingCartFooterView()
         }
     }
     
@@ -42,7 +35,7 @@ public struct ShoppingCartView: View {
                 Text(keyed: "Snabble.Shoppingcart.EmptyState.description")
             }
         } else {
-            ShoppingCartItemsView(cartModel: cartModel, footer: footer, asList: listMode)
+            ShoppingCartItemsView(footer: footer, asList: listMode)
         }
     }
 }

@@ -6,15 +6,17 @@
 //
 import SwiftUI
 import CoreMotion
+import Observation
 
-class MotionManager: ObservableObject {
+@Observable
+class MotionManager {
     static let shared = MotionManager()
-    
+
     private let manager: CMMotionManager
     let formatter: NumberFormatter
-    
-    @Published var xCoordinate = 0.0
-    @Published var yCoordinate = 0.0
+
+    var xCoordinate = 0.0
+    var yCoordinate = 0.0
 
     init() {
         self.formatter = NumberFormatter()
