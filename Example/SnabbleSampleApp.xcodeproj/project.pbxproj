@@ -21,7 +21,6 @@
 		76C7B74A28BFA10700D94F4F /* DashboardViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 76C7B74928BFA10700D94F4F /* DashboardViewController.swift */; };
 		76C7B79028C1ACD900D94F4F /* Profile.json in Resources */ = {isa = PBXBuildFile; fileRef = 76C7B78F28C1ACD900D94F4F /* Profile.json */; };
 		E127DB6F28C74A64005A7416 /* SnabbleConfig.swift in Sources */ = {isa = PBXBuildFile; fileRef = E127DB6E28C74A64005A7416 /* SnabbleConfig.swift */; };
-		E131CF1A28A3D45C00A844E1 /* SnabbleSampleAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E131CF1928A3D45C00A844E1 /* SnabbleSampleAppTests.swift */; };
 		E161B0EE28B76DD9005061C4 /* Onboarding.json in Resources */ = {isa = PBXBuildFile; fileRef = E161B0EB28B76357005061C4 /* Onboarding.json */; };
 		E16A6EA62AB846E800E6096D /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = E16A6EA52AB8449300E6096D /* Settings.bundle */; };
 		E1786CBF28BF351400CB7AF0 /* Dashboard.json in Resources */ = {isa = PBXBuildFile; fileRef = E1786CBE28BF351400CB7AF0 /* Dashboard.json */; };
@@ -29,16 +28,6 @@
 		E1DA445E28B3668C0034427D /* AppDelegate+AssetProviding.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DA445D28B3668C0034427D /* AppDelegate+AssetProviding.swift */; };
 		E1DA449C28B3A2BD0034427D /* LoadingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = E1DA449B28B3A2BD0034427D /* LoadingViewController.swift */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		E131CF1B28A3D45C00A844E1 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 607FACC81AFB9204008FA782 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 607FACCF1AFB9204008FA782;
-			remoteInfo = SnabbleSampleApp;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		3A64AF2F2710486300AF24C6 /* AccountViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AccountViewController.swift; sourceTree = "<group>"; };
@@ -61,8 +50,6 @@
 		76C7B78F28C1ACD900D94F4F /* Profile.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Profile.json; sourceTree = "<group>"; };
 		76CE06962902ED8C00E643A6 /* snabble-ios-sdk */ = {isa = PBXFileReference; lastKnownFileType = wrapper; name = "snabble-ios-sdk"; path = ..; sourceTree = "<group>"; };
 		E127DB6E28C74A64005A7416 /* SnabbleConfig.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnabbleConfig.swift; sourceTree = "<group>"; };
-		E131CF1728A3D45C00A844E1 /* SnabbleSampleAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = SnabbleSampleAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		E131CF1928A3D45C00A844E1 /* SnabbleSampleAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SnabbleSampleAppTests.swift; sourceTree = "<group>"; };
 		E161B03C28B64883005061C4 /* Snabble.gpx */ = {isa = PBXFileReference; lastKnownFileType = text.xml; path = Snabble.gpx; sourceTree = "<group>"; };
 		E161B0EB28B76357005061C4 /* Onboarding.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = Onboarding.json; sourceTree = "<group>"; };
 		E16A6EA52AB8449300E6096D /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
@@ -81,13 +68,6 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		E131CF1428A3D45C00A844E1 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
@@ -97,7 +77,6 @@
 				76CE06962902ED8C00E643A6 /* snabble-ios-sdk */,
 				76151FDB28D2FC4800C08D97 /* SnabbleSampleApp.entitlements */,
 				607FACD21AFB9204008FA782 /* Sources */,
-				E131CF1828A3D45C00A844E1 /* SnabbleSampleAppTests */,
 				607FACD11AFB9204008FA782 /* Products */,
 				649282D5B1D228389A97EBA1 /* Frameworks */,
 			);
@@ -107,7 +86,6 @@
 			isa = PBXGroup;
 			children = (
 				607FACD01AFB9204008FA782 /* SnabbleSampleApp.app */,
-				E131CF1728A3D45C00A844E1 /* SnabbleSampleAppTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -157,14 +135,6 @@
 				76AD21B228D4331A003D865A /* terms.html */,
 			);
 			name = Profile;
-			sourceTree = "<group>";
-		};
-		E131CF1828A3D45C00A844E1 /* SnabbleSampleAppTests */ = {
-			isa = PBXGroup;
-			children = (
-				E131CF1928A3D45C00A844E1 /* SnabbleSampleAppTests.swift */,
-			);
-			path = SnabbleSampleAppTests;
 			sourceTree = "<group>";
 		};
 		E161B0ED28B76C23005061C4 /* Onboarding */ = {
@@ -230,24 +200,6 @@
 			productReference = 607FACD01AFB9204008FA782 /* SnabbleSampleApp.app */;
 			productType = "com.apple.product-type.application";
 		};
-		E131CF1628A3D45C00A844E1 /* SnabbleSampleAppTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = E131CF1F28A3D45C00A844E1 /* Build configuration list for PBXNativeTarget "SnabbleSampleAppTests" */;
-			buildPhases = (
-				E131CF1328A3D45C00A844E1 /* Sources */,
-				E131CF1428A3D45C00A844E1 /* Frameworks */,
-				E131CF1528A3D45C00A844E1 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				E131CF1C28A3D45C00A844E1 /* PBXTargetDependency */,
-			);
-			name = SnabbleSampleAppTests;
-			productName = SnabbleSampleAppTests;
-			productReference = E131CF1728A3D45C00A844E1 /* SnabbleSampleAppTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -265,12 +217,6 @@
 						DevelopmentTeam = 53K7JS449L;
 						LastSwiftMigration = 1020;
 						ProvisioningStyle = Automatic;
-					};
-					E131CF1628A3D45C00A844E1 = {
-						CreatedOnToolsVersion = 13.4.1;
-						DevelopmentTeam = 53K7JS449L;
-						ProvisioningStyle = Automatic;
-						TestTargetID = 607FACCF1AFB9204008FA782;
 					};
 				};
 			};
@@ -291,7 +237,6 @@
 			projectRoot = "";
 			targets = (
 				607FACCF1AFB9204008FA782 /* SnabbleSampleApp */,
-				E131CF1628A3D45C00A844E1 /* SnabbleSampleAppTests */,
 			);
 		};
 /* End PBXProject section */
@@ -311,13 +256,6 @@
 				E1BEF67128B79B4900549104 /* imprint.html in Resources */,
 				76AD21B128D42513003D865A /* privacy.html in Resources */,
 				76AD21B328D4331A003D865A /* terms.html in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		E131CF1528A3D45C00A844E1 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -381,23 +319,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		E131CF1328A3D45C00A844E1 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				E131CF1A28A3D45C00A844E1 /* SnabbleSampleAppTests.swift in Sources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		E131CF1C28A3D45C00A844E1 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 607FACCF1AFB9204008FA782 /* SnabbleSampleApp */;
-			targetProxy = E131CF1B28A3D45C00A844E1 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		607FACDE1AFB9204008FA782 /* LaunchScreen.xib */ = {
@@ -583,63 +505,6 @@
 			};
 			name = Release;
 		};
-		E131CF1D28A3D45C00A844E1 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEBUG_INFORMATION_FORMAT = dwarf;
-				DEVELOPMENT_TEAM = 53K7JS449L;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
-				MARKETING_VERSION = 1.0;
-				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = io.snabble.SnabbleSampleAppTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SnabbleSampleApp.app/SnabbleSampleApp";
-			};
-			name = Debug;
-		};
-		E131CF1E28A3D45C00A844E1 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(TEST_HOST)";
-				CLANG_ANALYZER_NONNULL = YES;
-				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
-				CLANG_CXX_LANGUAGE_STANDARD = "gnu++17";
-				CLANG_ENABLE_OBJC_WEAK = YES;
-				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
-				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 1;
-				DEVELOPMENT_TEAM = 53K7JS449L;
-				GCC_C_LANGUAGE_STANDARD = gnu11;
-				GENERATE_INFOPLIST_FILE = YES;
-				IPHONEOS_DEPLOYMENT_TARGET = 17.6;
-				MARKETING_VERSION = 1.0;
-				MTL_FAST_MATH = YES;
-				PRODUCT_BUNDLE_IDENTIFIER = io.snabble.SnabbleSampleAppTests;
-				PRODUCT_NAME = "$(TARGET_NAME)";
-				SWIFT_EMIT_LOC_STRINGS = NO;
-				SWIFT_VERSION = 5.0;
-				TARGETED_DEVICE_FAMILY = "1,2";
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/SnabbleSampleApp.app/SnabbleSampleApp";
-			};
-			name = Release;
-		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
@@ -657,15 +522,6 @@
 			buildConfigurations = (
 				607FACF01AFB9204008FA782 /* Debug */,
 				607FACF11AFB9204008FA782 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		E131CF1F28A3D45C00A844E1 /* Build configuration list for PBXNativeTarget "SnabbleSampleAppTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				E131CF1D28A3D45C00A844E1 /* Debug */,
-				E131CF1E28A3D45C00A844E1 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
