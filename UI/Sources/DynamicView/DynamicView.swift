@@ -9,14 +9,19 @@ import Combine
 import SwiftUI
 
 public struct DynamicView: View {
-    @Environment(DynamicViewModel.self) private var viewModel
+    @State public var viewModel: DynamicViewModel
+    
     @State private var refresher: AnyCancellable = UserDefaults.standard
         .publisher(for: \.developerMode)
         .handleEvents(receiveOutput: { _ in
             // @Observable automatically handles change notifications
         })
         .sink { _ in }
-        
+
+    public init(viewModel: DynamicViewModel) {
+        self._viewModel = State(initialValue: viewModel)
+    }
+
     @ViewBuilder
     var teaser: some View {
         if let image = viewModel.configuration.image {
@@ -51,6 +56,7 @@ public struct DynamicView: View {
                 .listStyle(.grouped)
             }
         }
+        .environment(viewModel)
         .onAppear {
             // @Observable automatically handles change notifications
         }
