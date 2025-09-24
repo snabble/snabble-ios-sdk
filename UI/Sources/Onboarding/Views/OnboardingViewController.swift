@@ -35,7 +35,7 @@ public final class OnboardingViewController: UIHostingController<OnboardingView>
     /// - Parameter viewModel: A view model that specifies the details to be shown. Default value is `.default`
     public init(viewModel: OnboardingViewModel) {
         self.viewModel = viewModel
-        super.init(rootView: OnboardingView().environment(viewModel))
+        super.init(rootView: OnboardingView(viewModel: viewModel))
         isModalInPresentation = true
         modalPresentationStyle = .overFullScreen
     }
