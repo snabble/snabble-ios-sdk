@@ -9,12 +9,13 @@ import SnabbleCore
 import Combine
 import SnabbleAssetProviding
 
+@MainActor
 public final class PaymentMethodStartCheck {
     private var method: PaymentMethod
     private var detail: PaymentMethodDetail?
     private weak var presenter: UIViewController?
     public weak var messageDelegate: MessageDelegate?
-    private var completionHandler: ((Bool) -> Void)?
+    private var completionHandler: (@Sendable (Bool) -> Void)?
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -26,7 +27,7 @@ public final class PaymentMethodStartCheck {
         self.presenter = presenter
     }
 
-    public func startPayment(_ completion: @escaping (Bool) -> Void) {
+    public func startPayment(_ completion: @escaping @Sendable (Bool) -> Void) {
         guard let presenter = presenter, method.canStart() else {
             completion(false)
             return
@@ -38,6 +39,7 @@ public final class PaymentMethodStartCheck {
             if case .payoneSepa = detail?.methodData {
                 self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.SEPA.payNow"), completion)
             } else {
+                    
                 let view = SepaOverlayView(frame: .zero)
                 let viewModel = SepaOverlayView.ViewModel(project: SnabbleCI.project)
                 view.configure(with: viewModel)
@@ -100,12 +102,12 @@ public final class PaymentMethodStartCheck {
     }
 
     // MARK: - Sepa
-    @objc private func dismissOverlay(_ sender: Any) {
+    @MainActor @objc private func dismissOverlay(_ sender: Any) {
         presenter?.dismissOverlay()
         completionHandler?(false)
     }
 
-    @objc private func sepaSuccessButtonTapped(_ sender: UIButton) {
+    @MainActor @objc private func sepaSuccessButtonTapped(_ sender: UIButton) {
         guard
             let presenter = presenter,
             let completionHandler = completionHandler
@@ -126,7 +128,7 @@ public final class PaymentMethodStartCheck {
 
     // MARK: - biometry
 
-    private func requestBiometricAuthentication(on presenter: UIViewController, reason: String, _ completion: @escaping (Bool) -> Void) {
+    private func requestBiometricAuthentication(on presenter: UIViewController, reason: String, _ completion: @escaping @Sendable (Bool) -> Void) {
         BiometricAuthentication.requestAuthentication(for: reason) { result in
             switch result {
             case .proceed:
@@ -134,7 +136,9 @@ public final class PaymentMethodStartCheck {
             case .locked:
                 let name = BiometricAuthentication.supportedBiometry.name
                 let message = Asset.localizedString(forKey: "Snabble.Biometry.locked", arguments: name)
-                self.messageDelegate?.showWarningMessage(message)
+                Task { @MainActor in
+                    self.messageDelegate?.showWarningMessage(message)
+                }
                 completion(false)
             default:
                 completion(false)

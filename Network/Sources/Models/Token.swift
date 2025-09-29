@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Token: Codable {
+public struct Token: Codable, Sendable {
     public let id: String
     public let value: String
     public let issuedAt: Date

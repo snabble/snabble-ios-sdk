@@ -11,7 +11,7 @@ import Foundation
 extension Snabble {
     static let inFlightKey = "io.snabble.inFlightCheckout"
 
-    public struct InFlightCheckout: Codable {
+    public struct InFlightCheckout: Codable, Sendable {
         public let url: String
         public let shop: Shop
         public let cart: ShoppingCart

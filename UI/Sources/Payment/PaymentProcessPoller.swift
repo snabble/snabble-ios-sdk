@@ -7,13 +7,13 @@
 import Foundation
 import SnabbleCore
 
-public enum PaymentEvent {
+public enum PaymentEvent: Sendable {
     case paymentSuccess
 
     case receipt
 }
 
-public final class PaymentProcessPoller {
+public final class PaymentProcessPoller: @unchecked Sendable {
     private weak var timer: Timer?
 
     private let process: CheckoutProcess
@@ -49,16 +49,16 @@ public final class PaymentProcessPoller {
     }
 
     // wait for a number of events, and call the completion handler as soon as one (or more) are fulfilled
-    public func waitFor(_ events: [PaymentEvent], completion: @escaping ([PaymentEvent: Bool]) -> Void ) {
+    public func waitFor(_ events: [PaymentEvent], completion: @escaping @Sendable ([PaymentEvent: Bool]) -> Void ) {
         self.waitingFor = events
         self.alreadySeen = []
         self.timer?.invalidate()
-        self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            self.checkEvents(events, completion)
+        self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { [weak self] _ in
+            self?.checkEvents(completion)
         }
     }
 
-    private func checkEvents(_ events: [PaymentEvent], _ completion: @escaping ([PaymentEvent: Bool]) -> Void ) {
+    private func checkEvents(_ completion: @escaping @Sendable ([PaymentEvent: Bool]) -> Void ) {
         self.process.update(self.project, taskCreated: { self.task = $0 }, completion: { result in
             switch result.result {
             case .failure(let error):
@@ -72,7 +72,7 @@ public final class PaymentProcessPoller {
         })
     }
 
-    private func checkProcess(_ process: CheckoutProcess, _ completion: @escaping ([PaymentEvent: Bool]) -> Void ) {
+    private func checkProcess(_ process: CheckoutProcess, _ completion: @escaping @Sendable ([PaymentEvent: Bool]) -> Void ) {
         if let failureCause = process.paymentResult?["failureCause"] as? String {
             self.failureCause = FailureCause(rawValue: failureCause)
         }

@@ -14,7 +14,7 @@ import SnabbleCore
 import SnabbleAssetProviding
 
 @Observable
-final class ConnectWifiViewModel {
+final class ConnectWifiViewModel: @unchecked Sendable {
     let configuration: DynamicViewConfiguration
 
     private let pathMonitor: NWPathMonitor

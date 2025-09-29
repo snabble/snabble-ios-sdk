@@ -460,7 +460,7 @@ struct PaymentMethodDetailStorage {
 }
 
 public enum PaymentMethodDetails {
-    private static let storage = PaymentMethodDetailStorage()
+    nonisolated(unsafe) private static let storage = PaymentMethodDetailStorage()
 
     public static func read() -> [PaymentMethodDetail] {
         return storage.read()

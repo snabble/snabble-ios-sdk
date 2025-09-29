@@ -152,8 +152,10 @@ class CouponCollectionViewCell: UICollectionViewCell, Cardable, ReuseIdentifiabl
         imageView?.image = nil
         activityIndicatorView?.startAnimating()
         sessionDataTask = couponViewModel.loadImage { [weak self] image in
-            self?.activityIndicatorView?.stopAnimating()
-            self?.imageView?.image = image
+            Task { @MainActor in
+                self?.activityIndicatorView?.stopAnimating()
+                self?.imageView?.image = image
+            }
         }
     }
 }

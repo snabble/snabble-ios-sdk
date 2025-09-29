@@ -43,7 +43,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 fatalError("project initialization failed - make sure APPID and APPSECRET are valid")
             }
 
-            self.setupAppearance()
+            Task { @MainActor in
+                self.setupAppearance()
+            }
             // register the project with the UI components
             SnabbleCI.register(project)
             snabble.checkInManager.delegate = self
@@ -51,7 +53,9 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
             // initialize the product database for this project
             snabble.setupProductDatabase(for: project) { [unowned self] _ in
-                transitionView(with: project.shops)
+                Task { @MainActor in
+                    transitionView(with: project.shops)
+                }
             }
         }
     }

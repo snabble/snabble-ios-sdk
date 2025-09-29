@@ -32,6 +32,7 @@ public struct ScanMessage {
     }
 }
 
+@MainActor
 public protocol ScannerDelegate: AnalyticsDelegate {
     /// check if we need to display a special message when scanning this product, like
     /// "don't forget to grab the other X packages"

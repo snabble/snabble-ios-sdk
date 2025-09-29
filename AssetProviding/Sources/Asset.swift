@@ -11,10 +11,10 @@ import SwiftUI
 
 public enum Asset {
     /// Reference to the implementation of the `AssetProviding` implementation
-    public static weak var provider: AssetProviding?
+    nonisolated(unsafe) public static weak var provider: AssetProviding?
 
     /// Reference to the current domain
-    public static var domain: Any?
+    nonisolated(unsafe) public static var domain: Any?
 
     // MARK: - Color
     public static func color(named name: String, domain: Any? = domain) -> UIColor? {

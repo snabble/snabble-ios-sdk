@@ -48,7 +48,9 @@ public final class TeaserModel {
         return await withCheckedContinuation { continuation in
             project.fetchImage(urlString: fullUrlString) { [weak self] image in
                 if let image = image {
-                    self?.imageCache[urlString] = image
+                    Task { @MainActor in
+                        self?.imageCache[urlString] = image
+                    }
                 }
                 continuation.resume(returning: image)
             }

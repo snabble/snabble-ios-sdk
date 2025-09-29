@@ -13,6 +13,7 @@ import SnabbleCore
 import SnabbleAssetProviding
 
 /// Methods for managing callbacks
+@MainActor
 public protocol InvoiceViewControllerDelegate: AnyObject {
 
     /// Tells the delegate that an widget will perform an action

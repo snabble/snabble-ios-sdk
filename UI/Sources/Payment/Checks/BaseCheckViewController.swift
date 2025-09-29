@@ -10,7 +10,7 @@ import Combine
 import Observation
 import SnabbleAssetProviding
 
-@Observable
+@Observable @MainActor
 open class BaseCheckViewModel: CheckViewModel {
     public var checkModel: CheckModel
     public var codeImage: UIImage?
@@ -53,6 +53,7 @@ open class BaseCheckViewModel: CheckViewModel {
 }
 
 // base class for SupervisorCheckViewController and GatekeeperCheckViewController
+@MainActor
 open class BaseCheckViewController<Content: View>: UIHostingController<Content>, CheckViewModelProviding, CheckoutProcessing, CheckModelDelegate {
     
     public var viewModel: CheckViewModel?
@@ -85,7 +86,9 @@ open class BaseCheckViewController<Content: View>: UIHostingController<Content>,
             UIScreen.main.brightness = 0.5
             self.paymentDelegate?.track(.brightnessIncreased)
         }
-        UIApplication.shared.isIdleTimerDisabled = true
+        MainActor.assumeIsolated {
+            UIApplication.shared.isIdleTimerDisabled = true
+        }
         
         checkModel.startCheck()
     }
@@ -94,7 +97,9 @@ open class BaseCheckViewController<Content: View>: UIHostingController<Content>,
         super.viewWillDisappear(animated)
 
         UIScreen.main.brightness = self.initialBrightness
-        UIApplication.shared.isIdleTimerDisabled = false
+        MainActor.assumeIsolated {
+            UIApplication.shared.isIdleTimerDisabled = false
+        }
     }
 }
 

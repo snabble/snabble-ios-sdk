@@ -101,7 +101,7 @@ public struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, Br
     }
 }
 
-public struct PayoneResponse {
+public struct PayoneResponse: Sendable {
     public let info: PayonePreAuthData
     let maskedCardPAN: String
     let brand: CreditCardBrand

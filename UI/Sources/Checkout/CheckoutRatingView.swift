@@ -97,6 +97,7 @@ public final class RatingModel {
         return ratingItems[index]
     }
 
+    @MainActor
     func tap(ratingItem: RatingItem) {
         guard let index = ratingItems.firstIndex(where: { $0.id == ratingItem.id }) else { return }
         
@@ -109,6 +110,7 @@ public final class RatingModel {
         }
     }
 
+    @MainActor
     func sendFeedback(_ message: String) {
         guard let project = shop.project, let item = selectedRating else { return }
         

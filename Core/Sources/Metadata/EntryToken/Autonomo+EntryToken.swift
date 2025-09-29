@@ -7,8 +7,8 @@
 
 import Foundation
 
-public enum Autonomo {
-    public enum State: String, Codable {
+public enum Autonomo: Sendable {
+    public enum State: String, Codable, Sendable {
         case preAuthFailed = "pre_auth_failed"
         case preAuthErrored = "pre_auth_errored"
         case entryPending = "entry_pending"
@@ -24,14 +24,14 @@ public enum Autonomo {
         case paymentFailed = "payment_failed"
         case failed
     }
-    public struct Session: Codable, Identifiable {
+    public struct Session: Codable, Identifiable, Sendable {
         public let id: Identifier<Session>
         public let entryToken: EntryToken?
         public let state: State
         public let customerMessage: String?
     }
 
-    public struct EntryToken: Codable, SnabbleCore.EntryToken {
+    public struct EntryToken: Codable, SnabbleCore.EntryToken, Sendable {
         public let value: String
         public let validUntil: Date
         public let refreshAfter: Date
@@ -46,7 +46,7 @@ private struct SessionRequest: Encodable {
 }
 
 extension Project {
-    public func getAutonomoSession(for shop: Shop, paymentMethodDetail: PaymentMethodDetail, numberOfPersons: Int, completion: @escaping (Result<Autonomo.Session, SnabbleError>) -> Void) {
+    public func getAutonomoSession(for shop: Shop, paymentMethodDetail: PaymentMethodDetail, numberOfPersons: Int, completion: @escaping @Sendable (Result<Autonomo.Session, SnabbleError>) -> Void) {
         let tokenRequest = SessionRequest(
             shopID: shop.id.rawValue,
             paymentMethod: paymentMethodDetail.rawMethod.rawValue,
@@ -67,7 +67,7 @@ extension Project {
         }
     }
 
-    public func updateAutonomoSession(for sessionId: Identifier<Autonomo.Session>, projectId: Identifier<Project>, completion: @escaping (Result<Autonomo.Session, SnabbleError>) -> Void) {
+    public func updateAutonomoSession(for sessionId: Identifier<Autonomo.Session>, projectId: Identifier<Project>, completion: @escaping @Sendable (Result<Autonomo.Session, SnabbleError>) -> Void) {
         self.request(.get, "/\(projectId.rawValue)/autonomo/sessions/\(sessionId.rawValue)", timeout: 5) { request in
             guard let request = request else {
                 return completion(.failure(SnabbleError.noRequest))

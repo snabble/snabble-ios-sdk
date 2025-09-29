@@ -9,7 +9,7 @@ import UIKit
 import QuickLook
 import SnabbleCore
 
-public final class ReceiptPreviewItem: NSObject, QLPreviewItem {
+public final class ReceiptPreviewItem: NSObject, QLPreviewItem, Sendable {
     public let receiptUrl: URL
     public let title: String
 
@@ -109,14 +109,16 @@ public final class ReceiptsDetailViewController: UIViewController {
 
     public override func viewDidLoad() {
         super.viewDidLoad()
-        let completion: (Result<ReceiptPreviewItem, Swift.Error>) -> Void = { [weak self] result in
-            self?.activityIndicatorView?.stopAnimating()
-            switch result {
-            case .success(let previewItem):
-                self?.title = previewItem.title
-                self?.setupQuicklook(with: previewItem)
-            case .failure:
-                print("Show Error!") // No requirements available
+        let completion: @Sendable (Result<ReceiptPreviewItem, Swift.Error>) -> Void = { [weak self] result in
+            Task { @MainActor in
+                self?.activityIndicatorView?.stopAnimating()
+                switch result {
+                case .success(let previewItem):
+                    self?.title = previewItem.title
+                    self?.setupQuicklook(with: previewItem)
+                case .failure:
+                    print("Show Error!") // No requirements available
+                }
             }
         }
         if let order, let project {
@@ -140,7 +142,7 @@ public final class ReceiptsDetailViewController: UIViewController {
 }
 
 extension ReceiptsDetailViewController {
-    private func getReceipt(orderID: String, projectID: Identifier<Project>, completion: @escaping (Result<ReceiptPreviewItem, Swift.Error>) -> Void) {
+    private func getReceipt(orderID: String, projectID: Identifier<Project>, completion: @escaping @Sendable (Result<ReceiptPreviewItem, Swift.Error>) -> Void) {
         guard let project = Snabble.shared.project(for: projectID) ?? Snabble.shared.projects.first else {
             return completion(.failure(Error.missingProject))
         }
@@ -151,13 +153,15 @@ extension ReceiptsDetailViewController {
             }).first else {
                 return completion(.failure(Error.missingOrder))
             }
-            self?.order = order
-            self?.project = project
-            self?.getReceipt(order: order, project: project, completion: completion)
+            Task { @MainActor in
+                self?.order = order
+                self?.project = project
+                self?.getReceipt(order: order, project: project, completion: completion)
+            }
         }
     }
     
-    private func getReceipt(order: Order, project: Project, completion: @escaping (Result<ReceiptPreviewItem, Swift.Error>) -> Void) {
+    private func getReceipt(order: Order, project: Project, completion: @escaping @Sendable (Result<ReceiptPreviewItem, Swift.Error>) -> Void) {
         order.getReceipt(project) { result in
             switch result {
             case .success(let targetURL):

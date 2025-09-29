@@ -28,6 +28,7 @@ private extension UserDefaults {
 }
 
 @Observable 
+@MainActor
 public class PurchasesViewModel: LoadableObject {
     typealias Output = [PurchaseProviding]
     
@@ -101,7 +102,7 @@ public class PurchasesViewModel: LoadableObject {
         listRefreshTrigger += 1
     }
 
-    private func load(reset: Bool, isRefreshing: Bool = false, completion: (() -> Void)? = nil) {
+    private func load(reset: Bool, isRefreshing: Bool = false, completion: (@Sendable () -> Void)? = nil) {
         guard let project = Snabble.shared.projects.first else {
             state = .empty
             completion?()
@@ -114,27 +115,29 @@ public class PurchasesViewModel: LoadableObject {
 
         OrderList.load(project) { [weak self] result in
             defer { completion?() }
-            
-            if let self = self {
+
+            Task { @MainActor in
+                guard let self = self else { return }
+
                 do {
                     let orders = try result.get().receipts
-                    
+
                     if orders.isEmpty {
-                        userDefaults.setReceiptCount(0)
+                        self.userDefaults.setReceiptCount(0)
                         self.state = .empty
                         self.numberOfUnread = 0
                     } else {
                         self.state = .loaded(orders)
-                        
+
                         if reset {
-                            userDefaults.setReceiptCount(orders.count)
+                            self.userDefaults.setReceiptCount(orders.count)
                         }
-                        
-                        if let oldValue = userDefaults.receiptCount() {
-                            numberOfUnloaded = orders.count - oldValue
+
+                        if let oldValue = self.userDefaults.receiptCount() {
+                            self.numberOfUnloaded = orders.count - oldValue
                         } else {
-                            userDefaults.setReceiptCount(orders.count)
-                            numberOfUnloaded = orders.count
+                            self.userDefaults.setReceiptCount(orders.count)
+                            self.numberOfUnloaded = orders.count
                         }
                         
                         self.updateUnreadCount()
@@ -161,7 +164,7 @@ public class PurchasesViewModel: LoadableObject {
 }
 
 extension PurchasesViewModel {
-    public func storeImage(projectId: Identifier<Project>, completion: @escaping (UIImage?) -> Void) {
+    public func storeImage(projectId: Identifier<Project>, completion: @escaping @Sendable (UIImage?) -> Void) {
         SnabbleCI.getAsset(.storeIcon, projectId: projectId) { image in
             completion(image)
         }
@@ -179,7 +182,9 @@ extension PurchasesViewModel {
             guard let image else {
                 return
             }
-            self.imageCache[projectId] = Image(uiImage: image)
+            Task { @MainActor in
+                self.imageCache[projectId] = Image(uiImage: image)
+            }
         }
         return imageCache[projectId]
     }

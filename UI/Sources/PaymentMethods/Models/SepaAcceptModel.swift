@@ -10,7 +10,7 @@ import Observation
 import SnabbleCore
 
 @Observable
-public final class SepaAcceptModel {
+public final class SepaAcceptModel: @unchecked Sendable {
     /// subscribe to this Publisher to  process
     public var actionPublisher = PassthroughSubject<[String: Any]?, Never>()
     

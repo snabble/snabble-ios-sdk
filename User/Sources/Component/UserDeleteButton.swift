@@ -54,12 +54,12 @@ public struct UserDeleteButton: View {
     }
 
     private func delete() {
-        Task {
+        Task { @MainActor in
+            isLoading = true
+            errorMessage = nil
+
             do {
-                isLoading = true
-                errorMessage = nil
-                
-                try await networkManager.publisher(for: Endpoints.User.erase())
+                try await self.networkManager.publisher(for: Endpoints.User.erase())
                 onCompletion()
             } catch {
                 errorMessage = Asset.localizedString(forKey: "Snabble.Account.Delete.error")

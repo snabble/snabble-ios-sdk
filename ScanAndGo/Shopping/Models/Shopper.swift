@@ -47,11 +47,8 @@ public protocol ShoppingProvider: AnyObject {
 /// shopper.startScanner()
 /// ```
 @Observable
-@dynamicMemberLookup
-public final class Shopper: BarcodeProcessing, Equatable {
-    public static func == (lhs: Shopper, rhs: Shopper) -> Bool {
-        lhs.barcodeManager.shop == rhs.barcodeManager.shop
-    }
+@MainActor
+public final class Shopper: BarcodeProcessing {
     
     /// Manages the barcode scanning process.
     /// The `barcodeManager` is responsible for handling scanned barcodes, managing the scanner state, and processing scanned items.
@@ -81,15 +78,12 @@ public final class Shopper: BarcodeProcessing, Equatable {
     public var projectPayments: [RawPaymentMethod] {
         project.availablePaymentMethods.filter({ !restrictedPayments.contains($0) })
     }
-    /// Provides a dynamic member lookup for retrieving payment icons.
-    ///
-    /// - Parameter member: The member name to lookup.
-    /// - Returns: The payment icon if available, otherwise nil.
-   subscript(dynamicMember member: String) -> UIImage? {
-        if member == "paymentIcon", hasValidPayment  {
-            return paymentManager.selectedPayment?.method.icon
+
+    public var paymentIcon: UIImage? {
+        guard hasValidPayment else {
+            return nil
         }
-        return nil
+        return paymentManager.selectedPayment?.method.icon
     }
 
     let logger = Logger(subsystem: "io.snabble.sdk.ScanAndGo", category: "Shopper")
@@ -126,9 +120,7 @@ public final class Shopper: BarcodeProcessing, Equatable {
         ActionManager.shared.actionStatePublisher
             .receive(on: RunLoop.main)
             .sink { [unowned self] action in
-                Task {
-                    await self.handleAction(action)
-                }
+                self.handleAction(action)
             }
             .store(in: &subscriptions)
     }
@@ -243,11 +235,17 @@ public final class Shopper: BarcodeProcessing, Equatable {
     }
 }
 
-extension Shopper: Hashable {
-    public func hash(into hasher: inout Hasher) {
-        hasher.combine(barcodeManager.shop.id)
-    }
-}
+//extension Shopper: Equatable {
+//    public static func == (lhs: Shopper, rhs: Shopper) -> Bool {
+//        lhs.barcodeManager.shop == rhs.barcodeManager.shop
+//    }
+//}
+//
+//extension Shopper: Hashable {
+//    public func hash(into hasher: inout Hasher) {
+//        hasher.combine(barcodeManager.shop.id)
+//    }
+//}
 
 extension Shopper: AnalyticsDelegate {
     public func track(_ event: SnabbleCore.AnalyticsEvent) {
@@ -269,12 +267,14 @@ extension Shopper: ShoppingCartDelegate {
             let process = PaymentProcess(info, cart, shop: barcodeManager.shop)
             process.paymentDelegate = self
             process.start(method, detail) { result in
-                switch result {
-                case .success(let viewController):
-                    self.controller = viewController
-                    
-                case .failure(let error):
-                    self.showWarningMessage("Error creating payment process: \(error))")
+                Task { @MainActor in
+                    switch result {
+                    case .success(let viewController):
+                        self.controller = viewController
+
+                    case .failure(let error):
+                        self.showWarningMessage("Error creating payment process: \(error))")
+                    }
                 }
             }
             

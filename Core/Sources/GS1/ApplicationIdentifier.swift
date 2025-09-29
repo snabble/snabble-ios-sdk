@@ -10,7 +10,7 @@ import Foundation
 //  https://www.gs1.org/docs/barcodes/GS1_General_Specifications.pdf
 
 /// GS1 Application Identifier
-public struct ApplicationIdentifier {
+public struct ApplicationIdentifier: Sendable {
     public let prefix: String
     public let description: String
     public let format: String

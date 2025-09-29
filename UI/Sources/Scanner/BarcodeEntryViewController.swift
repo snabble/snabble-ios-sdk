@@ -29,7 +29,7 @@ public final class BarcodeEntryViewController: UIViewController {
     public init(_ productProvider: ProductProviding,
                 _ shopId: Identifier<Shop>,
                 showSku: Bool = false,
-                completion: @escaping (String, ScanFormat?, String?) -> Void
+                completion: @escaping @Sendable (String, ScanFormat?, String?) -> Void
     ) {
         self.productProvider = productProvider
         self.shopId = shopId

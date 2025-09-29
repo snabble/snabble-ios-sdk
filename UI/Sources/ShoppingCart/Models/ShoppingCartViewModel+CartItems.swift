@@ -73,7 +73,7 @@ extension ShoppingCartViewModel {
     private func performPendingLookups(_ lookups: [PendingLookup], _ lastSaved: Date?) {
         let group = DispatchGroup()
 
-        var replacements = [(Int, CartItem?)]()
+        nonisolated(unsafe) var replacements = [(Int, CartItem?)]()
         let mutex = Mutex()
 
         let productProvider = Snabble.shared.productProvider(for: SnabbleCI.project)

@@ -10,11 +10,13 @@ import UIKit
 import SnabbleCore
 import SnabbleAssetProviding
 
+@MainActor
 protocol PaymentMethodSelectorDelegate: AnyObject {
     func paymentMethodSelector(_ paymentMethodSelector: PaymentMethodSelector, didSelectMethod: RawPaymentMethod?)
 }
 
-final class PaymentMethodSelector {
+@MainActor
+final class PaymentMethodSelector: @unchecked Sendable {
     
     private weak var parentVC: (UIViewController & AnalyticsDelegate)?
     private weak var methodSelectionView: UIView?
@@ -70,14 +72,15 @@ final class PaymentMethodSelector {
         paymentManager.updateAvailablePaymentMethods()
     }
     
-    @objc private func methodSelectionTapped(_ gesture: UITapGestureRecognizer) {
+    @MainActor @objc private func methodSelectionTapped(_ gesture: UITapGestureRecognizer) {
         let sheet = paymentManager.sheetController()
-        
+
         self.parentVC?.present(sheet, animated: true)
     }
 }
 
 extension PaymentMethodSelector: @preconcurrency PaymentMethodManagerDelegate {
+    @MainActor
     func paymentMethodManager(didSelectPayment payment: Payment?) {
         let method = payment?.method
         let detail = payment?.detail

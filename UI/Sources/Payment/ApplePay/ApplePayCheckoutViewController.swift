@@ -8,6 +8,7 @@ import PassKit
 import SnabbleCore
 import SnabbleAssetProviding
 
+@MainActor
 final class ApplePayCheckoutViewController: UIViewController {
     private var authController: UIViewController?
     private let countryCode: String?
@@ -106,28 +107,37 @@ final class ApplePayCheckoutViewController: UIViewController {
     // POST the payment authorization token we get from the PassKit API to our backend
     private func performPayment(with process: CheckoutProcess,
                                 and payment: PKPayment,
-                                completion: @escaping (_ success: Bool) -> Void) {
+                                completion: @escaping @Sendable (_ success: Bool) -> Void) {
         guard let authorizeUrl = process.links.authorizePayment?.href else {
             return completion(false)
         }
-        
+
+        // Extract data from PKPayment before entering @Sendable closure
+        let encryptedOrigin = payment.token.paymentData.base64EncodedString()
+        let paymentNetwork = payment.token.paymentMethod.network?.rawValue
+        let lastName = payment.billingContact?.name?.familyName
+        let countryCode = payment.billingContact?.postalAddress?.isoCountryCode
+        let state = payment.billingContact?.postalAddress?.state
+
         project.request(.post, authorizeUrl, timeout: 4) { request in
             guard var request = request else {
                 return completion(false)
             }
-            
+
             var body = [
-                "encryptedOrigin": payment.token.paymentData.base64EncodedString()
+                "encryptedOrigin": encryptedOrigin
             ]
-            if let network = payment.token.paymentMethod.network {
-                body["paymentNetwork"] = network.rawValue
+            if let network = paymentNetwork {
+                body["paymentNetwork"] = network
             }
-            if let familyName = payment.billingContact?.name?.familyName {
+            if let familyName = lastName {
                 body["lastName"] = familyName
             }
-            if let postalAddress = payment.billingContact?.postalAddress {
-                body["countryCode"] = postalAddress.isoCountryCode
-                body["state"] = postalAddress.state
+            if let postalAddress = countryCode {
+                body["countryCode"] = postalAddress
+                if let state = state {
+                    body["state"] = state
+                }
             }
             // swiftlint:disable:next force_try
             let data = try! JSONSerialization.data(withJSONObject: body, options: [])
@@ -136,11 +146,12 @@ final class ApplePayCheckoutViewController: UIViewController {
             // can't use `Project.perform` here since we have to deal with "204 NO CONTENT" as the "success" response
             let start = Date.timeIntervalSinceReferenceDate
             let session = Snabble.urlSession
+            let requestUrl = request.url?.absoluteString ?? "n/a"
+            let requestMethod = request.httpMethod ?? ""
+            
             let task = session.dataTask(with: request) { data, response, error in
                 let elapsed = Date.timeIntervalSinceReferenceDate - start
-                let url = request.url?.absoluteString ?? "n/a"
-                let method = request.httpMethod ?? ""
-                Log.info("\(method) \(url) took \(elapsed)s")
+                Log.info("\(requestMethod) \(requestUrl) took \(elapsed)s")
                 
                 if let data = data, let raw = String(bytes: data, encoding: .utf8) {
                     Log.info("raw response: \(raw)")
@@ -168,21 +179,23 @@ final class ApplePayCheckoutViewController: UIViewController {
         self.delegate?.track(.paymentCancelled)
         
         self.checkoutProcess.abort(SnabbleCI.project) { result in
-            switch result {
-            case .success:
-                Snabble.clearInFlightCheckout()
-                self.shoppingCart.generateNewUUID()
-                if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
-                    self.navigationController?.popToViewController(cartVC, animated: true)
-                } else {
-                    self.navigationController?.popToRootViewController(animated: true)
+            Task { @MainActor in
+                switch result {
+                case .success:
+                    Snabble.clearInFlightCheckout()
+                    self.shoppingCart.generateNewUUID()
+                    if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
+                        self.navigationController?.popToViewController(cartVC, animated: true)
+                    } else {
+                        self.navigationController?.popToRootViewController(animated: true)
+                    }
+                case .failure:
+                    let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
+                                                  message: Asset.localizedString(forKey: "Snabble.Payment.CancelError.message"),
+                                                  preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default, handler: nil))
+                    self.present(alert, animated: true)
                 }
-            case .failure:
-                let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
-                                              message: Asset.localizedString(forKey: "Snabble.Payment.CancelError.message"),
-                                              preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default, handler: nil))
-                self.present(alert, animated: true)
             }
         }
     }
@@ -220,7 +233,8 @@ extension ApplePayCheckoutViewController {
 
 // MARK: - PKPaymentAuthorizationViewControllerDelegate
 
-extension ApplePayCheckoutViewController: PKPaymentAuthorizationViewControllerDelegate {
+extension ApplePayCheckoutViewController: @MainActor PKPaymentAuthorizationViewControllerDelegate {
+    @MainActor
     public func paymentAuthorizationViewControllerDidFinish(_ controller: PKPaymentAuthorizationViewController) {
         self.authController?.dismiss(animated: true)
         
@@ -231,7 +245,8 @@ extension ApplePayCheckoutViewController: PKPaymentAuthorizationViewControllerDe
         }
     }
     
-    public func paymentAuthorizationViewController(_ controller: PKPaymentAuthorizationViewController, didAuthorizePayment payment: PKPayment, handler completion: @escaping (PKPaymentAuthorizationResult) -> Void) {
+    @MainActor
+    public func paymentAuthorizationViewController(_ controller: PKPaymentAuthorizationViewController, didAuthorizePayment payment: PKPayment, handler completion: @escaping @Sendable (PKPaymentAuthorizationResult) -> Void) {
         authorized = true
         self.performPayment(with: self.checkoutProcess, and: payment) { success in
             let status: PKPaymentAuthorizationStatus = success ? .success : .failure
@@ -243,9 +258,12 @@ extension ApplePayCheckoutViewController: PKPaymentAuthorizationViewControllerDe
         let project = SnabbleCI.project
         let poller = PaymentProcessPoller(checkoutProcess, project)
         
-        poller.waitFor([.paymentSuccess]) { events in
+        poller.waitFor([.paymentSuccess]) { [weak self] events in
             if events[.paymentSuccess] != nil {
-                self.paymentFinished(poller.updatedProcess)
+                Task { @MainActor [weak self] in
+                    guard let self = self else { return }
+                    self.paymentFinished(self.poller?.updatedProcess ?? self.checkoutProcess)
+                }
             }
         }
         

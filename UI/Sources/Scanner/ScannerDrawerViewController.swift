@@ -275,7 +275,7 @@ final class ScannerDrawerViewController: UIViewController {
 }
 
 // MARK: - pulley
-extension ScannerDrawerViewController: PulleyDrawerViewControllerDelegate {
+extension ScannerDrawerViewController: @preconcurrency PulleyDrawerViewControllerDelegate {
     public func supportedDrawerPositions() -> [PulleyPosition] {
         return PulleyPosition.compact
     }

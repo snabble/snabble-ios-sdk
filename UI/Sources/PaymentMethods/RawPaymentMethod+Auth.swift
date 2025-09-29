@@ -29,6 +29,7 @@ extension RawPaymentMethod {
         return self.codeRequired && !devicePasscodeSet() ? false : true
     }
     
+    @MainActor
     func isAddingAllowed(showAlertOn viewController: UIViewController) -> Bool {
         if !isAddingAllowed {
             let alert = self.alertController(nil)

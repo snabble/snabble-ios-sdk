@@ -29,7 +29,7 @@ struct SavedCart: Codable {
     }
 }
 
-public final class OfflineCarts {
+public final class OfflineCarts: @unchecked Sendable {
     public static let shared = OfflineCarts()
 
     private var inProgress = false
@@ -65,11 +65,11 @@ public final class OfflineCarts {
     }
 
     private func doRetrySendingCarts() {
-        var savedCarts = self.readSavedCarts()
+        nonisolated(unsafe) var savedCarts = self.readSavedCarts()
 
         let group = DispatchGroup()
         let mutex = Mutex()
-        var successIndices = [Int]()
+        nonisolated(unsafe) var successIndices = [Int]()
 
         // retry the requests
         for (index, savedCart) in savedCarts.enumerated() {

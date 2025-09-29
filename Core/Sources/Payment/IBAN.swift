@@ -139,7 +139,7 @@ public enum IBAN {
     }
 
     public static let formatCharacters: [Character] = ["p", "b", "d", "k", "K", "r", "s", "X"]
-    public static var formatKeys: String = { formatCharacters.reduce("", { "\($0)\($1)" }) }()  // "pbdkKrsX"
+    public static let formatKeys: String = { formatCharacters.reduce("", { "\($0)\($1)" }) }()  // "pbdkKrsX"
 
     public static var formatCharacterSet: CharacterSet {
         return CharacterSet(charactersIn: formatKeys)

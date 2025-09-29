@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct PriceFormatter {
+public struct PriceFormatter: Sendable {
     private let decimalDigits: Int
     private let formatter: NumberFormatter
 

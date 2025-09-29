@@ -10,12 +10,14 @@ import Foundation
 import SnabbleAssetProviding
 
 extension ShoppingCartViewModel {
+    @MainActor
     func deleteCart() {
         self.shoppingCartDelegate?.track(.deletedEntireCart)
         // Clear entire cache
         self.shoppingCart.removeAll(endSession: false, keepBackup: false)
     }
     
+    @MainActor
     private func delete(at index: Int) {
         if case .cartItem(let item, _) = self.items[index] {
 
@@ -33,6 +35,7 @@ extension ShoppingCartViewModel {
         NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
     }
     
+    @MainActor
     public func delete(item: CartEntry) {
         guard let index = items.firstIndex(where: { $0.id == item.id }) else {
             return
@@ -71,6 +74,7 @@ extension ShoppingCartViewModel {
         deletionItemIndex = nil
     }
     
+    @MainActor
     func processDeletion() {
         guard let index = deletionItemIndex else {
             return

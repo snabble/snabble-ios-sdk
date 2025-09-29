@@ -74,7 +74,7 @@ extension Order: PurchaseProviding {
         Self.relativeDateTimeFormatter.localizedString(for: date, relativeTo: Date())
     }
 
-    private static var relativeDateTimeFormatter: RelativeDateTimeFormatter = {
+    nonisolated(unsafe) private static var relativeDateTimeFormatter: RelativeDateTimeFormatter = {
         let formatter = RelativeDateTimeFormatter()
         formatter.formattingContext = .listItem
         formatter.dateTimeStyle = .named

@@ -11,6 +11,7 @@ import SwiftUI
 import SnabbleAssetProviding
 import SnabbleComponents
 
+@MainActor
 protocol LoadableObject {
     associatedtype Output
     var state: LoadingState<Output> { get }

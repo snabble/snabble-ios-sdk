@@ -48,7 +48,7 @@ public enum BiometricAuthentication {
         }
     }
 
-    static func requestAuthentication(for reason: String, _ reply: @escaping (Bool, Error?) -> Void ) {
+    static func requestAuthentication(for reason: String, _ reply: @escaping @Sendable (Bool, Error?) -> Void ) {
         let authContext = LAContext()
         let canEvaluate = authContext.canEvaluatePolicy(self.policy, error: nil)
 
@@ -71,7 +71,7 @@ public enum BiometricAuthentication {
 }
 
 extension BiometricAuthentication {
-    static func requestAuthentication(for reason: String, completion: @escaping (AuthenticationResult) -> Void ) {
+    static func requestAuthentication(for reason: String, completion: @escaping @Sendable (AuthenticationResult) -> Void ) {
         BiometricAuthentication.requestAuthentication(for: reason) { success, error in
             if let error = error as? LAError {
                 let cancelCodes = [ LAError.Code.userCancel, LAError.Code.appCancel, LAError.Code.systemCancel ]

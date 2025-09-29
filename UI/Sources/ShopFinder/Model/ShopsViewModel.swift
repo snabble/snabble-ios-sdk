@@ -11,12 +11,13 @@ import CoreLocation
 import MapKit
 import SnabbleCore
 
+@MainActor
 public protocol ShopViewModelDelegate: AnyObject {
     func shopViewModel(_ model: ShopsViewModel, didUpdateDistances: [Identifier<Shop>: Double])
 }
 
 /// ShopsViewModel for objects implermenting the ShopProviding protocol
-@Observable
+@Observable @MainActor
 public final class ShopsViewModel: NSObject {
     public init(shops: [ShopProviding]) {
         self.shops = shops
@@ -67,36 +68,39 @@ public final class ShopsViewModel: NSObject {
 }
 
 extension ShopsViewModel: CLLocationManagerDelegate {
-    public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-
-        switch status {
-        case .authorizedAlways, .authorizedWhenInUse:
-            break
-        case .denied, .restricted, .notDetermined:
-            distances.removeAll()
-        @unknown default:
-            distances.removeAll()
+    nonisolated public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        Task { @MainActor in
+            switch status {
+            case .authorizedAlways, .authorizedWhenInUse:
+                break
+            case .denied, .restricted, .notDetermined:
+                distances.removeAll()
+            @unknown default:
+                distances.removeAll()
+            }
         }
     }
 
-    public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+    nonisolated public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
         guard let location = locations.last else {
             return
         }
 
-        var distances: [Identifier<Shop>: Double] = [:]
-        shops.forEach {
-            distances[$0.id] = $0.distance(from: location)
-        }
-        self.distances = distances
+        Task { @MainActor in
+            var distances: [Identifier<Shop>: Double] = [:]
+            shops.forEach {
+                distances[$0.id] = $0.distance(from: location)
+            }
+            self.distances = distances
 
-        shops = shops.sorted { lhs, rhs in
-            lhs.distance(from: location) < rhs.distance(from: location)
+            shops = shops.sorted { lhs, rhs in
+                lhs.distance(from: location) < rhs.distance(from: location)
+            }
+            delegate?.shopViewModel(self, didUpdateDistances: self.distances)
         }
-        delegate?.shopViewModel(self, didUpdateDistances: self.distances)
     }
 
-    public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
+    nonisolated public func locationManager(_ manager: CLLocationManager, didFailWithError error: Error) {
         if let error = error as? CLError {
             if error.code != .locationUnknown {
                 print("locationDidFail: \(error)")
@@ -104,7 +108,9 @@ extension ShopsViewModel: CLLocationManagerDelegate {
 
             if error.code == .denied {
                 manager.requestAlwaysAuthorization()
-                distances.removeAll()
+                Task { @MainActor in
+                    distances.removeAll()
+                }
             }
         }
     }

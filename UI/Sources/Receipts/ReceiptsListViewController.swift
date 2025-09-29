@@ -9,6 +9,7 @@ import SnabbleCore
 import SwiftUI
 import Combine
 
+@MainActor
 public protocol ReceiptsListDelegate: AnyObject {
     func handleAction(_ viewController: ReceiptsListViewController, on receipt: PurchaseProviding) -> Bool
 }

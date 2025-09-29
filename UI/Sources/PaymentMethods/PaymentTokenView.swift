@@ -87,6 +87,7 @@ public struct PaymentTokenView: View {
         case telecash
         case payone
         
+        @MainActor
         public var defaultUserFields: [UserField] {
             switch self {
             case .telecash:
@@ -98,6 +99,7 @@ public struct PaymentTokenView: View {
             }
             
         }
+        @MainActor
         public var requiredUserFields: [UserField] {
             switch self {
             case .telecash:

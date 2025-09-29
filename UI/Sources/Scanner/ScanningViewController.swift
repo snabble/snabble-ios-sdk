@@ -34,7 +34,7 @@ public final class ZoomWheelController: UIHostingController<ZoomControl> {
     }
 }
 
-private enum ScannerLookup {
+private enum ScannerLookup: Sendable {
     case product(ScannedProduct)
     case coupon(Coupon, String)
     case failure(ProductLookupError)
@@ -198,7 +198,9 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
         super.viewWillAppear(animated)
 
         self.barcodeDetector.scannerWillAppear(on: self.view)
-        UIApplication.shared.isIdleTimerDisabled = true
+        MainActor.assumeIsolated {
+            UIApplication.shared.isIdleTimerDisabled = true
+        }
     }
 
     override public func viewDidAppear(_ animated: Bool) {
@@ -238,11 +240,13 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
 
     override public func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        
+
         self.barcodeDetector.pauseScanning()
         self.barcodeDetector.scannerWillDisappear()
 
-        UIApplication.shared.isIdleTimerDisabled = false
+        MainActor.assumeIsolated {
+            UIApplication.shared.isIdleTimerDisabled = false
+        }
         hideMessage()
     }
 
@@ -261,12 +265,12 @@ public final class ScanningViewController: UIViewController, BarcodePresenting {
     }
 
     // MARK: - nav bar buttons
-    @objc private func torchTapped(_ sender: Any) {
+    @MainActor @objc private func torchTapped(_ sender: Any) {
         let torchOn = self.barcodeDetector.toggleTorch()
         torchButton?.image = torchOn ? Asset.image(named: "SnabbleSDK/icon-light-active") : Asset.image(named: "SnabbleSDK/icon-light-inactive")
     }
 
-    @objc private func searchTapped(_ sender: Any) {
+    @MainActor @objc private func searchTapped(_ sender: Any) {
         self.enterBarcode()
     }
 }
@@ -307,7 +311,9 @@ extension ScanningViewController {
         if let seconds = seconds {
             self.messageTimer?.invalidate()
             self.messageTimer = Timer.scheduledTimer(withTimeInterval: seconds, repeats: false) { _ in
-                self.hideMessage()
+                Task { @MainActor in
+                    self.hideMessage()
+                }
             }
         }
     }
@@ -423,7 +429,11 @@ extension ScanningViewController {
     }
 
     private func enterBarcode() {
-        let barcodeEntryViewController = BarcodeEntryViewController(self.productProvider, self.shop.id, completion: self.handleScannedCode)
+        let barcodeEntryViewController = BarcodeEntryViewController(self.productProvider, self.shop.id) { [weak self] code, format, template in
+            Task { @MainActor in
+                self?.handleScannedCode(code, withFormat: format, withTemplate: template)
+            }
+        }
         barcodeEntryViewController.analyticsDelegate = scannerDelegate
         self.navigationController?.pushViewController(barcodeEntryViewController, animated: true)
 
@@ -451,57 +461,67 @@ extension ScanningViewController {
     private func handleScannedCode(_ scannedCode: String, withFormat format: ScanFormat?, withTemplate template: String? = nil) {
         self.spinnerTimer?.invalidate()
         self.spinnerTimer = Timer.scheduledTimer(withTimeInterval: 0.5, repeats: false) { _ in
-            self.spinner?.startAnimating()
+            Task { @MainActor in
+                self.spinner?.startAnimating()
+            }
         }
 
         self.barcodeDetector.pauseScanning()
 
         self.lookupCode(scannedCode, withFormat: format, withTemplate: template) { scannedResult in
-            self.spinnerTimer?.invalidate()
-            self.spinner?.stopAnimating()
+            Task { @MainActor in
+                self.spinnerTimer?.invalidate()
+                self.spinner?.stopAnimating()
+            }
 
             let scannedProduct: ScannedProduct
             switch scannedResult {
             case .failure(let error):
-                self.showScanLookupError(error, forCode: scannedCode)
+                Task { @MainActor in
+                    self.showScanLookupError(error, forCode: scannedCode)
+                }
                 return
             case .product(let product):
                 scannedProduct = product
             case .coupon(let coupon, let scannedCode):
-                self.shoppingCart.addCoupon(coupon, scannedCode: scannedCode)
-                NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
-                let msg = Asset.localizedString(forKey: "Snabble.Scanner.couponAdded", arguments: coupon.name)
-                self.showMessage(ScanMessage(msg))
-                self.barcodeDetector.resumeScanning()
+                Task { @MainActor in
+                    self.shoppingCart.addCoupon(coupon, scannedCode: scannedCode)
+                    NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
+                    let msg = Asset.localizedString(forKey: "Snabble.Scanner.couponAdded", arguments: coupon.name)
+                    self.showMessage(ScanMessage(msg))
+                    self.barcodeDetector.resumeScanning()
+                }
                 return
             }
 
-            let product = scannedProduct.product
-            let embeddedData = scannedProduct.embeddedData
+            Task { @MainActor in
+                let product = scannedProduct.product
+                let embeddedData = scannedProduct.embeddedData
 
-            // check for sale stop / notForSale
-            if self.isSaleProhibited(of: product, scannedCode: scannedCode) {
-                return
+                // check for sale stop / notForSale
+                if self.isSaleProhibited(of: product, scannedCode: scannedCode) {
+                    return
+                }
+
+                // handle scanning the shelf code of a pre-weighed product (no data or 0 encoded in the EAN)
+                if product.type == .preWeighed && (embeddedData == nil || embeddedData == 0) {
+                    let msg = Asset.localizedString(forKey: "Snabble.Scanner.scannedShelfCode")
+                    self.scannedUnknown(messageText: msg, code: scannedCode)
+                    self.barcodeDetector.resumeScanning()
+                    return
+                }
+
+                self.tapticFeedback.notificationOccurred(.success)
+                self.scannerDelegate?.track(.scanProduct(scannedProduct.transmissionCode ?? scannedCode))
+                self.productType = product.type
+
+                if product.bundles.isEmpty || scannedProduct.priceOverride != nil {
+                    self.addProduct(scannedProduct, withCode: scannedCode)
+                } else {
+                    self.showBundleSelection(for: scannedProduct, withCode: scannedCode)
+                }
             }
 
-            // handle scanning the shelf code of a pre-weighed product (no data or 0 encoded in the EAN)
-            if product.type == .preWeighed && (embeddedData == nil || embeddedData == 0) {
-                let msg = Asset.localizedString(forKey: "Snabble.Scanner.scannedShelfCode")
-                self.scannedUnknown(messageText: msg, code: scannedCode)
-                self.barcodeDetector.resumeScanning()
-                return
-            }
-
-            self.tapticFeedback.notificationOccurred(.success)
-
-            self.scannerDelegate?.track(.scanProduct(scannedProduct.transmissionCode ?? scannedCode))
-            self.productType = product.type
-
-            if product.bundles.isEmpty || scannedProduct.priceOverride != nil {
-                self.addProduct(scannedProduct, withCode: scannedCode)
-            } else {
-                self.showBundleSelection(for: scannedProduct, withCode: scannedCode)
-            }
         }
     }
 
@@ -517,7 +537,7 @@ extension ScanningViewController {
         self.barcodeDetector.resumeScanning()
     }
 
-    private func isSaleProhibited(of product: Product, scannedCode: String) -> Bool {
+    @MainActor private func isSaleProhibited(of product: Product, scannedCode: String) -> Bool {
         // check for sale stop
         if product.saleStop {
             self.showSaleStop()
@@ -533,7 +553,7 @@ extension ScanningViewController {
         return false
     }
 
-    private func showSaleStop() {
+    @MainActor private func showSaleStop() {
         self.tapticFeedback.notificationOccurred(.error)
         let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.SaleStop.ErrorMsg.title"),
                                       message: Asset.localizedString(forKey: "Snabble.SaleStop.ErrorMsg.scan"),
@@ -546,7 +566,7 @@ extension ScanningViewController {
         self.present(alert, animated: true)
     }
 
-    private func showNotForSale(for product: Product, withCode scannedCode: String) {
+    @MainActor private func showNotForSale(for product: Product, withCode scannedCode: String) {
         self.tapticFeedback.notificationOccurred(.error)
         if let msg = self.scannerDelegate?.scanMessage(for: SnabbleCI.project, self.shop, product) {
             self.showMessage(msg)
@@ -556,7 +576,7 @@ extension ScanningViewController {
         self.barcodeDetector.resumeScanning()
     }
 
-    private func showBundleSelection(for scannedProduct: ScannedProduct, withCode scannedCode: String) {
+    @MainActor private func showBundleSelection(for scannedProduct: ScannedProduct, withCode scannedCode: String) {
         let alert = UIAlertController(title: nil, message: Asset.localizedString(forKey: "Snabble.Scanner.BundleDialog.headline"), preferredStyle: .actionSheet)
 
         let product = scannedProduct.product
@@ -597,7 +617,7 @@ extension ScanningViewController {
     private func lookupCode(_ code: String,
                             withFormat format: ScanFormat?,
                             withTemplate template: String?,
-                            completion: @escaping (ScannerLookup) -> Void ) {
+                            completion: @escaping @Sendable (ScannerLookup) -> Void ) {
         // if we were given a template from the barcode entry, use that to lookup the product directly
         if let template = template {
             return self.lookupProduct(for: code, withTemplate: template, priceOverride: nil, completion: completion)
@@ -620,69 +640,72 @@ extension ScanningViewController {
         let codes = Array(zip(lookupCodes, templates))
 
         self.productProvider.productBy(codes: codes, shopId: self.shop.id) { result in
-            switch result {
-            case .success(let lookupResult):
-                guard let parseResult = matches.first(where: { $0.template.id == lookupResult.templateId }) else {
-                    completion(.failure(.notFound))
-                    return
-                }
-
-                let scannedCode = lookupResult.transmissionCode ?? code
-                var newResult = ScannedProduct(lookupResult.product,
-                                               parseResult.lookupCode,
-                                               scannedCode,
-                                               templateId: lookupResult.templateId,
-                                               transmissionTemplateId: lookupResult.transmissionTemplateId,
-                                               embeddedData: parseResult.embeddedData,
-                                               encodingUnit: lookupResult.encodingUnit,
-                                               referencePriceOverride: parseResult.referencePrice,
-                                               specifiedQuantity: lookupResult.specifiedQuantity)
-
-                if let decimalData = parseResult.embeddedDecimal {
-                    var encodingUnit = lookupResult.product.encodingUnit
-                    var embeddedData: Int?
-                    let div = Int(pow(10.0, Double(decimalData.fractionDigits)))
-                    if let enc = encodingUnit {
-                        switch enc {
-                        case .piece:
-                            encodingUnit = .piece
-                            embeddedData = decimalData.value / div
-                        case .kilogram, .meter, .liter, .squareMeter:
-                            encodingUnit = enc.fractionalUnit(div)
-                            embeddedData = decimalData.value
-                        case .gram, .millimeter, .milliliter:
-                            embeddedData = decimalData.value
-                        default:
-                            Log.warn("unspecified conversion for embedded data: \(decimalData.value) \(enc)")
+            Task { @MainActor in
+                
+                switch result {
+                case .success(let lookupResult):
+                    guard let parseResult = matches.first(where: { $0.template.id == lookupResult.templateId }) else {
+                        completion(.failure(.notFound))
+                        return
+                    }
+                    
+                    let scannedCode = lookupResult.transmissionCode ?? code
+                    var newResult = ScannedProduct(lookupResult.product,
+                                                   parseResult.lookupCode,
+                                                   scannedCode,
+                                                   templateId: lookupResult.templateId,
+                                                   transmissionTemplateId: lookupResult.transmissionTemplateId,
+                                                   embeddedData: parseResult.embeddedData,
+                                                   encodingUnit: lookupResult.encodingUnit,
+                                                   referencePriceOverride: parseResult.referencePrice,
+                                                   specifiedQuantity: lookupResult.specifiedQuantity)
+                    
+                    if let decimalData = parseResult.embeddedDecimal {
+                        var encodingUnit = lookupResult.product.encodingUnit
+                        var embeddedData: Int?
+                        let div = Int(pow(10.0, Double(decimalData.fractionDigits)))
+                        if let enc = encodingUnit {
+                            switch enc {
+                            case .piece:
+                                encodingUnit = .piece
+                                embeddedData = decimalData.value / div
+                            case .kilogram, .meter, .liter, .squareMeter:
+                                encodingUnit = enc.fractionalUnit(div)
+                                embeddedData = decimalData.value
+                            case .gram, .millimeter, .milliliter:
+                                embeddedData = decimalData.value
+                            default:
+                                Log.warn("unspecified conversion for embedded data: \(decimalData.value) \(enc)")
+                            }
                         }
+                        
+                        newResult = ScannedProduct(lookupResult.product, parseResult.lookupCode, scannedCode,
+                                                   templateId: lookupResult.templateId,
+                                                   transmissionTemplateId: lookupResult.transmissionTemplateId,
+                                                   embeddedData: embeddedData,
+                                                   encodingUnit: encodingUnit,
+                                                   referencePriceOverride: newResult.referencePriceOverride,
+                                                   specifiedQuantity: lookupResult.specifiedQuantity)
                     }
-
-                    newResult = ScannedProduct(lookupResult.product, parseResult.lookupCode, scannedCode,
-                                               templateId: lookupResult.templateId,
-                                               transmissionTemplateId: lookupResult.transmissionTemplateId,
-                                               embeddedData: embeddedData,
-                                               encodingUnit: encodingUnit,
-                                               referencePriceOverride: newResult.referencePriceOverride,
-                                               specifiedQuantity: lookupResult.specifiedQuantity)
-                }
-
-                completion(.product(newResult))
-            case .failure(let error):
-                if error == .notFound {
-                    if let gs1 = self.checkValidGS1(for: code) {
-                        return self.productForGS1(gs1: gs1, originalCode: code, completion: completion)
+                    
+                    completion(.product(newResult))
+                case .failure(let error):
+                    if error == .notFound {
+                        if let gs1 = self.checkValidGS1(for: code) {
+                            return self.productForGS1(gs1: gs1, originalCode: code, completion: completion)
+                        }
+                        
+                        // is this a valid coupon?
+                        if let coupon = self.checkValidCoupon(for: code) {
+                            return completion(.coupon(coupon, code))
+                        }
+                        
+                        return completion(.failure(.notFound))
+                    } else {
+                        let event = AppEvent(scannedCode: code, codes: codes, project: project)
+                        event.post()
+                        completion(.failure(error))
                     }
-
-                    // is this a valid coupon?
-                    if let coupon = self.checkValidCoupon(for: code) {
-                        return completion(.coupon(coupon, code))
-                    }
-
-                    return completion(.failure(.notFound))
-                } else {
-                    let event = AppEvent(scannedCode: code, codes: codes, project: project)
-                    event.post()
-                    completion(.failure(error))
                 }
             }
         }
@@ -714,7 +737,7 @@ extension ScanningViewController {
 
     private func productForGS1(gs1: GS1Code,
                                originalCode: String,
-                               completion: @escaping (ScannerLookup) -> Void ) {
+                               completion: @escaping @Sendable (ScannerLookup) -> Void ) {
         guard let gtin = gs1.gtin else {
             return completion(.failure(.notFound))
         }
@@ -744,7 +767,7 @@ extension ScanningViewController {
         }
     }
 
-    private func productForOverrideCode(for match: OverrideLookup, completion: @escaping (ScannerLookup) -> Void ) {
+    private func productForOverrideCode(for match: OverrideLookup, completion: @escaping @Sendable (ScannerLookup) -> Void ) {
         let code = match.lookupCode
 
         if let template = match.lookupTemplate {
@@ -777,7 +800,7 @@ extension ScanningViewController {
         }
     }
 
-    private func lookupProduct(for code: String, withTemplate template: String, priceOverride: Int?, completion: @escaping (ScannerLookup) -> Void ) {
+    private func lookupProduct(for code: String, withTemplate template: String, priceOverride: Int?, completion: @escaping @Sendable (ScannerLookup) -> Void ) {
         let codes = [(code, template)]
         self.productProvider.productBy(codes: codes, shopId: self.shop.id) { result in
             switch result {

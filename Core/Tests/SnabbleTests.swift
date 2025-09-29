@@ -9,7 +9,7 @@ import XCTest
 
 @testable import SnabbleCore
 
-class SnabbleTests: XCTestCase {
+class SnabbleTests: XCTestCase, @unchecked Sendable {
     
     override func setUp() {
         super.setUp()

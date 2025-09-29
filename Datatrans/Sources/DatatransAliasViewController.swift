@@ -173,12 +173,16 @@ public final class DatatransAliasViewController: UIViewController {
         if let projectId = self.projectId, let method = self.method {
             fetchToken(projectId, method) { [weak self] response in
                 guard let self = self, let tokenResponse = response else {
-                    self?.showError("no mobile token")
+                    Task { @MainActor in
+                        self?.showError("no mobile token")
+                    }
                     return
                 }
 
                 print("got mobileToken: \(tokenResponse.mobileToken)")
-                self.startTransaction(with: tokenResponse, on: self)
+                Task { @MainActor in
+                    self.startTransaction(with: tokenResponse, on: self)
+                }
             }
         }
 
@@ -314,16 +318,24 @@ public final class DatatransAliasViewController: UIViewController {
 
 // MARK: - datatrans transaction delegate
 extension DatatransAliasViewController: TransactionDelegate {
-    public func transactionDidFinish(_ transaction: Transaction, result: TransactionSuccess) {
-        self.handleSuccess(result)
+    nonisolated public func transactionDidFinish(_ transaction: Transaction, result: TransactionSuccess) {
+        nonisolated(unsafe) let capturedResult = result
+        Task { @MainActor in
+            self.handleSuccess(capturedResult)
+        }
     }
 
-    public func transactionDidFail(_ transaction: Transaction, error: TransactionError) {
-        self.showError("transaction failed: \(error)")
+    nonisolated public func transactionDidFail(_ transaction: Transaction, error: TransactionError) {
+        let capturedError = error
+        Task { @MainActor in
+            self.showError("transaction failed: \(capturedError)")
+        }
     }
 
-    public func transactionDidCancel(_ transaction: Transaction) {
-        self.showError("transaction cancelled")
+    nonisolated public func transactionDidCancel(_ transaction: Transaction) {
+        Task { @MainActor in
+            self.showError("transaction cancelled")
+        }
     }
 }
 
@@ -341,7 +353,7 @@ extension DatatransAliasViewController {
         let isTesting: Bool?
     }
 
-    private func fetchToken(_ projectId: Identifier<Project>, _ method: RawPaymentMethod, completion: @escaping (TokenResponse?) -> Void) {
+    private func fetchToken(_ projectId: Identifier<Project>, _ method: RawPaymentMethod, completion: @escaping @Sendable (TokenResponse?) -> Void) {
         guard
             let project = Snabble.shared.project(for: projectId),
             let descriptor = project.paymentMethodDescriptors.first(where: { $0.id == method }),

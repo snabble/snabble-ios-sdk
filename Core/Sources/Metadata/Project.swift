@@ -14,7 +14,7 @@ public struct Company: Decodable {
     public let zip: String?
 }
 
-public struct ProjectLinks: Decodable {
+public struct ProjectLinks: Decodable, Sendable {
     public let appdb: Link
     public let appEvents: Link
     public let checkoutInfo: Link
@@ -69,7 +69,7 @@ public struct ProjectLinks: Decodable {
     }
 }
 
-public enum RoundingMode: String, Codable, UnknownCaseRepresentable {
+public enum RoundingMode: String, Codable, UnknownCaseRepresentable, Sendable {
     /// always round up
     case up
     /// always round down
@@ -90,7 +90,7 @@ public enum RoundingMode: String, Codable, UnknownCaseRepresentable {
     public static let unknownCase = RoundingMode.up
 }
 
-public enum QRCodeFormat: String, Decodable, UnknownCaseRepresentable {
+public enum QRCodeFormat: String, Decodable, UnknownCaseRepresentable, Sendable {
     case unknown
 
     case simple
@@ -211,7 +211,7 @@ public struct QRCodeConfig: Decodable {
     }
 }
 
-public enum ScanFormat: String, Codable, CaseIterable, UnknownCaseRepresentable {
+public enum ScanFormat: String, Codable, CaseIterable, UnknownCaseRepresentable, Sendable {
     case unknown
 
     // 1d codes
@@ -229,7 +229,7 @@ public enum ScanFormat: String, Codable, CaseIterable, UnknownCaseRepresentable 
     public static let unknownCase = Self.unknown
 }
 
-public enum BarcodeDetectorType: String, Decodable, UnknownCaseRepresentable {
+public enum BarcodeDetectorType: String, Decodable, UnknownCaseRepresentable, Sendable {
     case `default`
     case cortex
 
@@ -528,7 +528,7 @@ extension CustomizationConfig.Teaser {
     }
 }
 
-public struct Project: Decodable, Identifiable {
+public struct Project: Decodable, Identifiable, @unchecked Sendable {
     public let id: Identifier<Project>
     public let name: String
     public let links: ProjectLinks

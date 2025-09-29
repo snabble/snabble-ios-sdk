@@ -28,6 +28,7 @@ extension View {
 
 extension ShoppingCartViewModel {
     @ViewBuilder
+    @MainActor
     func view(for item: CartEntry) -> some View {
         if case .cartItem = item {
             CartItemView(cartEntry: item)
@@ -51,6 +52,7 @@ extension ShoppingCartViewModel {
 }
 
 extension ShoppingCartViewModel {
+    @MainActor
     public var confirmDeletionAlert: Alert {
         Alert(
             title: Text(""),

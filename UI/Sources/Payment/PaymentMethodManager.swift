@@ -25,7 +25,7 @@ public protocol PaymentMethodManagerDelegate: AnyObject {
 }
 
 @Observable
-public final class PaymentMethodManager {
+public final class PaymentMethodManager: @unchecked Sendable {
     public var selectedPayment: Payment? {
         didSet {
             selectedPaymentPublisher.send(selectedPayment)
@@ -164,11 +164,13 @@ public final class PaymentMethodManager {
     }
 }
 
+@MainActor
 public protocol SheetProviding {
     typealias DismissHandler = () -> Void
     func sheetController(_ onDismiss: DismissHandler?) -> UIViewController
 }
 
+@MainActor
 public protocol AlertProviding {
     typealias DismissHandler = (UIAlertAction) -> Void
     func alertController(_ onDismiss: DismissHandler?) -> UIAlertController

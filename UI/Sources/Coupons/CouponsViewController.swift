@@ -41,6 +41,13 @@ public final class CouponsViewController: UICollectionViewController {
         configureCollectionView(collectionView)
         configureEmptyLabel(on: collectionView)
         update(with: coupons)
+
+        // Modern trait change registration for iOS 17+
+        if #available(iOS 17, *) {
+            registerForTraitChanges([UITraitUserInterfaceStyle.self]) { (self: Self, _) in
+                self.update(with: self.coupons)
+            }
+        }
     }
 
     private func configureCollectionView(_ collectionView: UICollectionView) {

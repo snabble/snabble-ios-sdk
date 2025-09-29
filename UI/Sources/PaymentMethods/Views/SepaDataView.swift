@@ -15,7 +15,7 @@ import SnabbleComponents
 import UIKit
 
 extension View {
-    func hideKeyboard() {
+    @MainActor func hideKeyboard() {
         UIApplication.shared.sendAction(#selector(UIResponder.resignFirstResponder), to: nil, from: nil, for: nil)
     }
 }

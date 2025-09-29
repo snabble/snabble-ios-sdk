@@ -8,12 +8,13 @@ import SwiftUI
 
 import SnabbleAssetProviding
 
+@MainActor
 public protocol UserFieldProviding {
     static var defaultUserFields: [UserField] { get }
     static var requiredUserFields: [UserField] { get }
 }
 
-public enum UserField: String, CaseIterable, Swift.Identifiable, Hashable {
+public enum UserField: String, CaseIterable, Swift.Identifiable, Hashable, Sendable {
     public var id: Self { self }
     
     case firstName

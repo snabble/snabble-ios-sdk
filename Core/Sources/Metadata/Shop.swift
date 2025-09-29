@@ -7,18 +7,18 @@
 // MARK: - shop data
 
 /// opening hours
-public struct OpeningHoursSpecification: Codable {
+public struct OpeningHoursSpecification: Codable, Sendable {
     public let opens: String
     public let closes: String
     public let dayOfWeek: String
 }
 
 /// customer networks
-public struct CustomerNetworks: Codable {
+public struct CustomerNetworks: Codable, Sendable {
     public let ssid: String
 }
 
-public struct ShopService: Codable {
+public struct ShopService: Codable, Sendable {
     public let serviceId: String
     public let iconPath: String
     public let translations: [String: String]
@@ -31,7 +31,7 @@ public struct ShopService: Codable {
 }
 
 /// base data for one shop
-public struct Shop: Codable, Identifiable {
+public struct Shop: Codable, Identifiable, Sendable {
     /// id of this shop, use this to initialize shopping carts
     public let id: Identifier<Shop>
     /// name of this shop
@@ -47,7 +47,7 @@ public struct Shop: Codable, Identifiable {
     /// externally provided identifier
     public let externalId: String?
     /// externally provided data
-    public let external: [String: Any]?
+    nonisolated(unsafe) public let external: [String: Any]?
 
     /// latitude
     public let latitude: Double
@@ -167,6 +167,6 @@ extension Shop: Equatable {
 }
 
 // response object from the `activeShops` endpoint
-struct ActiveShops: Decodable {
+struct ActiveShops: Decodable, Sendable {
     let shops: [Shop]
 }

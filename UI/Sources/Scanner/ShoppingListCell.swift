@@ -86,15 +86,15 @@ extension ShoppingListCell {
 
         self.cellView?.spinner?.startAnimating()
         self.task = Snabble.urlSession.dataTask(with: url) { data, _, error in
-            self.task = nil
-            DispatchQueue.main.async {
+            Task { @MainActor in
+                self.task = nil
                 self.cellView?.spinner?.stopAnimating()
             }
             guard let data = data, error == nil else {
                 return
             }
 
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 if let image = UIImage(data: data) {
                     ShoppingListCell.imageCache[imgUrl] = image
                     self.cellView?.configureProductImage(with: image)
@@ -106,7 +106,7 @@ extension ShoppingListCell {
         self.task?.resume()
     }
 
-    private func setDefaultImage(for item: ShoppingListItem) {
+    @MainActor private func setDefaultImage(for item: ShoppingListItem) {
         let asset: UIImage?
         switch item.entry {
         case .product:

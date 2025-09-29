@@ -17,7 +17,7 @@ public final class PaymentMethodListViewController: UITableViewController {
             tableView.backgroundView?.isHidden = !data.isEmpty
         }
     }
-    private(set) weak var emptyViewController: PaymentEmptyViewController?
+   private(set) weak var emptyViewController: PaymentEmptyViewController?
 
     public init(for projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) {
         self.projectId = projectId
@@ -30,9 +30,11 @@ public final class PaymentMethodListViewController: UITableViewController {
     }
 
     deinit {
-        emptyViewController?.willMove(toParent: nil)
-        emptyViewController?.view.removeFromSuperview()
-        emptyViewController?.removeFromParent()
+        MainActor.assumeIsolated {
+            emptyViewController?.willMove(toParent: nil)
+            emptyViewController?.view.removeFromSuperview()
+            emptyViewController?.removeFromParent()
+        }
     }
 
     override public func viewDidLoad() {

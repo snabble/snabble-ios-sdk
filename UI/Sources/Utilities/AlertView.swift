@@ -7,12 +7,12 @@
 
 import UIKit
 
-class AlertView {
+@MainActor
+class AlertView: @unchecked Sendable {
     private var window: UIWindow?
     public var alertController: UIAlertController?
     private var presentingViewController: ClearViewController
 
-    @MainActor
     private var firstWindow: UIWindow? {
         UIApplication.shared.connectedScenes
             .filter { $0.activationState == .foregroundActive }

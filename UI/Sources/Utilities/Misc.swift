@@ -135,7 +135,7 @@ extension UIImage {
 }
 
 extension UIApplication {
-    class func topViewController(_ base: UIViewController? = UIApplication.shared.sceneKeyWindow?.rootViewController) -> UIViewController? {
+    @MainActor class func topViewController(_ base: UIViewController? = UIApplication.shared.sceneKeyWindow?.rootViewController) -> UIViewController? {
         if let nav = base as? UINavigationController {
             return topViewController(nav.visibleViewController)
         }

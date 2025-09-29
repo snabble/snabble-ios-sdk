@@ -6,16 +6,16 @@
 
 import Foundation
 
-public enum CouponType: String, Codable, UnknownCaseRepresentable {
+public enum CouponType: String, Codable, UnknownCaseRepresentable, Sendable {
     case unknown
 
     case printed
     case digital
 
-    public static var unknownCase = CouponType.unknown
+    nonisolated(unsafe) public static var unknownCase = CouponType.unknown
 }
 
-public struct Coupon: Codable {
+public struct Coupon: Codable, Sendable {
     public let id: String
     public let externalID: String?
     public let name: String
@@ -36,23 +36,23 @@ public struct Coupon: Codable {
     public let validUntil: Date?
     public let percentage: Int?
 
-    public struct Code: Codable {
+    public struct Code: Codable, Sendable {
         public let code: String
         public let template: String
     }
 }
 
-public struct Colors: Codable {
+public struct Colors: Codable, Sendable {
     public let background: String
     public let foreground: String
 }
 
-public struct Image: Codable {
+public struct Image: Codable, Sendable {
     public let formats: [Format]
     public let name: String?
 }
 
-public struct Format: Codable {
+public struct Format: Codable, Sendable {
     // [sic] this should be called `resolution` as it contains the resolution as in Android:
     // mdpi, hdpi, xhdpi, xxhdpi, xxxhdpi etc
     public let size: String
@@ -75,6 +75,6 @@ extension Coupon: Hashable {
     }
 }
 
-public struct CouponList: Decodable {
+public struct CouponList: Decodable, Sendable {
     let coupons: [Coupon]
 }

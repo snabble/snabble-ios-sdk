@@ -7,7 +7,7 @@
 import UIKit
 import SnabbleCore
 
-protocol PaymentMethodAddCellViewModel {
+protocol PaymentMethodAddCellViewModel: Sendable {
     var projectId: Identifier<Project> { get }
     var name: String { get }
     var count: String { get }
@@ -89,8 +89,10 @@ final class PaymentMethodAddCell: UITableViewCell {
 
         projectId = viewModel.projectId
         SnabbleCI.getAsset(.storeIcon, projectId: viewModel.projectId) { [weak self] img in
-            if self?.projectId == viewModel.projectId {
-                self?.icon?.image = img
+            Task { @MainActor in
+                if self?.projectId == viewModel.projectId {
+                    self?.icon?.image = img
+                }
             }
         }
         countLabel?.text = viewModel.count

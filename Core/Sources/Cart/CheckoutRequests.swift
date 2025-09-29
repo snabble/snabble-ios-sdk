@@ -15,7 +15,7 @@ extension ShoppingCart {
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     ///   - completion: is called on the main thread with the result of the API call
     ///   - result: the `SignedCheckoutInfo` or the error
-    public func createCheckoutInfo(_ project: Project, timeout: TimeInterval = 0, completion: @escaping (_ result: Result<SignedCheckoutInfo, SnabbleError>) -> Void ) {
+    public func createCheckoutInfo(_ project: Project, timeout: TimeInterval = 0, completion: @escaping @Sendable (_ result: Result<SignedCheckoutInfo, SnabbleError>) -> Void ) {
         self.eventTimer?.invalidate()
         // cancel any previous tasks
         self.cancelPendingCheckoutInfoRequest()
@@ -73,7 +73,7 @@ extension SignedCheckoutInfo {
                                       paymentMethod: PaymentMethod,
                                       timeout: TimeInterval = 0,
                                       finalizedAt: Date? = nil,
-                                      completion: @escaping (_ result: RawResult<CheckoutProcess, SnabbleError>) -> Void ) {
+                                      completion: @escaping @Sendable (_ result: RawResult<CheckoutProcess, SnabbleError>) -> Void ) {
         do {
             // since we need to pass the originally-received SignedCheckoutInfo as-is,
             // we can't use the struct but have to build this manually:
@@ -140,7 +140,7 @@ extension SignedCheckoutInfo {
 }
 
 extension CheckoutProcess {
-    public static func fetch(for project: Project, url: String, _ completion: @escaping (_ result: RawResult<CheckoutProcess, SnabbleError>) -> Void ) {
+    public static func fetch(for project: Project, url: String, _ completion: @escaping @Sendable (_ result: RawResult<CheckoutProcess, SnabbleError>) -> Void ) {
         project.request(.get, url, timeout: 3) { request in
             guard let request = request else {
                 return completion(RawResult.failure(SnabbleError.noRequest))
@@ -176,8 +176,8 @@ extension CheckoutProcess {
     ///   - result: the `CheckoutProcess` returned from the backend or the error
     public func update(_ project: Project,
                        timeout: TimeInterval = 0,
-                       taskCreated: @escaping (_ task: URLSessionDataTask) -> Void,
-                       completion: @escaping (_ result: RawResult<CheckoutProcess, SnabbleError>) -> Void ) {
+                       taskCreated: @escaping @Sendable (_ task: URLSessionDataTask) -> Void,
+                       completion: @escaping @Sendable (_ result: RawResult<CheckoutProcess, SnabbleError>) -> Void ) {
 
         project.request(.get, self.links._self.href, timeout: timeout) { request in
             guard let request = request else {
@@ -200,7 +200,7 @@ extension CheckoutProcess {
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     ///   - completion: is called on the main thread with the result of the API call,
     ///   - result: the `CheckoutProcess` returned from the backend or the error
-    public func abort(_ project: Project, timeout: TimeInterval = 0, completion: @escaping (_ result: Result<CheckoutProcess, SnabbleError>) -> Void ) {
+    public func abort(_ project: Project, timeout: TimeInterval = 0, completion: @escaping @Sendable (_ result: Result<CheckoutProcess, SnabbleError>) -> Void ) {
         let abort = AbortRequest(aborted: true)
 
         project.request(.patch, self.links._self.href, body: abort, timeout: timeout) { request in

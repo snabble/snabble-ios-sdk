@@ -11,7 +11,7 @@ import Observation
 import SnabbleCore
 import SnabbleAssetProviding
 
-public struct InvoiceLoginInfo: Decodable {
+public struct InvoiceLoginInfo: Decodable, Sendable {
     public let username: String?
     public let contactPersonID: String?
     
@@ -44,7 +44,7 @@ extension Project {
     }
 
     public func getUserLoginInfo(with credentials: InvoiceLoginCredentials,
-                                 completion: @escaping (Result<InvoiceLoginInfo, SnabbleError>) -> Void) {
+                                 completion: @escaping @Sendable (Result<InvoiceLoginInfo, SnabbleError>) -> Void) {
         do {
             let data = try JSONEncoder().encode(credentials)
 
@@ -61,7 +61,7 @@ extension Project {
     }
 }
 
-public final class InvoiceLoginModel: LoginViewModel {
+public final class InvoiceLoginModel: LoginViewModel, @unchecked Sendable {
     public var isLoggedIn = false
 
     private var paymentDetail: PaymentMethodDetail?
@@ -142,7 +142,7 @@ extension InvoiceLoginModel {
 }
 
 /// InvoiceLoginProcessor provides the logic to get customer card info using a login service
-@Observable
+@Observable @MainActor
 public final class InvoiceLoginProcessor: LoginProcessing {
 
     var loginModel: Loginable? {
@@ -158,48 +158,35 @@ public final class InvoiceLoginProcessor: LoginProcessing {
         self.invoiceLoginModel = invoiceLoginModel
     }
     
-    private var loginPublisher: Future<InvoiceLoginInfo, LoginError> {
-        Future { [weak self] promise in
-            guard let strongSelf = self, strongSelf.invoiceLoginModel.isValid else {
-                return promise(.failure(.loginFailed))
-            }
-            
-            guard let username = strongSelf.invoiceLoginModel.username,
-                  let password = strongSelf.invoiceLoginModel.password else {
-                
-                return promise(.failure(.loginFailed))
-            }
-            let credentials = InvoiceLoginCredentials(username: username, password: password)
-                                          
-            strongSelf.invoiceLoginModel.project?.getUserLoginInfo(with: credentials) { result in
-                switch result {
-                case .success(let info):
-                    promise(.success(info))
-                case .failure:
-                    promise(.failure(.loginFailed))
-                }
-            }
-        }
-    }
-    
     public func login() {
         isWaiting = true
         self.invoiceLoginModel.errorMessage = nil
-        
-        loginPublisher
-            .receive(on: RunLoop.main)
-            .sink(receiveCompletion: { [weak self] completion in
-                self?.isWaiting = false
-                switch completion {
-                case .finished:
-                    break
-                case .failure:
-                    self?.invoiceLoginModel.errorMessage = Asset.localizedString(forKey: "Snabble.Payment.ExternalBilling.Error.wrongCredentials")
+
+        // Extrahiere alle benötigten Werte vor dem Task
+        guard invoiceLoginModel.isValid,
+              let username = invoiceLoginModel.username,
+              let password = invoiceLoginModel.password,
+              let project = invoiceLoginModel.project else {
+            self.invoiceLoginModel.errorMessage = Asset.localizedString(forKey: "Snabble.Payment.ExternalBilling.Error.wrongCredentials")
+            return
+        }
+
+        let credentials = InvoiceLoginCredentials(username: username, password: password)
+
+        Task {
+            do {
+                let loginInfo = try await withCheckedThrowingContinuation { continuation in
+                    project.getUserLoginInfo(with: credentials) { @Sendable result in
+                        continuation.resume(with: result.mapError { _ in LoginError.loginFailed })
+                    }
                 }
-            }, receiveValue: { [weak self] loginInfo in
-                self?.invoiceLoginModel.loginInfo = loginInfo
-            })
-            .store(in: &cancellables)
+                self.isWaiting = false
+                self.invoiceLoginModel.loginInfo = loginInfo
+            } catch {
+                self.isWaiting = false
+                self.invoiceLoginModel.errorMessage = Asset.localizedString(forKey: "Snabble.Payment.ExternalBilling.Error.wrongCredentials")
+            }
+        }
     }
     
     public func remove() {

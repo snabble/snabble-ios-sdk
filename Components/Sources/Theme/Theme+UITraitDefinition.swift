@@ -8,21 +8,21 @@
 import SwiftUI
 import UIKit
 
-public enum Project: Equatable {
+public enum Project: Equatable, Sendable {
     case none
     case project(id: String)
 }
 
 public struct ProjectTrait: UITraitDefinition {
-    public static var defaultValue: Project = .none
-    public static var affectsColorAppearance: Bool = true
-    public static var identifier: String = "io.snabble.components.project"
-    public static var name: String = "Project"
+    public static let defaultValue: Project = .none
+    public static let affectsColorAppearance: Bool = true
+    public static let identifier: String = "io.snabble.components.project"
+    public static let name: String = "Project"
 }
 
 
 public struct ProjectEnvironmentKey: EnvironmentKey {
-    public static var defaultValue = ProjectTrait.defaultValue
+    public static let defaultValue = ProjectTrait.defaultValue
 }
 
 public extension EnvironmentValues {

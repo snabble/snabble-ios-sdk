@@ -261,8 +261,10 @@ public final class SepaEditViewController: UIViewController {
 
         if showError {
             Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { _ in
-                self.fadeText(self.ibanLabel, Asset.localizedString(forKey: "Snabble.Payment.SEPA.iban"))
-                self.fadeText(self.nameLabel, Asset.localizedString(forKey: "Snabble.Payment.SEPA.name"))
+                Task { @MainActor in
+                    self.fadeText(self.ibanLabel, Asset.localizedString(forKey: "Snabble.Payment.SEPA.iban"))
+                    self.fadeText(self.nameLabel, Asset.localizedString(forKey: "Snabble.Payment.SEPA.name"))
+                }
             }
         }
 
@@ -300,7 +302,9 @@ public final class SepaEditViewController: UIViewController {
 
             project.perform(request) { (_: Result<Empty, SnabbleError>, response) in
                 if response?.statusCode == 201 { // created
-                    self.goBack()
+                    Task { @MainActor in
+                        self.goBack()
+                    }
                 }
             }
         }

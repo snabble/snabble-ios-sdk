@@ -17,7 +17,7 @@ public enum Dimension {
 }
 
 /// units for variable-price products
-public enum Units: String, Codable, Equatable {
+public enum Units: String, Codable, Equatable, Sendable {
     // length
     case meter = "m"            // 1
     case decimeter = "dm"       // 10
@@ -157,7 +157,7 @@ extension Units {
         let divisor: Decimal
     }
 
-    private static let conversions = Units.initializeConversions()
+    nonisolated(unsafe) private static let conversions = Units.initializeConversions()
 
     private typealias Conversions = [ Dimension: [Conversion] ]
 

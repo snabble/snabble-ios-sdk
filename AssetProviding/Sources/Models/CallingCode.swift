@@ -8,8 +8,8 @@
 import Foundation
 
 public struct CallingCode: Decodable, Identifiable {
-    public static var all: [CallingCode] = loadJSON("calling-codes")
-    public static var germany: CallingCode = CallingCode(identifier: "DE", code: 49)
+    nonisolated(unsafe) public static var all: [CallingCode] = loadJSON("calling-codes")
+    nonisolated(unsafe) public static var germany: CallingCode = CallingCode(identifier: "DE", code: 49)
 
     public let id: String
     public let code: UInt

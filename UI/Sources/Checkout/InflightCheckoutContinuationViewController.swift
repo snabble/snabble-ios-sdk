@@ -86,27 +86,29 @@ public final class InFlightCheckoutContinuationViewController: UIViewController 
             return
         }
         CheckoutProcess.fetch(for: project, url: inFlightCheckout.url) { [weak self] result in
-            switch result.result {
-            case .success(let process):
-                self?.activityIndicatorView?.stopAnimating()
-                var cart = inFlightCheckout.cart
-                if let shoppingCart = self?.shoppingCart, cart.uuid == shoppingCart.uuid {
-                    cart = shoppingCart
-                }
-                let checkoutViewController = PaymentProcess.checkoutViewController(
-                    for: process,
-                    shop: inFlightCheckout.shop,
-                    cart: cart,
-                    paymentDelegate: self?.paymentDelegate
-                )
-                if let checkoutViewController = checkoutViewController {
-                    self?.navigationController?.pushViewController(checkoutViewController, animated: true)
-                } else {
+            Task { @MainActor in
+                switch result.result {
+                case .success(let process):
+                    self?.activityIndicatorView?.stopAnimating()
+                    var cart = inFlightCheckout.cart
+                    if let shoppingCart = self?.shoppingCart, cart.uuid == shoppingCart.uuid {
+                        cart = shoppingCart
+                    }
+                    let checkoutViewController = PaymentProcess.checkoutViewController(
+                        for: process,
+                        shop: inFlightCheckout.shop,
+                        cart: cart,
+                        paymentDelegate: self?.paymentDelegate
+                    )
+                    if let checkoutViewController = checkoutViewController {
+                        self?.navigationController?.pushViewController(checkoutViewController, animated: true)
+                    } else {
+                        self?.dismiss()
+                    }
+                case .failure(let error):
+                    print("can't get in-flight checkout process: \(error)")
                     self?.dismiss()
                 }
-            case .failure(let error):
-                print("can't get in-flight checkout process: \(error)")
-                self?.dismiss()
             }
         }
     }

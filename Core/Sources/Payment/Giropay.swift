@@ -9,7 +9,7 @@ import Foundation
 // TODO: remove ipAddress and fingerprint
 // TODO: if there are multiple bank accounts in one PD account, how/where do we figure out which account to use?
 
-public struct GiropayAuthorization: Encodable {
+public struct GiropayAuthorization: Encodable, Sendable {
     public let id: String
     public let name: String
     public let ipAddress: String

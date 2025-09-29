@@ -109,7 +109,7 @@ public extension ShoppingCartItemBadging {
 }
 
 @Observable
-open class CartItemModel: ShoppingCartItem {
+open class CartItemModel: ShoppingCartItem, @unchecked Sendable {
     public var id: String {
         return UUID().uuidString
     }

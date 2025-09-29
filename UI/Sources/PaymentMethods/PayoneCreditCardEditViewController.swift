@@ -44,6 +44,7 @@ extension SnabbleUser.User: PrefillData {
     public var state: String? { address?.state }
 }
 
+@MainActor
 public protocol PayoneCreditCardEditViewControllerDelegate: AnyObject {
     func payoneCreditCardEditViewController(_ controller: PayoneCreditCardEditViewController, didTokenizePaymentMethodDetail: PaymentMethodDetail)
     func payoneCreditCardEditViewControllerDidComplete(_ controller: PayoneCreditCardEditViewController)
@@ -178,17 +179,21 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     private func tokenizeWithPayone(_ project: Project, _ descriptor: PaymentMethodDescriptor) {
         let link = descriptor.links?.tokenization
         self.getPayoneTokenization(for: project, link) { [weak self] result in
-            self?.activityIndicator?.stopAnimating()
-            switch result {
-            case .failure:
-                let alert = UIAlertController(title: "Oops", message: Asset.localizedString(forKey: "Snabble.CC.noEntryPossible"), preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { _ in
-                    self?.goBack()
-                })
-                self?.present(alert, animated: true)
-            case .success(let payoneTokenization):
-                self?.payoneTokenization = payoneTokenization
-                self?.prepareAndInjectPage(payoneTokenization)
+            Task { @MainActor in
+                self?.activityIndicator?.stopAnimating()
+                switch result {
+                case .failure:
+                    let alert = UIAlertController(title: "Oops", message: Asset.localizedString(forKey: "Snabble.CC.noEntryPossible"), preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { @Sendable _ in
+                        Task { @MainActor in
+                            self?.goBack()
+                        }
+                    })
+                    self?.present(alert, animated: true)
+                case .success(let payoneTokenization):
+                    self?.payoneTokenization = payoneTokenization
+                    self?.prepareAndInjectPage(payoneTokenization)
+                }
             }
         }
     }
@@ -375,12 +380,14 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         }
 
         startPayonePreauthorization(for: project, payoneTokenization?.links.preAuth, response) { result in
-            switch result {
-            case .failure(let error):
-                print(error)
-                self.showErrorAlert(message: Asset.localizedString(forKey: "Snabble.Payment.CreditCard.error"), goBack: true)
-            case .success(let preAuthResult):
-                self.loadScaChallenge(for: project, preAuthResult, response)
+            Task { @MainActor in
+                switch result {
+                case .failure(let error):
+                    print(error)
+                    self.showErrorAlert(message: Asset.localizedString(forKey: "Snabble.Payment.CreditCard.error"), goBack: true)
+                case .success(let preAuthResult):
+                    self.loadScaChallenge(for: project, preAuthResult, response)
+                }
             }
         }
     }
@@ -408,17 +415,21 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     // stop the process on failure or success
     private func startPreAuthPollTimer(for project: Project, _ preAuthResult: PayonePreAuthResult) {
         pollTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { [weak self] _ in
-            self?.getPreAuthStatus(for: project, preAuthResult.links.preAuthStatus) { result in
-                switch result {
-                case .failure(let error):
-                    print(error)
-                    self?.startPreAuthPollTimer(for: project, preAuthResult)
-                case .success(let status):
-                    switch status.status {
-                    case .unknown, .pending:
-                        self?.startPreAuthPollTimer(for: project, preAuthResult)
-                    case .successful, .failed:
-                        self?.finishPreAuth(with: status.status)
+            Task { @MainActor in
+                self?.getPreAuthStatus(for: project, preAuthResult.links.preAuthStatus) { result in
+                    Task { @MainActor in
+                        switch result {
+                        case .failure(let error):
+                            print(error)
+                            self?.startPreAuthPollTimer(for: project, preAuthResult)
+                        case .success(let status):
+                            switch status.status {
+                            case .unknown, .pending:
+                                self?.startPreAuthPollTimer(for: project, preAuthResult)
+                            case .successful, .failed:
+                                self?.finishPreAuth(with: status.status)
+                            }
+                        }
                     }
                 }
             }
@@ -483,7 +494,7 @@ extension PayoneCreditCardEditViewController {
     // get the info we need for the web form / tokenization request
     private func getPayoneTokenization(for project: Project,
                                        _ link: SnabbleCore.Link?,
-                                       completion: @escaping (Result<PayoneTokenization, SnabbleError>) -> Void ) {
+                                       completion: @escaping @Sendable (Result<PayoneTokenization, SnabbleError>) -> Void ) {
         guard let url = link?.href else {
             Log.error("no tokenization link found")
             return completion(Result.failure(SnabbleError.unknown))
@@ -504,7 +515,7 @@ extension PayoneCreditCardEditViewController {
     private func startPayonePreauthorization(for project: Project,
                                              _ link: SnabbleCore.Link?,
                                              _ response: PayoneResponse,
-                                             completion: @escaping (Result<PayonePreAuthResult, SnabbleError>) -> Void) {
+                                             completion: @escaping @Sendable (Result<PayonePreAuthResult, SnabbleError>) -> Void) {
         guard let url = link?.href else {
             Log.error("no preauth link found")
             return completion(Result.failure(SnabbleError.unknown))
@@ -527,7 +538,7 @@ extension PayoneCreditCardEditViewController {
     // get the status of a pre auth - we need to poll this until status is either `.successful` or `.failed`
     private func getPreAuthStatus(for project: Project,
                                   _ link: SnabbleCore.Link,
-                                  completion: @escaping (Result<PayonePreAuthStatusResult, SnabbleError>) -> Void) {
+                                  completion: @escaping @Sendable (Result<PayonePreAuthStatusResult, SnabbleError>) -> Void) {
         project.request(.get, link.href, timeout: 2) { request in
             guard var request = request else {
                 return completion(Result.failure(SnabbleError.noRequest))
@@ -612,7 +623,7 @@ extension PayoneCreditCardEditViewController {
 
 // MARK: - webview navigation delegate
 extension PayoneCreditCardEditViewController: WKNavigationDelegate {
-    public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+    @objc public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
         if let preAuthResult = self.payonePreAuthResult, let url = navigationAction.request.url?.absoluteString {
             if url == preAuthResult.links.redirectSuccess.href {
                 // sca succeeded, we still need to wait for the preAuth status to switch to "success"
@@ -721,6 +732,7 @@ public struct PayoneView: UIViewControllerRepresentable {
         Coordinator(parent: self)
     }
     
+    @MainActor
     public class Coordinator: PayoneCreditCardEditViewControllerDelegate {
         let parent: PayoneView
         

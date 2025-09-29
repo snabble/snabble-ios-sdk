@@ -47,7 +47,7 @@ class BarcodeScannerViewController: UIViewController {
 #endif
         }
     }
-    private func addLayer(_ layer: CALayer, to viewController: UIViewController) {
+    @MainActor private func addLayer(_ layer: CALayer, to viewController: UIViewController) {
         let frame = viewController.view.bounds
         let insets = UIApplication.shared.sceneKeyWindow?.safeAreaInsets ?? UIEdgeInsets()
         

@@ -11,7 +11,7 @@ struct Orders: Decodable {
     let orders: [Order]
 }
 
-public struct Order: Decodable {    
+public struct Order: Decodable, Sendable {    
     public let id: String
     public let date: Date
     

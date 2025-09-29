@@ -63,7 +63,7 @@ public enum SnabbleError: Error, Equatable {
     }
 }
 
-public enum ProductLookupError: Error, Equatable {
+public enum ProductLookupError: Error, Equatable, Sendable {
     case notFound
     case networkError(URLError.Code)
     case serverError(Int)
@@ -95,7 +95,7 @@ public enum ProductLookupError: Error, Equatable {
     }
 }
 
-public enum ErrorResponseType: String, UnknownCaseRepresentable {
+public enum ErrorResponseType: String, UnknownCaseRepresentable, Sendable {
     case unknown
 
     // checkout errors
@@ -116,7 +116,7 @@ public enum ErrorResponseType: String, UnknownCaseRepresentable {
     public static let unknownCase = ErrorResponseType.unknown
 }
 
-public struct ErrorResponse: Decodable, Equatable {
+public struct ErrorResponse: Decodable, Equatable, Sendable {
     public let rawType: String
     public let message: String?
     public let sku: String?
@@ -141,7 +141,7 @@ public struct ErrorResponse: Decodable, Equatable {
     }
 }
 
-public struct SnabbleAPIError: Decodable, Error, Equatable {
+public struct SnabbleAPIError: Decodable, Error, Equatable, Sendable {
     public let error: ErrorResponse
 }
 
@@ -154,7 +154,7 @@ public enum HTTPRequestMethod: String {
 }
 
 /// for those API calls where we need both the decoded result as well as the raw json data as a dictionary
-public struct RawResult<T, E: Swift.Error> {
+public struct RawResult<T, E: Swift.Error>: @unchecked Sendable {
     public let result: Result<T, E>
     public let rawJson: [String: Any]?
 
@@ -208,7 +208,7 @@ extension Project {
     ///   - parameters: the query parameters to append to the URL
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    public func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, parameters: [String: String]? = nil, timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
+    public func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, parameters: [String: String]? = nil, timeout: TimeInterval, completion: @escaping @Sendable (URLRequest?) -> Void) {
         request(method, url, json: json, jwtRequired: jwtRequired, queryItems: parameters?.queryItems(), timeout: timeout, completion: completion)
     }
 
@@ -221,7 +221,7 @@ extension Project {
     ///   - queryItems: the query parameters to append to the URL
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    public func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, queryItems: [URLQueryItem]?, timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
+    public func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, queryItems: [URLQueryItem]?, timeout: TimeInterval, completion: @escaping @Sendable (URLRequest?) -> Void) {
         guard
             let url = url.urlString(with: queryItems),
             let fullUrl = Snabble.shared.urlFor(url)
@@ -240,7 +240,7 @@ extension Project {
     ///   - body: the JSON data to send as the HTTP body
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    public func request(_ method: HTTPRequestMethod, _ url: String, body: Data, timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
+    public func request(_ method: HTTPRequestMethod, _ url: String, body: Data, timeout: TimeInterval, completion: @escaping @Sendable (URLRequest?) -> Void) {
         guard let url = Snabble.shared.urlFor(url) else {
             return completion(nil)
         }
@@ -260,7 +260,7 @@ extension Project {
     ///   - body: the JSON object to send as the HTTP body
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     /// - Returns: the URLRequest
-    public func request<T: Encodable>(_ method: HTTPRequestMethod, _ url: String, body: T, timeout: TimeInterval = 0, _ completion: @escaping (URLRequest?) -> Void ) {
+    public func request<T: Encodable & Sendable>(_ method: HTTPRequestMethod, _ url: String, body: T, timeout: TimeInterval = 0, _ completion: @escaping @Sendable (URLRequest?) -> Void ) {
         guard let url = Snabble.shared.urlFor(url) else {
             return completion(nil)
         }
@@ -288,8 +288,8 @@ extension Project {
     ///   - jwtRequired: if true, this request requires authorization via JWT
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     ///   - completion: the URLRequest
-    public func request(_ method: HTTPRequestMethod, _ url: URL, _ json: Bool, _ jwtRequired: Bool, _ timeout: TimeInterval, _ completion: @escaping (URLRequest) -> Void) {
-        var urlRequest = Snabble.request(url: url, timeout: timeout, json: json)
+    public func request(_ method: HTTPRequestMethod, _ url: URL, _ json: Bool, _ jwtRequired: Bool, _ timeout: TimeInterval, _ completion: @escaping @Sendable (URLRequest) -> Void) {
+        nonisolated(unsafe) var urlRequest = Snabble.request(url: url, timeout: timeout, json: json)
         urlRequest.httpMethod = method.rawValue
 
         if jwtRequired {
@@ -311,7 +311,7 @@ extension Project {
     ///   - completion: called on the main thread when the result is available.
     ///   - result: the parsed result object or error
     @discardableResult
-    public func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ result: Result<T, SnabbleError>) -> Void ) -> URLSessionDataTask {
+    public func perform<T: Decodable & Sendable>(_ request: URLRequest, _ completion: @escaping @Sendable (_ result: Result<T, SnabbleError>) -> Void ) -> URLSessionDataTask {
         return self.perform(request, returnRaw: false) { result, _, _ in
             completion(result)
         }
@@ -324,7 +324,7 @@ extension Project {
     ///   - completion: called on the main thread when the result is available.
     ///   - result: the parsed result object plus its raw JSON data, or error
     @discardableResult
-    func performRaw<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ result: RawResult<T, SnabbleError>) -> Void ) -> URLSessionDataTask {
+    func performRaw<T: Decodable & Sendable>(_ request: URLRequest, _ completion: @escaping @Sendable (_ result: RawResult<T, SnabbleError>) -> Void ) -> URLSessionDataTask {
         return self.perform(request, returnRaw: true) { (_ result: Result<T, SnabbleError>, _ raw: [String: Any]?, _) in
             let rawResult = RawResult(result, rawJson: raw)
             completion(rawResult)
@@ -339,7 +339,7 @@ extension Project {
     ///   - result: the parsed result object or error
     ///   - response: the HTTPURLResponse object
     @discardableResult
-    public func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ result: Result<T, SnabbleError>, _ response: HTTPURLResponse?) -> Void ) -> URLSessionDataTask {
+    public func perform<T: Decodable & Sendable>(_ request: URLRequest, _ completion: @escaping @Sendable (_ result: Result<T, SnabbleError>, _ response: HTTPURLResponse?) -> Void ) -> URLSessionDataTask {
         return self.perform(request, returnRaw: false) { result, _, response in
             completion(result, response)
         }
@@ -355,7 +355,7 @@ extension Project {
     ///   - raw: the JSON structure returned by the server, or nil if an error occurred
     ///   - response: the HTTPURLResponse object if available
     @discardableResult
-    private func perform<T: Decodable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping (_ result: Result<T, SnabbleError>, _ raw: [String: Any]?, _ response: HTTPURLResponse?) -> Void ) -> URLSessionDataTask {
+    private func perform<T: Decodable & Sendable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping @Sendable (_ result: Result<T, SnabbleError>, _ raw: [String: Any]?, _ response: HTTPURLResponse?) -> Void ) -> URLSessionDataTask {
         let start = Date.timeIntervalSinceReferenceDate
         let session = Snabble.urlSession
         let task = session.dataTask(with: request) { data, response, error in

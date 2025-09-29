@@ -8,8 +8,8 @@
 import Foundation
 
 public struct Country: Decodable, Equatable {
-    public static var all: [Country] = loadJSON("countries")
-    public static var germany: Country = Country(code: "DE", numeric: "276")
+    nonisolated(unsafe) public static var all: [Country] = loadJSON("countries")
+    nonisolated(unsafe) public static var germany: Country = Country(code: "DE", numeric: "276")
     
     public let code: String
     public let states: [State]?

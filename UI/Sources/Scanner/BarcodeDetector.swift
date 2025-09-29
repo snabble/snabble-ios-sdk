@@ -10,10 +10,10 @@ import AVFoundation
 import SnabbleCore
 import SnabbleAssetProviding
 
-public struct BarcodeResult {
+public struct BarcodeResult: Sendable {
     public let code: String
     public let format: ScanFormat?
-    
+
     public init(code: String, format: ScanFormat?) {
         self.code = code
         self.format = format
@@ -29,11 +29,13 @@ extension BarcodeResult: CustomStringConvertible {
     }
 }
 
+@MainActor
 public protocol BarcodeScanning: AnyObject {
     /// callback for a successful scan
     func scannedCodeResult(_ result: BarcodeResult)
 }
 
+@MainActor
 public protocol BarcodePresenting: AnyObject {
     /// this is used to present permission alerts. If the delegate instance is a `UIViewController`, no more code is needed
     func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
@@ -44,7 +46,7 @@ public typealias BarcodeDetectorDelegate = BarcodeScanning & BarcodePresenting
 public protocol BarcodeDetectorMessageDelegate: AnyObject {
     /// show a message covering the entire screen (used by the "battery saver" function e.g. in the Cortex Decoder implementation)
     /// `completion` is invoked when the user dimisses the message
-    func showMessage(_ msg: String, completion: @escaping () -> Void)
+    func showMessage(_ msg: String, completion: @escaping @Sendable () -> Void)
 
     /// dismiss any message that might still be on-screen
     func dismiss()
@@ -59,7 +61,7 @@ public protocol Zoomable {
 // NOTE that this class is not really a part of the public API of the Snabble SDK - it and its properties are only marked
 // `public`/`open` to support implementing `CortexDecoderBarcodeDetector` in its separate module
 
-open class BarcodeDetector: NSObject, Zoomable {
+open class BarcodeDetector: NSObject, Zoomable, @unchecked Sendable {
     
     public static var batterySaverTimeout: TimeInterval { 90 }
     public static var batterySaverKey: String { "io.snabble.sdk.batterySaver" }
@@ -96,7 +98,7 @@ open class BarcodeDetector: NSObject, Zoomable {
     }
 
     // MARK: - idle timer
-    @objc public func startBatterySaverTimer() {
+    @MainActor @objc public func startBatterySaverTimer() {
         guard
             UserDefaults.standard.bool(forKey: Self.batterySaverKey),
             self.messageDelegate != nil
@@ -106,15 +108,17 @@ open class BarcodeDetector: NSObject, Zoomable {
 
         batterySaverTimer?.invalidate()
         batterySaverTimer = Timer.scheduledTimer(withTimeInterval: Self.batterySaverTimeout, repeats: false) { [weak self] _ in
-            self?.batterySaverTimerFired()
+            Task { @MainActor in
+                self?.batterySaverTimerFired()
+            }
         }
     }
 
-    @objc public func stopBatterySaverTimer() {
+    @MainActor @objc public func stopBatterySaverTimer() {
         self.batterySaverTimer?.invalidate()
     }
 
-    private func batterySaverTimerFired() {
+    @MainActor private func batterySaverTimerFired() {
         self.pauseScanning()
         self.screenTap = UITapGestureRecognizer(target: self, action: #selector(screenTapped(_:)))
         self.decorationOverlay?.addGestureRecognizer(self.screenTap!)
@@ -124,7 +128,7 @@ open class BarcodeDetector: NSObject, Zoomable {
         }
     }
 
-    @objc private func screenTapped(_ gesture: UIGestureRecognizer) {
+    @MainActor @objc private func screenTapped(_ gesture: UIGestureRecognizer) {
         self.decorationOverlay?.removeGestureRecognizer(self.screenTap!)
         self.resumeScanning()
 
@@ -152,14 +156,14 @@ open class BarcodeDetector: NSObject, Zoomable {
     }
 
     // MARK: - camera permission
-    public func requestCameraPermission() {
+    @MainActor public func requestCameraPermission() {
         let authorizationStatus = AVCaptureDevice.authorizationStatus(for: .video)
         if authorizationStatus != .authorized {
             self.requestCameraPermission(currentStatus: authorizationStatus)
         }
     }
 
-    public func requestCameraPermission(currentStatus: AVAuthorizationStatus) {
+    @MainActor public func requestCameraPermission(currentStatus: AVAuthorizationStatus) {
         switch currentStatus {
         case .restricted, .denied:
             let title = Asset.localizedString(forKey: "Snabble.Scanner.Camera.accessDenied")
@@ -167,7 +171,9 @@ open class BarcodeDetector: NSObject, Zoomable {
             let alert = UIAlertController(title: title, message: msg, preferredStyle: .alert)
             alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.cancel"), style: .cancel, handler: nil))
             alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.goToSettings"), style: .default) { _ in
-                UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+                Task { @MainActor in
+                    UIApplication.shared.open(URL(string: UIApplication.openSettingsURLString)!)
+                }
             })
             DispatchQueue.main.async {
                 self.delegate?.present(alert, animated: true, completion: nil)
@@ -185,12 +191,12 @@ open class BarcodeDetector: NSObject, Zoomable {
     /// this must be called from `viewWillAppear()` of the hosting view controller
     /// use this method to initialize the detector as well as the camera
     /// and add the camera preview view or layer to the given view
-    open func scannerWillAppear(on view: UIView) { fatalError("clients must override") }
+    @MainActor open func scannerWillAppear(on view: UIView) { fatalError("clients must override") }
 
     /// this must be called from `viewDidLayoutSubviews()` of the hosting view controller.
     /// at this point, the bounds of the area reserved for camera preview have been determined
     /// and a barcode detector instance can resize its preview layer/view to these bounds
-    open func scannerDidLayoutSubviews() { fatalError("clients must override") }
+    @MainActor open func scannerDidLayoutSubviews() { fatalError("clients must override") }
 
     /// this must be called from `viewWillDisappear()` of the hosting view controller.
     /// the view is about to disappear, and the detector can remove its camera preview from the
@@ -204,7 +210,7 @@ open class BarcodeDetector: NSObject, Zoomable {
     open func resumeScanning() { fatalError("clients must override") }
 
     /// set the scanner overlay's offset relative to the Y-axis center
-    open func setOverlayOffset(_ offset: CGFloat) { fatalError("clients must override") }
+    @MainActor open func setOverlayOffset(_ offset: CGFloat) { fatalError("clients must override") }
 
     /// turn the torch on/off
     open func setTorch(_ on: Bool) { fatalError("clients must override") }

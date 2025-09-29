@@ -227,7 +227,9 @@ final class QRCheckoutViewController: UIViewController {
         let poller = PaymentProcessPoller(self.process, SnabbleCI.project)
         poller.waitFor([.paymentSuccess]) { events in
             if let success = events[.paymentSuccess] {
-                self.paymentFinished(success, poller.updatedProcess)
+                Task { @MainActor in
+                    self.paymentFinished(success, poller.updatedProcess)
+                }
             }
         }
         self.poller = poller
@@ -246,27 +248,32 @@ final class QRCheckoutViewController: UIViewController {
             case .success:
                 Snabble.clearInFlightCheckout()
                 self.cart.generateNewUUID()
-                self.delegate?.track(.paymentCancelled)
 
-                if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
-                    self.navigationController?.popToViewController(cartVC, animated: true)
-                } else {
-                    self.navigationController?.popToRootViewController(animated: true)
+                Task { @MainActor in
+                    self.delegate?.track(.paymentCancelled)
+
+                    if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
+                        self.navigationController?.popToViewController(cartVC, animated: true)
+                    } else {
+                        self.navigationController?.popToRootViewController(animated: true)
+                    }
                 }
             case .failure:
-                let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
-                                              message: Asset.localizedString(forKey: "Snabble.Payment.CancelError.message"),
-                                              preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { _ in
-                    self.startPoller()
-                    sender.isEnabled = true
-                })
-                self.present(alert, animated: true)
+                Task { @MainActor in
+                    let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
+                                                  message: Asset.localizedString(forKey: "Snabble.Payment.CancelError.message"),
+                                                  preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { _ in
+                        self.startPoller()
+                        sender.isEnabled = true
+                    })
+                    self.present(alert, animated: true)
+                }
             }
         }
     }
 
-    private func paymentFinished(_ success: Bool, _ process: CheckoutProcess) {
+    @MainActor private func paymentFinished(_ success: Bool, _ process: CheckoutProcess) {
         self.poller = nil
 
         if success {
