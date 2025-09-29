@@ -15,7 +15,7 @@ protocol CheckoutStepsViewModelDelegate: AnyObject {
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateExitToken exitToken: ExitToken)
 }
 
-final class CheckoutStepsViewModel {
+final class CheckoutStepsViewModel: @unchecked Sendable {
     private(set) var checkoutProcess: CheckoutProcess? {
         didSet {
             if let checkoutProcess = checkoutProcess {

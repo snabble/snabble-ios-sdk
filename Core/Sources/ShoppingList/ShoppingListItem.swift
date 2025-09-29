@@ -42,7 +42,7 @@ public enum ShoppingListEntry {
     case custom(String)
 }
 
-public final class ShoppingListItem: Codable {
+public final class ShoppingListItem: Codable, @unchecked Sendable {
     public var quantity = 0
     public var checked = false
     public let entry: ShoppingListEntry

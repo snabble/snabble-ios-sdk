@@ -10,7 +10,7 @@ import SnabbleCore
 import SnabbleAssetProviding
 
 /// Manage the payment process
-public final class PaymentProcess {
+public final class PaymentProcess: @unchecked Sendable {
     let signedCheckoutInfo: SignedCheckoutInfo
     let cart: ShoppingCart
     let shop: Shop
@@ -185,7 +185,8 @@ public final class PaymentProcess {
         return results
     }
 
-    private func startFailed(_ method: PaymentMethod, shop: Shop, _ error: SnabbleError?, _ completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
+    @MainActor
+    private func startFailed(_ method: PaymentMethod, shop: Shop, _ error: SnabbleError?, _ completion: @escaping @Sendable (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
         var handled = false
         if let error = error {
             handled = self.paymentDelegate?.handlePaymentError(method, error) ?? false
@@ -205,10 +206,13 @@ public final class PaymentProcess {
     private func startBlurOverlayTimer() {
         self.hudTimer?.invalidate()
         self.hudTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: false) { _ in
-            self.showBlurOverlay()
+            Task { @MainActor in
+                self.showBlurOverlay()
+            }
         }
     }
 
+    @MainActor
     func track(_ event: AnalyticsEvent) {
         self.paymentDelegate?.track(event)
     }
@@ -217,6 +221,7 @@ public final class PaymentProcess {
 
     private var blurView: UIView?
 
+    @MainActor
     private func showBlurOverlay() {
         guard let view = self.paymentDelegate?.view else {
             return
@@ -238,7 +243,7 @@ public final class PaymentProcess {
         self.blurView = blurEffectView
     }
 
-    private func hideBlurOverlay() {
+    @MainActor private func hideBlurOverlay() {
         self.blurView?.removeFromSuperview()
         self.blurView = nil
     }
@@ -277,7 +282,7 @@ extension PaymentProcess {
     ///   - detail: the details for that payment method (e.g., the encrypted IBAN for SEPA)
     ///   - completion: a closure called when the payment method has been determined.
     ///   - result: the view controller to present for this payment process or the error
-    public func start(_ rawMethod: RawPaymentMethod, _ detail: PaymentMethodDetail?, completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void) {
+    public func start(_ rawMethod: RawPaymentMethod, _ detail: PaymentMethodDetail?, completion: @escaping @Sendable (_ result: Result<UIViewController, SnabbleError>) -> Void) {
         guard
             let method = PaymentMethod.make(rawMethod, detail),
             method.canStart()
@@ -285,7 +290,9 @@ extension PaymentProcess {
             return completion(Result.failure(.noRequest))
         }
 
-        UIApplication.shared.sceneKeyWindow?.isUserInteractionEnabled = false
+        MainActor.assumeIsolated {
+            UIApplication.shared.sceneKeyWindow?.isUserInteractionEnabled = false
+        }
         self.startBlurOverlayTimer()
 
         let project = shop.project ?? .none
@@ -293,8 +300,10 @@ extension PaymentProcess {
         
         self.signedCheckoutInfo.createCheckoutProcess(project, id: id, paymentMethod: method, timeout: Self.createTimeout) { result in
             self.hudTimer?.invalidate()
-            UIApplication.shared.sceneKeyWindow?.isUserInteractionEnabled = true
-            self.hideBlurOverlay()
+            Task { @MainActor in
+                UIApplication.shared.sceneKeyWindow?.isUserInteractionEnabled = true
+                self.hideBlurOverlay()
+            }
             
             func checkViolation(for process: CheckoutProcess) -> CheckoutInfo.Violation? {
                 
@@ -310,21 +319,25 @@ extension PaymentProcess {
             }
             
             func checkoutProcess(process: CheckoutProcess) {
-                
+
                 if let violation = checkViolation(for: process) {
-                    self.cart.delegate?.shoppingCart(self.cart, violationsDetected: [violation])
+                    Task { @MainActor in
+                        self.cart.delegate?.shoppingCart(self.cart, violationsDetected: [violation])
+                    }
                     return
                 }
-                
-                let checkoutVC = Self.checkoutViewController(for: process,
-                                                             shop: self.shop,
-                                                             cart: self.cart,
-                                                             paymentDelegate: self.paymentDelegate)
-                
-                if let viewController = checkoutVC {
-                    completion(.success(viewController))
-                } else {
-                    self.paymentDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
+
+                Task { @MainActor in
+                    let checkoutVC = Self.checkoutViewController(for: process,
+                                                                 shop: self.shop,
+                                                                 cart: self.cart,
+                                                                 paymentDelegate: self.paymentDelegate)
+
+                    if let viewController = checkoutVC {
+                        completion(.success(viewController))
+                    } else {
+                        self.paymentDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
+                    }
                 }
             }
             
@@ -332,7 +345,9 @@ extension PaymentProcess {
                 if !error.isUrlError(.timedOut) {
                     self.cart.generateNewUUID()
                 }
-                self.startFailed(method, shop: self.shop, error, completion)
+                Task { @MainActor in
+                    self.startFailed(method, shop: self.shop, error, completion)
+                }
             }
                         
             switch result.result {
@@ -348,6 +363,7 @@ extension PaymentProcess {
         }
     }
 
+    @MainActor
     static func checkoutViewController(for process: CheckoutProcess,
                                        shop: Shop,
                                        cart: ShoppingCart,

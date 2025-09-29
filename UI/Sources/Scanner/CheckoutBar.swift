@@ -227,11 +227,13 @@ final class CheckoutBar: UIView {
 
         let project = SnabbleCI.project
         self.shoppingCartDelegate?.checkoutAllowed(project: project, cart: shoppingCart) { start in
-            if start {
-                if self.taxationInfoRequired() {
-                    self.requestTaxationInfo()
-                } else {
-                    self.startCheckout()
+            Task { @MainActor in
+                if start {
+                    if self.taxationInfoRequired() {
+                        self.requestTaxationInfo()
+                    } else {
+                        self.startCheckout()
+                    }
                 }
             }
         }
@@ -267,47 +269,49 @@ final class CheckoutBar: UIView {
         button.isEnabled = false
 
         self.shoppingCart.createCheckoutInfo(SnabbleCI.project, timeout: 10) { result in
-            spinner.stopAnimating()
-            spinner.removeFromSuperview()
-            button.isEnabled = true
-
-            switch result {
-            case .success(let info):
-                // force any required info to be re-requested on the next attempt
-                self.shoppingCart.resetInformationData() // requiredInformationData = []
-
-                let detail = self.methodSelector?.selectedPayment?.detail
-                let cart = self.shoppingCart
-                self.shoppingCartDelegate?.gotoPayment(paymentMethod, detail, info, cart) { didStart in
-                    if !didStart {
-                        self.resumeScanning()
+            Task { @MainActor in
+                spinner.stopAnimating()
+                spinner.removeFromSuperview()
+                button.isEnabled = true
+                
+                switch result {
+                case .success(let info):
+                    // force any required info to be re-requested on the next attempt
+                    self.shoppingCart.resetInformationData() // requiredInformationData = []
+                    
+                    let detail = self.methodSelector?.selectedPayment?.detail
+                    let cart = self.shoppingCart
+                    self.shoppingCartDelegate?.gotoPayment(paymentMethod, detail, info, cart) { didStart in
+                        if !didStart {
+                            self.resumeScanning()
+                        }
                     }
-                }
-            case .failure(let error):
-                let handled = self.shoppingCartDelegate?.handleCheckoutError(error) ?? false
-                if !handled {
-                    if let offendingSkus = error.details?.compactMap({ $0.sku }) {
-                        self.showProductError(offendingSkus)
-                        return
-                    }
-
-                    if paymentMethod.offline {
-                        // if the payment method works offline, ignore the error and continue anyway
-                        let info = SignedCheckoutInfo([paymentMethod])
-                        self.shoppingCartDelegate?.gotoPayment(paymentMethod, nil, info, self.shoppingCart) { _ in }
-                        return
-                    }
-
-                    if case SnabbleError.urlError = error {
-                        self.shoppingCartDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.offlineHint"))
-                        return
-                    }
-
-                    switch error.type {
-                    case .noAvailableMethod:
-                        self.shoppingCartDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.noMethodAvailable"))
-                    default:
-                        self.shoppingCartDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
+                case .failure(let error):
+                    let handled = self.shoppingCartDelegate?.handleCheckoutError(error) ?? false
+                    if !handled {
+                        if let offendingSkus = error.details?.compactMap({ $0.sku }) {
+                            self.showProductError(offendingSkus)
+                            return
+                        }
+                        
+                        if paymentMethod.offline {
+                            // if the payment method works offline, ignore the error and continue anyway
+                            let info = SignedCheckoutInfo([paymentMethod])
+                            self.shoppingCartDelegate?.gotoPayment(paymentMethod, nil, info, self.shoppingCart) { _ in }
+                            return
+                        }
+                        
+                        if case SnabbleError.urlError = error {
+                            self.shoppingCartDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.offlineHint"))
+                            return
+                        }
+                        
+                        switch error.type {
+                        case .noAvailableMethod:
+                            self.shoppingCartDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.noMethodAvailable"))
+                        default:
+                            self.shoppingCartDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
+                        }
                     }
                 }
             }

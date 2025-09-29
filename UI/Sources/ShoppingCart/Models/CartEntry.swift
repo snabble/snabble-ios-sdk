@@ -28,7 +28,7 @@ extension CartEntry: Equatable {
     }
 }
 
-public enum CartEntry: Swift.Identifiable {
+public enum CartEntry: Swift.Identifiable, @unchecked Sendable {
     public var id: String {
         switch self {
         case .cartItem(let cartItem, _):

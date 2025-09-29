@@ -4,6 +4,7 @@
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
+@MainActor
 public protocol AnalyticsDelegate: AnyObject {
     func track(_ event: AnalyticsEvent)
 }

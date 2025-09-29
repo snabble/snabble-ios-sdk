@@ -110,6 +110,7 @@ public struct CouponView: View {
 }
 
 /// A UIViewController wrapping SwiftUI's ShoppingCartView
+@MainActor
 open class CouponViewController: UIHostingController<CouponView> {
     public weak var delegate: CouponViewControllerDelegate?
 

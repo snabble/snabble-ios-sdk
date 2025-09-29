@@ -16,7 +16,7 @@ public extension ShoppingCart {
 }
 
 @Observable
-open class ShoppingCartViewModel: Swift.Identifiable, Equatable {
+open class ShoppingCartViewModel: Swift.Identifiable, Equatable, @unchecked Sendable {
     public let id = UUID()
 
     public static func == (lhs: ShoppingCartViewModel, rhs: ShoppingCartViewModel) -> Bool {

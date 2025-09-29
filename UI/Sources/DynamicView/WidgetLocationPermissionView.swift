@@ -10,6 +10,7 @@ import SwiftUI
 import Combine
 import CoreLocation
 
+@MainActor
 public class LocationPermissionViewModel: NSObject, ObservableObject {
     @Published public private(set) var widget: WidgetButton?
 
@@ -66,7 +67,7 @@ public class LocationPermissionViewModel: NSObject, ObservableObject {
         }
     }
 
-    func openSettings() {
+    @MainActor func openSettings() {
         let application = UIApplication.shared
         if let url = URL(string: UIApplication.openSettingsURLString), application.canOpenURL(url) {
             application.open(url)
@@ -75,9 +76,12 @@ public class LocationPermissionViewModel: NSObject, ObservableObject {
 }
 
 extension LocationPermissionViewModel: CLLocationManagerDelegate {
-    public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        update(with: status)
-        update(with: manager.accuracyAuthorization)
+    nonisolated public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        let accuracyAuthorization = manager.accuracyAuthorization
+        Task { @MainActor in
+            update(with: status)
+            update(with: accuracyAuthorization)
+        }
     }
 }
 

@@ -11,7 +11,7 @@ import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleUI
 
-public enum ScannerLookup {
+public enum ScannerLookup: Sendable {
     case product(ScannedProduct)
     case coupon(Coupon, String)
     case voucher(Voucher)
@@ -62,62 +62,64 @@ extension BarcodeManager {
         self.processingDelegate?.processing = true
         
         self.lookupCode(scannedCode, withFormat: format, withTemplate: template) { scannedResult in
-            
-            self.processingDelegate?.processing = false
-            let scannedProduct: ScannedProduct
-            switch scannedResult {
-            case .failure(let error):
-                self.logger.debug("got error for code: \(scannedCode) -> \(error.localizedDescription)")
-                self.showScanLookupError(error, forCode: scannedCode)
-                return
+            Task { @MainActor in
+                self.processingDelegate?.processing = false
+
+                let scannedProduct: ScannedProduct
+                switch scannedResult {
+                case .failure(let error):
+                    self.logger.debug("got error for code: \(scannedCode) -> \(error.localizedDescription)")
+                    self.showScanLookupError(error, forCode: scannedCode)
+                    return
                 
-            case .product(let product):
-                self.logger.debug("got product: \(product.product.name)")
-                scannedProduct = product
-                
-            case .coupon(let coupon, let scannedCode):
-                self.logger.debug("got coupon: \(coupon.name)")
-                self.shoppingCart.addCoupon(coupon, scannedCode: scannedCode)
-                NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
-                let msg = Asset.localizedString(forKey: "Snabble.Scanner.couponAdded", arguments: coupon.name)
-                self.processingDelegate?.scanMessage = ScanMessage(msg)
-                return
-                
-            case .voucher(let voucher):
-                self.logger.debug("got voucher: \(voucher.scannedCode)")
-                self.shoppingCart.addVoucher(voucher)
-                NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
+                case .product(let product):
+                    self.logger.debug("got product: \(product.product.name)")
+                    scannedProduct = product
+
+                case .coupon(let coupon, let scannedCode):
+                    self.logger.debug("got coupon: \(coupon.name)")
+                    self.shoppingCart.addCoupon(coupon, scannedCode: scannedCode)
+                    NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
+                    let msg = Asset.localizedString(forKey: "Snabble.Scanner.couponAdded", arguments: coupon.name)
+                    self.processingDelegate?.scanMessage = ScanMessage(msg)
+                    return
+
+                case .voucher(let voucher):
+                    self.logger.debug("got voucher: \(voucher.scannedCode)")
+                    self.shoppingCart.addVoucher(voucher)
+                    NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
+                    self.tapticFeedback.notificationOccurred(.success)
+                    let msg = Asset.localizedString(forKey: "Snabble.Scanner.DepositReturnVoucher.Added")
+                    self.processingDelegate?.scanMessage = ScanMessage(msg)
+                    return
+                }
+
+                let product = scannedProduct.product
+                let embeddedData = scannedProduct.embeddedData
+
+                // check for sale stop / notForSale
+                if self.isSaleProhibited(of: product, scannedCode: scannedCode) {
+                    return
+                }
+
+                // handle scanning the shelf code of a pre-weighed product (no data or 0 encoded in the EAN)
+                if product.type == .preWeighed && (embeddedData == nil || embeddedData == 0) {
+                    let msg = Asset.localizedString(forKey: "Snabble.Scanner.scannedShelfCode")
+                    self.scannedUnknown(messageText: msg, code: scannedCode)
+                    return
+                }
+
                 self.tapticFeedback.notificationOccurred(.success)
-                let msg = Asset.localizedString(forKey: "Snabble.Scanner.DepositReturnVoucher.Added")
-                self.processingDelegate?.scanMessage = ScanMessage(msg)
-                return
-            }
-            
-            let product = scannedProduct.product
-            let embeddedData = scannedProduct.embeddedData
-            
-            // check for sale stop / notForSale
-            if self.isSaleProhibited(of: product, scannedCode: scannedCode) {
-                return
-            }
-            
-            // handle scanning the shelf code of a pre-weighed product (no data or 0 encoded in the EAN)
-            if product.type == .preWeighed && (embeddedData == nil || embeddedData == 0) {
-                let msg = Asset.localizedString(forKey: "Snabble.Scanner.scannedShelfCode")
-                self.scannedUnknown(messageText: msg, code: scannedCode)
-                return
-            }
-            
-            self.tapticFeedback.notificationOccurred(.success)
-            
-            self.processingDelegate?.track(.scanProduct(scannedProduct.transmissionCode ?? scannedCode))
-            
-            let item = ScannedItem(scannedProduct: scannedProduct, code: scannedCode, type: product.type)
-            self.processingDelegate?.scannedItem = item
-            self.logger.debug("scannedItem: \(item)")
-            
-            if !product.bundles.isEmpty || scannedProduct.priceOverride == nil {
-                self.collectBundles(for: item)
+
+                self.processingDelegate?.track(.scanProduct(scannedProduct.transmissionCode ?? scannedCode))
+
+                let item = ScannedItem(scannedProduct: scannedProduct, code: scannedCode, type: product.type)
+                self.processingDelegate?.scannedItem = item
+                self.logger.debug("scannedItem: \(item)")
+
+                if !product.bundles.isEmpty || scannedProduct.priceOverride == nil {
+                    self.collectBundles(for: item)
+                }
             }
         }
     }
@@ -186,7 +188,7 @@ extension BarcodeManager {
     private func lookupCode(_ code: String,
                             withFormat format: ScanFormat?,
                             withTemplate template: String?,
-                            completion: @escaping (ScannerLookup) -> Void ) {
+                            completion: @escaping @Sendable (ScannerLookup) -> Void ) {
         // if we were given a template from the barcode entry, use that to lookup the product directly
         if let template = template {
             return self.lookupProduct(for: code, withTemplate: template, priceOverride: nil, completion: completion)
@@ -257,24 +259,26 @@ extension BarcodeManager {
                 
                 completion(.product(newResult))
             case .failure(let error):
-                if error == .notFound {
-                    if let gs1 = self.checkValidGS1(for: code) {
-                        return self.productForGS1(gs1: gs1, originalCode: code, completion: completion)
+                Task { @MainActor in
+                    if error == .notFound {
+                        if let gs1 = self.checkValidGS1(for: code) {
+                            return self.productForGS1(gs1: gs1, originalCode: code, completion: completion)
+                        }
+
+                        // is this a valid coupon?
+                        if let coupon = self.checkValidCoupon(for: code) {
+                            return completion(.coupon(coupon, code))
+                        }
+
+                        if let voucher = self.checkValidVoucher(for: code) {
+                            return completion(.voucher(voucher))
+                        }
+                        return completion(.failure(.notFound))
+                    } else {
+                        let event = AppEvent(scannedCode: code, codes: codes, project: project)
+                        event.post()
+                        completion(.failure(error))
                     }
-                    
-                    // is this a valid coupon?
-                    if let coupon = self.checkValidCoupon(for: code) {
-                        return completion(.coupon(coupon, code))
-                    }
-                    
-                    if let voucher = self.checkValidVoucher(for: code) {
-                        return completion(.voucher(voucher))
-                    }
-                    return completion(.failure(.notFound))
-                } else {
-                    let event = AppEvent(scannedCode: code, codes: codes, project: project)
-                    event.post()
-                    completion(.failure(error))
                 }
             }
         }
@@ -322,7 +326,7 @@ extension BarcodeManager {
     
     private func productForGS1(gs1: GS1Code,
                                originalCode: String,
-                               completion: @escaping (ScannerLookup) -> Void ) {
+                               completion: @escaping @Sendable (ScannerLookup) -> Void ) {
         guard let gtin = gs1.gtin else {
             return completion(.failure(.notFound))
         }
@@ -352,7 +356,7 @@ extension BarcodeManager {
         }
     }
     
-    private func productForOverrideCode(for match: OverrideLookup, completion: @escaping (ScannerLookup) -> Void ) {
+    private func productForOverrideCode(for match: OverrideLookup, completion: @escaping @Sendable (ScannerLookup) -> Void ) {
         let code = match.lookupCode
         
         if let template = match.lookupTemplate {
@@ -385,7 +389,7 @@ extension BarcodeManager {
         }
     }
     
-    private func lookupProduct(for code: String, withTemplate template: String, priceOverride: Int?, completion: @escaping (ScannerLookup) -> Void ) {
+    private func lookupProduct(for code: String, withTemplate template: String, priceOverride: Int?, completion: @escaping @Sendable (ScannerLookup) -> Void ) {
         let codes = [(code, template)]
         self.productProvider.productBy(codes: codes, shopId: self.shop.id) { result in
             switch result {

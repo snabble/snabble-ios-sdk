@@ -81,6 +81,7 @@ public extension UserDefaults {
 }
 
 public extension DeveloperMode {
+    @MainActor
     static func toggle() {
         if Self.isEnabled == false {
             ask()
@@ -90,6 +91,7 @@ public extension DeveloperMode {
         }
     }
     
+    @MainActor
     static private func ask() {
         guard Self.isEnabled == false else {
             return
@@ -129,6 +131,7 @@ public extension DeveloperMode {
         return Self.isEnabled || BuildConfig.debug
     }
 
+    @MainActor
     static func toggleCheckIn(for shop: ShopProviding) {
         guard showCheckIn else {
             return
@@ -184,6 +187,7 @@ public extension DeveloperMode {
 
 public extension DeveloperMode {
     
+    @MainActor
     static func resetAppId(viewController: DynamicViewController) {
         let alert = UIAlertController(title: "Create new app user id?", message: "You will irrevocably lose all previous orders.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .destructive) { _ in
@@ -193,6 +197,7 @@ public extension DeveloperMode {
         viewController.present(alert, animated: true)
     }
     
+    @MainActor
     static func resetClientId(viewController: DynamicViewController) {
         let alert = UIAlertController(title: "Create new client id?", message: "You will irrevocably lose all previous orders.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .destructive) { _ in
@@ -206,6 +211,7 @@ public extension DeveloperMode {
         viewController.present(alert, animated: true)
     }
     
+    @MainActor
     static func switchEnvironment(environment: Snabble.Environment, model: MultiValueViewModel, viewController: DynamicViewController) {
         
         if Snabble.shared.environment != environment {

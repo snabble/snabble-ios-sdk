@@ -224,17 +224,19 @@ public final class GiropayEditViewController: UIViewController {
             }
 
             project.perform(request) { (result: Result<GiropayAuthorizationResult, SnabbleError>) in
-                switch result {
-                case .success(let authResult):
-                    guard let webUrl = URL(string: authResult.links.web.href) else {
-                        return
+                Task { @MainActor in
+                    switch result {
+                    case .success(let authResult):
+                        guard let webUrl = URL(string: authResult.links.web.href) else {
+                            return
+                        }
+                        
+                        self.webView?.load(URLRequest(url: webUrl))
+                        self.clientAuthorization = authResult.links._self.href
+                    case .failure(let error):
+                        self.errorView?.isHidden = false
+                        print(error)
                     }
-
-                    self.webView?.load(URLRequest(url: webUrl))
-                    self.clientAuthorization = authResult.links._self.href
-                case .failure(let error):
-                    self.errorView?.isHidden = false
-                    print(error)
                 }
             }
         }
@@ -246,7 +248,7 @@ public final class GiropayEditViewController: UIViewController {
         self.analyticsDelegate?.track(.viewPaymentMethodDetail)
     }
 
-    @objc private func openButtonTapped(_ sender: Any) {
+    @MainActor @objc private func openButtonTapped(_ sender: Any) {
         UIApplication.shared.open(URL(string: "https://www.giropay.de")!)
     }
 
@@ -299,7 +301,9 @@ extension GiropayEditViewController: WKNavigationDelegate {
         print("navigation action: \(navigationAction)")
 
         if navigationAction.navigationType == .linkActivated, let url = navigationAction.request.url {
-            UIApplication.shared.open(url)
+            Task { @MainActor in
+                UIApplication.shared.open(url)
+            }
             decisionHandler(.cancel)
             return
         }

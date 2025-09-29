@@ -5,7 +5,7 @@
 //
 
 /// Link
-public struct Link: Codable, Hashable {
+public struct Link: Codable, Hashable, Sendable {
     public let href: String
 
     /// empty instance, used for the default init of `MetadataLinks`

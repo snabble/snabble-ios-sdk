@@ -80,7 +80,7 @@ struct ActionItem: Swift.Identifiable, Equatable {
 /// throughout the application. It publishes action states and provides a mechanism for views to observe and respond to these
 /// states.
 @Observable
-public final class ActionManager {
+public final class ActionManager: @unchecked Sendable {
     public static let shared = ActionManager()
     
     let logger = Logger(subsystem: "io.snabble.sdk.ScanAndGo", category: "ActionManager")

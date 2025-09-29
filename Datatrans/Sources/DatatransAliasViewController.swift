@@ -341,7 +341,7 @@ extension DatatransAliasViewController {
         let isTesting: Bool?
     }
 
-    private func fetchToken(_ projectId: Identifier<Project>, _ method: RawPaymentMethod, completion: @escaping (TokenResponse?) -> Void) {
+    private func fetchToken(_ projectId: Identifier<Project>, _ method: RawPaymentMethod, completion: @escaping @Sendable (TokenResponse?) -> Void) {
         guard
             let project = Snabble.shared.project(for: projectId),
             let descriptor = project.paymentMethodDescriptors.first(where: { $0.id == method }),

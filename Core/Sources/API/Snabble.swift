@@ -10,7 +10,7 @@ import SnabbleUser
 import SnabbleNetwork
 import Combine
 
-public var globalButterOverflow: String?
+nonisolated(unsafe) public var globalButterOverflow: String?
 
 public enum CustomProperty: Hashable {
     case externalBillingSubjectLimit(projectId: String)
@@ -77,7 +77,7 @@ extension Config: SnabbleUser.Configurable, SnabbleNetwork.Configurable {
 }
 
 public extension Notification.Name {
-    static var metadataLoaded = Notification.Name(rawValue: "io.snabble.metadataLoaded")
+    nonisolated(unsafe) static var metadataLoaded = Notification.Name(rawValue: "io.snabble.metadataLoaded")
 }
 
 /**
@@ -85,7 +85,7 @@ public extension Notification.Name {
  *
  * Use `Snabble.setup(config:, completion:)` to initialize Snabble.
  */
-public class Snabble {
+public class Snabble: @unchecked Sendable {
 
     private init(config: Config, tokenRegistry: TokenRegistry) {
         self.config = config
@@ -153,7 +153,7 @@ public class Snabble {
     }
 
     /// Snabble instance is accessible after calling `Snabble.setup(config:, completion:)`
-    public private(set) static var shared: Snabble!
+    nonisolated(unsafe) public private(set) static var shared: Snabble!
 
     /// Geo-fencing based check in manager. Use for automatically detecting if you are in a shop.
     public lazy var checkInManager = CheckInManager()
@@ -245,7 +245,7 @@ public class Snabble {
     /// - Parameters:
     ///   - config: `SnabbleAPIConfig` with at least an `appId` and a `secret`
     ///   - completion: CompletionHandler is called as soon as everything is finished
-    public static func setup(config: Config, completion: @escaping (Snabble) -> Void) {
+    public static func setup(config: Config, completion: @escaping @Sendable (Snabble) -> Void) {
         shared = Snabble(
             config: config,
             tokenRegistry: TokenRegistry(appId: config.appId, secret: config.secret)
@@ -255,7 +255,7 @@ public class Snabble {
     
     /// update Snabble
     /// - Parameter completion: completionHandler informs about the status
-    public func update(completion: @escaping (Snabble) -> Void) {
+    public func update(completion: @escaping @Sendable (Snabble) -> Void) {
         let bundleVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0"
         let appVersion = config.appVersion ?? bundleVersion
         let version = appVersion.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? appVersion
@@ -266,7 +266,7 @@ public class Snabble {
                 self.metadata = metadata
             }
 
-            let metadataLoaded = {
+            let metadataLoaded: @Sendable () -> Void = {
                 if self.config.loadActiveShops {
                     self.loadActiveShops()
                 }
@@ -309,7 +309,7 @@ public class Snabble {
         }
     }
 
-    private func loadCoupons(_ completion: @escaping () -> Void) {
+    private func loadCoupons(_ completion: @escaping @Sendable () -> Void) {
         // reload coupons from `coupons` endpoint where present
         let group = DispatchGroup()
 
@@ -344,7 +344,7 @@ public class Snabble {
     
     /// Set up database for project
     /// - Parameter project: `Project` associated to setup the product database
-    public func setupProductDatabase(for project: Project, completion: @escaping (ProductStoreAvailability) -> Void) {
+    public func setupProductDatabase(for project: Project, completion: @escaping @Sendable (ProductStoreAvailability) -> Void) {
         productDatabase(for: project).setup(completion: completion)
     }
     
@@ -498,7 +498,8 @@ extension Snabble {
         var machine = [CChar](repeating: 0, count: size)
         sysctlbyname("hw.machine", &machine, &size, nil, 0)
         
-        return String(cString: machine)
+        let bytes = machine.prefix { $0 != 0 }.map { UInt8($0) }
+        return String(bytes: bytes, encoding: .utf8) ?? "unknown"
     }()
 
     /// HTTP headerFields using user agent keys defined in https://wicg.github.io/ua-client-hints/
@@ -589,8 +590,8 @@ extension Snabble {
         }
     }
 
-    private(set) static var appUserData: AppUserData?
-    private static weak var appUserDataTask: URLSessionDataTask?
+    nonisolated(unsafe) private(set) static var appUserData: AppUserData?
+    nonisolated(unsafe) private static weak var appUserDataTask: URLSessionDataTask?
 
     public static var userAge: Int {
         return appUserData?.age ?? 0
@@ -622,13 +623,13 @@ extension Snabble {
         }
     }
 
-    private struct TermsVersion: Encodable {
+    private struct TermsVersion: Encodable, Sendable {
         let version: String
     }
 
-    private struct TermsResponse: Decodable {}
+    private struct TermsResponse: Decodable, Sendable {}
 
-    public func saveTermsConsent(_ version: String, completion: @escaping (Bool) -> Void) {
+    public func saveTermsConsent(_ version: String, completion: @escaping @Sendable (Bool) -> Void) {
         guard
             let appUserId = appUser?.id,
             let consents = links.consents?.href,

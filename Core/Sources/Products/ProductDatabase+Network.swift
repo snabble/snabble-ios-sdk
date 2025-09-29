@@ -20,12 +20,12 @@ extension ProductDatabase {
     fileprivate static let sqliteType = "application/vnd+snabble.appdb+sqlite3"
     private static let contentTypes = "\(sqlType),\(sqliteType)"
 
-    private func appDbSession(_ completion: @escaping (AppDbResponse) -> Void) -> URLSession {
+    private func appDbSession(_ completion: @escaping @Sendable (AppDbResponse) -> Void) -> URLSession {
         let delegate = AppDBDownloadDelegate(self, completion)
         return URLSession(configuration: .default, delegate: delegate, delegateQueue: nil)
     }
 
-    func getAppDb(currentRevision: Int64, schemaVersion: String, forceFullDb: Bool = false, completion: @escaping (AppDbResponse) -> Void ) {
+    func getAppDb(currentRevision: Int64, schemaVersion: String, forceFullDb: Bool = false, completion: @escaping @Sendable (AppDbResponse) -> Void ) {
         let parameters = [
             "havingRevision": "\(currentRevision)",
             "schemaVersion": schemaVersion
@@ -50,7 +50,7 @@ extension ProductDatabase {
         }
     }
 
-    func resumeAppDbDownload(_ completion: @escaping (AppDbResponse) -> Void ) {
+    func resumeAppDbDownload(_ completion: @escaping @Sendable (AppDbResponse) -> Void ) {
         guard let resumeData = self.resumeData else {
             return
         }
@@ -69,8 +69,8 @@ extension ProductDatabase {
 
 }
 
-final class AppDBDownloadDelegate: NSObject, URLSessionDownloadDelegate {
-    private var completion: (AppDbResponse) -> Void
+final class AppDBDownloadDelegate: NSObject, URLSessionDownloadDelegate, @unchecked Sendable {
+    private let completion: @Sendable (AppDbResponse) -> Void
     private var response: URLResponse?
     private weak var productDb: ProductDatabase?
     private let start = Date.timeIntervalSinceReferenceDate
@@ -79,7 +79,7 @@ final class AppDBDownloadDelegate: NSObject, URLSessionDownloadDelegate {
 
     private var tmpFile: URL?
 
-    init(_ productDb: ProductDatabase, _ completion: @escaping (AppDbResponse) -> Void) {
+    init(_ productDb: ProductDatabase, _ completion: @escaping @Sendable (AppDbResponse) -> Void) {
         self.productDb = productDb
         self.completion = completion
     }

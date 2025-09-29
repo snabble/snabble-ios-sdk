@@ -50,6 +50,7 @@ final class CheckoutModel {
         return step == last
     }
     
+    @MainActor
     func done() {
         Snabble.shared.fetchAppUserData(self.stepsModel.shop.projectId)
         updateShoppingCart(for: self.stepsModel.checkoutProcess)
@@ -263,7 +264,7 @@ final class CheckoutStepsViewController: UIHostingController<CheckoutView> {
     }
 }
 
-extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
+extension CheckoutStepsViewController: @preconcurrency CheckoutStepsViewModelDelegate {
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateCheckoutProcess checkoutProcess: CheckoutProcess) {
         self.model.isComplete = checkoutProcess.isComplete
         
@@ -291,7 +292,7 @@ extension CheckoutStepsViewController: CheckoutStepsViewModelDelegate {
     }
 }
 
-extension CheckoutStepsViewController: SepaEditViewControllerDelegate {
+extension CheckoutStepsViewController: @preconcurrency SepaEditViewControllerDelegate {
     func sepaEditViewControllerDidSave(iban: String) {
         viewModel.savedIbans.insert(iban)
         viewModel.update()

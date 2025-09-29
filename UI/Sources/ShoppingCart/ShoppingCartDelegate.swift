@@ -7,12 +7,13 @@
 import SnabbleCore
 
 /// a protocol that users of `ShoppingCartViewController` must implement
+@MainActor
 public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
     /// called to determine if starting the checkout process is allowed/possible,
     /// e.g. after asking the user's confirmation
     /// it is this method's responsibility to display corresponding error messages
     /// calls the `completion` to indicate whether the checkout process should start
-    func checkoutAllowed(project: Project, cart: ShoppingCart, completion: @escaping (Bool) -> Void)
+    func checkoutAllowed(project: Project, cart: ShoppingCart, completion: @escaping @Sendable (Bool) -> Void)
 
     /// called when the user wants to initiate payment.
     /// Implementations should usually create a `PaymentProcess` instance and invoke its `start` method
@@ -33,7 +34,7 @@ public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
 }
 
 extension ShoppingCartDelegate {
-    public func checkoutAllowed(project: Project, cart: ShoppingCart, completion: @escaping (Bool) -> Void) {
+    public func checkoutAllowed(project: Project, cart: ShoppingCart, completion: @escaping @Sendable (Bool) -> Void) {
         completion(true)
     }
 

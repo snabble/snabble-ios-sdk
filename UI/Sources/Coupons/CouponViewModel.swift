@@ -12,11 +12,12 @@ import SwiftUI
 import Observation
 import SnabbleAssetProviding
 
+@MainActor
 protocol CouponViewModelDelegate: AnyObject {
     func couponViewModel(_ couponViewModel: CouponViewModel, shouldActivateCoupon coupon: Coupon) -> Bool
 }
 
-@Observable
+@Observable @MainActor
 public class CouponViewModel {
     let coupon: Coupon
 
@@ -74,21 +75,22 @@ public class CouponViewModel {
     }
 
     @discardableResult
-    func loadImage(completion: ((UIImage?) -> Void)? = nil) -> URLSessionDataTask? {
+    func loadImage(completion: (@Sendable (UIImage?) -> Void)? = nil) -> URLSessionDataTask? {
         guard let imageUrl = coupon.imageURL else {
             completion?(nil)
             return nil
         }
         imageTask?.cancel()
         imageTask = URLSession.shared.dataTask(with: imageUrl) { [weak self] data, _, _ in
-            DispatchQueue.main.async {
+            Task { @MainActor [weak self] in
                 guard let data = data else {
-                    return completion?(nil) ?? ()
+                    completion?(nil)
+                    return
                 }
 
                 let image = UIImage(data: data)
                 self?.image = image
-                
+
                 completion?(image)
             }
         }
@@ -102,19 +104,19 @@ extension CouponViewModel {
         Asset.localizedString(forKey: coupon.isActivated ? "Snabble.Coupon.deactivate" : "Snabble.Coupon.activate")
     }
 
-    @objc
+    @MainActor @objc
     func activateCoupon() {
         if delegate?.couponViewModel(self, shouldActivateCoupon: coupon) ?? true {
             Snabble.shared.couponManager.activate(coupon: coupon)
         }
     }
 
-    @objc
+    @MainActor @objc
     func deactivateCoupon() {
         Snabble.shared.couponManager.deactivate(coupon: coupon)
     }
 
-    @objc
+    @MainActor @objc
     func toggleActivation() {
         if coupon.isActivated {
             deactivateCoupon()

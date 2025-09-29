@@ -16,7 +16,7 @@ public protocol NetworkManagerDelegate: AnyObject {
     func networkManager(_ networkManager: NetworkManager, projectIdForConfiguration configuration: Configuration) -> String?
 }
 
-@Observable public class NetworkManager {
+@Observable public class NetworkManager: @unchecked Sendable {
     public let configuration: Configuration
     private let authenticator: Authenticator
     public weak var delegate: NetworkManagerDelegate?

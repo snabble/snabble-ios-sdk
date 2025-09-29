@@ -13,7 +13,7 @@ extension Snabble {
     /// and verifies the CAs
     ///
     /// - Returns: a URLSession object
-    public static var urlSession: URLSession = {
+    nonisolated(unsafe) public static var urlSession: URLSession = {
         let sessionConfiguration = URLSessionConfiguration.default
         sessionConfiguration.httpCookieStorage = nil
         return URLSession(configuration: sessionConfiguration)

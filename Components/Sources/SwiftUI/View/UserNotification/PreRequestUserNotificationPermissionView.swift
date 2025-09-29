@@ -135,7 +135,7 @@ extension View {
         isAllowedToBePresented: Binding<Bool>,
         notificationCenter: UNUserNotificationCenter = .current(),
         options: UNAuthorizationOptions = [.alert, .badge, .sound],
-        completion: @escaping (_ isAuthorized: Bool?) -> Void) -> some View {
+        completion: @escaping @Sendable (_ isAuthorized: Bool?) -> Void) -> some View {
         modifier(UserNotificationDialogViewModifier(
             isAllowedToBePresented: isAllowedToBePresented,
             notificationCenter: notificationCenter,

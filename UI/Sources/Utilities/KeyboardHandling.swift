@@ -32,6 +32,7 @@ public struct KeyboardInfo {
     }
 }
 
+@MainActor
 public protocol KeyboardHandling: AnyObject {
     func keyboardWillShow(_ info: KeyboardInfo)
 
@@ -50,7 +51,7 @@ public final class KeyboardObserver: NSObject {
         nc.addObserver(self, selector: #selector(self.keyboardWillHide(_:)), name: UIResponder.keyboardWillHideNotification, object: nil)
     }
 
-    @objc private func keyboardWillShow(_ notification: Notification) {
+    @MainActor @objc private func keyboardWillShow(_ notification: Notification) {
         guard let info = KeyboardInfo(notification: notification) else {
             return
         }
@@ -58,7 +59,7 @@ public final class KeyboardObserver: NSObject {
         self.handler?.keyboardWillShow(info)
     }
 
-    @objc private func keyboardWillHide(_ notification: Notification) {
+    @MainActor @objc private func keyboardWillHide(_ notification: Notification) {
         guard let info = KeyboardInfo(notification: notification) else {
             return
         }

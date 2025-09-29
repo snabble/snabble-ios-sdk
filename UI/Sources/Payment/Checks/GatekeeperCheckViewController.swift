@@ -16,10 +16,11 @@ public protocol GatekeeperProviding: AnyObject {
     func gatekeeper(viewModel: GatekeeperViewModel, domain: Any?) -> UIViewController?
 }
 
+@MainActor
 public enum Gatekeeper {
     /// Reference to the implementation of the `GatekeeperProviding` implementation
     public static weak var provider: GatekeeperProviding?
- 
+
     /// Reference to the current domain
     public static var domain: Any?
     

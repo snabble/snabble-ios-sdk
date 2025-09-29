@@ -332,8 +332,8 @@ public struct UserInputView: View {
                         city: String,
                         country: String,
                         state: String) {
-        Task {
-            
+        Task { @MainActor in
+
             let details = User.Details(
                 firstName: firstName,
                 lastName: lastName,
@@ -347,10 +347,8 @@ public struct UserInputView: View {
             let endpoint = Endpoints.User.update(details: details)
             do {
                 isLoading = true
-                try await networkManager.publisher(for: endpoint)
-                await MainActor.run {
-                    onCompletion(details)
-                }
+                try await self.networkManager.publisher(for: endpoint)
+                onCompletion(details)
             } catch {
                 errorMessage = error.localizedDescription
             }

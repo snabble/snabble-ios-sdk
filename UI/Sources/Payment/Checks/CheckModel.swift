@@ -10,16 +10,19 @@ import SnabbleCore
 import Combine
 import SnabbleAssetProviding
 
+@MainActor
 public protocol CheckViewModel {
     var checkModel: CheckModel { get }
     var codeImage: UIImage? { get }
     var headerImage: UIImage? { get set }
 }
 
+@MainActor
 public protocol CheckViewModelProviding {
     var viewModel: CheckViewModel? { get }
 }
 
+@MainActor
 public protocol CheckoutProcessing {
     var checkoutProcess: CheckoutProcess { get }
     var shoppingCart: ShoppingCart { get }
@@ -27,13 +30,14 @@ public protocol CheckoutProcessing {
     var paymentDelegate: PaymentDelegate? { get }
 }
 
+@MainActor
 public protocol CheckModelDelegate: AnyObject {
     func checkoutRejected(process: CheckoutProcess)
     func checkoutFinalized(process: CheckoutProcess)
     func checkoutAborted(process: CheckoutProcess)
 }
 
-public final class CheckModel: CheckoutProcessing, CheckModelDelegate {
+public final class CheckModel: CheckoutProcessing, CheckModelDelegate, @unchecked Sendable {
     
     public private(set) var checkoutProcess: CheckoutProcess
     public let shoppingCart: ShoppingCart
@@ -62,10 +66,20 @@ public final class CheckModel: CheckoutProcessing, CheckModelDelegate {
     private func startTimer() {
         self.processTimer?.invalidate()
         self.processTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { _ in
-            let project = SnabbleCI.project
-            self.checkoutProcess.update(project,
-                                        taskCreated: { self.sessionTask = $0 },
-                                        completion: { self.update($0) })
+            Task { @MainActor in
+                let project = SnabbleCI.project
+                self.checkoutProcess.update(project,
+                                            taskCreated: { task in
+                                                Task { @MainActor in
+                                                    self.sessionTask = task
+                                                }
+                                            },
+                                            completion: { result in
+                                                Task { @MainActor in
+                                                    self.update(result)
+                                                }
+                                            })
+            }
         }
     }
     
@@ -131,16 +145,18 @@ public final class CheckModel: CheckoutProcessing, CheckModelDelegate {
         self.stopTimer()
 
         self.checkoutProcess.abort(SnabbleCI.project) { result in
-            switch result {
-            case .success(let process):
-                self.checkoutAborted(process: process)
-            case .failure:
-                let alertView = AlertView(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
-                                          message: Asset.localizedString(forKey: "Snabble.Payment.CancelError.message"))
-                alertView.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { _ in
-                    self.startTimer()
-                })
-                alertView.show()
+            Task { @MainActor in
+                switch result {
+                case .success(let process):
+                    self.checkoutAborted(process: process)
+                case .failure:
+                    let alertView = AlertView(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
+                                              message: Asset.localizedString(forKey: "Snabble.Payment.CancelError.message"))
+                    alertView.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { _ in
+                        self.startTimer()
+                    })
+                    alertView.show()
+                }
             }
         }
     }
@@ -174,13 +190,22 @@ extension CheckModel {
     }
     
     func assetPublisher() -> AnyPublisher<UIImage?, Never> {
-        Future<UIImage?, Never> { promise in
-            let asset = self.asset
-            
-            SnabbleCI.getAsset(asset.imageAsset, bundlePath: asset.bundlePath) { img in
-                promise(.success(img))
+        let asset = self.asset
+
+        return Future<UIImage?, Never> { promise in
+            Task {
+                let image = await self.getAsset(asset)
+                promise(.success(image))
             }
         }
         .eraseToAnyPublisher()
+    }
+
+    private func getAsset(_ asset: (imageAsset: ImageAsset, bundlePath: String)) async -> UIImage? {
+        await withCheckedContinuation { continuation in
+            SnabbleCI.getAsset(asset.imageAsset, bundlePath: asset.bundlePath) { img in
+                continuation.resume(returning: img)
+            }
+        }
     }
 }

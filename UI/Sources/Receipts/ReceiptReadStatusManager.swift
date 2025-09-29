@@ -11,7 +11,7 @@ import SnabbleCore
 
 /// Manager for persistent storage of the "read" status of receipts
 @Observable
-public final class ReceiptReadStatusManager {
+public final class ReceiptReadStatusManager: @unchecked Sendable {
     public static let shared = ReceiptReadStatusManager()
     
     private let userDefaults: UserDefaults

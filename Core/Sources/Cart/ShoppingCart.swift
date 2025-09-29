@@ -7,13 +7,14 @@
 import Foundation
 import Combine
 
+@MainActor
 public protocol InternalShoppingCartDelegate: AnyObject {
     func shoppingCart(_ shoppingCart: ShoppingCart, didChangeCustomerCard customerCard: String?)
     func shoppingCart(_ shoppingCart: ShoppingCart, violationsDetected violations: [CheckoutInfo.Violation])
 }
 
 /// a ShoppingCart is a collection of CartItem objects
-public final class ShoppingCart: Codable, PaymentConsumer {
+public final class ShoppingCart: Codable, PaymentConsumer, @unchecked Sendable {
 
 //    public let cartDidChange = PassthroughSubject<Void, Never>()
 
@@ -60,7 +61,9 @@ public final class ShoppingCart: Codable, PaymentConsumer {
     public var customerCard: String? {
         didSet {
             self.updateProducts(self.customerCard)
-            delegate?.shoppingCart(self, didChangeCustomerCard: customerCard)
+            Task { @MainActor in
+                delegate?.shoppingCart(self, didChangeCustomerCard: customerCard)
+            }
         }
     }
 
@@ -625,7 +628,7 @@ extension ShoppingCart {
         return Cart(self, clientId: Snabble.clientId, appUserId: Snabble.shared.appUser?.id)
     }
 
-    func createCheckoutInfo(userInitiated: Bool = false, completion: @escaping (Bool) -> Void) {
+    func createCheckoutInfo(userInitiated: Bool = false, completion: @escaping @Sendable (Bool) -> Void) {
         guard
             let project = Snabble.shared.project(for: self.projectId),
             self.numberOfItems > 0
@@ -653,7 +656,9 @@ extension ShoppingCart {
                         message: error.details?.first?.message ?? "invalid cart item",
                         refersToItems: error.details?.compactMap(\.id)
                     )
-                    delegate?.shoppingCart(self, violationsDetected: [violation])
+                    Task { @MainActor in
+                        delegate?.shoppingCart(self, violationsDetected: [violation])
+                    }
                 }
                 completion(false)
             case .success(let info):
@@ -672,7 +677,9 @@ extension ShoppingCart {
                         .forEach {
                             remove(with: $0)
                     }
-                    delegate?.shoppingCart(self, violationsDetected: violations)
+                    Task { @MainActor in
+                        delegate?.shoppingCart(self, violationsDetected: violations)
+                    }
                 }
                 self.lastCheckoutInfoError = nil
                 self.save(postEvent: false)

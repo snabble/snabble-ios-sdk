@@ -24,7 +24,7 @@ public enum Endpoints {
     }
 }
 
-public struct Endpoint<Response> {
+public struct Endpoint<Response: Sendable> {
     public let method: HTTPMethod
     public let path: String
 

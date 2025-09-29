@@ -7,7 +7,7 @@
 import Foundation
 
 /// Signed Checkout Info
-public struct SignedCheckoutInfo: Decodable {
+public struct SignedCheckoutInfo: Decodable, Sendable {
     public let checkoutInfo: CheckoutInfo
     public let signature: String
     public let links: CheckoutLinks
@@ -18,7 +18,7 @@ public struct SignedCheckoutInfo: Decodable {
         case links
     }
 
-    public struct CheckoutLinks: Decodable {
+    public struct CheckoutLinks: Decodable, Sendable {
         public let checkoutProcess: Link
 
         fileprivate init() {
@@ -27,7 +27,7 @@ public struct SignedCheckoutInfo: Decodable {
     }
 
     // not part of the Snabble API, only used internally
-    var rawJson: [String: Any]?
+    nonisolated(unsafe) var rawJson: [String: Any]?
 
     // only used for the embedded codes offline payment
     public init(_ paymentMethods: [RawPaymentMethod]) {
@@ -37,7 +37,7 @@ public struct SignedCheckoutInfo: Decodable {
     }
 }
 
-public enum AcceptedOriginType: String, Codable {
+public enum AcceptedOriginType: String, Codable, Sendable {
     case iban
     case ipgHostedDataID
     case tegutEmployeeID
@@ -49,7 +49,7 @@ public enum AcceptedOriginType: String, Codable {
     case contactPersonCredentials
 }
 
-public enum PaymentState: String, Decodable, UnknownCaseRepresentable {
+public enum PaymentState: String, Decodable, UnknownCaseRepresentable, Sendable {
     case unknown
 
     case pending
@@ -68,7 +68,7 @@ public enum PaymentState: String, Decodable, UnknownCaseRepresentable {
 
 /// line items can be added by the backend.
 /// If they refer back to a shopping cart item via their `refersTo` property, the `type` describes the relationship
-public enum LineItemType: String, Codable, UnknownCaseRepresentable {
+public enum LineItemType: String, Codable, UnknownCaseRepresentable, Sendable {
     /// not actually sent by the backend
     case unknown
 
@@ -92,11 +92,11 @@ public enum LineItemType: String, Codable, UnknownCaseRepresentable {
 }
 
 // optional required information
-public struct RequiredInformation: Codable {
+public struct RequiredInformation: Codable, Sendable {
     public let id: RequiredInformationType
     public let value: String?
 
-    enum TaxationValue: String {
+    enum TaxationValue: String, Sendable {
         case inHouse
         case takeaway
     }
@@ -105,12 +105,12 @@ public struct RequiredInformation: Codable {
     public static let taxationTakeaway = RequiredInformation(id: .taxation, value: TaxationValue.takeaway.rawValue)
 }
 
-public enum RequiredInformationType: String, Codable {
+public enum RequiredInformationType: String, Codable, Sendable {
     case taxation
 }
 
 // CheckoutInfo
-public struct CheckoutInfo: Decodable {
+public struct CheckoutInfo: Decodable, Sendable {
     /// session id
     public let session: String
 
@@ -132,9 +132,9 @@ public struct CheckoutInfo: Decodable {
         case session, paymentMethods, lineItems, price, requiredInformation, violations
     }
 
-    public struct Violation: Codable {
-        public enum `Type`: String, Codable, UnknownCaseRepresentable {
-            public static var unknownCase: Self = .unknown
+    public struct Violation: Codable, Sendable {
+        public enum `Type`: String, Codable, UnknownCaseRepresentable, Sendable {
+            nonisolated(unsafe) public static var unknownCase: Self = .unknown
 
             case couponInvalid = "coupon_invalid"
             case couponCurrentlyNotValid = "coupon_currently_not_valid"
@@ -158,7 +158,7 @@ public struct CheckoutInfo: Decodable {
         }
     }
 
-    public struct LineItem: Codable, Swift.Identifiable, Equatable {
+    public struct LineItem: Codable, Swift.Identifiable, Equatable, Sendable {
         public static func == (lhs: CheckoutInfo.LineItem, rhs: CheckoutInfo.LineItem) -> Bool {
             lhs.id == rhs.id && lhs.amount == rhs.amount
         }
@@ -192,8 +192,8 @@ public struct CheckoutInfo: Decodable {
             return (self.units ?? 1) * price
         }
 
-        public enum Action: String, Codable, UnknownCaseRepresentable {
-            public static var unknownCase: Self = .unknown
+        public enum Action: String, Codable, UnknownCaseRepresentable, Sendable {
+            nonisolated(unsafe) public static var unknownCase: Self = .unknown
             
             case add
             case replace
@@ -201,14 +201,14 @@ public struct CheckoutInfo: Decodable {
             case unknown
         }
 
-        public struct PriceModifier: Codable {
+        public struct PriceModifier: Codable, Sendable {
             public let name: String
             public let action: Action?
             public let price: Int
         }
     }
 
-    public struct Price: Decodable {
+    public struct Price: Decodable, Sendable {
         public let price: Int
         public let netPrice: Int
 
@@ -241,7 +241,7 @@ public struct CheckoutInfo: Decodable {
     }
 }
 
-public enum FulfillmentState: String, Decodable, UnknownCaseRepresentable {
+public enum FulfillmentState: String, Decodable, UnknownCaseRepresentable, Sendable {
     case unknown
 
     // working
@@ -264,14 +264,14 @@ public enum FulfillmentState: String, Decodable, UnknownCaseRepresentable {
     public static let unknownCase = FulfillmentState.unknown
 }
 
-public struct Fulfillment: Decodable {
+public struct Fulfillment: Decodable, Sendable {
     public let id: String
     public let refersTo: [String]
     public let type: String
     public let state: FulfillmentState
     public let errors: [FulfillmentError]?
 
-    public struct FulfillmentError: Decodable {
+    public struct FulfillmentError: Decodable, Sendable {
         public let type: String
         public let refersTo: String?
         public let message: String
@@ -285,18 +285,18 @@ extension Array where Element == Fulfillment {
 }
 
 // known values from checkoutProcess.paymentResults["failureCause"]
-public enum FailureCause: String {
+public enum FailureCause: String, Sendable {
     case terminalAbort
     case ageVerificationFailed
     case ageVerificationNotSupportedByCard
 }
 
-public struct ExitToken: Codable {
+public struct ExitToken: Codable, Sendable {
     public let format: ScanFormat?
     public let value: String?
 }
 
-public enum RoutingTarget: String, Decodable, UnknownCaseRepresentable {
+public enum RoutingTarget: String, Decodable, UnknownCaseRepresentable, Sendable {
     case none
     case supervisor
     case gatekeeper
@@ -305,7 +305,7 @@ public enum RoutingTarget: String, Decodable, UnknownCaseRepresentable {
 }
 
 // MARK: - Checkout Process
-public struct CheckoutProcess: Decodable {
+public struct CheckoutProcess: Decodable, Sendable {
     public let id: String
     public let links: ProcessLinks
     public let aborted: Bool
@@ -314,7 +314,7 @@ public struct CheckoutProcess: Decodable {
     public let paymentInformation: PaymentInformation?
     public let paymentState: PaymentState
     public let orderID: String?
-    public let paymentResult: [String: Any]?
+    nonisolated(unsafe) public let paymentResult: [String: Any]?
     public let pricing: Pricing
     public let checks: [CheckoutProcess.Check]
     public let fulfillments: [Fulfillment]
@@ -328,12 +328,12 @@ public struct CheckoutProcess: Decodable {
         RawPaymentMethod(rawValue: paymentMethod)
     }
 
-    public struct Pricing: Decodable {
+    public struct Pricing: Decodable, Sendable {
         public let lineItems: [CheckoutInfo.LineItem]
         public let price: CheckoutInfo.Price
     }
 
-    public struct ProcessLinks: Decodable {
+    public struct ProcessLinks: Decodable, Sendable {
         public let _self: Link
         public let approval: Link
         public let receipt: Link?
@@ -345,7 +345,7 @@ public struct CheckoutProcess: Decodable {
         }
     }
 
-    public struct PaymentInformation: Decodable {
+    public struct PaymentInformation: Decodable, Sendable {
         /// for method == .qrCodePOS
         public let qrCodeContent: String?
 
@@ -353,17 +353,17 @@ public struct CheckoutProcess: Decodable {
         public let handoverInformation: String?
     }
 
-    public struct PaymentPreauthInformation: Decodable {
+    public struct PaymentPreauthInformation: Decodable, Sendable {
         public let merchantID: String? // for Apple Pay
         public let markup: String? // for PayOneSepa
         public let mandateIdentification: String? // for PayOneSepa
     }
 
-    public struct VoucherInformation: Decodable {
+    public struct VoucherInformation: Decodable, Sendable {
         public let refersTo: String
         public let state: VoucherState
         
-        public enum VoucherState: String, Decodable {
+        public enum VoucherState: String, Decodable, Sendable {
             case pending
             case redeemed
             case redeemingFailed
@@ -484,7 +484,7 @@ extension CheckoutProcess {
 // MARK: - data we send to the server
 
 /// Cart
-public struct Cart: Encodable {
+public struct Cart: Encodable, Sendable {
     public let session: String
     public let shopID: Identifier<Shop>
     public let customer: CustomerInfo?
@@ -504,7 +504,7 @@ public struct Cart: Encodable {
         self.appUserID = appUserId
     }
 
-    public enum Item: Encodable {
+    public enum Item: Encodable, Sendable {
         case product(ProductItem)
         case coupon(CouponItem)
         case voucher(VoucherItem)
@@ -522,7 +522,7 @@ public struct Cart: Encodable {
         }
     }
 
-    public struct ProductItem: Encodable {
+    public struct ProductItem: Encodable, Sendable {
         public let id: String
         public let sku: String
         public let amount: Int
@@ -534,7 +534,7 @@ public struct Cart: Encodable {
         public let weightUnit: Units?
     }
 
-    public struct CouponItem: Encodable {
+    public struct CouponItem: Encodable, Sendable {
         public let id: String
         public let couponID: String
         public let refersTo: String?
@@ -550,7 +550,7 @@ public struct Cart: Encodable {
         }
     }
 
-    public struct VoucherItem: Encodable {
+    public struct VoucherItem: Encodable, Sendable {
         public let id: String
         public let itemID: String
         public let type: String
@@ -566,7 +566,7 @@ public struct Cart: Encodable {
         }
     }
 
-    public struct CustomerInfo: Encodable {
+    public struct CustomerInfo: Encodable, Sendable {
         public let loyaltyCard: String
 
         init?(loyaltyCard: String?) {
@@ -583,16 +583,16 @@ struct AbortRequest: Encodable {
     let aborted: Bool
 }
 
-public enum CandidateType: String, Decodable, Hashable {
+public enum CandidateType: String, Decodable, Hashable, Sendable {
     case debitCardIban = "debit_card_iban"
 }
 
-public struct OriginCandidate: Decodable {
+public struct OriginCandidate: Decodable, Sendable {
     public let links: CandidateLinks?
     public let origin: String?
     public let type: CandidateType?
 
-    public struct CandidateLinks: Decodable, Hashable {
+    public struct CandidateLinks: Decodable, Hashable, Sendable {
         public let _self: Link
         public let promote: Link
 

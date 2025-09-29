@@ -11,6 +11,7 @@ import SwiftUI
 import Combine
 
 /// Methods for managing callbacks for widges
+@MainActor
 public protocol DynamicViewControllerDelegate: AnyObject {
 
     /// Tells the delegate that an widget will perform an action
@@ -18,6 +19,7 @@ public protocol DynamicViewControllerDelegate: AnyObject {
 }
 
 /// A UIViewController wrapping SwiftUI's DynamicStackView
+@MainActor
 open class DynamicViewController: UIHostingController<DynamicView> {
     public weak var delegate: DynamicViewControllerDelegate?
 

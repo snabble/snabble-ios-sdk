@@ -26,7 +26,7 @@ public struct Methods {
     }
 }
 
-public final class MethodRegistry {
+public final class MethodRegistry: @unchecked Sendable {
     private var methods = [RawPaymentMethod: Methods]()
 
     public func isMethodAvailable(_ method: RawPaymentMethod) -> Bool {

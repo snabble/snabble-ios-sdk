@@ -209,10 +209,12 @@ final class CustomerCardCheckoutViewController: UIViewController {
         super.viewDidAppear(animated)
 
         Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { _ in
-            UIView.animate(withDuration: 0.2) {
-                self.paidButton?.alpha = 1
+            Task { @MainActor in 
+                UIView.animate(withDuration: 0.2) {
+                    self.paidButton?.alpha = 1
+                }
+                self.paidButton?.isUserInteractionEnabled = true
             }
-            self.paidButton?.isUserInteractionEnabled = true
         }
     }
 
@@ -229,18 +231,20 @@ final class CustomerCardCheckoutViewController: UIViewController {
 
     private func setupIcons() {
         SnabbleCI.getAsset(.checkoutOffline, bundlePath: "Checkout/\(SnabbleCI.project.id)/checkout-offline") { img in
-            if let img = img {
-                self.iconImageView?.image = img
-                self.iconImageHeight?.constant = img.size.height
-                self.iconWrapper?.isHidden = false
-                let scaledArrowWrapperHeight = UIFontMetrics.default.scaledValue(for: self.arrowIconHeight)
-                self.arrowWrapper?.heightAnchor.constraint(equalToConstant: scaledArrowWrapperHeight).usingPriority(.defaultHigh + 1).isActive = true
-                self.arrowWrapper?.isHidden = false
+            Task { @MainActor in
+                if let img = img {
+                    self.iconImageView?.image = img
+                    self.iconImageHeight?.constant = img.size.height
+                    self.iconWrapper?.isHidden = false
+                    let scaledArrowWrapperHeight = UIFontMetrics.default.scaledValue(for: self.arrowIconHeight)
+                    self.arrowWrapper?.heightAnchor.constraint(equalToConstant: scaledArrowWrapperHeight).usingPriority(.defaultHigh + 1).isActive = true
+                    self.arrowWrapper?.isHidden = false
+                }
             }
         }
     }
 
-    @objc private func paidButtonTapped(_ sender: Any) {
+    @MainActor @objc private func paidButtonTapped(_ sender: Any) {
         self.cart.removeAll(endSession: true, keepBackup: true)
 
         let checkoutSteps = CheckoutStepsViewController(shop: shop, shoppingCart: cart, checkoutProcess: process)

@@ -39,7 +39,7 @@ extension InternalBarcodeDetector.State: CustomStringConvertible {
 }
 
 @Observable
-open class InternalBarcodeDetector: NSObject, Zoomable {
+open class InternalBarcodeDetector: NSObject, Zoomable, @unchecked Sendable {
     public static var batterySaverTimeout: TimeInterval { 90 }
     public static var batterySaverKey: String { "io.snabble.sdk.batterySaver" }
     public static var zoomValueKey: String { "io.snabble.sdk.zoomValue" }

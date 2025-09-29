@@ -43,10 +43,10 @@ extension AVMetadataObject.ObjectType {
 
 public protocol BarcodeBufferDelegate: AnyObject {
     /// callback for a CMSampleBuffer output
-    func sampleOutput(_ sampleBuffer: CMSampleBuffer, completion: @escaping (BarcodeResult?) -> Void)
+    func sampleOutput(_ sampleBuffer: CMSampleBuffer, completion: @escaping @Sendable (BarcodeResult?) -> Void)
 }
 
-open class BarcodeCamera: BarcodeDetector {
+open class BarcodeCamera: BarcodeDetector, @unchecked Sendable {
     private var camera: AVCaptureDevice?
     private var input: AVCaptureDeviceInput?
     
@@ -96,7 +96,7 @@ open class BarcodeCamera: BarcodeDetector {
         videoDataOutput.setSampleBufferDelegate(self, queue: outputQueue)
     }
 
-    override open func scannerWillAppear(on view: UIView) {
+    @MainActor override open func scannerWillAppear(on view: UIView) {
         startForegroundBackgroundObserver()
 
         guard
@@ -137,7 +137,7 @@ open class BarcodeCamera: BarcodeDetector {
         }
    }
 
-    private func addOverlay(to view: UIView) {
+    @MainActor private func addOverlay(to view: UIView) {
         guard self.decorationOverlay == nil else {
             return
         }
@@ -154,7 +154,7 @@ open class BarcodeCamera: BarcodeDetector {
         self.decorationOverlay = decorationOverlay
     }
 
-    override open func setOverlayOffset(_ offset: CGFloat) {
+    @MainActor override open func setOverlayOffset(_ offset: CGFloat) {
         guard let overlay = self.decorationOverlay else {
             return
         }
@@ -170,7 +170,7 @@ open class BarcodeCamera: BarcodeDetector {
         }
     }
 
-    override open func scannerDidLayoutSubviews() {
+    @MainActor override open func scannerDidLayoutSubviews() {
         decorationOverlay?.layoutIfNeeded()
         if let previewLayer = self.previewLayer, let decorationOverlay = self.decorationOverlay {
             previewLayer.frame = decorationOverlay.bounds
@@ -185,14 +185,18 @@ open class BarcodeCamera: BarcodeDetector {
         self.sessionQueue.async {
             self.captureSession.stopRunning()
         }
-        self.stopBatterySaverTimer()
+        Task { @MainActor in
+            self.stopBatterySaverTimer()
+        }
     }
 
     override open func resumeScanning() {
         self.sessionQueue.async {
             self.captureSession.startRunning()
         }
-        self.startBatterySaverTimer()
+        Task { @MainActor in
+            self.startBatterySaverTimer()
+        }
     }
 
     override open func setTorch(_ on: Bool) {
@@ -212,7 +216,9 @@ open class BarcodeCamera: BarcodeDetector {
         }
 
         // camera found, are we allowed to access it?
-        self.requestCameraPermission()
+        Task { @MainActor in
+            self.requestCameraPermission()
+        }
 
         // set focus/low light properties of the camera
         do {
@@ -250,7 +256,9 @@ open class BarcodeCamera: BarcodeDetector {
     
     private var lastScannedTime: Date?
     private func handleBarCodeResult(_ result: BarcodeResult) {
-        startBatterySaverTimer()
+        Task { @MainActor in
+            startBatterySaverTimer()
+        }
         if let lastScannedTime, lastScannedTime.addingTimeInterval(scanDebounce) > .now {
             return
         }

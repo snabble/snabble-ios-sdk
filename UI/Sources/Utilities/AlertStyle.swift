@@ -6,7 +6,7 @@
 
 import SDCAlertView
 
-public final class SnabbleAlertStyle: AlertVisualStyle {
+public final class SnabbleAlertStyle: AlertVisualStyle, @unchecked Sendable {
     override public init(alertStyle: AlertControllerStyle) {
         super.init(alertStyle: alertStyle)
 

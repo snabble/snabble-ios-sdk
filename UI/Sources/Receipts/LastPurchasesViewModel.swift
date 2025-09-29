@@ -9,8 +9,8 @@ import SwiftUI
 
 import SnabbleCore
 
-@Observable
-public class LastPurchasesViewModel: LoadableObject {
+@Observable @MainActor
+public class LastPurchasesViewModel: LoadableObject, @unchecked Sendable {
     typealias Output = [PurchaseProviding]
     
     var projectId: Identifier<Project>? {
@@ -31,10 +31,12 @@ public class LastPurchasesViewModel: LoadableObject {
         state = .idle
 
         OrderList.load(project) { [weak self] result in
-            if let self = self {
+            Task { @MainActor in
+                guard let self = self else { return }
+
                 do {
                     let providers = try result.get().receipts
-                    
+
                     if providers.isEmpty {
                         self.state = .empty
                     } else {

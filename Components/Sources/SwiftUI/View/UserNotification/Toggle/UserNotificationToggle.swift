@@ -75,7 +75,7 @@ public struct UserNotificationToggle: View {
         }
     }
     
-    private func openSettings() async {
+    @MainActor private func openSettings() async {
         if let appSettings = URL(string: UIApplication.openSettingsURLString), UIApplication.shared.canOpenURL(appSettings) {
             await UIApplication.shared.open(appSettings)
         }

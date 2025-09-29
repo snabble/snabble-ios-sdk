@@ -22,7 +22,10 @@ extension Coupon {
         let defaultSizes = [ "xhdpi", "hdpi", "mdpi", "ldpi", "thumbnail" ]
 #if os(iOS)
         var sizes = defaultSizes
-        if UIScreen.main.scale >= 3 {
+        let scale = MainActor.assumeIsolated {
+            UIScreen.main.scale
+        }
+        if scale >= 3 {
             sizes.insert("xxhdpi", at: 0)
         }
         return sizes

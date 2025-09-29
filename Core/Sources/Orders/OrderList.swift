@@ -6,7 +6,7 @@
 
 import Foundation
 
-public struct OrderList: Decodable {
+public struct OrderList: Decodable, Sendable {
     public let orders: [Order]
 
     public var receipts: [Order] {
@@ -19,7 +19,7 @@ public struct OrderList: Decodable {
     }
 }
 
-public struct Order: Codable {
+public struct Order: Codable, Sendable {
     public let projectId: Identifier<Project>
     public let id: String
     public let date: Date
@@ -28,7 +28,7 @@ public struct Order: Codable {
     public let price: Int
     public let links: OrderLinks
 
-    public struct OrderLinks: Codable {
+    public struct OrderLinks: Codable, Sendable {
         public let receipt: Link?
     }
 
@@ -39,7 +39,7 @@ public struct Order: Codable {
 }
 
 extension OrderList {
-    public static func load(_ project: Project, completion: @escaping (Result<OrderList, SnabbleError>) -> Void ) {
+    public static func load(_ project: Project, completion: @escaping @Sendable (Result<OrderList, SnabbleError>) -> Void ) {
         var url: String?
         if let clientOrdersUrl = Snabble.shared.links.clientOrders?.href {
             url = clientOrdersUrl.replacingOccurrences(of: "{clientID}", with: Snabble.clientId)
@@ -98,7 +98,7 @@ extension Order {
         return FileManager.default.fileExists(atPath: targetPath.path)
     }
     
-    public func getReceipt(_ project: Project, completion: @escaping (Result<URL, Error>) -> Void) {
+    public func getReceipt(_ project: Project, completion: @escaping @Sendable (Result<URL, Error>) -> Void) {
         // uncomment to force new downloads on every access
         // try? FileManager.default.removeItem(at: cachedReceiptURL(project))
 
@@ -115,7 +115,7 @@ extension Order {
         }
     }
    
-    public static func download(_ project: Project, receipt: Link?, completion: @escaping (Result<URL, Error>) -> Void ) {
+    public static func download(_ project: Project, receipt: Link?, completion: @escaping @Sendable (Result<URL, Error>) -> Void ) {
         guard let link = receipt?.href else {
             Log.error("error downloading receipt: no receipt link?!?")
             return completion(.failure(SnabbleError.noRequest))
@@ -143,7 +143,7 @@ extension Order {
         }
     }
     
-    private func download(_ project: Project, _ targetPath: URL, completion: @escaping (Result<URL, Error>) -> Void ) {
+    private func download(_ project: Project, _ targetPath: URL, completion: @escaping @Sendable (Result<URL, Error>) -> Void ) {
         
         Order.download(project, receipt: self.links.receipt) { result in
             switch result {

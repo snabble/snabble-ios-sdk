@@ -10,6 +10,7 @@ import Combine
 
 import SnabbleAssetProviding
 
+@MainActor
 public protocol UserViewControllerDelegate: AnyObject {
     func userViewController(_ viewController: UserViewController, didFinishWithUser user: User)
 }

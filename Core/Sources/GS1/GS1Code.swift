@@ -7,7 +7,7 @@
 import Foundation
 
 // a parsed Application Identifier with it value(s)
-public struct GS1CodeElement {
+public struct GS1CodeElement: Sendable {
     public let definition: ApplicationIdentifier
     public let values: [String]
 
@@ -32,10 +32,10 @@ public struct GS1CodeElement {
 /// parse a GS1 barcode into its constituent application identifiers
 ///
 /// any skipped/unknown/invalid code parts will be returned in `skipped`
-public struct GS1Code {
+public struct GS1Code: Sendable {
     public static let gs = "\u{1d}"
 
-    private static var prefixMap: [String: [ApplicationIdentifier]] = {
+    nonisolated(unsafe) private static var prefixMap: [String: [ApplicationIdentifier]] = {
         var map = [String: [ApplicationIdentifier]]()
         for ai in ApplicationIdentifier.allIdentifiers {
             let pfx = String(ai.prefix.prefix(2))

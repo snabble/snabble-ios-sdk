@@ -20,9 +20,13 @@ public struct DynamicAction {
 }
 
 @Observable
-public class DynamicViewModel: NSObject, Decodable {
-    public var configuration: DynamicViewConfiguration
-    public var widgets: [Widget]
+@MainActor
+public class DynamicViewModel: /*NSObject,*/ Decodable {
+    nonisolated(unsafe) private var _configuration: DynamicViewConfiguration
+    nonisolated(unsafe) private var _widgets: [Widget]
+
+    public var configuration: DynamicViewConfiguration { _configuration }
+    public var widgets: [Widget] { _widgets }
 
     private enum CodingKeys: String, CodingKey {
         case configuration
@@ -33,21 +37,21 @@ public class DynamicViewModel: NSObject, Decodable {
         configuration: DynamicViewConfiguration,
         widgets: [Widget]
     ) {
-        self.configuration = configuration
-        self.widgets = widgets
-        super.init()
+        self._configuration = configuration
+        self._widgets = widgets
+//        super.init()
     }
 
     private enum WidgetsCodingKeys: String, CodingKey {
         case type
     }
 
-    public required init(from decoder: Decoder) throws {
+    nonisolated public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
-        self.configuration = try container.decode(DynamicViewConfiguration.self, forKey: .configuration)
+        self._configuration = try container.decode(DynamicViewConfiguration.self, forKey: .configuration)
 
         let wrappers = try container.decode([WidgetWrapper].self, forKey: .widgets)
-        self.widgets = wrappers.map { $0.value }
+        self._widgets = wrappers.map { $0.value }
     }
 
     /// Emits if the widget triigers the action

@@ -76,7 +76,7 @@ private struct CountDownButtonBackground: View {
     let to: Date
     let completion: () -> Void
     
-    init(interval: Double, from: Date = .now, to: Date? = nil, completion: @escaping (() -> Void) = {}) {
+    init(interval: Double, from: Date = .now, to: Date? = nil, completion: @escaping @Sendable (() -> Void) = {}) {
         self.from = from
         self.to = to ?? (from + interval)
         self.completion = completion

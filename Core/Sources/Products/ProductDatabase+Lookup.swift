@@ -7,9 +7,9 @@
 import Foundation
 
 extension ProductDatabase {
-    func resolveProductsLookup(_ url: String, _ codes: [(String, String)], _ shopId: Identifier<Shop>, completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
+    func resolveProductsLookup(_ url: String, _ codes: [(String, String)], _ shopId: Identifier<Shop>, completion: @escaping @Sendable (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
         let group = DispatchGroup()
-        var results = [Result<ScannedProduct, ProductLookupError>]()
+        nonisolated(unsafe) var results = [Result<ScannedProduct, ProductLookupError>]()
         let mutex = Mutex()
 
         // lookup each code/template
@@ -48,7 +48,7 @@ extension ProductDatabase {
     }
 
     private func resolveProductsLookup(_ url: String, _ code: String, _ template: String, _ shopId: Identifier<Shop>,
-                                       completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
+                                       completion: @escaping @Sendable (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
         let session = Snabble.urlSession
 
         // TODO: is this the right value?
@@ -110,7 +110,7 @@ extension ProductDatabase {
         }
     }
 
-    func resolveProductLookup(url: String, sku: String, shopId: Identifier<Shop>, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void) {
+    func resolveProductLookup(url: String, sku: String, shopId: Identifier<Shop>, completion: @escaping @Sendable (_ result: Result<Product, ProductLookupError>) -> Void) {
         let session = Snabble.urlSession
 
         // TODO: is this the right value?
@@ -166,7 +166,7 @@ extension ProductDatabase {
         }
     }
 
-    private func returnError<T>(_ msg: String, _ error: ProductLookupError, _ completion: @escaping (_ result: Result<T, ProductLookupError>) -> Void ) {
+    private func returnError<T>(_ msg: String, _ error: ProductLookupError, _ completion: @escaping @Sendable (_ result: Result<T, ProductLookupError>) -> Void ) {
         if error != .notFound {
             self.logError(msg)
         }

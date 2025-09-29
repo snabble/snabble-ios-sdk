@@ -7,11 +7,11 @@
 import Foundation
 
 public protocol Identifiable {
-    associatedtype RawIdentifier: Codable, Hashable = String
+    associatedtype RawIdentifier: Codable, Hashable, Sendable = String
     var id: Identifier<Self> { get }
 }
 
-public struct Identifier<Value: Identifiable>: RawRepresentable {
+public struct Identifier<Value: Identifiable>: RawRepresentable, Sendable {
     public let rawValue: Value.RawIdentifier
 
     public init(rawValue: Value.RawIdentifier) {

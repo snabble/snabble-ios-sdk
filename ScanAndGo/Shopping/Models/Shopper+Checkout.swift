@@ -38,44 +38,46 @@ extension Shopper {
         self.processing = true
         
         self.barcodeManager.shoppingCart.createCheckoutInfo(barcodeManager.project, timeout: 10) { result in
-            self.processing = false
-            
-            switch result {
-            case .success(let info):
-                // force any required info to be re-requested on the next attempt
-                shoppingCart.resetInformationData() // requiredInformationData = []
-                
-                let detail = self.paymentManager.selectedPayment?.detail
-                self.gotoPayment(paymentMethod, detail, info, shoppingCart) { didStart in
-                    if !didStart {
-                        self.startScanner()
+            Task { @MainActor in
+                self.processing = false
+
+                switch result {
+                case .success(let info):
+                    // force any required info to be re-requested on the next attempt
+                    shoppingCart.resetInformationData() // requiredInformationData = []
+
+                    let detail = self.paymentManager.selectedPayment?.detail
+                    self.gotoPayment(paymentMethod, detail, info, shoppingCart) { didStart in
+                        if !didStart {
+                            self.startScanner()
+                        }
                     }
-                }
-            case .failure(let error):
-                let handled = self.handleCheckoutError(error)
-                if !handled {
-                    if let offendingSkus = error.details?.compactMap({ $0.sku }) {
-                        self.showProductError(offendingSkus)
-                        return
-                    }
-                    
-                    if paymentMethod.offline {
-                        // if the payment method works offline, ignore the error and continue anyway
-                        let info = SignedCheckoutInfo([paymentMethod])
-                        self.gotoPayment(paymentMethod, nil, info, self.barcodeManager.shoppingCart) { _ in }
-                        return
-                    }
-                    
-                    if case SnabbleError.urlError = error {
-                        self.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.offlineHint"))
-                        return
-                    }
-                    
-                    switch error.type {
-                    case .noAvailableMethod:
-                        self.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.noMethodAvailable"))
-                    default:
-                        self.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
+                case .failure(let error):
+                    let handled = self.handleCheckoutError(error)
+                    if !handled {
+                        if let offendingSkus = error.details?.compactMap({ $0.sku }) {
+                            self.showProductError(offendingSkus)
+                            return
+                        }
+
+                        if paymentMethod.offline {
+                            // if the payment method works offline, ignore the error and continue anyway
+                            let info = SignedCheckoutInfo([paymentMethod])
+                            self.gotoPayment(paymentMethod, nil, info, self.barcodeManager.shoppingCart) { _ in }
+                            return
+                        }
+
+                        if case SnabbleError.urlError = error {
+                            self.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.offlineHint"))
+                            return
+                        }
+
+                        switch error.type {
+                        case .noAvailableMethod:
+                            self.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.noMethodAvailable"))
+                        default:
+                            self.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
+                        }
                     }
                 }
             }

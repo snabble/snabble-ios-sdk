@@ -278,10 +278,12 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
         super.viewDidAppear(animated)
 
         Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { _ in
-            UIView.animate(withDuration: 0.2) {
-                self.paidButton?.alpha = 1
+            Task { @MainActor in
+                UIView.animate(withDuration: 0.2) {
+                    self.paidButton?.alpha = 1
+                }
+                self.paidButton?.isUserInteractionEnabled = true
             }
-            self.paidButton?.isUserInteractionEnabled = true
         }
     }
 
@@ -391,12 +393,14 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     private func setupIcon() {
         SnabbleCI.getAsset(.checkoutOffline, bundlePath: "Checkout/\(SnabbleCI.project.id)/checkout-offline") { img in
             if let img = img {
-                self.topIcon?.image = img
-                self.topIcon?.heightAnchor.constraint(equalToConstant: img.size.height).usingPriority(.required - 1).isActive = true
-                self.topWrapper?.isHidden = false
-                let scaledArrowWrapperHeight = UIFontMetrics.default.scaledValue(for: self.arrowIconHeight)
-                self.arrowWrapper?.heightAnchor.constraint(equalToConstant: scaledArrowWrapperHeight).usingPriority(.defaultHigh + 1).isActive = true
-                self.arrowWrapper?.isHidden = false
+                Task { @MainActor in
+                    self.topIcon?.image = img
+                    self.topIcon?.heightAnchor.constraint(equalToConstant: img.size.height).usingPriority(.required - 1).isActive = true
+                    self.topWrapper?.isHidden = false
+                    let scaledArrowWrapperHeight = UIFontMetrics.default.scaledValue(for: self.arrowIconHeight)
+                    self.arrowWrapper?.heightAnchor.constraint(equalToConstant: scaledArrowWrapperHeight).usingPriority(.defaultHigh + 1).isActive = true
+                    self.arrowWrapper?.isHidden = false
+                }
             }
         }
     }

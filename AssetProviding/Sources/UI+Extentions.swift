@@ -33,7 +33,7 @@ public extension UITabBarController {
 
 private struct SafeAreaInsetsKey: EnvironmentKey {
     static var defaultValue: EdgeInsets {
-        UIApplication.shared.sceneKeyWindow?.safeAreaInsets.swiftUIInsets ?? EdgeInsets()
+        EdgeInsets()
     }
 }
 private extension UIEdgeInsets {

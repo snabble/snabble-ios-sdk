@@ -12,6 +12,7 @@ import SnabbleCore
 import SnabbleAssetProviding
 
 /// Methods for managing callbacks for widges
+@MainActor
 public protocol SepaAcceptViewControllerDelegate: AnyObject {
 
     /// Tells the delegate that an widget will perform an action

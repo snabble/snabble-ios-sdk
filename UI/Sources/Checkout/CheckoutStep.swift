@@ -190,7 +190,7 @@ extension CheckoutStep {
     }()
     static let savedIbans: Set<String> = []
     
-    static let mockModel: [CheckoutStep] = {
+    nonisolated(unsafe) static let mockModel: [CheckoutStep] = {
         return [
             CheckoutStep(paymentState: .pending),
             CheckoutStep(paymentState: .successful),

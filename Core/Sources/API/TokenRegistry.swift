@@ -53,7 +53,7 @@ private struct TokenData {
     }
 }
 
-public final class TokenRegistry {
+public final class TokenRegistry: @unchecked Sendable {
     private let appId: String
     private let secret: String
 
@@ -78,7 +78,7 @@ public final class TokenRegistry {
     }
 
     /// get the JWT for `project`, retrieving a new one if no token existed or it was expired
-    public func getToken(for project: Project, completion: @escaping (String?) -> Void) {
+    public func getToken(for project: Project, completion: @escaping @Sendable (String?) -> Void) {
         if let jwt = self.token(for: project.id) {
             return completion(jwt)
         }
@@ -92,7 +92,7 @@ public final class TokenRegistry {
         token(for: project.id)
     }
 
-    private func performTokenRetrieval(for projectId: Identifier<Project>, _ completion: @escaping (String?) -> Void) {
+    private func performTokenRetrieval(for projectId: Identifier<Project>, _ completion: @escaping @Sendable (String?) -> Void) {
         // no token in our registry, go fetch it
         let count: Int? = lock.writing {
             self.pendingHandlers[projectId, default: []].append(completion)
@@ -211,7 +211,7 @@ public final class TokenRegistry {
         }
     }
 
-    private func retrieveToken(for projectId: Identifier<Project>, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void) {
+    private func retrieveToken(for projectId: Identifier<Project>, _ date: Date? = nil, completion: @escaping @Sendable (TokenData?) -> Void) {
         if let appUser = Snabble.shared.appUser {
             if verboseToken { Log.debug("retrieveToken p=\(projectId.rawValue) app=\(self.appId) client=\(Snabble.clientId) au=\(appUser), date=\(String(describing: date))") }
             self.retrieveTokenForUser(for: projectId, appUser, date, completion: completion)
@@ -221,7 +221,7 @@ public final class TokenRegistry {
         }
     }
 
-    private func retrieveAppUserAndToken(for projectId: Identifier<Project>, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void) {
+    private func retrieveAppUserAndToken(for projectId: Identifier<Project>, _ date: Date? = nil, completion: @escaping @Sendable (TokenData?) -> Void) {
         guard let project = Snabble.shared.project(for: projectId) else {
             return completion(nil)
         }
@@ -261,7 +261,7 @@ public final class TokenRegistry {
         }
     }
 
-    private func retrieveTokenForUser(for projectId: Identifier<Project>, _ appUser: AppUser, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void ) {
+    private func retrieveTokenForUser(for projectId: Identifier<Project>, _ appUser: AppUser, _ date: Date? = nil, completion: @escaping @Sendable (TokenData?) -> Void ) {
         guard let project = Snabble.shared.project(for: projectId) else {
             return completion(nil)
         }
@@ -300,7 +300,7 @@ public final class TokenRegistry {
         }
     }
 
-    private func retryWithServerDate(_ projectId: Identifier<Project>, _ response: HTTPURLResponse, completion: @escaping (TokenData?) -> Void ) {
+    private func retryWithServerDate(_ projectId: Identifier<Project>, _ response: HTTPURLResponse, completion: @escaping @Sendable (TokenData?) -> Void ) {
         // not authorized. try again with the content of the the server's "Date" header
         if let serverDate = response.allHeaderFields["Date"] as? String {
             let formatter = DateFormatter()

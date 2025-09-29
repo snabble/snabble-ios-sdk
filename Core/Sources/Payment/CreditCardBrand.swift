@@ -7,7 +7,7 @@
 import Foundation
 
 // unfortunately we have to maintain a bunch of different mappings to strings and other types
-public enum CreditCardBrand: String, Codable, CaseIterable {
+public enum CreditCardBrand: String, Codable, CaseIterable, Sendable {
     // 1st mapping: from the reponse of the IPG card entry form; also used for datatrans
     case visa
     case mastercard
