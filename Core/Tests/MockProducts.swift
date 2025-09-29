@@ -111,7 +111,7 @@ class MockProductDB: ProductStoring & ProductProviding {
                             type: .singleItem,
                             codes: [])
 
-    private static var productMap = [String: Product]()
+    nonisolated(unsafe) private static var productMap = [String: Product]()
     private static let allProducts = [p1, p2, p3, p4, p5]
 
     required init(_ config: Config, _ project: Project) {

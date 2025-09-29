@@ -57,7 +57,7 @@ extension URLSession {
 
 extension URLSession {
     func downloadTaskPublisher(for url: URL) -> AnyPublisher<URL, URLError> {
-        Future<URL, URLError> { promise in
+        Future<URL, URLError> { @Sendable promise in
             let task = self.downloadTask(with: url) { location, _, error in
                 if let error = error as? URLError {
                     promise(.failure(error))
