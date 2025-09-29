@@ -144,13 +144,13 @@ public extension ProductProviding {
     
     // MARK: - asynchronous variants of the product lookup methods
 
-    /// asynchronously get a product by its SKU
-    ///
-    /// - Parameters:
-    ///   - sku: the sku to look for
-    ///   - forceDownload: if true, skip the lookup in the local DB
-    ///   - result: the product found or the error
-//    nonisolated func productProviderBy(sku: String, shopId: Identifier<Shop>, forceDownload: Bool) -> Future<Product, ProductLookupError> {
+    // asynchronously get a product by its SKU
+    //
+    // - Parameters:
+    //   - sku: the sku to look for
+    //   - forceDownload: if true, skip the lookup in the local DB
+    //   - result: the product found or the error
+//    func productProviderBy(sku: String, shopId: Identifier<Shop>, forceDownload: Bool) -> Future<Product, ProductLookupError> {
 //        return Future { promise in
 //            self.productBy(sku: sku, shopId: shopId, forceDownload: forceDownload) { result in
 //                switch result {
@@ -163,12 +163,12 @@ public extension ProductProviding {
 //        }
 //    }
 
-    /// asynchronously get a product by (one of) its scannable codes
-    ///
-    /// - Parameters:
-    ///   - codes: the code/template pairs to look for
-    ///   - forceDownload: if true, skip the lookup in the local DB
-    ///   - result: the lookup result or the error
+    // asynchronously get a product by (one of) its scannable codes
+    //
+    // - Parameters:
+    //   - codes: the code/template pairs to look for
+    //   - forceDownload: if true, skip the lookup in the local DB
+    //   - result: the lookup result or the error
 //    func scannedProductProviderBy(codes: [(String, String)], shopId: Identifier<Shop>, forceDownload: Bool) -> Future<ScannedProduct, ProductLookupError> {
 //        Future { @Sendable promise in
 //            self.scannedProductBy(codes: codes, shopId: shopId, forceDownload: forceDownload) { result in
