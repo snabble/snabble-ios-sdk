@@ -8,12 +8,12 @@
 import Foundation
 
 public enum TestingDefaults {
-    public static var dateFormatter = {
+    public nonisolated(unsafe) static var dateFormatter = {
         let dateFormatter = ISO8601DateFormatter()
         return dateFormatter
     }()
 
-    public static var jsonDecoder = {
+    public nonisolated(unsafe) static var jsonDecoder = {
         let decoder = JSONDecoder()
         decoder.dateDecodingStrategy = .iso8601
         return decoder
