@@ -391,8 +391,9 @@ final class AssetManager: @unchecked Sendable {
     }
 
     private func downloadIfMissing(_ projectId: Identifier<Project>, _ file: Manifest.File, completion: @escaping @Sendable (URL?) -> Void) {
+        let scale = UIScreen.main.scale
         guard
-            let localName = file.localName(MainActor.assumeIsolated { UIScreen.main.scale }),
+            let localName = file.localName(scale),
             let cacheUrl = AssetManager.shared.cacheDirectory(projectId)
         else {
             return
@@ -408,7 +409,7 @@ final class AssetManager: @unchecked Sendable {
             let downloadDelegate = AssetDownloadDelegate(projectId, localName, file.defaultsKey(projectId), completion)
             let session = URLSession(configuration: .default, delegate: downloadDelegate, delegateQueue: nil)
 
-            if let remoteUrl = file.remoteURL(for: MainActor.assumeIsolated { UIScreen.main.scale }) {
+            if let remoteUrl = file.remoteURL(for: scale) {
                 let request = Snabble.request(url: remoteUrl, json: false)
                 let task = session.downloadTask(with: request)
                 task.resume()
@@ -529,3 +530,4 @@ private final class AssetDownloadDelegate: NSObject, URLSessionDownloadDelegate,
         cache.storeCachedResponse(CachedURLResponse(response: response, data: data), for: request)
     }
 }
+
