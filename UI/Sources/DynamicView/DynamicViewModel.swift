@@ -21,9 +21,9 @@ public struct DynamicAction {
 
 @Observable
 @MainActor
-public class DynamicViewModel: /*NSObject,*/ Decodable {
-    nonisolated(unsafe) private var _configuration: DynamicViewConfiguration
-    nonisolated(unsafe) private var _widgets: [Widget]
+public class DynamicViewModel: /*NSObject,*/ @MainActor Decodable {
+    private var _configuration: DynamicViewConfiguration
+    private var _widgets: [Widget]
 
     public var configuration: DynamicViewConfiguration { _configuration }
     public var widgets: [Widget] { _widgets }
@@ -46,7 +46,7 @@ public class DynamicViewModel: /*NSObject,*/ Decodable {
         case type
     }
 
-    nonisolated public required init(from decoder: Decoder) throws {
+    public required init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
         self._configuration = try container.decode(DynamicViewConfiguration.self, forKey: .configuration)
 
