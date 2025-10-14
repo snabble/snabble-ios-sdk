@@ -50,6 +50,7 @@ struct ShoppingScannerView: View {
             ScannerOverlay(offset: $minHeight)
             ZoomControl(zoomLevel: $zoomLevel, steps: zoomSteps)
                 .offset(x: 0, y: position - 114)
+                .opacity(model.scanningPaused ? 0 : 1)
             PullOverView(minHeight: $minHeight, expanded: $model.scanningPaused, paddingTop: $topMargin, position: $position) {
                 ScannerCartView(model: model, minHeight: $minHeight)
             }
