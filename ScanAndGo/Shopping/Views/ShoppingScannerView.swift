@@ -52,8 +52,9 @@ struct ShoppingScannerView: View {
                 .offset(x: 0, y: position - 114)
             PullOverView(minHeight: $minHeight, expanded: Binding(get: { model.scanningPaused }, set: { model.scanningPaused = $0 }) , paddingTop: $topMargin, position: $position) {
                 ScannerCartView(minHeight: $minHeight)
+                .opacity(model.scanningPaused || position == 0 ? 0 : 1)
             }
-            if model.processing {
+            if model.processing || position == 0 {
                 ScannerProcessingView()
             }
         }

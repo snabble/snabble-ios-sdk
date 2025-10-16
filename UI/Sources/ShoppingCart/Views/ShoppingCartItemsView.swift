@@ -51,37 +51,6 @@ extension ShoppingCartViewModel {
 
 }
 
-extension ShoppingCartViewModel {
-    @MainActor
-    public var confirmDeletionAlert: Alert {
-        Alert(
-            title: Text(""),
-            message: Text(deletionMessage),
-            primaryButton:
-                    .destructive(Text(keyed: "Snabble.yes"),
-                                 action: {
-                                     self.processDeletion()
-                                 }),
-            secondaryButton:
-                    .cancel(Text(keyed: "Snabble.no"),
-                            action: {
-                                self.cancelDeletion()
-                            }))
-        
-    }
-
-    public var productErrorAlert: Alert {
-        Alert(
-            title: Text(keyed: "Snabble.SaleStop.ErrorMsg.title"),
-            message: Text(self.productErrorMessage),
-            dismissButton:
-                    .default(Text(keyed: "Snabble.ok"),
-                             action: {
-                                 self.productError = false
-                             }))
-    }
-}
-
 public struct ShoppingCartItemsView<Footer: View>: View {
     @Environment(ShoppingCartViewModel.self) var cartModel
     var footer: Footer
@@ -106,6 +75,7 @@ public struct ShoppingCartItemsView<Footer: View>: View {
                 }
             }
             .listStyle(.plain)
+            .scrollBounceBehavior(.basedOnSize)
             .background(.clear)
             .hiddenScrollView()
         }
@@ -113,11 +83,32 @@ public struct ShoppingCartItemsView<Footer: View>: View {
 
     public var body: some View {
         content
-            .alert(isPresented: .constant(cartModel.productError)) {
-                cartModel.productErrorAlert
+            .alert(
+                "Snabble.SaleStop.ErrorMsg.title",
+                isPresented: $cartModel.productError
+            ) {
+                Button("Snabble.ok") {
+                    cartModel.productError = false
+                }
+            } message: {
+                Text(cartModel.productErrorMessage)
             }
-            .alert(isPresented: .constant(cartModel.confirmDeletion)) {
-                cartModel.confirmDeletionAlert
+            .alert(
+                "",
+                isPresented: $cartModel.confirmDeletion
+            ) {
+                Button(role: .destructive) {
+                    cartModel.processDeletion()
+                } label: {
+                    Text(keyed: "Snabble.yes")
+                }
+                Button(role: .cancel) {
+                    cartModel.cancelDeletion()
+                } label: {
+                    Text(keyed: "Snabble.no")
+                }
+            } message: {
+                Text(cartModel.deletionMessage)
             }
     }
 

@@ -119,7 +119,7 @@ struct PullView: ViewModifier {
             .frame(minWidth: UIScreen.main.bounds.width)
             .background(.regularMaterial)
             .clipShape(CardShape(radius: 24))
-            .onAppear {
+            .task {
                 setupMinHeight(geom: geom)
             }
             .onChange(of: minHeight) {
@@ -132,7 +132,8 @@ struct PullView: ViewModifier {
             .offset(y: max(0, position + self.dragTracker.height))
             .animation(.easeInOut(duration: 0.2), value: position)
             .animation(Animation.interpolatingSpring(stiffness: 250.0, damping: 40.0, initialVelocity: 5.0), value: dragging)
-            .gesture(DragGesture(minimumDistance: 50, coordinateSpace: .local)
+            .opacity(position == 0 ? 0 : 1)
+            .simultaneousGesture(DragGesture(minimumDistance: 50, coordinateSpace: .local)
                 .updating($dragTracker) { drag, state, _ in
                     if drag.isVertical {
                         state = drag.translation

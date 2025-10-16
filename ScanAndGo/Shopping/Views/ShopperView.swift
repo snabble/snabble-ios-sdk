@@ -29,6 +29,7 @@ public struct ShopperView: View {
     public var body: some View {
         ShoppingScannerView(minHeight: $minHeight)
             .environment(model)
+            .edgesIgnoringSafeArea(.bottom)
             .animation(.easeInOut, value: model.scannedItem)
             .navigationDestination(isPresented: $isPresenting) {
                 model.navigationDestination(isPresented: $isPresenting)
