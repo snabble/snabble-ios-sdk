@@ -135,15 +135,17 @@ public struct ShopperView: View {
     }
     
     private func selectItem(_ item: BarcodeManager.ScannedItem?) {
-        defer {
-            model.scannedItem = nil
-            model.startScanner()
-        }
         guard let item else {
+            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                model.scannedItem = nil
+                model.startScanner()
+            }
             return
         }
         DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
             model.addScannedItem(item)
+            model.scannedItem = nil
+            model.startScanner()
         }
     }
 }
