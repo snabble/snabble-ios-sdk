@@ -178,9 +178,6 @@ open class InternalBarcodeDetector: NSObject, Zoomable {
         
         self.previewLayer = previewLayer
         
-        if #available(iOS 15, *) {
-            self.setRecommendedZoomFactor()
-        }
         self.state = .ready
     }
     
@@ -242,6 +239,7 @@ open class InternalBarcodeDetector: NSObject, Zoomable {
         }
         self.startBatterySaverTimer()
         self.state = .scanning
+        self.setRecommendedZoomFactor()
     }
     
     open func setTorch(_ switchedOn: Bool) {
