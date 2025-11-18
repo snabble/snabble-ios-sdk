@@ -113,12 +113,13 @@ extension BarcodeManager {
             self.processingDelegate?.track(.scanProduct(scannedProduct.transmissionCode ?? scannedCode))
             
             let item = ScannedItem(scannedProduct: scannedProduct, code: scannedCode, type: product.type)
-            self.processingDelegate?.scannedItem = item
-            self.logger.debug("scannedItem: \(item)")
             
             if !product.bundles.isEmpty || scannedProduct.priceOverride == nil {
                 self.collectBundles(for: item)
             }
+            
+            self.processingDelegate?.scannedItem = item
+            self.logger.debug("scannedItem: \(item)")
         }
     }
     
