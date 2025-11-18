@@ -131,8 +131,8 @@ extension ProductDatabase {
             }
             // get all bundles
             let bundles = rows.compactMap { self.productFrom(dbQueue, row: $0, shopId: shopId) }
-            // remove bundles w/o price
-            return bundles.filter { $0.listPrice != 0 }
+            // return all bundles
+            return bundles
         } catch {
             self.logError("productsBundling db error: \(error)")
         }

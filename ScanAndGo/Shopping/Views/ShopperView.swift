@@ -17,7 +17,10 @@ public struct ShopperView: View {
     
     @State private var showSearch: Bool = false
     @State private var showError: Bool = false
+    @State private var showBundleSelection: Bool = false
+    
     @State private var minHeight: CGFloat = 0
+    @State private var bundles: [BarcodeManager.ScannedItem] = []
     
     @SwiftUI.Environment(\.dismiss) var dismiss
     
@@ -67,15 +70,39 @@ public struct ShopperView: View {
                     }
                 }
             }
+            .onReceive(model.$bundles) { bundles in
+                self.bundles = bundles
+            }
             .onReceive(model.$scannedItem) { item in
                 if let item {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
-                        model.addScannedItem(item)
-                        model.scannedItem = nil
-                        model.startScanner()
-                   }
+                    if self.bundles.isEmpty {
+                        selectItem(item)
+                    } else {
+                        withAnimation {
+                            showBundleSelection = true
+                        }
+                    }
                 }
             }
+            .alert(
+                Asset.localizedString(forKey: "Snabble.Scanner.BundleDialog.headline"),
+                isPresented: $showBundleSelection,
+                actions: {
+                    ForEach(bundles, id: \.code) { bundle in
+                        Button(bundle.productName) {
+                            selectItem(bundle)
+                        }
+                    }
+                    if let item = model.scannedItem {
+                        Button(item.productName) {
+                            selectItem(item)
+                        }
+                    }
+                    Button(Asset.localizedString(forKey: "Snabble.cancel")) {
+                        selectItem(nil)
+                    }
+                }
+            )
             .onChange(of: showSearch) {
                 if showSearch {
                     model.stopScanner()
@@ -105,5 +132,18 @@ public struct ShopperView: View {
                     })
                 }
             }
+    }
+    
+    private func selectItem(_ item: BarcodeManager.ScannedItem?) {
+        defer {
+            model.scannedItem = nil
+            model.startScanner()
+        }
+        guard let item else {
+            return
+        }
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            model.addScannedItem(item)
+        }
     }
 }
