@@ -43,7 +43,8 @@ struct ShoppingScannerView: View {
     @State private var zoomLevel: CGFloat = 1
     @State private var zoomSteps: [ZoomStep] = ZoomStep.defaultSteps
     @State private var position: CGFloat = 0
-
+    @State private var scanMessage: ScanMessage?
+    
     var body: some View {
         ZStack(alignment: .top) {
             BarcodeScannerView(detector: model.barcodeManager.barcodeDetector)
@@ -59,7 +60,7 @@ struct ShoppingScannerView: View {
             }
         }
         .hud(isPresented: $showHud) {
-            ScanMessageView(message: model.scanMessage, isPresented: $showHud)
+            ScanMessageView(message: scanMessage, isPresented: $showHud)
         }
         .task {
             if let zoomFactor = model.barcodeManager.barcodeDetector.zoomFactor {
@@ -86,6 +87,7 @@ struct ShoppingScannerView: View {
         }
         .onReceive(model.$scanMessage) { scanMessage in
             if scanMessage != nil {
+                self.scanMessage = scanMessage
                 model.startScanner()
                 withAnimation {
                     showHud = true
