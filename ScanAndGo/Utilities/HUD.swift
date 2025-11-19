@@ -36,7 +36,6 @@ extension View {
                             }
                         }
                     }
-                    .zIndex(1)
             }
         }
     }
