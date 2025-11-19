@@ -11,7 +11,7 @@ import SnabbleComponents
 
 struct HUD<Content: View>: View {
     @ViewBuilder let content: Content
-    
+
     var body: some View {
         content
             .background(.regularMaterial)
@@ -28,7 +28,7 @@ extension View {
             self
             if isPresented.wrappedValue {
                 HUD(content: content)
-                    .transition(AnyTransition.move(edge: .top).combined(with: .opacity))
+                    .transition(.move(edge: .top).combined(with: .opacity))
                     .onAppear {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                             withAnimation {
@@ -39,6 +39,5 @@ extension View {
                     .zIndex(1)
             }
         }
-        
     }
 }
