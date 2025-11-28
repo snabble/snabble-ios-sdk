@@ -90,6 +90,7 @@ public struct MetadataLinks: Decodable {
     public let appUser: Link
     public let appUserOrders: Link
     public let chargingFeatureEnabled: Link?
+    public let parkingFeatureEnabled: Link?
     public let consents: Link?
     public let giropayCustomerAuthorization: Link?
     public let createAppUser: Link
@@ -97,7 +98,7 @@ public struct MetadataLinks: Decodable {
 
     enum CodingKeys: String, CodingKey {
         case _self = "self"
-        case clientOrders, appUser, appUserOrders, chargingFeatureEnabled, consents, createAppUser
+        case clientOrders, appUser, appUserOrders, chargingFeatureEnabled, parkingFeatureEnabled, consents, createAppUser
         case giropayCustomerAuthorization = "paydirektCustomerAuthorization"
     }
 
@@ -109,6 +110,8 @@ public struct MetadataLinks: Decodable {
         self._self = Link.empty
 
         self.chargingFeatureEnabled = Link.empty
+        self.parkingFeatureEnabled = Link.empty
+
         self.consents = Link.empty
         self.giropayCustomerAuthorization = nil
     }
