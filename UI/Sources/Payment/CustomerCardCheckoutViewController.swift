@@ -191,7 +191,13 @@ final class CustomerCardCheckoutViewController: UIViewController {
         iconWrapper?.isHidden = true
 
         setupIcons()
-    }
+
+        registerForTraitChanges([UITraitUserInterfaceStyle.self,
+                                 UITraitHorizontalSizeClass.self,
+                                 UITraitVerticalSizeClass.self]) { (self: Self, _: UITraitCollection) in
+            self.setupIcons()
+        }
+   }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
@@ -220,11 +226,6 @@ final class CustomerCardCheckoutViewController: UIViewController {
         super.viewWillDisappear(animated)
 
         UIScreen.main.brightness = self.initialBrightness
-    }
-
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        setupIcons()
     }
 
     private func setupIcons() {

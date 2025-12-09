@@ -239,7 +239,13 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
 
         topWrapper?.isHidden = true
         arrowWrapper?.isHidden = true
+        
         setupIcon()
+        registerForTraitChanges([UITraitUserInterfaceStyle.self,
+                                 UITraitHorizontalSizeClass.self,
+                                 UITraitVerticalSizeClass.self]) { (self: Self, _: UITraitCollection) in
+            self.setupIcon()
+        }
 
         let msg = Asset.localizedString(forKey: "Snabble.QRCode.message")
         messageLabel?.text = msg
@@ -294,11 +300,6 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             // user "aborted" this payment process by tapping 'Back'
             cart.generateNewUUID()
         }
-    }
-    
-    override func traitCollectionDidChange(_ previousTraitCollection: UITraitCollection?) {
-        super.traitCollectionDidChange(previousTraitCollection)
-        setupIcon()
     }
 
     private func configureViewForDevice() {
