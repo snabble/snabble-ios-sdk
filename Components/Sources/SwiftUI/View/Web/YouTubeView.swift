@@ -35,18 +35,12 @@ public struct YouTubeView: UIViewRepresentable {
     }
 
     public func updateUIView(_ uiView: WKWebView, context: Context) {
-        let embedHTML = """
-        <!DOCTYPE html>
-        <html>
-        <head>
-            <meta name="viewport" content="initial-scale=1.0, maximum-scale=1.0">
-            <style>body { margin: 0; padding: 0; }</style>
-        </head>
-        <body>
-            <iframe width="100%" height="280px" src="https://www.youtube.com/embed/\(videoID)?playsinline=1" frameborder="0" allowfullscreen></iframe>
-        </body>
-        </html>
-        """
-        uiView.loadHTMLString(embedHTML, baseURL: nil)
+        guard let url = URL(string: "https://www.youtube.com/embed/\(videoID)") else {
+            return
+        }
+        var request = URLRequest(url: url)
+        request.setValue("http://io.snabble.sdk", forHTTPHeaderField: "Referer")
+        
+        uiView.load(request)
     }
 }
