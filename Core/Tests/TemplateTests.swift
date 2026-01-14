@@ -114,6 +114,10 @@ class TemplateTests: XCTestCase {
         if let template = CodeTemplate("", "01{code:ean14}"), let match = template.match("0128000017120605") {
             XCTAssertEqual(match.lookupCode, "28000017120605")
         }
+        if let template = CodeTemplate("", "97{code:ean13}{price:6}{_}"), let match = template.match("9740062297102140000994") {
+            XCTAssertEqual(match.lookupCode, "4006229710214")
+        }
+        XCTAssertNotNil(CodeTemplate("", "voucher_{_:*}")?.match("voucher_valid"))
 
         XCTAssertNotNil(CodeTemplate("", "96{code:ean13}{embed:6}{price:5}{_}")?.match("960000000000000111111222223"))
 
@@ -125,6 +129,12 @@ class TemplateTests: XCTestCase {
         XCTAssertNil(CodeTemplate("", "{code:ean8}")?.match("87654320"))
 
         XCTAssertNil(CodeTemplate("", "96{code:ean13}{embed:6}{price:5}{_}")?.match("970000000000000111111222223"))
+
+        XCTAssertNil(CodeTemplate("", "123{_:5}")?.match("55545678"))
+        XCTAssertNil(CodeTemplate("", "123{_:5}")?.match("12345"))
+        XCTAssertNil(CodeTemplate("", "123{_:5}")?.match("123456789"))
+        XCTAssertNil(CodeTemplate("", "97{code:ean8}{price:6}{_}")?.match("9740062297102140000994"))
+
         XCTAssertNil(CodeTemplate("", "96{code:ean13}{embed:6}{price:5}{_}")?.match("96000000000000011111122222"))
     }
 
