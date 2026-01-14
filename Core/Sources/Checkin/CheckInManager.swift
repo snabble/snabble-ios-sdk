@@ -49,6 +49,7 @@ public class CheckInManager: NSObject {
     }
 
     public var shopPublisher = CurrentValueSubject<Shop?, Never>(nil)
+    public let authorizationStatusSubject = PassthroughSubject<CLAuthorizationStatus, Never>()
 
     private func trackCheckIn(with shop: Shop) {
         guard let location = locationManager.location, let project = shop.project else { return }
@@ -126,18 +127,22 @@ public class CheckInManager: NSObject {
 }
 
 extension CheckInManager: CLLocationManagerDelegate {
-    @available(iOS 14.0, *)
-    public func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
-        switch manager.authorizationStatus {
+    private func updateLocationManger(_ manager: CLLocationManager, status: CLAuthorizationStatus) {
+        switch status {
         case .authorizedWhenInUse, .authorizedAlways:
             manager.startUpdatingLocation()
         case .denied, .restricted, .notDetermined:
             manager.stopUpdatingLocation()
-            delegate?.checkInManager(self, locationAuthorizationNotGranted: manager.authorizationStatus)
-            return
+            delegate?.checkInManager(self, locationAuthorizationNotGranted: status)
         @unknown default:
             break
         }
+        authorizationStatusSubject.send(manager.authorizationStatus)
+    }
+
+    @available(iOS 14.0, *)
+    public func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+        updateLocationManger(manager, status: manager.authorizationStatus)
 
         switch manager.accuracyAuthorization {
         case .reducedAccuracy:
@@ -148,17 +153,9 @@ extension CheckInManager: CLLocationManagerDelegate {
             break
         }
     }
-
+    
     public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        switch status {
-        case .authorizedWhenInUse, .authorizedAlways:
-            manager.startUpdatingLocation()
-        case .denied, .restricted, .notDetermined:
-            manager.stopUpdatingLocation()
-            delegate?.checkInManager(self, locationAuthorizationNotGranted: status)
-        @unknown default:
-            break
-        }
+        updateLocationManger(manager, status: status)
     }
 
     public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
