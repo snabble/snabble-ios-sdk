@@ -59,7 +59,8 @@ final class ProductDatabase: ProductStoring {
     internal var resumeData: Data?
 
 #if os(iOS)
-    private var backgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid {
+    /// Thread-safety: UIBackgroundTaskIdentifier is just a number, UIApplication.shared handles synchronization
+    nonisolated(unsafe) private var backgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid {
         didSet {
             if oldValue != .invalid {
                 UIApplication.shared.endBackgroundTask(oldValue)
@@ -72,9 +73,11 @@ final class ProductDatabase: ProductStoring {
         willSet {
 #if os(iOS)
             if newValue != nil {
-                backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: { [self] in
-                    backgroundTaskIdentifier = .invalid
+                let app = UIApplication.shared
+                let taskId = app.beginBackgroundTask(expirationHandler: {
+                    // Task will be ended by didSet when backgroundTaskIdentifier is set to .invalid
                 })
+                backgroundTaskIdentifier = taskId
             } else {
                 backgroundTaskIdentifier = .invalid
             }

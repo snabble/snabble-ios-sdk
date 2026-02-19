@@ -7,7 +7,7 @@
 import Foundation
 
 /// type of product: normal single items, pre-weighed by the seller, or to-be-weighed by the customer
-public enum ProductType: Int, Codable, UnknownCaseRepresentable {
+public enum ProductType: Int, Codable, UnknownCaseRepresentable, Sendable {
     case singleItem
     case preWeighed
 
@@ -15,7 +15,7 @@ public enum ProductType: Int, Codable, UnknownCaseRepresentable {
 }
 
 /// product availability. searching for barcodes will not show products where `availability == .notAvailable`
-public enum ProductAvailability: Int, Codable, UnknownCaseRepresentable {
+public enum ProductAvailability: Int, Codable, UnknownCaseRepresentable, Sendable {
     case inStock
     case listed
     case notAvailable
@@ -23,7 +23,7 @@ public enum ProductAvailability: Int, Codable, UnknownCaseRepresentable {
     public static let unknownCase = ProductAvailability.inStock
 }
 
-public enum SaleRestriction: Codable {
+public enum SaleRestriction: Codable, Sendable {
     case none
     case age(Int)
     case fsk
@@ -83,7 +83,7 @@ extension SaleRestriction: Equatable {
     }
 }
 
-public struct ScannableCode: Codable {
+public struct ScannableCode: Codable, Sendable {
     public let code: String
     public let template: String
     public let transmissionCode: String?
@@ -93,7 +93,7 @@ public struct ScannableCode: Codable {
 }
 
 /// data for one product.
-public struct Product: Codable {
+public struct Product: Codable, Sendable {
     /// the stock keeping unit, unique identifier for this product
     public let sku: String
 

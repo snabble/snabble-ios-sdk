@@ -51,13 +51,15 @@ public enum Log {
 
 // MARK: - ISO8601/RFC3339 date formatting
 extension Formatter {
-    static let iso8601withFractionalSeconds: ISO8601DateFormatter = {
+    /// Thread-safety: Lazily initialized once, then only read. ISO8601DateFormatter is thread-safe.
+    nonisolated(unsafe) static let iso8601withFractionalSeconds: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
         return formatter
     }()
 
-    static let iso8601: ISO8601DateFormatter = {
+    /// Thread-safety: Lazily initialized once, then only read. ISO8601DateFormatter is thread-safe.
+    nonisolated(unsafe) static let iso8601: ISO8601DateFormatter = {
         let formatter = ISO8601DateFormatter()
         formatter.formatOptions = [.withInternetDateTime]
         return formatter

@@ -12,7 +12,8 @@ public protocol InternalShoppingCartDelegate: AnyObject {
 }
 
 /// a ShoppingCart is a collection of CartItem objects
-public final class ShoppingCart: Codable, PaymentConsumer {
+/// Thread-safety: Will be migrated to Actor in Phase 3. Currently uses internal locks for synchronization.
+public final class ShoppingCart: Codable, PaymentConsumer, @unchecked Sendable {
     
     public private(set) var items: [CartItem]
     public private(set) var session: String
@@ -621,7 +622,7 @@ extension ShoppingCart {
         return Cart(self, clientId: Snabble.clientId, appUserId: Snabble.shared.appUser?.id)
     }
 
-    func createCheckoutInfo(userInitiated: Bool = false, completion: @escaping (Bool) -> Void) {
+    func createCheckoutInfo(userInitiated: Bool = false, completion: @escaping @Sendable (Bool) -> Void) {
         guard
             let project = Snabble.shared.project(for: self.projectId),
             self.numberOfItems > 0

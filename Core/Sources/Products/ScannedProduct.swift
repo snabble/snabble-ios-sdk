@@ -8,7 +8,7 @@
 import Foundation
 
 /// the return type from `productByScannableCodes`
-public struct ScannedProduct {
+public struct ScannedProduct: Sendable {
     /// contains the product found
     public let product: Product
     /// can be used to override the code that gets sent to the backend, e.g. when an EAN-8 is scanned, but the backend requires EAN-13s

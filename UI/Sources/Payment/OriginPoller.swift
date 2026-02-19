@@ -7,6 +7,7 @@
 import Foundation
 import SnabbleCore
 
+@MainActor
 protocol OriginPollerDelegate: AnyObject {
     func originPoller(_ originPoller: OriginPoller, didReceiveCandidate originCandidate: OriginCandidate)
 }

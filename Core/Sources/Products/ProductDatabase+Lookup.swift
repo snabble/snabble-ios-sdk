@@ -9,15 +9,20 @@ import Foundation
 extension ProductDatabase {
     func resolveProductsLookup(_ url: String, _ codes: [(String, String)], _ shopId: Identifier<Shop>, completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
         let group = DispatchGroup()
-        var results = [Result<ScannedProduct, ProductLookupError>]()
         let mutex = Mutex()
+        
+        // Thread-safety: Mutable state protected by Mutex, accessed from concurrent closures
+        final class MutableResults: @unchecked Sendable {
+            var results: [Result<ScannedProduct, ProductLookupError>] = []
+        }
+        let state = MutableResults()
 
         // lookup each code/template
         for (code, template) in codes {
             group.enter()
             self.resolveProductsLookup(url, code, template, shopId) { result in
                 mutex.lock()
-                results.append(result)
+                state.results.append(result)
                 mutex.unlock()
                 group.leave()
             }
@@ -25,9 +30,9 @@ extension ProductDatabase {
 
         // all requests done - return the first success, if any
         group.notify(queue: DispatchQueue.main) {
-            var result = results[0]
+            var result = state.results[0]
             var found = 0
-            for res in results {
+            for res in state.results {
                 switch res {
                 case .success:
                     result = res
@@ -48,7 +53,7 @@ extension ProductDatabase {
     }
 
     private func resolveProductsLookup(_ url: String, _ code: String, _ template: String, _ shopId: Identifier<Shop>,
-                                       completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
+                                       completion: @escaping @Sendable (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
         let session = Snabble.urlSession
 
         // TODO: is this the right value?
@@ -110,7 +115,7 @@ extension ProductDatabase {
         }
     }
 
-    func resolveProductLookup(url: String, sku: String, shopId: Identifier<Shop>, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void) {
+    func resolveProductLookup(url: String, sku: String, shopId: Identifier<Shop>, completion: @escaping @Sendable (_ result: Result<Product, ProductLookupError>) -> Void) {
         let session = Snabble.urlSession
 
         // TODO: is this the right value?
@@ -166,7 +171,7 @@ extension ProductDatabase {
         }
     }
 
-    private func returnError<T>(_ msg: String, _ error: ProductLookupError, _ completion: @escaping (_ result: Result<T, ProductLookupError>) -> Void ) {
+    private func returnError<T>(_ msg: String, _ error: ProductLookupError, _ completion: @escaping @Sendable (_ result: Result<T, ProductLookupError>) -> Void ) {
         if error != .notFound {
             self.logError(msg)
         }

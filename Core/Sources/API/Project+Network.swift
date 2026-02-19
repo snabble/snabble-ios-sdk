@@ -95,7 +95,7 @@ public enum ProductLookupError: Error, Equatable {
     }
 }
 
-public enum ErrorResponseType: String, UnknownCaseRepresentable {
+public enum ErrorResponseType: String, UnknownCaseRepresentable, Sendable {
     case unknown
 
     // checkout errors
@@ -311,7 +311,7 @@ extension Project {
     ///   - completion: called on the main thread when the result is available.
     ///   - result: the parsed result object or error
     @discardableResult
-    public func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ result: Result<T, SnabbleError>) -> Void ) -> URLSessionDataTask {
+    public func perform<T: Decodable & Sendable>(_ request: URLRequest, _ completion: @escaping @Sendable (_ result: Result<T, SnabbleError>) -> Void ) -> URLSessionDataTask {
         return self.perform(request, returnRaw: false) { result, _, _ in
             completion(result)
         }
@@ -324,7 +324,7 @@ extension Project {
     ///   - completion: called on the main thread when the result is available.
     ///   - result: the parsed result object plus its raw JSON data, or error
     @discardableResult
-    func performRaw<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ result: RawResult<T, SnabbleError>) -> Void ) -> URLSessionDataTask {
+    func performRaw<T: Decodable & Sendable>(_ request: URLRequest, _ completion: @escaping @Sendable (_ result: RawResult<T, SnabbleError>) -> Void ) -> URLSessionDataTask {
         return self.perform(request, returnRaw: true) { (_ result: Result<T, SnabbleError>, _ raw: [String: Any]?, _) in
             let rawResult = RawResult(result, rawJson: raw)
             completion(rawResult)
@@ -339,7 +339,7 @@ extension Project {
     ///   - result: the parsed result object or error
     ///   - response: the HTTPURLResponse object
     @discardableResult
-    public func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ result: Result<T, SnabbleError>, _ response: HTTPURLResponse?) -> Void ) -> URLSessionDataTask {
+    public func perform<T: Decodable & Sendable>(_ request: URLRequest, _ completion: @escaping @Sendable (_ result: Result<T, SnabbleError>, _ response: HTTPURLResponse?) -> Void ) -> URLSessionDataTask {
         return self.perform(request, returnRaw: false) { result, _, response in
             completion(result, response)
         }
@@ -355,7 +355,7 @@ extension Project {
     ///   - raw: the JSON structure returned by the server, or nil if an error occurred
     ///   - response: the HTTPURLResponse object if available
     @discardableResult
-    private func perform<T: Decodable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping (_ result: Result<T, SnabbleError>, _ raw: [String: Any]?, _ response: HTTPURLResponse?) -> Void ) -> URLSessionDataTask {
+    private func perform<T: Decodable & Sendable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping @Sendable (_ result: Result<T, SnabbleError>, _ raw: [String: Any]?, _ response: HTTPURLResponse?) -> Void ) -> URLSessionDataTask {
         let start = Date.timeIntervalSinceReferenceDate
         let session = Snabble.urlSession
         let task = session.dataTask(with: request) { data, response, error in

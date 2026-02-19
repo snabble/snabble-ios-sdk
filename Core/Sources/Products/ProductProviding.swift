@@ -6,7 +6,7 @@
 //
 
 import Foundation
-import Combine
+@preconcurrency import Combine
 
 // MARK: - ProductProviding protocol to access products
 
@@ -50,7 +50,7 @@ public protocol ProductProviding: AnyObject {
     ///   - sku: the sku to look for
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - result: the product found or the error
-    func productBy(sku: String, shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void )
+    func productBy(sku: String, shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping @Sendable (_ result: Result<Product, ProductLookupError>) -> Void )
 
     /// asynchronously get a product by (one of) its scannable codes
     ///
@@ -58,14 +58,14 @@ public protocol ProductProviding: AnyObject {
     ///   - codes: the code/template pairs to look for
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - result: the lookup result or the error
-    func scannedProductBy(codes: [(String, String)], shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void )
+    func scannedProductBy(codes: [(String, String)], shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping @Sendable (_ result: Result<ScannedProduct, ProductLookupError>) -> Void )
     
 }
 
 // MARK: - ProductProviding convenience methods
 
 public extension ProductProviding {
-    func productBy(sku: String, shopId: Identifier<Shop>, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void ) {
+    func productBy(sku: String, shopId: Identifier<Shop>, completion: @escaping @Sendable (_ result: Result<Product, ProductLookupError>) -> Void ) {
         self.productBy(sku: sku, shopId: shopId, forceDownload: false, completion: completion)
     }
 
@@ -77,7 +77,7 @@ public extension ProductProviding {
         return self.productsBy(name: name, filterDeposits: true)
     }
 
-    func productBy(codes: [(String, String)], shopId: Identifier<Shop>, completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void ) {
+    func productBy(codes: [(String, String)], shopId: Identifier<Shop>, completion: @escaping @Sendable (_ result: Result<ScannedProduct, ProductLookupError>) -> Void ) {
         self.scannedProductBy(codes: codes, shopId: shopId, forceDownload: false, completion: completion)
     }
 }
@@ -152,15 +152,11 @@ public extension ProductProviding {
     ///   - result: the product found or the error
     func productProviderBy(sku: String, shopId: Identifier<Shop>, forceDownload: Bool) -> Future<Product, ProductLookupError> {
         Future { promise in
+            // Legacy Combine bridge - will be replaced with async/await in Phase 4
+            // Thread-safety: Future's promise is called from completion handler, Combine handles synchronization
+            nonisolated(unsafe) let unsafePromise = promise
             self.productBy(sku: sku, shopId: shopId, forceDownload: forceDownload) { result in
-                switch result {
-                case .success(let product):
-                    promise(.success(product))
-                    
-                case .failure(let error):
-                    promise(.failure(ProductLookupError.from(error) ?? .notFound))
-                }
-
+                unsafePromise(result)
             }
         }
     }
@@ -173,15 +169,11 @@ public extension ProductProviding {
     ///   - result: the lookup result or the error
     func scannedProductProviderBy(codes: [(String, String)], shopId: Identifier<Shop>, forceDownload: Bool) -> Future<ScannedProduct, ProductLookupError> {
         Future { promise in
+            // Legacy Combine bridge - will be replaced with async/await in Phase 4
+            // Thread-safety: Future's promise is called from completion handler, Combine handles synchronization
+            nonisolated(unsafe) let unsafePromise = promise
             self.scannedProductBy(codes: codes, shopId: shopId, forceDownload: forceDownload) { result in
-                switch result {
-                case .success(let product):
-                    promise(.success(product))
-                    
-                case .failure(let error):
-                    promise(.failure(ProductLookupError.from(error) ?? .notFound))
-                }
-
+                unsafePromise(result)
             }
         }
     }

@@ -7,9 +7,10 @@
 
 import Foundation
 
-public struct Country: Decodable, Equatable {
-    public static var all: [Country] = loadJSON("countries")
-    public static var germany: Country = Country(code: "DE", numeric: "276")
+public struct Country: Decodable, Equatable, Sendable {
+    /// Thread-safety: Loaded once from JSON at static initialization, then only read. Immutable after load.
+    nonisolated(unsafe) public static var all: [Country] = loadJSON("countries")
+    public static let germany: Country = Country(code: "DE", numeric: "276")
     
     public let code: String
     public let states: [State]?
@@ -21,7 +22,7 @@ public struct Country: Decodable, Equatable {
         self.numeric = numeric
     }
     
-    public struct State: Decodable, Equatable {
+    public struct State: Decodable, Equatable, Sendable {
         public let code: String
         public let name: String
 

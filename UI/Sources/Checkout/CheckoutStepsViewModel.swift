@@ -8,6 +8,7 @@
 import Foundation
 import SnabbleCore
 
+@MainActor
 protocol CheckoutStepsViewModelDelegate: AnyObject {
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateCheckoutProcess checkoutProcess: CheckoutProcess)
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateHeaderViewModel headerViewModel: CheckoutHeaderViewModel)
@@ -15,6 +16,7 @@ protocol CheckoutStepsViewModelDelegate: AnyObject {
     func checkoutStepsViewModel(_ viewModel: CheckoutStepsViewModel, didUpdateExitToken exitToken: ExitToken)
 }
 
+@MainActor
 final class CheckoutStepsViewModel {
     private(set) var checkoutProcess: CheckoutProcess? {
         didSet {

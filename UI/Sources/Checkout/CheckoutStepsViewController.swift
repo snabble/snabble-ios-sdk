@@ -10,6 +10,7 @@ import Combine
 import SnabbleAssetProviding
 import SnabbleComponents
 
+@MainActor
 final class CheckoutModel: ObservableObject {
 
     weak var paymentDelegate: PaymentDelegate? {

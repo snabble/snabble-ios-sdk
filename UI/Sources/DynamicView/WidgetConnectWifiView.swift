@@ -13,6 +13,7 @@ import Network
 import SnabbleCore
 import SnabbleAssetProviding
 
+@MainActor
 final class ConnectWifiViewModel: ObservableObject {
     let configuration: DynamicViewConfiguration
 
@@ -24,7 +25,10 @@ final class ConnectWifiViewModel: ObservableObject {
         pathMonitor = NWPathMonitor(requiredInterfaceType: .wifi)
 
         pathMonitor.pathUpdateHandler = { [weak self] _ in
-            self?.isHidden = self!.verifyIsHidden()
+            Task { @MainActor in
+                guard let self = self else { return }
+                self.isHidden = self.verifyIsHidden()
+            }
         }
         pathMonitor.start(queue: .main)
     }

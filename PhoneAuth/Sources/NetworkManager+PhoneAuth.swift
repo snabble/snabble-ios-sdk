@@ -19,7 +19,7 @@ public protocol PhoneAuthProviding {
 
 extension NetworkManager: PhoneAuthProviding {
 
-    private func useContinuation<Value, Response>(endpoint: Endpoint<Response>, receiveValue: @escaping (Response, CheckedContinuation<Value, any Error>) -> Void) async throws -> Value {
+    private func useContinuation<Value: Sendable, Response: Sendable>(endpoint: Endpoint<Response>, receiveValue: @escaping @Sendable (Response, CheckedContinuation<Value, any Error>) -> Void) async throws -> Value {
         return try await withCheckedThrowingContinuation { continuation in
             var cancellable: AnyCancellable?
             cancellable = publisher(for: endpoint)

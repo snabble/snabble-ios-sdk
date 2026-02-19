@@ -90,3 +90,8 @@ extension Identifier: Equatable {
         lhs.rawValue == rhs.rawValue
     }
 }
+
+// MARK: - Sendable
+
+extension Identifier: Sendable where Value.RawIdentifier: Sendable {
+}

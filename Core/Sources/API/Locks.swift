@@ -8,7 +8,8 @@
 
 import Foundation
 
-public final class ReadWriteLock {
+/// Thread-safety: ReadWriteLock provides thread synchronization via pthread_rwlock_t
+public final class ReadWriteLock: @unchecked Sendable {
     private var lock: pthread_rwlock_t
 
     public init() {
@@ -45,7 +46,8 @@ public final class ReadWriteLock {
     }
 }
 
-public final class Mutex {
+/// Thread-safety: Mutex provides thread synchronization via pthread_mutex_t
+public final class Mutex: @unchecked Sendable {
     private var mutex: pthread_mutex_t
 
     public init() {

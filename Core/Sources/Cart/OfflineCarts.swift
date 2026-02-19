@@ -29,8 +29,9 @@ struct SavedCart: Codable {
     }
 }
 
-public final class OfflineCarts {
-    public static let shared = OfflineCarts()
+public final class OfflineCarts: @unchecked Sendable {
+    /// Thread-safety: Singleton accessed from multiple threads. All mutations protected by serial DispatchQueue.
+    nonisolated(unsafe) public static let shared = OfflineCarts()
 
     private var inProgress = false
     private var pendingCarts = 0
@@ -65,14 +66,21 @@ public final class OfflineCarts {
     }
 
     private func doRetrySendingCarts() {
-        var savedCarts = self.readSavedCarts()
-
+        // Thread-safety: Mutable state protected by Mutex, accessed from concurrent closures
+        final class MutableState: @unchecked Sendable {
+            var savedCarts: [SavedCart]
+            var successIndices: [Int] = []
+            init(savedCarts: [SavedCart]) {
+                self.savedCarts = savedCarts
+            }
+        }
+        
+        let state = MutableState(savedCarts: self.readSavedCarts())
         let group = DispatchGroup()
         let mutex = Mutex()
-        var successIndices = [Int]()
 
         // retry the requests
-        for (index, savedCart) in savedCarts.enumerated() {
+        for (index, savedCart) in state.savedCarts.enumerated() {
             let cart = savedCart.cart
             guard let project = Snabble.shared.project(for: cart.projectId) else {
                 continue
@@ -86,11 +94,11 @@ public final class OfflineCarts {
                         switch result.result {
                         case .success:
                             mutex.lock()
-                            successIndices.append(index)
+                            state.successIndices.append(index)
                             mutex.unlock()
                         case .failure(let error):
                             mutex.lock()
-                            savedCarts[index].failures += 1
+                            state.savedCarts[index].failures += 1
                             mutex.unlock()
                             Log.error("error creating process: \(error)")
                         }
@@ -98,7 +106,7 @@ public final class OfflineCarts {
                     }
                 case .failure(let error):
                     mutex.lock()
-                    savedCarts[index].failures += 1
+                    state.savedCarts[index].failures += 1
                     mutex.unlock()
                     Log.error("error creating info: \(error)")
                     group.leave()
@@ -110,13 +118,13 @@ public final class OfflineCarts {
         group.wait()
 
         // remove all carts where the re-sending was successful or we had too many failures
-        for idx in (0 ..< savedCarts.count).reversed() {
-            if successIndices.contains(idx) || savedCarts[idx].failures > 3 {
-                savedCarts.remove(at: idx)
+        for idx in (0 ..< state.savedCarts.count).reversed() {
+            if state.successIndices.contains(idx) || state.savedCarts[idx].failures > 3 {
+                state.savedCarts.remove(at: idx)
             }
         }
-        self.writeSavedCarts(savedCarts)
-        self.pendingCarts = savedCarts.count
+        self.writeSavedCarts(state.savedCarts)
+        self.pendingCarts = state.savedCarts.count
         self.inProgress = false
     }
 }

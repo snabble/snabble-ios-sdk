@@ -35,7 +35,8 @@ public struct GS1CodeElement {
 public struct GS1Code {
     public static let gs = "\u{1d}"
 
-    private static var prefixMap: [String: [ApplicationIdentifier]] = {
+    /// Thread-safety: Lazily initialized once from immutable ApplicationIdentifier.allIdentifiers, then only read
+    nonisolated(unsafe) private static var prefixMap: [String: [ApplicationIdentifier]] = {
         var map = [String: [ApplicationIdentifier]]()
         for ai in ApplicationIdentifier.allIdentifiers {
             let pfx = String(ai.prefix.prefix(2))

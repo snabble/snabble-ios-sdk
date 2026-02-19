@@ -7,9 +7,10 @@
 
 import Foundation
 
-public struct CallingCode: Decodable, Identifiable {
-    public static var all: [CallingCode] = loadJSON("calling-codes")
-    public static var germany: CallingCode = CallingCode(identifier: "DE", code: 49)
+public struct CallingCode: Decodable, Identifiable, Sendable {
+    /// Thread-safety: Loaded once from JSON at static initialization, then only read. Immutable after load.
+    nonisolated(unsafe) public static var all: [CallingCode] = loadJSON("calling-codes")
+    public static let germany: CallingCode = CallingCode(identifier: "DE", code: 49)
 
     public let id: String
     public let code: UInt

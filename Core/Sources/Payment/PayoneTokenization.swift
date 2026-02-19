@@ -48,7 +48,7 @@ public struct PayonePreAuthStatusResult: Decodable {
     public let status: PayonePreAuthStatus
 }
 
-public enum PayonePreAuthStatus: String, Decodable, UnknownCaseRepresentable {
+public enum PayonePreAuthStatus: String, Decodable, UnknownCaseRepresentable, Sendable {
     case unknown
 
     case pending

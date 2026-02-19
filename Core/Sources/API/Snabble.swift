@@ -10,7 +10,8 @@ import SnabbleUser
 import SnabbleNetwork
 import Combine
 
-public var globalButterOverflow: String?
+/// Thread-safety: Global debug variable, set once during testing/debugging
+nonisolated(unsafe) public var globalButterOverflow: String?
 
 public enum CustomProperty: Hashable {
     case externalBillingSubjectLimit(projectId: String)
@@ -77,15 +78,18 @@ extension Config: SnabbleUser.Configurable, SnabbleNetwork.Configurable {
 }
 
 public extension Notification.Name {
-    static var metadataLoaded = Notification.Name(rawValue: "io.snabble.metadataLoaded")
+    /// Thread-safety: Notification name constant, immutable after initialization
+    nonisolated(unsafe) static var metadataLoaded = Notification.Name(rawValue: "io.snabble.metadataLoaded")
 }
 
 /**
  * The main entry point for the SnabbleSDK.
  *
  * Use `Snabble.setup(config:, completion:)` to initialize Snabble.
+ *
+ * Thread-safety: Singleton with internal synchronization via ReadWriteLock and dispatch queues
  */
-public class Snabble {
+public class Snabble: @unchecked Sendable {
 
     private init(config: Config, tokenRegistry: TokenRegistry) {
         self.config = config
@@ -153,7 +157,8 @@ public class Snabble {
     }
 
     /// Snabble instance is accessible after calling `Snabble.setup(config:, completion:)`
-    public private(set) static var shared: Snabble!
+    /// Thread-safety: Set once during app initialization via setup(), then only read
+    nonisolated(unsafe) public private(set) static var shared: Snabble!
 
     /// Geo-fencing based check in manager. Use for automatically detecting if you are in a shop.
     public lazy var checkInManager = CheckInManager()
@@ -195,7 +200,8 @@ public class Snabble {
         return metadata.links.giropayCustomerAuthorization?.href
     }
     
-    public static let methodRegistry = MethodRegistry()
+    /// Thread-safety: Singleton registry initialized at static initialization, internal synchronization
+    nonisolated(unsafe) public static let methodRegistry = MethodRegistry()
 
     private var databases: [Identifier<Project>: ProductDatabase]
 
@@ -245,7 +251,7 @@ public class Snabble {
     /// - Parameters:
     ///   - config: `SnabbleAPIConfig` with at least an `appId` and a `secret`
     ///   - completion: CompletionHandler is called as soon as everything is finished
-    public static func setup(config: Config, completion: @escaping (Snabble) -> Void) {
+    public static func setup(config: Config, completion: @escaping @Sendable (Snabble) -> Void) {
         shared = Snabble(
             config: config,
             tokenRegistry: TokenRegistry(appId: config.appId, secret: config.secret)
@@ -255,7 +261,7 @@ public class Snabble {
     
     /// update Snabble
     /// - Parameter completion: completionHandler informs about the status
-    public func update(completion: @escaping (Snabble) -> Void) {
+    public func update(completion: @escaping @Sendable (Snabble) -> Void) {
         let bundleVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0"
         let appVersion = config.appVersion ?? bundleVersion
         let version = appVersion.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? appVersion
@@ -309,7 +315,7 @@ public class Snabble {
         }
     }
 
-    private func loadCoupons(_ completion: @escaping () -> Void) {
+    private func loadCoupons(_ completion: @escaping @Sendable () -> Void) {
         // reload coupons from `coupons` endpoint where present
         let group = DispatchGroup()
 
@@ -589,8 +595,10 @@ extension Snabble {
         }
     }
 
-    private(set) static var appUserData: AppUserData?
-    private static weak var appUserDataTask: URLSessionDataTask?
+    /// Thread-safety: Set during fetchAppUserData() network call, accessed from multiple threads
+    nonisolated(unsafe) private(set) static var appUserData: AppUserData?
+    /// Thread-safety: Weak reference to ongoing network task, accessed from multiple threads
+    nonisolated(unsafe) private static weak var appUserDataTask: URLSessionDataTask?
 
     public static var userAge: Int {
         return appUserData?.age ?? 0
@@ -628,7 +636,7 @@ extension Snabble {
 
     private struct TermsResponse: Decodable {}
 
-    public func saveTermsConsent(_ version: String, completion: @escaping (Bool) -> Void) {
+    public func saveTermsConsent(_ version: String, completion: @escaping @Sendable (Bool) -> Void) {
         guard
             let appUserId = appUser?.id,
             let consents = links.consents?.href,

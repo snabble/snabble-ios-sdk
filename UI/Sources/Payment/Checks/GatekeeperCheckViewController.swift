@@ -18,10 +18,12 @@ public protocol GatekeeperProviding: AnyObject {
 
 public enum Gatekeeper {
     /// Reference to the implementation of the `GatekeeperProviding` implementation
-    public static weak var provider: GatekeeperProviding?
+    /// Thread-safety: Set once during app initialization
+    nonisolated(unsafe) public static weak var provider: GatekeeperProviding?
  
     /// Reference to the current domain
-    public static var domain: Any?
+    /// Thread-safety: Set once during app initialization
+    nonisolated(unsafe) public static var domain: Any?
     
     // MARK: - Color
     public static func gatekeeper(viewModel: GatekeeperViewModel, domain: Any? = domain) -> UIViewController? {

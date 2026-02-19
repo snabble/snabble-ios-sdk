@@ -7,18 +7,18 @@
 // MARK: - shop data
 
 /// opening hours
-public struct OpeningHoursSpecification: Codable {
+public struct OpeningHoursSpecification: Codable, Sendable {
     public let opens: String
     public let closes: String
     public let dayOfWeek: String
 }
 
 /// customer networks
-public struct CustomerNetworks: Codable {
+public struct CustomerNetworks: Codable, Sendable {
     public let ssid: String
 }
 
-public struct ShopService: Codable {
+public struct ShopService: Codable, Sendable {
     public let serviceId: String
     public let iconPath: String
     public let translations: [String: String]
@@ -31,7 +31,9 @@ public struct ShopService: Codable {
 }
 
 /// base data for one shop
-public struct Shop: Codable, Identifiable {
+/// Thread-safety: Contains `external: [String: Any]?` which is not Sendable, but Shop instances are
+/// immutable after decoding from JSON and only accessed for reading.
+public struct Shop: Codable, Identifiable, @unchecked Sendable {
     /// id of this shop, use this to initialize shopping carts
     public let id: Identifier<Shop>
     /// name of this shop
@@ -167,6 +169,6 @@ extension Shop: Equatable {
 }
 
 // response object from the `activeShops` endpoint
-struct ActiveShops: Decodable {
+struct ActiveShops: Decodable, Sendable {
     let shops: [Shop]
 }

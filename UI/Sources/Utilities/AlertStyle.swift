@@ -18,6 +18,8 @@ public final class SnabbleAlertStyle: AlertVisualStyle {
 }
 
 extension AlertVisualStyle {
-    public static let snabbleAlert = SnabbleAlertStyle(alertStyle: .alert)
-    public static let snabbleActionSheet = SnabbleAlertStyle(alertStyle: .actionSheet)
+    /// Thread-safety: Immutable once initialized
+    nonisolated(unsafe) public static let snabbleAlert = SnabbleAlertStyle(alertStyle: .alert)
+    /// Thread-safety: Immutable once initialized
+    nonisolated(unsafe) public static let snabbleActionSheet = SnabbleAlertStyle(alertStyle: .actionSheet)
 }

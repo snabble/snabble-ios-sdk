@@ -7,7 +7,8 @@
 import Foundation
 
 /// Signed Checkout Info
-public struct SignedCheckoutInfo: Decodable {
+/// Thread-safety: Contains `rawJson: [String: Any]?` for internal use, but instances are immutable after decoding
+public struct SignedCheckoutInfo: Decodable, @unchecked Sendable {
     public let checkoutInfo: CheckoutInfo
     public let signature: String
     public let links: CheckoutLinks
@@ -18,7 +19,7 @@ public struct SignedCheckoutInfo: Decodable {
         case links
     }
 
-    public struct CheckoutLinks: Decodable {
+    public struct CheckoutLinks: Decodable, Sendable {
         public let checkoutProcess: Link
 
         fileprivate init() {
@@ -37,7 +38,7 @@ public struct SignedCheckoutInfo: Decodable {
     }
 }
 
-public enum AcceptedOriginType: String, Codable {
+public enum AcceptedOriginType: String, Codable, Sendable {
     case iban
     case ipgHostedDataID
     case tegutEmployeeID
@@ -49,7 +50,7 @@ public enum AcceptedOriginType: String, Codable {
     case contactPersonCredentials
 }
 
-public enum PaymentState: String, Decodable, UnknownCaseRepresentable {
+public enum PaymentState: String, Decodable, UnknownCaseRepresentable, Sendable {
     case unknown
 
     case pending
@@ -59,16 +60,19 @@ public enum PaymentState: String, Decodable, UnknownCaseRepresentable {
     case failed
     case unauthorized
 
-    public static let successStates = Set<PaymentState>([ .successful, .transferred ])
+    /// Thread-safety: Immutable set initialized at static initialization
+    nonisolated(unsafe) public static let successStates = Set<PaymentState>([ .successful, .transferred ])
 
-    public static let endStates = Set<PaymentState>([ .successful, .failed, .transferred ])
+    /// Thread-safety: Immutable set initialized at static initialization
+    nonisolated(unsafe) public static let endStates = Set<PaymentState>([ .successful, .failed, .transferred ])
 
-    public static let unknownCase = PaymentState.unknown
+    /// Thread-safety: Constant enum value
+    nonisolated(unsafe) public static let unknownCase = PaymentState.unknown
 }
 
 /// line items can be added by the backend.
 /// If they refer back to a shopping cart item via their `refersTo` property, the `type` describes the relationship
-public enum LineItemType: String, Codable, UnknownCaseRepresentable {
+public enum LineItemType: String, Codable, UnknownCaseRepresentable, Sendable {
     /// not actually sent by the backend
     case unknown
 
@@ -88,11 +92,12 @@ public enum LineItemType: String, Codable, UnknownCaseRepresentable {
     case depositReturnVoucher
     case depositReturn
     
-    public static let unknownCase = LineItemType.unknown
+    /// Thread-safety: Constant enum value
+    nonisolated(unsafe) public static let unknownCase = LineItemType.unknown
 }
 
 // optional required information
-public struct RequiredInformation: Codable {
+public struct RequiredInformation: Codable, Sendable {
     public let id: RequiredInformationType
     public let value: String?
 
@@ -101,16 +106,18 @@ public struct RequiredInformation: Codable {
         case takeaway
     }
 
-    public static let taxationInhouse = RequiredInformation(id: .taxation, value: TaxationValue.inHouse.rawValue)
-    public static let taxationTakeaway = RequiredInformation(id: .taxation, value: TaxationValue.takeaway.rawValue)
+    /// Thread-safety: Immutable struct constant
+    nonisolated(unsafe) public static let taxationInhouse = RequiredInformation(id: .taxation, value: TaxationValue.inHouse.rawValue)
+    /// Thread-safety: Immutable struct constant
+    nonisolated(unsafe) public static let taxationTakeaway = RequiredInformation(id: .taxation, value: TaxationValue.takeaway.rawValue)
 }
 
-public enum RequiredInformationType: String, Codable {
+public enum RequiredInformationType: String, Codable, Sendable {
     case taxation
 }
 
 // CheckoutInfo
-public struct CheckoutInfo: Decodable {
+public struct CheckoutInfo: Decodable, Sendable {
     /// session id
     public let session: String
 
@@ -132,9 +139,10 @@ public struct CheckoutInfo: Decodable {
         case session, paymentMethods, lineItems, price, requiredInformation, violations
     }
 
-    public struct Violation: Codable {
-        public enum `Type`: String, Codable, UnknownCaseRepresentable {
-            public static var unknownCase: Self = .unknown
+    public struct Violation: Codable, Sendable {
+        public enum `Type`: String, Codable, UnknownCaseRepresentable, Sendable {
+            /// Thread-safety: Constant enum value
+            nonisolated(unsafe) public static var unknownCase: Self = .unknown
 
             case couponInvalid = "coupon_invalid"
             case couponCurrentlyNotValid = "coupon_currently_not_valid"
@@ -158,7 +166,7 @@ public struct CheckoutInfo: Decodable {
         }
     }
 
-    public struct LineItem: Codable {
+    public struct LineItem: Codable, Sendable {
         public let id: String
         public let sku: String?
         public let name: String?
@@ -188,8 +196,9 @@ public struct CheckoutInfo: Decodable {
             return (self.units ?? 1) * price
         }
 
-        public enum Action: String, Codable, UnknownCaseRepresentable {
-            public static var unknownCase: Self = .unknown
+        public enum Action: String, Codable, UnknownCaseRepresentable, Sendable {
+            /// Thread-safety: Constant enum value
+            nonisolated(unsafe) public static var unknownCase: Self = .unknown
             
             case add
             case replace
@@ -197,14 +206,14 @@ public struct CheckoutInfo: Decodable {
             case unknown
         }
 
-        public struct PriceModifier: Codable {
+        public struct PriceModifier: Codable, Sendable {
             public let name: String
             public let action: Action?
             public let price: Int
         }
     }
 
-    public struct Price: Decodable {
+    public struct Price: Decodable, Sendable {
         public let price: Int
         public let netPrice: Int
 
@@ -237,7 +246,7 @@ public struct CheckoutInfo: Decodable {
     }
 }
 
-public enum FulfillmentState: String, Decodable, UnknownCaseRepresentable {
+public enum FulfillmentState: String, Decodable, UnknownCaseRepresentable, Sendable {
     case unknown
 
     // working
@@ -247,27 +256,32 @@ public enum FulfillmentState: String, Decodable, UnknownCaseRepresentable {
     // finished with error
     case aborted, allocationFailed, allocationTimedOut, failed
 
-    public static let workingStates: Set<FulfillmentState> =
+    /// Thread-safety: Immutable set initialized at static initialization
+    nonisolated(unsafe) public static let workingStates: Set<FulfillmentState> =
         [ .open, .allocating, .allocated, .processing ]
-    public static let failureStates: Set<FulfillmentState> =
+    /// Thread-safety: Immutable set initialized at static initialization
+    nonisolated(unsafe) public static let failureStates: Set<FulfillmentState> =
         [ .aborted, .allocationFailed, .allocationTimedOut, .failed ]
-    public static let endStates: Set<FulfillmentState> =
+    /// Thread-safety: Immutable set initialized at static initialization
+    nonisolated(unsafe) public static let endStates: Set<FulfillmentState> =
         [ .aborted, .allocationFailed, .allocationTimedOut, .failed, .processed ]
 
-    public static let allocationFailureStates: Set<FulfillmentState> =
+    /// Thread-safety: Immutable set initialized at static initialization
+    nonisolated(unsafe) public static let allocationFailureStates: Set<FulfillmentState> =
         [ .allocationFailed, .allocationTimedOut ]
 
-    public static let unknownCase = FulfillmentState.unknown
+    /// Thread-safety: Constant enum value
+    nonisolated(unsafe) public static let unknownCase = FulfillmentState.unknown
 }
 
-public struct Fulfillment: Decodable {
+public struct Fulfillment: Decodable, Sendable {
     public let id: String
     public let refersTo: [String]
     public let type: String
     public let state: FulfillmentState
     public let errors: [FulfillmentError]?
 
-    public struct FulfillmentError: Decodable {
+    public struct FulfillmentError: Decodable, Sendable {
         public let type: String
         public let refersTo: String?
         public let message: String
@@ -287,21 +301,23 @@ public enum FailureCause: String {
     case ageVerificationNotSupportedByCard
 }
 
-public struct ExitToken: Codable {
+public struct ExitToken: Codable, Sendable {
     public let format: ScanFormat?
     public let value: String?
 }
 
-public enum RoutingTarget: String, Decodable, UnknownCaseRepresentable {
+public enum RoutingTarget: String, Decodable, UnknownCaseRepresentable, Sendable {
     case none
     case supervisor
     case gatekeeper
 
-    public static let unknownCase = Self.none
+    /// Thread-safety: Constant enum value
+    nonisolated(unsafe) public static let unknownCase = Self.none
 }
 
 // MARK: - Checkout Process
-public struct CheckoutProcess: Decodable {
+/// Thread-safety: Contains `paymentResult: [String: Any]?` for payment provider data, but instances are immutable after decoding
+public struct CheckoutProcess: Decodable, @unchecked Sendable {
     public let id: String
     public let links: ProcessLinks
     public let aborted: Bool
@@ -324,12 +340,12 @@ public struct CheckoutProcess: Decodable {
         RawPaymentMethod(rawValue: paymentMethod)
     }
 
-    public struct Pricing: Decodable {
+    public struct Pricing: Decodable, Sendable {
         public let lineItems: [CheckoutInfo.LineItem]
         public let price: CheckoutInfo.Price
     }
 
-    public struct ProcessLinks: Decodable {
+    public struct ProcessLinks: Decodable, Sendable {
         public let _self: Link
         public let approval: Link
         public let receipt: Link?
@@ -341,7 +357,7 @@ public struct CheckoutProcess: Decodable {
         }
     }
 
-    public struct PaymentInformation: Decodable {
+    public struct PaymentInformation: Decodable, Sendable {
         /// for method == .qrCodePOS
         public let qrCodeContent: String?
 
@@ -349,17 +365,17 @@ public struct CheckoutProcess: Decodable {
         public let handoverInformation: String?
     }
 
-    public struct PaymentPreauthInformation: Decodable {
+    public struct PaymentPreauthInformation: Decodable, Sendable {
         public let merchantID: String? // for Apple Pay
         public let markup: String? // for PayOneSepa
         public let mandateIdentification: String? // for PayOneSepa
     }
 
-    public struct VoucherInformation: Decodable {
+    public struct VoucherInformation: Decodable, Sendable {
         public let refersTo: String
         public let state: VoucherState
         
-        public enum VoucherState: String, Decodable {
+        public enum VoucherState: String, Decodable, Sendable {
             case pending
             case redeemed
             case redeemingFailed

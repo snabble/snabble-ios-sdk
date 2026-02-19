@@ -11,10 +11,12 @@ import Combine
 import SwiftUI
 import SnabbleAssetProviding
 
+@MainActor
 protocol CouponViewModelDelegate: AnyObject {
     func couponViewModel(_ couponViewModel: CouponViewModel, shouldActivateCoupon coupon: Coupon) -> Bool
 }
 
+@MainActor
 class CouponViewModel: ObservableObject {
     let coupon: Coupon
 

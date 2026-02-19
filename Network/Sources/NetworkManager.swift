@@ -16,7 +16,7 @@ public protocol NetworkManagerDelegate: AnyObject {
     func networkManager(_ networkManager: NetworkManager, projectIdForConfiguration configuration: Configuration) -> String?
 }
 
-@Observable public class NetworkManager {
+@Observable public class NetworkManager: @unchecked Sendable {
     public let configuration: Configuration
     private let authenticator: Authenticator
     public weak var delegate: NetworkManagerDelegate?
@@ -59,7 +59,7 @@ public protocol NetworkManagerDelegate: AnyObject {
             .eraseToAnyPublisher()
     }
     
-    public func publisher<Response>(for endpoint: Endpoint<Response>) async throws -> Response {
+    public func publisher<Response: Sendable>(for endpoint: Endpoint<Response>) async throws -> Response {
         try await withCheckedThrowingContinuation { continuation in
             var cancellable: AnyCancellable?
             

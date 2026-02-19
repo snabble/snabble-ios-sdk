@@ -6,7 +6,8 @@
 
 import Foundation
 
-public struct Metadata: Decodable {
+/// Thread-safety: Immutable after initialization from API response. All stored properties are let or private(set).
+public struct Metadata: Decodable, @unchecked Sendable {
     public let flags: Flags
     public private(set) var projects: [Project]
     public let gatewayCertificates: [GatewayCertificate]
@@ -28,7 +29,7 @@ public struct Metadata: Decodable {
         self.brands = []
     }
 
-    static let none = Metadata()
+    nonisolated(unsafe) static let none = Metadata()
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
@@ -180,7 +181,7 @@ public extension Metadata {
         return nil
     }
 
-    static func load(from url: String, completion: @escaping (Metadata?) -> Void ) {
+    static func load(from url: String, completion: @escaping @Sendable (Metadata?) -> Void ) {
         let project = Project.none
         project.request(.get, url, jwtRequired: false, timeout: 5) { request in
             guard var request = request, let absoluteString = request.url?.absoluteString else {

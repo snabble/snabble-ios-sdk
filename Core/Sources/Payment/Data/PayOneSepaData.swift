@@ -32,7 +32,8 @@ public struct PayoneSepaData: Codable, EncryptedPaymentData, Equatable {
     }
 
     /// array of supported IBAN countries, return a list if iso country names or `"*"` for all. (see IBAN.countries for all possible country codes)
-    public static var countries: [String] = ["DE"]
+    /// Thread-safety: Configuration constant, set once and only read. Could be let but kept as var for compatibility.
+    nonisolated(unsafe) public static var countries: [String] = ["DE"]
 
     private struct DirectDebitRequestOrigin: PaymentRequestOrigin {
         let iban: String

@@ -7,7 +7,7 @@
 import Foundation
 
 public enum Wanzel {
-    public struct EntryToken: Decodable, SnabbleCore.EntryToken {
+    public struct EntryToken: Decodable, SnabbleCore.EntryToken, Sendable {
         public let value: String
         public let validUntil: Date
         public let refreshAfter: Date
@@ -31,7 +31,7 @@ private struct EntryTokenRequest: Encodable {
 }
 
 extension Project {
-    public func getWanzelEntryToken(for shopId: Identifier<Shop>, completion: @escaping (Result<Wanzel.EntryToken, SnabbleError>) -> Void) {
+    public func getWanzelEntryToken(for shopId: Identifier<Shop>, completion: @escaping @Sendable (Result<Wanzel.EntryToken, SnabbleError>) -> Void) {
         let tokenRequest = EntryTokenRequest(shopID: shopId)
 
         guard

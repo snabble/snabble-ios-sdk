@@ -1,4 +1,4 @@
-// swift-tools-version: 5.10
+// swift-tools-version: 6.0
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -73,7 +73,11 @@ let package = Package(
         .target(
             name: "SnabbleNetwork",
             dependencies: ["SwiftOTP", "KeychainAccess"],
-            path: "Network/Sources"
+            path: "Network/Sources",
+            swiftSettings: [
+                .swiftLanguageMode(.v6),
+                .enableExperimentalFeature("StrictConcurrency=minimal")
+            ]
         ),
         .testTarget(
             name: "SnabbleNetworkTests",
@@ -91,6 +95,10 @@ let package = Package(
             path: "AssetProviding/Sources",
             resources: [
                 .process("Resources")
+            ],
+            swiftSettings: [
+                .swiftLanguageMode(.v6),
+                .enableExperimentalFeature("StrictConcurrency=minimal")
             ]
         ),
         .target(
@@ -105,6 +113,10 @@ let package = Package(
             path: "Core/Sources",
             resources: [
                 .process("Resources")
+            ],
+            swiftSettings: [
+                .swiftLanguageMode(.v6),
+                .enableExperimentalFeature("StrictConcurrency=minimal")
             ]
         ),
         .testTarget(
@@ -140,7 +152,11 @@ let package = Package(
                 "SnabbleAssetProviding",
                 "WindowKit"
             ],
-            path: "Components/Sources"
+            path: "Components/Sources",
+            swiftSettings: [
+                .swiftLanguageMode(.v6),
+                .enableExperimentalFeature("StrictConcurrency=minimal")
+            ]
         ),
         .target(
             name: "SnabbleDatatrans",
@@ -207,7 +223,11 @@ let package = Package(
                 "SnabbleNetwork",
                 "SnabbleUser"
             ],
-            path: "PhoneAuth/Sources"
+            path: "PhoneAuth/Sources",
+            swiftSettings: [
+                .swiftLanguageMode(.v6),
+                .enableExperimentalFeature("StrictConcurrency=minimal")
+            ]
         ),
         .testTarget(
             name: "SnabblePhoneAuthTests",
@@ -221,7 +241,11 @@ let package = Package(
                 "SnabbleNetwork",
                 "SnabbleComponents"
             ],
-            path: "User/Sources"
+            path: "User/Sources",
+            swiftSettings: [
+                .swiftLanguageMode(.v6),
+                .enableExperimentalFeature("StrictConcurrency=minimal")
+            ]
         ),
         .target(
             name: "SnabbleScanAndGo",

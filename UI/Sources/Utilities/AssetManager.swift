@@ -125,7 +125,8 @@ private struct AssetRequest {
 }
 
 final class AssetManager {
-    static let shared = AssetManager()
+    /// Thread-safety: Singleton initialized once, internal state protected by ReadWriteLock
+    nonisolated(unsafe) static let shared = AssetManager()
 
     private var manifests = [Identifier<Project>: Manifest]()
     private var lock = ReadWriteLock()

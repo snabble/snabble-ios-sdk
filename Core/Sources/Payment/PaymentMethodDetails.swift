@@ -460,7 +460,8 @@ struct PaymentMethodDetailStorage {
 }
 
 public enum PaymentMethodDetails {
-    private static let storage = PaymentMethodDetailStorage()
+    /// Thread-safety: Singleton storage accessed from multiple threads, but protected by internal synchronization
+    nonisolated(unsafe) private static let storage = PaymentMethodDetailStorage()
 
     public static func read() -> [PaymentMethodDetail] {
         return storage.read()

@@ -11,10 +11,12 @@ public typealias CoreProviding = ShoppingCartMerging
 
 public enum Core {
     /// Reference to the implementation of the `CoreProviding` implementation
-    public static weak var provider: CoreProviding?
+    /// Thread-safety: Set once during app initialization, then only read
+    nonisolated(unsafe) public static weak var provider: CoreProviding?
 
     /// Reference to the current domain
-    public static var domain: Any?
+    /// Thread-safety: Set once during app initialization, then only read
+    nonisolated(unsafe) public static var domain: Any?
 
     // MARK: - ShoppingCartMerging
     public static func shoppingCart(_ shoppingCart: ShoppingCart, shouldMergeItem item: CartItem, domain: Any? = domain) -> Bool? {

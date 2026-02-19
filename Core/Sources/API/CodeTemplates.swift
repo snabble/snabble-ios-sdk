@@ -532,7 +532,8 @@ public struct OverrideLookup {
 }
 
 public enum CodeMatcher {
-    private static var templates = [Identifier<Project>: [String: CodeTemplate]]()
+    /// Thread-safety: Written during app initialization via addTemplate(), then only read
+    nonisolated(unsafe) private static var templates = [Identifier<Project>: [String: CodeTemplate]]()
 
     static func addTemplate(_ projectId: Identifier<Project>, _ id: String, _ template: String) {
         // print("add template \(projectId) \(id) \(template)")

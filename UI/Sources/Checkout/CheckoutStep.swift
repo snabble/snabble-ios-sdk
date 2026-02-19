@@ -183,14 +183,17 @@ extension CheckoutStep {
     { "id": "4711", "refersTo": ["referer"], "type": "A fulfillment type", "state": "allocated" }
     """)
     }()
-    static let mockOriginCandidate: OriginCandidate = {
+    /// Thread-safety: Mock data for testing, immutable once initialized
+    nonisolated(unsafe) static let mockOriginCandidate: OriginCandidate = {
         return loadJSON("""
     { }
     """)
     }()
-    static let savedIbans: Set<String> = []
+    /// Thread-safety: Mock data for testing, immutable
+    nonisolated(unsafe) static let savedIbans: Set<String> = []
     
-    static let mockModel: [CheckoutStep] = {
+    /// Thread-safety: Mock data for testing, immutable once initialized
+    nonisolated(unsafe) static let mockModel: [CheckoutStep] = {
         return [
             CheckoutStep(paymentState: .pending),
             CheckoutStep(paymentState: .successful),
