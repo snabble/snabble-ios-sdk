@@ -1,13 +1,13 @@
 {
-  "originHash" : "93288b40d47581540169afd05774f0606b9e6613251cd192d1f1c4121c6b2de6",
+  "originHash" : "75b4b568f54ca1ebf94f6d3bb7aee0276daecf3998b2afccc8e9830d593a7887",
   "pins" : [
     {
       "identity" : "camerazoomwheel",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/utilem/CameraZoomWheel.git",
       "state" : {
-        "revision" : "46a0462131849870cd0b73775de4c76474620420",
-        "version" : "2.0.0"
+        "revision" : "35b49953e2a16d50756d73898b600e33fc959df0",
+        "version" : "1.1.0"
       }
     },
     {
