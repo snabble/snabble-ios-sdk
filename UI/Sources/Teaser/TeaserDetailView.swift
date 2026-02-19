@@ -50,7 +50,7 @@ public struct TeaserDetailView: View {
     @ViewBuilder
     var videoView: some View {
         HStack {
-            if let videoURL = teaser.videoUrl, let videoID = videoURL.extractYouTubeID {
+            if let videoID = teaser.videoUrl?.extractYouTubeID {
                 YouTubeView(videoID: videoID)
             }
         }
@@ -62,7 +62,7 @@ public struct TeaserDetailView: View {
         ScrollView {
             VStack(alignment: .leading, spacing: 25) {
 
-                if teaser.videoUrl != nil {
+                if teaser.videoUrl?.extractYouTubeID != nil {
                     videoView
                 } else {
                     imageView
