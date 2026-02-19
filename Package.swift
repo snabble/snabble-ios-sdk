@@ -144,6 +144,10 @@ let package = Package(
             path: "UI/Sources",
             resources: [
                 .process("Resources")
+            ],
+            swiftSettings: [
+                .swiftLanguageMode(.v6),
+                .enableExperimentalFeature("StrictConcurrency=minimal")
             ]
         ),
         .target(
@@ -165,21 +169,33 @@ let package = Package(
                 "SnabbleUI",
                 .product(name: "Datatrans", package: "ios-sdk"),
             ],
-            path: "Datatrans/Sources"
+            path: "Datatrans/Sources",
+            swiftSettings: [
+                .swiftLanguageMode(.v6),
+                .enableExperimentalFeature("StrictConcurrency=minimal")
+            ]
         ),
         .target(
             name: "SnabbleLogger",
             dependencies: [
                 .product(name: "Logging", package: "swift-log"),
             ],
-            path: "Pay/Sources/Logger"
+            path: "Pay/Sources/Logger",
+            swiftSettings: [
+                .swiftLanguageMode(.v6),
+                .enableExperimentalFeature("StrictConcurrency=minimal")
+            ]
         ),
         .target(
             name: "SnabblePayNetwork",
             dependencies: [
                 "SnabbleLogger",
             ],
-            path: "Pay/Sources/Network"
+            path: "Pay/Sources/Network",
+            swiftSettings: [
+                .swiftLanguageMode(.v6),
+                .enableExperimentalFeature("StrictConcurrency=minimal")
+            ]
         ),
         .target(
             name: "SnabblePay",
@@ -188,7 +204,11 @@ let package = Package(
                 "SnabblePayNetwork",
                 "SnabbleLogger",
             ],
-            path: "Pay/Sources/Core"
+            path: "Pay/Sources/Core",
+            swiftSettings: [
+                .swiftLanguageMode(.v6),
+                .enableExperimentalFeature("StrictConcurrency=minimal")
+            ]
         ),
         .target(
             name: "TestHelper",
@@ -254,7 +274,11 @@ let package = Package(
                 "SnabbleAssetProviding",
                 "SnabbleUI",
             ],
-            path: "ScanAndGo"
+            path: "ScanAndGo",
+            swiftSettings: [
+                .swiftLanguageMode(.v6),
+                .enableExperimentalFeature("StrictConcurrency=minimal")
+            ]
         ),
 
     ]
