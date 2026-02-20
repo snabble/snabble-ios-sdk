@@ -17,7 +17,7 @@ public protocol CheckViewModel {
 }
 
 public protocol CheckViewModelProviding {
-    var viewModel: CheckViewModel? { get }
+    nonisolated var viewModel: CheckViewModel? { get }
 }
 
 public protocol CheckoutProcessing {
@@ -33,7 +33,7 @@ public protocol CheckModelDelegate: AnyObject {
     func checkoutAborted(process: CheckoutProcess)
 }
 
-public final class CheckModel: CheckoutProcessing, CheckModelDelegate {
+public final class CheckModel: CheckoutProcessing, CheckModelDelegate, @unchecked Sendable {
     
     public private(set) var checkoutProcess: CheckoutProcess
     public let shoppingCart: ShoppingCart
@@ -126,8 +126,10 @@ public final class CheckModel: CheckoutProcessing, CheckModelDelegate {
     
     public func cancelPayment() {
         guard processTimer != nil else { return }
-        
-        self.paymentDelegate?.track(.paymentCancelled)
+
+        Task { @MainActor in
+            self.paymentDelegate?.track(.paymentCancelled)
+        }
         self.stopTimer()
 
         self.checkoutProcess.abort(SnabbleCI.project) { result in
@@ -135,12 +137,14 @@ public final class CheckModel: CheckoutProcessing, CheckModelDelegate {
             case .success(let process):
                 self.checkoutAborted(process: process)
             case .failure:
-                let alertView = AlertView(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
-                                          message: Asset.localizedString(forKey: "Snabble.Payment.CancelError.message"))
-                alertView.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { _ in
-                    self.startTimer()
-                })
-                alertView.show()
+                Task { @MainActor in
+                    let alertView = AlertView(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
+                                              message: Asset.localizedString(forKey: "Snabble.Payment.CancelError.message"))
+                    alertView.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { _ in
+                        self.startTimer()
+                    })
+                    alertView.show()
+                }
             }
         }
     }
@@ -175,10 +179,19 @@ extension CheckModel {
     
     func assetPublisher() -> AnyPublisher<UIImage?, Never> {
         Future<UIImage?, Never> { promise in
+            // Create a wrapper class to make promise Sendable-safe
+            final class PromiseBox: @unchecked Sendable {
+                let promise: (Result<UIImage?, Never>) -> Void
+                init(_ promise: @escaping (Result<UIImage?, Never>) -> Void) {
+                    self.promise = promise
+                }
+            }
+            
             let asset = self.asset
+            let box = PromiseBox(promise)
             
             SnabbleCI.getAsset(asset.imageAsset, bundlePath: asset.bundlePath) { img in
-                promise(.success(img))
+                box.promise(.success(img))
             }
         }
         .eraseToAnyPublisher()

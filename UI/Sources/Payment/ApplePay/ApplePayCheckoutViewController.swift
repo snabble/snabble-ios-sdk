@@ -4,7 +4,7 @@
 //  Copyright © 2021 snabble. All rights reserved.
 //
 
-import PassKit
+@preconcurrency import PassKit
 import SnabbleCore
 import SnabbleAssetProviding
 
@@ -106,7 +106,7 @@ final class ApplePayCheckoutViewController: UIViewController {
     // POST the payment authorization token we get from the PassKit API to our backend
     private func performPayment(with process: CheckoutProcess,
                                 and payment: PKPayment,
-                                completion: @escaping (_ success: Bool) -> Void) {
+                                completion: @escaping @Sendable (_ success: Bool) -> Void) {
         guard let authorizeUrl = process.links.authorizePayment?.href else {
             return completion(false)
         }
@@ -168,21 +168,23 @@ final class ApplePayCheckoutViewController: UIViewController {
         self.delegate?.track(.paymentCancelled)
         
         self.checkoutProcess.abort(SnabbleCI.project) { result in
-            switch result {
-            case .success:
-                Snabble.clearInFlightCheckout()
-                self.shoppingCart.generateNewUUID()
-                if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
-                    self.navigationController?.popToViewController(cartVC, animated: true)
-                } else {
-                    self.navigationController?.popToRootViewController(animated: true)
+            Task { @MainActor in
+                switch result {
+                case .success:
+                    Snabble.clearInFlightCheckout()
+                    self.shoppingCart.generateNewUUID()
+                    if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
+                        self.navigationController?.popToViewController(cartVC, animated: true)
+                    } else {
+                        self.navigationController?.popToRootViewController(animated: true)
+                    }
+                case .failure:
+                    let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
+                                                  message: Asset.localizedString(forKey: "Snabble.Payment.CancelError.message"),
+                                                  preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default, handler: nil))
+                    self.present(alert, animated: true)
                 }
-            case .failure:
-                let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
-                                              message: Asset.localizedString(forKey: "Snabble.Payment.CancelError.message"),
-                                              preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default, handler: nil))
-                self.present(alert, animated: true)
             }
         }
     }
@@ -221,21 +223,33 @@ extension ApplePayCheckoutViewController {
 // MARK: - PKPaymentAuthorizationViewControllerDelegate
 
 extension ApplePayCheckoutViewController: PKPaymentAuthorizationViewControllerDelegate {
-    public func paymentAuthorizationViewControllerDidFinish(_ controller: PKPaymentAuthorizationViewController) {
-        self.authController?.dismiss(animated: true)
-        
-        if !authorized {
-            cancelPayment()
-        } else {
-            waitForPaymentProcessing()
+    nonisolated public func paymentAuthorizationViewControllerDidFinish(_ controller: PKPaymentAuthorizationViewController) {
+        Task { @MainActor in
+            self.authController?.dismiss(animated: true)
+            
+            if !authorized {
+                cancelPayment()
+            } else {
+                waitForPaymentProcessing()
+            }
         }
     }
     
-    public func paymentAuthorizationViewController(_ controller: PKPaymentAuthorizationViewController, didAuthorizePayment payment: PKPayment, handler completion: @escaping (PKPaymentAuthorizationResult) -> Void) {
-        authorized = true
-        self.performPayment(with: self.checkoutProcess, and: payment) { success in
-            let status: PKPaymentAuthorizationStatus = success ? .success : .failure
-            completion(PKPaymentAuthorizationResult(status: status, errors: nil))
+    nonisolated public func paymentAuthorizationViewController(_ controller: PKPaymentAuthorizationViewController, didAuthorizePayment payment: PKPayment, handler completion: @escaping (PKPaymentAuthorizationResult) -> Void) {
+        final class CompletionBox: @unchecked Sendable {
+            let completion: (PKPaymentAuthorizationResult) -> Void
+            init(_ completion: @escaping (PKPaymentAuthorizationResult) -> Void) {
+                self.completion = completion
+            }
+        }
+        
+        let box = CompletionBox(completion)
+        Task { @MainActor in
+            authorized = true
+            self.performPayment(with: self.checkoutProcess, and: payment) { success in
+                let status: PKPaymentAuthorizationStatus = success ? .success : .failure
+                box.completion(PKPaymentAuthorizationResult(status: status, errors: nil))
+            }
         }
     }
     

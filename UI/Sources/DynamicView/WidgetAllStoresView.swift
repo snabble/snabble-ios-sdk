@@ -10,8 +10,9 @@ import SwiftUI
 import Combine
 import SnabbleCore
 
-private class AllStoresViewModel: ObservableObject {
-    @Published var widget: WidgetButton?
+@Observable
+private class AllStoresViewModel {
+    var widget: WidgetButton?
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -40,12 +41,12 @@ public struct WidgetAllStoresView: View {
     let widget: WidgetAllStores
     let action: (WidgetAllStores) -> Void
 
-    @ObservedObject private var viewModel: AllStoresViewModel
+    @State private var viewModel: AllStoresViewModel
 
     init(widget: WidgetAllStores, action: @escaping (WidgetAllStores) -> Void) {
         self.widget = widget
         self.action = action
-        self.viewModel = AllStoresViewModel(widget: widget)
+        self._viewModel = State(wrappedValue: AllStoresViewModel(widget: widget))
     }
 
     public var body: some View {

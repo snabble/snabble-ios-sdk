@@ -14,10 +14,12 @@ public extension ShoppingCart {
     static let textFieldMagic: Int = 0x4711
 }
 
-open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatable {
+@Observable
+@MainActor
+open class ShoppingCartViewModel: Swift.Identifiable, Equatable {
     public let id = UUID()
-    
-    public static func == (lhs: ShoppingCartViewModel, rhs: ShoppingCartViewModel) -> Bool {
+
+    nonisolated public static func == (lhs: ShoppingCartViewModel, rhs: ShoppingCartViewModel) -> Bool {
         lhs.id == rhs.id
     }
     
@@ -29,14 +31,14 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
     
     public weak var shoppingCartDelegate: ShoppingCartDelegate?
     
-    @Published public var productError: Bool = false
+    public var productError: Bool = false
     var productErrorMessage: String = ""
     
-    @Published public var confirmDeletion: Bool = false
+    public var confirmDeletion: Bool = false
     var deletionMessage: String = ""
     var deletionItemIndex: Int?
     
-    @Published public var items = [CartEntry]()
+    public var items = [CartEntry]()
     
     func index(for itemModel: CartItemModel) -> Int? {
         guard let index = items.firstIndex(where: { $0.id == itemModel.id }) else {
@@ -65,27 +67,29 @@ open class ShoppingCartViewModel: ObservableObject, Swift.Identifiable, Equatabl
     
     // MARK: notification handlers
     @objc private func shoppingCartUpdated(_ notification: Notification) {
-        self.shoppingCart.cancelPendingCheckoutInfoRequest()
-        
-        // ignore notifcation sent from this class
-        if let object = notification.object as? ShoppingCartViewModel, object == self {
-            return
-        }
-        
-        // if we're on-screen, check for errors from the last checkoutInfo creation/update
-        if let error = self.shoppingCart.lastCheckoutInfoError {
-            switch error.type {
-            case .saleStop:
-                if let offendingSkus = error.details?.compactMap({ $0.sku }) {
-                    self.showProductError(offendingSkus)
-                }
-            default:
-                break
+        Task { @MainActor in
+            self.shoppingCart.cancelPendingCheckoutInfoRequest()
+
+            // ignore notifcation sent from this class
+            if let object = notification.object as? ShoppingCartViewModel, object == self {
+                return
             }
+
+            // if we're on-screen, check for errors from the last checkoutInfo creation/update
+            if let error = self.shoppingCart.lastCheckoutInfoError {
+                switch error.type {
+                case .saleStop:
+                    if let offendingSkus = error.details?.compactMap({ $0.sku }) {
+                        self.showProductError(offendingSkus)
+                    }
+                default:
+                    break
+                }
+            }
+
+            self.setupItems(self.shoppingCart)
+            self.getMissingImages()
         }
-        
-        self.setupItems(self.shoppingCart)
-        self.getMissingImages()
     }
     
     private func getMissingImages() {
@@ -487,13 +491,30 @@ extension ShoppingCartViewModel {
         }
     }
 
-    private func performPendingLookups(_ lookups: [PendingLookup], _ lastSaved: Date?) {
+    nonisolated private func performPendingLookups(_ lookups: [PendingLookup], _ lastSaved: Date?) {
+        final class ReplacementCollector: @unchecked Sendable {
+            private let lock = NSLock()
+            private var items: [(Int, CartItem?)] = []
+            
+            func append(_ item: (Int, CartItem?)) {
+                lock.lock()
+                items.append(item)
+                lock.unlock()
+            }
+            
+            func getAll() -> [(Int, CartItem?)] {
+                lock.lock()
+                defer { lock.unlock() }
+                return items
+            }
+        }
+        
         let group = DispatchGroup()
-
-        var replacements = [(Int, CartItem?)]()
-        let mutex = Mutex()
+        let collector = ReplacementCollector()
 
         let productProvider = Snabble.shared.productProvider(for: SnabbleCI.project)
+        let shopId = self.shoppingCart.shopId
+
         for lookup in lookups {
             guard let sku = lookup.lineItem.sku else {
                 continue
@@ -501,22 +522,27 @@ extension ShoppingCartViewModel {
 
             group.enter()
 
-            productProvider.productBy(sku: sku, shopId: self.shoppingCart.shopId) { result in
+            let index = lookup.index
+            let cartItem = lookup.cartItem
+            let lineItem = lookup.lineItem
+
+            productProvider.productBy(sku: sku, shopId: shopId) { result in
                 switch result {
                 case .failure(let error):
                     Log.error("error in pending lookup for \(sku): \(error)")
                 case .success(let product):
-                    let replacement = CartItem(replacing: lookup.cartItem, product, self.shoppingCart.shopId, lookup.lineItem)
-                    mutex.lock()
-                    replacements.append((lookup.index, replacement))
-                    mutex.unlock()
+                    let replacement = CartItem(replacing: cartItem, product, shopId, lineItem)
+                    collector.append((index, replacement))
                 }
                 group.leave()
             }
         }
 
         // when all lookups are finished:
-        group.notify(queue: DispatchQueue.main) {
+        group.notify(queue: DispatchQueue.main) { [weak self] in
+            guard let self = self else { return }
+            
+            let replacements = collector.getAll()
             guard !replacements.isEmpty, self.shoppingCart.lastSaved == lastSaved else {
                 Log.warn("no replacements, or cart was modified during retrieval")
                 return

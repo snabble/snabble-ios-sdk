@@ -26,13 +26,13 @@ final class SupervisorViewModel: BaseCheckViewModel {
 }
 
 struct SupervisorView: View {
-    @ObservedObject var model: SupervisorViewModel
+    var model: SupervisorViewModel
 
     @State private var disableButton: Bool = false
 
     @ViewBuilder
     var content: some View {
-        Group {
+        VStack {
             Spacer()
             VStack(spacing: 10) {
                 if let uiImage = model.headerImage {

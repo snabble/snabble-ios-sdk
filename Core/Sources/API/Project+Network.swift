@@ -63,7 +63,7 @@ public enum SnabbleError: Error, Equatable {
     }
 }
 
-public enum ProductLookupError: Error, Equatable {
+public enum ProductLookupError: Error, Equatable, Sendable {
     case notFound
     case networkError(URLError.Code)
     case serverError(Int)
@@ -154,7 +154,7 @@ public enum HTTPRequestMethod: String {
 }
 
 /// for those API calls where we need both the decoded result as well as the raw json data as a dictionary
-public struct RawResult<T, E: Swift.Error> {
+public struct RawResult<T, E: Swift.Error>: @unchecked Sendable {
     public let result: Result<T, E>
     public let rawJson: [String: Any]?
 

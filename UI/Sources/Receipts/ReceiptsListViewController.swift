@@ -91,7 +91,8 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
 }
 
 extension ReceiptsListViewController: ReceiptsListDelegate {
-    public func handleAction(_ viewController: ReceiptsListViewController, on receipt: PurchaseProviding) -> Bool {
-        return delegate?.handleAction(viewController, on: receipt) ?? false
+    nonisolated public func handleAction(_ viewController: ReceiptsListViewController, on receipt: PurchaseProviding) -> Bool {
+        let result = delegate?.handleAction(viewController, on: receipt) ?? false
+        return result
     }
 }

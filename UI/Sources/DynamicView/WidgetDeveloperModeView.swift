@@ -7,13 +7,14 @@
 import SwiftUI
 import Combine
 
-public class DeveloperModeViewModel: NSObject, ObservableObject {
+@Observable
+public class DeveloperModeViewModel: NSObject {
     public private(set) var widget = WidgetText(
         id: "io.snabble.developerMode",
         text: "Profile.developerMode",
         showDisclosure: false
     )
-    @Published public private(set) var isEnabled: Bool = false
+    public private(set) var isEnabled: Bool = false
 
     override init() {
         self.isEnabled = DeveloperMode.isEnabled
@@ -23,12 +24,10 @@ public class DeveloperModeViewModel: NSObject, ObservableObject {
 public struct WidgetDeveloperModeView: View {
     let widget: WidgetDeveloperMode
 
-    @ObservedObject private var developerModel: DeveloperModeViewModel
-    @ObservedObject private var viewModel: DynamicViewModel
+    private var developerModel: DeveloperModeViewModel
 
-    init(widget: WidgetDeveloperMode, viewModel: DynamicViewModel) {
+    init(widget: WidgetDeveloperMode) {
         self.widget = widget
-        self.viewModel = viewModel
         self.developerModel = .init()
     }
 
@@ -36,7 +35,7 @@ public struct WidgetDeveloperModeView: View {
         if self.developerModel.isEnabled {
             NavigationLink(destination: {
                 List {
-                    WidgetContainer(viewModel: self.viewModel, widgets: widget.items)
+                    WidgetContainer(widgets: widget.items)
                 }
                 .listStyle(.grouped)
             }) {

@@ -10,7 +10,7 @@ import SnabbleCore
 import SnabbleAssetProviding
 
 /// Manage the payment process
-public final class PaymentProcess {
+public final class PaymentProcess: @unchecked Sendable {
     let signedCheckoutInfo: SignedCheckoutInfo
     let cart: ShoppingCart
     let shop: Shop
@@ -185,19 +185,21 @@ public final class PaymentProcess {
         return results
     }
 
-    private func startFailed(_ method: PaymentMethod, shop: Shop, _ error: SnabbleError?, _ completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
-        var handled = false
-        if let error = error {
-            handled = self.paymentDelegate?.handlePaymentError(method, error) ?? false
-        }
-        if !handled {
-            let checkoutDisplay = method.rawMethod.checkoutDisplayViewController(shop: shop, checkoutProcess: nil, shoppingCart: self.cart, delegate: self.paymentDelegate)
-            // if method.rawMethod.offline, let processor = method.processor(nil, shop: shop, self.cart, self.paymentDelegate) {
-            if method.rawMethod.offline, let display = checkoutDisplay {
-                completion(.success(display))
-                OfflineCarts.shared.saveCartForLater(self.cart)
-            } else {
-                self.paymentDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
+    private func startFailed(_ method: PaymentMethod, shop: Shop, _ error: SnabbleError?, _ completion: @escaping @Sendable (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
+        Task { @MainActor in
+            var handled = false
+            if let error = error {
+                handled = self.paymentDelegate?.handlePaymentError(method, error) ?? false
+            }
+            if !handled {
+                let checkoutDisplay = method.rawMethod.checkoutDisplayViewController(shop: shop, checkoutProcess: nil, shoppingCart: self.cart, delegate: self.paymentDelegate)
+                // if method.rawMethod.offline, let processor = method.processor(nil, shop: shop, self.cart, self.paymentDelegate) {
+                if method.rawMethod.offline, let display = checkoutDisplay {
+                    completion(.success(display))
+                    OfflineCarts.shared.saveCartForLater(self.cart)
+                } else {
+                    self.paymentDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
+                }
             }
         }
     }
@@ -210,7 +212,10 @@ public final class PaymentProcess {
     }
 
     func track(_ event: AnalyticsEvent) {
-        self.paymentDelegate?.track(event)
+        let capturedEvent = event
+        Task { @MainActor in
+            self.paymentDelegate?.track(capturedEvent)
+        }
     }
 
     // MARK: - blur
@@ -218,9 +223,16 @@ public final class PaymentProcess {
     private var blurView: UIView?
 
     private func showBlurOverlay() {
-        guard let view = self.paymentDelegate?.view else {
-            return
+        Task { @MainActor in
+            guard let view = self.paymentDelegate?.view else {
+                return
+            }
+            self.createBlurView(for: view)
         }
+    }
+
+    @MainActor
+    private func createBlurView(for view: UIView) {
 
         let blurEffect = UIBlurEffect(style: .dark)
         let blurEffectView = UIVisualEffectView(effect: blurEffect)
@@ -277,7 +289,7 @@ extension PaymentProcess {
     ///   - detail: the details for that payment method (e.g., the encrypted IBAN for SEPA)
     ///   - completion: a closure called when the payment method has been determined.
     ///   - result: the view controller to present for this payment process or the error
-    public func start(_ rawMethod: RawPaymentMethod, _ detail: PaymentMethodDetail?, completion: @escaping (_ result: Result<UIViewController, SnabbleError>) -> Void) {
+    public func start(_ rawMethod: RawPaymentMethod, _ detail: PaymentMethodDetail?, completion: @escaping @Sendable (_ result: Result<UIViewController, SnabbleError>) -> Void) {
         guard
             let method = PaymentMethod.make(rawMethod, detail),
             method.canStart()
@@ -310,21 +322,25 @@ extension PaymentProcess {
             }
             
             func checkoutProcess(process: CheckoutProcess) {
-                
+
                 if let violation = checkViolation(for: process) {
-                    self.cart.delegate?.shoppingCart(self.cart, violationsDetected: [violation])
+                    Task { @MainActor in
+                        self.cart.delegate?.shoppingCart(self.cart, violationsDetected: [violation])
+                    }
                     return
                 }
-                
+
                 let checkoutVC = Self.checkoutViewController(for: process,
                                                              shop: self.shop,
                                                              cart: self.cart,
                                                              paymentDelegate: self.paymentDelegate)
-                
+
                 if let viewController = checkoutVC {
                     completion(.success(viewController))
                 } else {
-                    self.paymentDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
+                    Task { @MainActor in
+                        self.paymentDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
+                    }
                 }
             }
             

@@ -10,13 +10,16 @@ import SwiftUI
 import Combine
 import CoreLocation
 
-public class LocationPermissionViewModel: NSObject, ObservableObject {
-    @Published public private(set) var widget: WidgetButton?
+@Observable
+@MainActor
+public class LocationPermissionViewModel: NSObject, @unchecked Sendable {
+    public private(set) var widget: WidgetButton?
 
-    @Published public var permissionDeniedOrRestricted: Bool = false
-    @Published public var reducedAccuracy: Bool = false
+    public var permissionDeniedOrRestricted: Bool = false
+    public var reducedAccuracy: Bool = false
 
-    let locationManager: CLLocationManager
+    /// Thread-safety: CLLocationManager is thread-safe
+    nonisolated(unsafe) let locationManager: CLLocationManager
 
     init(locationManager: CLLocationManager = .init()) {
         self.locationManager = locationManager
@@ -75,9 +78,12 @@ public class LocationPermissionViewModel: NSObject, ObservableObject {
 }
 
 extension LocationPermissionViewModel: CLLocationManagerDelegate {
-    public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
-        update(with: status)
-        update(with: manager.accuracyAuthorization)
+    nonisolated public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+        let accuracy = manager.accuracyAuthorization
+        Task { @MainActor in
+            update(with: status)
+            update(with: accuracy)
+        }
     }
 }
 
@@ -85,12 +91,12 @@ public struct WidgetLocationPermissionView: View {
     let widget: Widget
     let action: (Widget) -> Void
 
-    @ObservedObject private var viewModel: LocationPermissionViewModel
+    @Bindable private var viewModel: LocationPermissionViewModel
 
     init(widget: WidgetLocationPermission, action: @escaping (Widget) -> Void) {
         self.widget = widget
         self.action = action
-        self.viewModel = .init()
+        self.viewModel = LocationPermissionViewModel()
     }
     
     public var body: some View {

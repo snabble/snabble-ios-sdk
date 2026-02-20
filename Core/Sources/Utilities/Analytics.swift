@@ -4,11 +4,12 @@
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
+@MainActor
 public protocol AnalyticsDelegate: AnyObject {
     func track(_ event: AnalyticsEvent)
 }
 
-public enum AnalyticsEvent {
+public enum AnalyticsEvent: Sendable {
     /// views events are tracked in `viewDidAppear` of the corresponding view controllers
     /// the `ScanningViewController` appeared
     case viewScanner

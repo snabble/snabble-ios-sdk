@@ -9,14 +9,14 @@ import SnabbleCore
 import Combine
 import SnabbleAssetProviding
 
-public final class PaymentMethodStartCheck {
+public final class PaymentMethodStartCheck: @unchecked Sendable {
     private var method: PaymentMethod
     private var detail: PaymentMethodDetail?
     private weak var presenter: UIViewController?
     public weak var messageDelegate: MessageDelegate?
     private var completionHandler: ((Bool) -> Void)?
 
-    private var cancellables = Set<AnyCancellable>()
+    nonisolated(unsafe) private var cancellables = Set<AnyCancellable>()
 
     public init(for method: PaymentMethod,
                 detail: PaymentMethodDetail?,
@@ -127,17 +127,27 @@ public final class PaymentMethodStartCheck {
     // MARK: - biometry
 
     private func requestBiometricAuthentication(on presenter: UIViewController, reason: String, _ completion: @escaping (Bool) -> Void) {
+        final class CompletionBox: @unchecked Sendable {
+            let completion: (Bool) -> Void
+            init(_ completion: @escaping (Bool) -> Void) {
+                self.completion = completion
+            }
+        }
+        let box = CompletionBox(completion)
         BiometricAuthentication.requestAuthentication(for: reason) { result in
-            switch result {
-            case .proceed:
-                completion(true)
-            case .locked:
-                let name = BiometricAuthentication.supportedBiometry.name
-                let message = Asset.localizedString(forKey: "Snabble.Biometry.locked", arguments: name)
-                self.messageDelegate?.showWarningMessage(message)
-                completion(false)
-            default:
-                completion(false)
+            let capturedResult = result
+            Task { @MainActor in
+                switch capturedResult {
+                case .proceed:
+                    box.completion(true)
+                case .locked:
+                    let name = BiometricAuthentication.supportedBiometry.name
+                    let message = Asset.localizedString(forKey: "Snabble.Biometry.locked", arguments: name)
+                    self.messageDelegate?.showWarningMessage(message)
+                    box.completion(false)
+                default:
+                    box.completion(false)
+                }
             }
         }
     }

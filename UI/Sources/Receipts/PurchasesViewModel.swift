@@ -28,7 +28,7 @@ private extension UserDefaults {
 }
 
 @Observable 
-public class PurchasesViewModel: LoadableObject {
+public class PurchasesViewModel: LoadableObject, @unchecked Sendable {
     typealias Output = [PurchaseProviding]
     
     public let userDefaults: UserDefaults
@@ -101,7 +101,7 @@ public class PurchasesViewModel: LoadableObject {
         listRefreshTrigger += 1
     }
 
-    private func load(reset: Bool, isRefreshing: Bool = false, completion: (() -> Void)? = nil) {
+    private func load(reset: Bool, isRefreshing: Bool = false, completion: (@Sendable () -> Void)? = nil) {
         guard let project = Snabble.shared.projects.first else {
             state = .empty
             completion?()
@@ -161,7 +161,7 @@ public class PurchasesViewModel: LoadableObject {
 }
 
 extension PurchasesViewModel {
-    public func storeImage(projectId: Identifier<Project>, completion: @escaping (UIImage?) -> Void) {
+    public func storeImage(projectId: Identifier<Project>, completion: @escaping @Sendable (UIImage?) -> Void) {
         SnabbleCI.getAsset(.storeIcon, projectId: projectId) { image in
             completion(image)
         }

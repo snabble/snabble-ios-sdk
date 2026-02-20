@@ -6,7 +6,7 @@
 //
 
 import UIKit
-import SDCAlertView
+@preconcurrency import SDCAlertView
 
 import SnabbleCore
 import SnabbleAssetProviding
@@ -22,9 +22,10 @@ public protocol PaymentMethodManagerDelegate: AnyObject {
     func paymentMethodManager(didSelectPayment: Payment?)
 }
 
-public final class PaymentMethodManager: ObservableObject {
-    @Published public var selectedPayment: Payment?
-    @Published public var hasMethodsToSelect: Bool = true
+@Observable
+public final class PaymentMethodManager {
+    public var selectedPayment: Payment?
+    public var hasMethodsToSelect: Bool = true
     
     let paymentConsumer: PaymentConsumer?
     
@@ -160,7 +161,7 @@ public protocol SheetProviding {
 }
 
 public protocol AlertProviding {
-    typealias DismissHandler = (UIAlertAction) -> Void
+    typealias DismissHandler = @Sendable (UIAlertAction) -> Void
     func alertController(_ onDismiss: DismissHandler?) -> UIAlertController
 }
 
@@ -177,14 +178,13 @@ extension PaymentMethodManager: SheetProviding {
 
         // add an action for each method
         for action in actions {
+            let icon = isAnyActive && !(action.active || action.methodDetail != nil) ? action.icon?.grayscale() : action.icon
             let alertAction = AlertAction(attributedTitle: action.title, style: .normal) { [self] _ in
                 if action.selectable {
                     setSelectedPaymentItem(action.item)
                     onDismiss?()
                 }
             }
-
-            let icon = isAnyActive && !(action.active || action.methodDetail != nil) ? action.icon?.grayscale() : action.icon
             alertAction.imageView.image = icon
             alertAction.imageView.setContentCompressionResistancePriority(.required, for: .vertical)
 

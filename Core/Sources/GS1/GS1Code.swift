@@ -7,7 +7,7 @@
 import Foundation
 
 // a parsed Application Identifier with it value(s)
-public struct GS1CodeElement {
+public struct GS1CodeElement: Sendable {
     public let definition: ApplicationIdentifier
     public let values: [String]
 
@@ -32,7 +32,7 @@ public struct GS1CodeElement {
 /// parse a GS1 barcode into its constituent application identifiers
 ///
 /// any skipped/unknown/invalid code parts will be returned in `skipped`
-public struct GS1Code {
+public struct GS1Code: Sendable {
     public static let gs = "\u{1d}"
 
     /// Thread-safety: Lazily initialized once from immutable ApplicationIdentifier.allIdentifiers, then only read

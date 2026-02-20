@@ -26,10 +26,10 @@ extension ShoppingCartViewModel {
 
 struct CartWeightView: View {
     @SwiftUI.Environment(\.projectTrait) private var project
-    
-    @ObservedObject var itemModel: ProductItemModel
+
+    var itemModel: ProductItemModel
     let editable: Bool
-    @EnvironmentObject var cartModel: ShoppingCartViewModel
+    @Environment(ShoppingCartViewModel.self) var cartModel
     @ScaledMetric var scale: CGFloat = 1
 
     @State private var weightText: String = ""

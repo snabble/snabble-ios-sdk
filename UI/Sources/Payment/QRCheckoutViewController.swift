@@ -242,26 +242,28 @@ final class QRCheckoutViewController: UIViewController {
         sender.isEnabled = false
 
         self.process.abort(SnabbleCI.project) { result in
-            switch result {
-            case .success:
-                Snabble.clearInFlightCheckout()
-                self.cart.generateNewUUID()
-                self.delegate?.track(.paymentCancelled)
+            Task { @MainActor in
+                switch result {
+                case .success:
+                    Snabble.clearInFlightCheckout()
+                    self.cart.generateNewUUID()
+                    self.delegate?.track(.paymentCancelled)
 
-                if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
-                    self.navigationController?.popToViewController(cartVC, animated: true)
-                } else {
-                    self.navigationController?.popToRootViewController(animated: true)
+                    if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
+                        _ = self.navigationController?.popToViewController(cartVC, animated: true)
+                    } else {
+                        _ = self.navigationController?.popToRootViewController(animated: true)
+                    }
+                case .failure:
+                    let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
+                                                  message: Asset.localizedString(forKey: "Snabble.Payment.CancelError.message"),
+                                                  preferredStyle: .alert)
+                    alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { _ in
+                        self.startPoller()
+                        sender.isEnabled = true
+                    })
+                    self.present(alert, animated: true)
                 }
-            case .failure:
-                let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
-                                              message: Asset.localizedString(forKey: "Snabble.Payment.CancelError.message"),
-                                              preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { _ in
-                    self.startPoller()
-                    sender.isEnabled = true
-                })
-                self.present(alert, animated: true)
             }
         }
     }

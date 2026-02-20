@@ -9,10 +9,11 @@ import SnabbleCore
 import Combine
 import SnabbleAssetProviding
 
-open class BaseCheckViewModel: ObservableObject, CheckViewModel {
-    @Published public var checkModel: CheckModel
-    @Published public var codeImage: UIImage?
-    @Published public var headerImage: UIImage?
+@Observable
+open class BaseCheckViewModel: CheckViewModel, @unchecked Sendable {
+    public var checkModel: CheckModel
+    public var codeImage: UIImage?
+    public var headerImage: UIImage?
     
     public weak var paymentDelegate: PaymentDelegate? {
         didSet {
@@ -22,7 +23,7 @@ open class BaseCheckViewModel: ObservableObject, CheckViewModel {
     public var idString: String {
         return String(checkModel.checkoutProcess.id.suffix(4))
     }
-    private var cancellables = Set<AnyCancellable>()
+    nonisolated(unsafe) private var cancellables = Set<AnyCancellable>()
 
     public init(checkModel: CheckModel) {
         self.checkModel = checkModel
@@ -53,7 +54,7 @@ open class BaseCheckViewModel: ObservableObject, CheckViewModel {
 // base class for SupervisorCheckViewController and GatekeeperCheckViewController
 open class BaseCheckViewController<Content: View>: UIHostingController<Content>, CheckViewModelProviding, CheckoutProcessing, CheckModelDelegate {
     
-    public var viewModel: CheckViewModel?
+    nonisolated(unsafe) public var viewModel: CheckViewModel?
     
     public init(model: CheckViewModel, rootView: Content) {
         super.init(rootView: rootView)
@@ -116,39 +117,45 @@ extension CheckViewModelProviding where Self: UIViewController {
         self.checkModel.checkoutProcess
     }
     
-    public func checkoutRejected(process: SnabbleCore.CheckoutProcess) {
-        let reject = SupervisorRejectedViewController(process)
-        self.shoppingCart.generateNewUUID()
-        reject.delegate = self.paymentDelegate
-        self.navigationController?.pushViewController(reject, animated: true)
-    }
-    
-    public func checkoutFinalized(process: SnabbleCore.CheckoutProcess) {
-        guard
-            let method = process.rawPaymentMethod,
-            let checkoutDisplay = method.checkoutDisplayViewController(
-                shop: self.shop,
-                checkoutProcess: process,
-                shoppingCart: self.shoppingCart,
-                delegate: self.paymentDelegate)
-        else {
-            self.paymentDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
-            return
+    nonisolated public func checkoutRejected(process: SnabbleCore.CheckoutProcess) {
+        Task { @MainActor in
+            let reject = SupervisorRejectedViewController(process)
+            self.shoppingCart.generateNewUUID()
+            reject.delegate = self.paymentDelegate
+            self.navigationController?.pushViewController(reject, animated: true)
         }
-        self.navigationController?.pushViewController(checkoutDisplay, animated: true)
     }
-    
-    public func checkoutAborted(process: SnabbleCore.CheckoutProcess) {
-        // Hack for VR-iOS to navigate to ShoppingView
-        if Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String == "de.vr.quartier",
-           let viewController = navigationController?.viewControllers.safelyAccessElement(at: 1) {
-            navigationController?.popToViewController(viewController, animated: true)
+
+    nonisolated public func checkoutFinalized(process: SnabbleCore.CheckoutProcess) {
+        Task { @MainActor in
+            guard
+                let method = process.rawPaymentMethod,
+                let checkoutDisplay = method.checkoutDisplayViewController(
+                    shop: self.shop,
+                    checkoutProcess: process,
+                    shoppingCart: self.shoppingCart,
+                    delegate: self.paymentDelegate)
+            else {
+                self.paymentDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
+                return
+            }
+            self.navigationController?.pushViewController(checkoutDisplay, animated: true)
         }
-        // Hack ended
-        else if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController }) {
-            self.navigationController?.popToViewController(cartVC, animated: true)
-        } else {
-            self.navigationController?.popToRootViewController(animated: true)
+    }
+
+    nonisolated public func checkoutAborted(process: SnabbleCore.CheckoutProcess) {
+        Task { @MainActor in
+            // Hack for VR-iOS to navigate to ShoppingView
+            if Bundle.main.infoDictionary?["CFBundleIdentifier"] as? String == "de.vr.quartier",
+               let viewController = navigationController?.viewControllers.safelyAccessElement(at: 1) {
+                navigationController?.popToViewController(viewController, animated: true)
+            }
+            // Hack ended
+            else if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController }) {
+                self.navigationController?.popToViewController(cartVC, animated: true)
+            } else {
+                self.navigationController?.popToRootViewController(animated: true)
+            }
         }
     }
 }

@@ -12,24 +12,22 @@ import SnabbleComponents
 
 /// A view that manages the shopping session for a user, integrating with the Shopper model to handle barcode scanning, displaying scan messages, and error handling.
 public struct ShopperView: View {
-    @ObservedObject public var model: Shopper
+    @Environment(Shopper.self) private var model
     @AppStorage(UserDefaults.scanningDisabledKey) var expanded: Bool = false
-    
+
     @State private var showSearch: Bool = false
     @State private var showError: Bool = false
     @State private var showBundleSelection: Bool = false
-    
+
     @State private var minHeight: CGFloat = 0
     @State private var bundles: [BarcodeManager.ScannedItem] = []
-    
+
     @SwiftUI.Environment(\.dismiss) var dismiss
-    
-    public init(model: Shopper) {
-        self.model = model
-    }
-    
+
     public var body: some View {
-        ShoppingScannerView(model: model, minHeight: $minHeight)
+        @Bindable var model = model
+
+        ShoppingScannerView(minHeight: $minHeight)
             .edgesIgnoringSafeArea(.bottom)
             .animation(.easeInOut, value: model.scannedItem)
             .navigationDestination(isPresented: $model.isNavigating) {
@@ -62,7 +60,7 @@ public struct ShopperView: View {
                     model.startScanner()
                 }
             }
-            .onReceive(model.$errorMessage) { message in
+            .onChange(of: model.errorMessage) { _, message in
                 if message != nil {
                     model.startScanner()
                     withAnimation {
@@ -70,10 +68,10 @@ public struct ShopperView: View {
                     }
                 }
             }
-            .onReceive(model.$bundles) { bundles in
+            .onChange(of: model.bundles) { _, bundles in
                 self.bundles = bundles
             }
-            .onReceive(model.$scannedItem) { item in
+            .onChange(of: model.scannedItem) { _, item in
                 if let item {
                     if self.bundles.isEmpty {
                         selectItem(item)

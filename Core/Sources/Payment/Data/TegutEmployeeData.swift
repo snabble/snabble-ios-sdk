@@ -6,7 +6,7 @@
 
 import Foundation
 
-public struct TegutEmployeeData: Codable, EncryptedPaymentData, Equatable {
+public struct TegutEmployeeData: Codable, EncryptedPaymentData, Equatable, Sendable {
     // encrypted JSON string
     public let encryptedPaymentData: String
     // serial # of the certificate used to encrypt

@@ -46,12 +46,22 @@ public final class OnboardingViewController: UIHostingController<OnboardingView>
 
     public override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.$isDone
-            .sink { [weak self] in
-                if $0 {
-                    self?.delegate?.onboardingViewControllerDidFinish(self!)
+        // Observe isDone property using withObservationTracking
+        observeIsDone()
+    }
+
+    private func observeIsDone() {
+        withObservationTracking {
+            _ = viewModel.isDone
+        } onChange: {
+            Task { @MainActor [weak self] in
+                guard let self = self else { return }
+                if self.viewModel.isDone {
+                    self.delegate?.onboardingViewControllerDidFinish(self)
+                } else {
+                    self.observeIsDone()
                 }
             }
-            .store(in: &cancellables)
+        }
     }
 }

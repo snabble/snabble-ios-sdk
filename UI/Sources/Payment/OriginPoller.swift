@@ -12,7 +12,7 @@ protocol OriginPollerDelegate: AnyObject {
     func originPoller(_ originPoller: OriginPoller, didReceiveCandidate originCandidate: OriginCandidate)
 }
 
-final class OriginPoller {
+final class OriginPoller: @unchecked Sendable {
     private let project: Project
     private(set) var candidatesURLStrings = Set<String>()
 
@@ -76,7 +76,9 @@ final class OriginPoller {
                     }
                 case .success(let candidate):
                     continuePolling = !candidate.isValid
-                    delegate?.originPoller(self, didReceiveCandidate: candidate)
+                    Task { @MainActor in
+                        delegate?.originPoller(self, didReceiveCandidate: candidate)
+                    }
                 }
 
                 if continuePolling {

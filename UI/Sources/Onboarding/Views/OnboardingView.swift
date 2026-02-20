@@ -10,7 +10,7 @@
 import SwiftUI
 
 public struct OnboardingView: View {
-    @ObservedObject public var viewModel: OnboardingViewModel
+    @Bindable public var viewModel: OnboardingViewModel
 
     public init(viewModel: OnboardingViewModel) {
         self.viewModel = viewModel

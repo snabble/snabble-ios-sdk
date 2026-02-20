@@ -123,16 +123,17 @@ public extension ShoppingCartItemBadging {
     }
 }
 
-open class CartItemModel: ObservableObject, ShoppingCartItem {
+@Observable
+open class CartItemModel: ShoppingCartItem {
     public var id: String {
         return UUID().uuidString
     }
     
-    @Published public var title: String
-    @Published public var leftDisplay: LeftDisplay
-    @Published public var rightDisplay: RightDisplay
+    public var title: String
+    public var leftDisplay: LeftDisplay
+    public var rightDisplay: RightDisplay
 
-    @Published public var image: SwiftUI.Image?
+    public var image: SwiftUI.Image?
     
     public var showImages: Bool
     init(title: String, leftDisplay: LeftDisplay = .none, rightDisplay: RightDisplay = .none, image: SwiftUI.Image? = nil, showImages: Bool = false) {

@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-public struct AsyncScreen<ID: Equatable, Value, Initial: View, Success: View, Failure: View>: View {
+public struct AsyncScreen<ID: Equatable & Sendable, Value, Initial: View, Success: View, Failure: View>: View {
 
     @State private var subview: Subview
     

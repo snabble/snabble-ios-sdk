@@ -15,7 +15,7 @@ public enum VoucherType: String, Codable, UnknownCaseRepresentable, Sendable {
     public static let unknownCase = VoucherType.unknown
 }
 
-public struct Voucher: Codable {
+public struct Voucher: Codable, Sendable {
     public let id: String
 
     public let itemID: String

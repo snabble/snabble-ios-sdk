@@ -47,10 +47,18 @@ public enum LoginStrings: String {
     }
 }
 
-public class LoginViewModel: Loginable, ObservableObject {
-    @Published public var username: String?
-    @Published public var password: String?
-    @Published public var isValid = false {
+@Observable
+public class LoginViewModel: Loginable {
+    private let usernameSubject = CurrentValueSubject<String?, Never>(nil)
+    private let passwordSubject = CurrentValueSubject<String?, Never>(nil)
+    
+    public var username: String? {
+        didSet { usernameSubject.send(username) }
+    }
+    public var password: String? {
+        didSet { passwordSubject.send(password) }
+    }
+    public var isValid = false {
         didSet {
             if errorMessage != nil {
                 self.errorMessage = nil
@@ -59,8 +67,8 @@ public class LoginViewModel: Loginable, ObservableObject {
     }
     
     // output
-    @Published public var hintMessage: String?
-    @Published public var errorMessage: String?
+    public var hintMessage: String?
+    public var errorMessage: String?
 
     public var debounce: RunLoop.SchedulerTimeType.Stride = 0.5
     public var minimumInputCount: Int = 4
@@ -68,14 +76,14 @@ public class LoginViewModel: Loginable, ObservableObject {
     private var cancellables = Set<AnyCancellable>()
 
     private var isUsernameValidPublisher: AnyPublisher<Bool, Never> {
-        $username
+        usernameSubject
             .debounce(for: debounce, scheduler: RunLoop.main)
             .minimumOptional(minimumInputCount)
             .removeDuplicates()
             .eraseToAnyPublisher()
     }
     private var isPasswordValidPublisher: AnyPublisher<Bool, Never> {
-        $password
+        passwordSubject
             .debounce(for: debounce, scheduler: RunLoop.main)
             .map { $0 != nil }
             .removeDuplicates()

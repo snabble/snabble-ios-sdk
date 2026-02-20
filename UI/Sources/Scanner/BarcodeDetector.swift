@@ -10,10 +10,10 @@ import AVFoundation
 import SnabbleCore
 import SnabbleAssetProviding
 
-public struct BarcodeResult {
+public struct BarcodeResult: Sendable {
     public let code: String
     public let format: ScanFormat?
-    
+
     public init(code: String, format: ScanFormat?) {
         self.code = code
         self.format = format
@@ -29,11 +29,13 @@ extension BarcodeResult: CustomStringConvertible {
     }
 }
 
+@MainActor
 public protocol BarcodeScanning: AnyObject {
     /// callback for a successful scan
     func scannedCodeResult(_ result: BarcodeResult)
 }
 
+@MainActor
 public protocol BarcodePresenting: AnyObject {
     /// this is used to present permission alerts. If the delegate instance is a `UIViewController`, no more code is needed
     func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)?)
@@ -59,7 +61,7 @@ public protocol Zoomable {
 // NOTE that this class is not really a part of the public API of the Snabble SDK - it and its properties are only marked
 // `public`/`open` to support implementing `CortexDecoderBarcodeDetector` in its separate module
 
-open class BarcodeDetector: NSObject, Zoomable {
+open class BarcodeDetector: NSObject, Zoomable, @unchecked Sendable {
     
     public static var batterySaverTimeout: TimeInterval { 90 }
     public static var batterySaverKey: String { "io.snabble.sdk.batterySaver" }

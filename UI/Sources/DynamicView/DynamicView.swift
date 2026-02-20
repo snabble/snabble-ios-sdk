@@ -9,16 +9,16 @@ import Combine
 import SwiftUI
 
 public struct DynamicView: View {
-    @ObservedObject public var viewModel: DynamicViewModel
+    public var viewModel: DynamicViewModel
     @State private var refresher: AnyCancellable
-    
+
     public init(viewModel: DynamicViewModel) {
         self.viewModel = viewModel
-        
+
         self.refresher = UserDefaults.standard
             .publisher(for: \.developerMode)
             .handleEvents(receiveOutput: { _ in
-                viewModel.objectWillChange.send()
+                // Note: objectWillChange doesn't exist on @Observable, observation is automatic
             })
             .sink { _ in }
     }
@@ -40,26 +40,24 @@ public struct DynamicView: View {
     public var body: some View {
         ZStack {
             teaser.edgesIgnoringSafeArea(.top)
-            
+
             switch viewModel.configuration.stackStyle {
             case .scroll:
                 ScrollView(.vertical) {
                     VStack(alignment: .center) {
-                        WidgetContainer(viewModel: viewModel, widgets: viewModel.widgets)
+                        WidgetContainer(widgets: viewModel.widgets)
                     }
                     .padding(viewModel.configuration.padding?.edgeInsets ?? .init())
                 }
             case .list:
                 List {
-                    WidgetContainer(viewModel: viewModel, widgets: viewModel.widgets)
+                    WidgetContainer(widgets: viewModel.widgets)
                 }
                 .padding(viewModel.configuration.padding?.edgeInsets ?? .init())
                 .listStyle(.grouped)
             }
         }
-        .onAppear {
-            viewModel.objectWillChange.send()
-        }
+        .environment(viewModel)
     }
 }
 

@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct PayoneSepaData: Codable, EncryptedPaymentData, Equatable {
+public struct PayoneSepaData: Codable, EncryptedPaymentData, Equatable, Sendable {
     // encrypted JSON string
     public let encryptedPaymentData: String
     // serial # of the certificate used to encrypt

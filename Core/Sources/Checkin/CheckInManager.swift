@@ -26,7 +26,8 @@ public protocol CheckInManagerDelegate: AnyObject {
     func checkInManager(_ checkInManager: CheckInManager, didFailWithError error: Error)
 }
 
-public class CheckInManager: NSObject {
+/// Thread-safety: State properties are accessed from main thread, CLLocationManager delegates use nonisolated pattern
+public class CheckInManager: NSObject, @unchecked Sendable {
     /// Projects used to find available shops.
     public var projects: [Project] {
         Snabble.shared.projects
@@ -48,8 +49,10 @@ public class CheckInManager: NSObject {
         }
     }
 
-    public var shopPublisher = CurrentValueSubject<Shop?, Never>(nil)
-    public let authorizationStatusSubject = PassthroughSubject<CLAuthorizationStatus, Never>()
+    /// Thread-safety: Combine publishers are thread-safe
+    nonisolated(unsafe) public var shopPublisher = CurrentValueSubject<Shop?, Never>(nil)
+    /// Thread-safety: Combine publishers are thread-safe
+    nonisolated(unsafe) public let authorizationStatusSubject = PassthroughSubject<CLAuthorizationStatus, Never>()
 
     private func trackCheckIn(with shop: Shop) {
         guard let location = locationManager.location, let project = shop.project else { return }
@@ -102,7 +105,8 @@ public class CheckInManager: NSObject {
     /// Shows if updating is activated
     public private(set) var isUpdating = false
 
-    public let locationManager: CLLocationManager
+    /// Thread-safety: CLLocationManager is thread-safe and can be accessed from any thread
+    nonisolated(unsafe) public let locationManager: CLLocationManager
 
     override init() {
         locationManager = CLLocationManager()
@@ -119,7 +123,7 @@ public class CheckInManager: NSObject {
         )
     }
 
-    @objc private func metadataLoadedNotification(_ notification: Notification) {
+    @objc nonisolated private func metadataLoadedNotification(_ notification: Notification) {
         if isUpdating {
             update(with: locationManager.location)
         }
@@ -127,13 +131,15 @@ public class CheckInManager: NSObject {
 }
 
 extension CheckInManager: CLLocationManagerDelegate {
-    private func updateLocationManger(_ manager: CLLocationManager, status: CLAuthorizationStatus) {
+    nonisolated private func updateLocationManger(_ manager: CLLocationManager, status: CLAuthorizationStatus) {
         switch status {
         case .authorizedWhenInUse, .authorizedAlways:
             manager.startUpdatingLocation()
         case .denied, .restricted, .notDetermined:
             manager.stopUpdatingLocation()
-            delegate?.checkInManager(self, locationAuthorizationNotGranted: status)
+            Task { @MainActor in
+                delegate?.checkInManager(self, locationAuthorizationNotGranted: status)
+            }
         @unknown default:
             break
         }
@@ -141,32 +147,39 @@ extension CheckInManager: CLLocationManagerDelegate {
     }
 
     @available(iOS 14.0, *)
-    public func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
+    nonisolated public func locationManagerDidChangeAuthorization(_ manager: CLLocationManager) {
         updateLocationManger(manager, status: manager.authorizationStatus)
 
-        switch manager.accuracyAuthorization {
+        let accuracyAuthorization = manager.accuracyAuthorization
+        switch accuracyAuthorization {
         case .reducedAccuracy:
-            delegate?.checkInManager(self, locationAccuracyNotSufficient: manager.accuracyAuthorization)
+            Task { @MainActor in
+                delegate?.checkInManager(self, locationAccuracyNotSufficient: accuracyAuthorization)
+            }
         case .fullAccuracy:
             break
         @unknown default:
             break
         }
     }
-    
-    public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
+
+    nonisolated public func locationManager(_ manager: CLLocationManager, didChangeAuthorization status: CLAuthorizationStatus) {
         updateLocationManger(manager, status: status)
     }
 
-    public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
-        update(with: locations.last)
+    nonisolated public func locationManager(_ manager: CLLocationManager, didUpdateLocations locations: [CLLocation]) {
+        Task { @MainActor in
+            update(with: locations.last)
+        }
     }
 
-    public func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
+    nonisolated public func locationManager(_ manager: CLLocationManager, didFailWithError error: Swift.Error) {
         if let error = error as? CLError, error.code == .denied {
             manager.stopUpdatingLocation()
         }
-        delegate?.checkInManager(self, didFailWithError: error)
+        Task { @MainActor in
+            delegate?.checkInManager(self, didFailWithError: error)
+        }
     }
 
     private func update(with location: CLLocation?) {

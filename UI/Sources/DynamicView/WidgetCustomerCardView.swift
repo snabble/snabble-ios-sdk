@@ -10,8 +10,9 @@ import SwiftUI
 import Combine
 import SnabbleCore
 
-private class CustomerCardViewModel: ObservableObject {
-    @Published var widget: WidgetInformation?
+@Observable
+private class CustomerCardViewModel {
+    var widget: WidgetInformation?
 
     private var cancellables = Set<AnyCancellable>()
 
@@ -48,14 +49,14 @@ public struct WidgetCustomerCardView: View {
     let configuration: DynamicViewConfiguration
     let action: (Widget) -> Void
 
-    @ObservedObject private var viewModel: CustomerCardViewModel
+    @State private var viewModel: CustomerCardViewModel
 
     init(widget: WidgetCustomerCard, configuration: DynamicViewConfiguration, action: @escaping (Widget) -> Void) {
         self.widget = widget
         self.configuration = configuration
         self.action = action
 
-        self.viewModel = CustomerCardViewModel(widget: widget)
+        self._viewModel = State(wrappedValue: CustomerCardViewModel(widget: widget))
     }
 
     public var body: some View {

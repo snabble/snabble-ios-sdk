@@ -10,7 +10,7 @@ import SwiftUI
 import SnabbleCore
 
 @Observable
-public class LastPurchasesViewModel: LoadableObject {
+public class LastPurchasesViewModel: LoadableObject, @unchecked Sendable {
     typealias Output = [PurchaseProviding]
     
     var projectId: Identifier<Project>? {

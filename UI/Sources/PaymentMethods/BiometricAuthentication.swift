@@ -25,7 +25,7 @@ public enum BiometricAuthentication {
         }
     }
 
-    public enum AuthenticationResult {
+    public enum AuthenticationResult: Sendable {
         case proceed
         case cancelled
         case locked
@@ -49,6 +49,14 @@ public enum BiometricAuthentication {
     }
 
     static func requestAuthentication(for reason: String, _ reply: @escaping (Bool, Error?) -> Void ) {
+        final class ReplyBox: @unchecked Sendable {
+            let reply: (Bool, Error?) -> Void
+            init(_ reply: @escaping (Bool, Error?) -> Void) {
+                self.reply = reply
+            }
+        }
+
+        let box = ReplyBox(reply)
         let authContext = LAContext()
         let canEvaluate = authContext.canEvaluatePolicy(self.policy, error: nil)
 
@@ -58,13 +66,15 @@ public enum BiometricAuthentication {
                 if let error = error {
                     NSLog("local authentication error: \(error)")
                 }
+                let capturedSuccess = success
+                let capturedError = error
                 DispatchQueue.main.async {
-                    reply(success, error)
+                    box.reply(capturedSuccess, capturedError)
                 }
             }
         } else {
             DispatchQueue.main.async {
-                reply(false, nil)
+                box.reply(false, nil)
             }
         }
     }

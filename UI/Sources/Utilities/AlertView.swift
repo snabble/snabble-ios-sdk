@@ -7,6 +7,7 @@
 
 import UIKit
 
+@MainActor
 class AlertView {
     private var window: UIWindow?
     public var alertController: UIAlertController?

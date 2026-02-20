@@ -13,8 +13,9 @@ import Network
 import SnabbleCore
 import SnabbleAssetProviding
 
+@Observable
 @MainActor
-final class ConnectWifiViewModel: ObservableObject {
+final class ConnectWifiViewModel {
     let configuration: DynamicViewConfiguration
 
     private let pathMonitor: NWPathMonitor
@@ -38,7 +39,7 @@ final class ConnectWifiViewModel: ObservableObject {
     }
 
     // MARK: Published
-    @Published var isHidden = true
+    var isHidden = true
 
     private func verifyIsHidden() -> Bool {
         guard !customerNetworks.isEmpty else {
@@ -55,8 +56,8 @@ final class ConnectWifiViewModel: ObservableObject {
 #endif
     }
 
-    @Published var isJoiningNetwork = false
-    @Published var networkError: Error?
+    var isJoiningNetwork = false
+    var networkError: Error?
     
 #if DEBUG
     let testSSID = "snabble"
@@ -150,7 +151,7 @@ public struct WidgetConnectWifiView: View {
     let widget: WidgetConnectWifi
     let configuration: DynamicViewConfiguration
     let action: (Widget) -> Void
-    @ObservedObject private var viewModel: ConnectWifiViewModel
+    private var viewModel: ConnectWifiViewModel
 
     init(widget: WidgetConnectWifi, configuration: DynamicViewConfiguration, action: @escaping (Widget) -> Void) {
         self.widget = widget

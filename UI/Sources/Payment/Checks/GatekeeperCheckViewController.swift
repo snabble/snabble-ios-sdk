@@ -81,7 +81,7 @@ struct UpArrow: View {
 }
 
 struct GatekeeperView: View {
-    @ObservedObject var model: GatekeeperViewModel
+    var model: GatekeeperViewModel
     @Environment(\.presentationMode) var presentationMode
 
     @State private var disableButton: Bool = false

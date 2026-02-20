@@ -53,7 +53,7 @@ struct BadgeTextView: View {
 }
 
 struct CartItemView: View {
-    @ObservedObject var itemModel: ProductItemModel
+    var itemModel: ProductItemModel
     @ScaledMetric var scale: CGFloat = 1
     
     init(itemModel: ProductItemModel) {

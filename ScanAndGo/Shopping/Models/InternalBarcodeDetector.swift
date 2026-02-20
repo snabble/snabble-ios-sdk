@@ -99,21 +99,21 @@ open class InternalBarcodeDetector: NSObject, Zoomable {
     }
     public let statePublisher = PassthroughSubject<InternalBarcodeDetector.State, Never>()
 
-    public var previewLayer: AVCaptureVideoPreviewLayer?
+    nonisolated(unsafe) public var previewLayer: AVCaptureVideoPreviewLayer?
     public var permissionGranted = false // Flag for permission
-    
-    public let sessionQueue: DispatchQueue
-    
+
+    nonisolated(unsafe) public let sessionQueue: DispatchQueue
+
     public weak var batterySaverTimer: Timer?
     public var scanDebounce: TimeInterval = 3
     public var detectorArea: BarcodeDetectorArea
-    
+
     private var camera: AVCaptureDevice?
     private var input: AVCaptureDeviceInput?
-    
+
     public var captureSession: AVCaptureSession
-    
-    private let metadataOutput: AVCaptureMetadataOutput
+
+    nonisolated(unsafe) private let metadataOutput: AVCaptureMetadataOutput
     
     private let outputQueue: DispatchQueue
     private let videoDataOutput: AVCaptureVideoDataOutput
@@ -255,10 +255,15 @@ open class InternalBarcodeDetector: NSObject, Zoomable {
     }
 
     /// Sets the region of interrest
-    open func setROI(rect roi: CGRect) {
-        DispatchQueue.main.async { [self] in
+    nonisolated open func setROI(rect roi: CGRect) {
+        // These properties are accessed across dispatch queues with manual synchronization
+        nonisolated(unsafe) let previewLayer = self.previewLayer
+        nonisolated(unsafe) let sessionQueue = self.sessionQueue
+        nonisolated(unsafe) let metadataOutput = self.metadataOutput
+
+        DispatchQueue.main.async {
             let rect = previewLayer?.metadataOutputRectConverted(fromLayerRect: roi)
-            sessionQueue.async { [self] in
+            sessionQueue.async {
                 // for some reason, running this on the main thread may block for ~10 seconds. WHY?!?
                 metadataOutput.rectOfInterest = rect ?? CGRect(origin: .zero, size: .init(width: 1, height: 1))
             }

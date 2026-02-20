@@ -80,23 +80,27 @@ public final class ScannerViewController: PulleyViewController {
 }
 
 extension ScannerViewController: InternalShoppingCartDelegate {
-    public func shoppingCart(_ shoppingCart: ShoppingCart, didChangeCustomerCard customerCard: String?) {
-        guard let drawer = self.drawerContentViewController as? ScannerDrawerViewController else { return }
-        drawer.updateTotals()
+    nonisolated public func shoppingCart(_ shoppingCart: ShoppingCart, didChangeCustomerCard customerCard: String?) {
+        Task { @MainActor in
+            guard let drawer = self.drawerContentViewController as? ScannerDrawerViewController else { return }
+            drawer.updateTotals()
+        }
     }
 
-    public func shoppingCart(_ shoppingCart: ShoppingCart, violationsDetected violations: [CheckoutInfo.Violation]) {
-        let alertController = UIAlertController(
-            title: Asset.localizedString(forKey: "Snabble.Violations.title"),
-            message: violations.message,
-            preferredStyle: .alert
-        )
-        let action = UIAlertAction(
-            title: Asset.localizedString(forKey: "Snabble.ok"),
-            style: .default) { _ in
-            alertController.dismiss(animated: true)
+    nonisolated public func shoppingCart(_ shoppingCart: ShoppingCart, violationsDetected violations: [CheckoutInfo.Violation]) {
+        Task { @MainActor in
+            let alertController = UIAlertController(
+                title: Asset.localizedString(forKey: "Snabble.Violations.title"),
+                message: violations.message,
+                preferredStyle: .alert
+            )
+            let action = UIAlertAction(
+                title: Asset.localizedString(forKey: "Snabble.ok"),
+                style: .default) { _ in
+                alertController.dismiss(animated: true)
+            }
+            alertController.addAction(action)
+            present(alertController, animated: true)
         }
-        alertController.addAction(action)
-        present(alertController, animated: true)
     }
 }

@@ -16,16 +16,17 @@ protocol CouponViewModelDelegate: AnyObject {
     func couponViewModel(_ couponViewModel: CouponViewModel, shouldActivateCoupon coupon: Coupon) -> Bool
 }
 
+@Observable
 @MainActor
-class CouponViewModel: ObservableObject {
+class CouponViewModel {
     let coupon: Coupon
 
     var title: String { coupon.name }
     var subtitle: String? { coupon.description }
     var text: String? { coupon.promotionDescription }
     var disclaimer: String? { coupon.disclaimer }
-    
-    @Published var image: UIImage?
+
+    var image: UIImage?
 
     weak var delegate: CouponViewModelDelegate?
     private weak var imageTask: URLSessionDataTask?
@@ -121,6 +122,5 @@ extension CouponViewModel {
         } else {
             activateCoupon()
         }
-        objectWillChange.send()
     }
 }

@@ -276,36 +276,42 @@ final class ScannerDrawerViewController: UIViewController {
 
 // MARK: - pulley
 extension ScannerDrawerViewController: PulleyDrawerViewControllerDelegate {
-    public func supportedDrawerPositions() -> [PulleyPosition] {
+    nonisolated public func supportedDrawerPositions() -> [PulleyPosition] {
         return PulleyPosition.compact
     }
 
-    public func collapsedDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
-        let heightForCartItems: CGFloat = min(CGFloat(shoppingCart.items.count) * cartItemHeight, cartItemHeight * 2.5)
-        let heightForListItems: CGFloat = min(CGFloat(shoppingList?.count ?? 0) * listItemHeight, listItemHeight * 2.5)
-        let heightForItems = !shoppingCart.items.isEmpty ? heightForCartItems : heightForListItems
-
-        let heightForSegmentedControl = shoppingList == nil ? 0 : segmentedControlHeight + separatorSpacerHeight
-        return minDrawerHeight + heightForSegmentedControl + totalsHeight + heightForItems + bottomSafeArea
+    nonisolated public func collapsedDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
+        Task { @MainActor in
+            let heightForCartItems: CGFloat = min(CGFloat(shoppingCart.items.count) * cartItemHeight, cartItemHeight * 2.5)
+            let heightForListItems: CGFloat = min(CGFloat(shoppingList?.count ?? 0) * listItemHeight, listItemHeight * 2.5)
+            let heightForItems = !shoppingCart.items.isEmpty ? heightForCartItems : heightForListItems
+            let heightForSegmentedControl = shoppingList == nil ? 0 : segmentedControlHeight + separatorSpacerHeight
+            return minDrawerHeight + heightForSegmentedControl + totalsHeight + heightForItems + bottomSafeArea
+        }
+        return 100 // Default fallback for nonisolated context
     }
 
-    public func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {
+    nonisolated public func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {
         let newPosition = drawer.drawerPosition
-        shoppingListTableVC.tableView.isScrollEnabled = newPosition == .open
+        Task { @MainActor in
+            shoppingListTableVC.tableView.isScrollEnabled = newPosition == .open
 
-        if newPosition != previousPosition {
-            let scanner = self.pulleyViewController?.primaryContentViewController as? ScanningViewController
-            if previousPosition == .open {
-                scanner?.resumeScanning()
-            } else if newPosition == .open {
-                scanner?.pauseScanning()
+            if newPosition != previousPosition {
+                let scanner = self.pulleyViewController?.primaryContentViewController as? ScanningViewController
+                if previousPosition == .open {
+                    scanner?.resumeScanning()
+                } else if newPosition == .open {
+                    scanner?.pauseScanning()
+                }
+                previousPosition = drawer.drawerPosition
             }
-            previousPosition = drawer.drawerPosition
         }
     }
 
-    public func drawerChangedDistanceFromBottom(drawer: PulleyViewController, distance: CGFloat, bottomSafeArea: CGFloat) {
-        updateOverlay(on: drawer, forDistance: distance)
+    nonisolated public func drawerChangedDistanceFromBottom(drawer: PulleyViewController, distance: CGFloat, bottomSafeArea: CGFloat) {
+        Task { @MainActor in
+            updateOverlay(on: drawer, forDistance: distance)
+        }
     }
 
     private func updateOverlay(on drawer: PulleyViewController, forDistance distance: CGFloat) {
@@ -316,7 +322,9 @@ extension ScannerDrawerViewController: PulleyDrawerViewControllerDelegate {
 }
 
 extension ScannerDrawerViewController: AnalyticsDelegate {
-    func track(_ event: AnalyticsEvent) {
-        self.shoppingCartDelegate?.track(event)
+    nonisolated func track(_ event: AnalyticsEvent) {
+        Task { @MainActor in
+            self.shoppingCartDelegate?.track(event)
+        }
     }
 }

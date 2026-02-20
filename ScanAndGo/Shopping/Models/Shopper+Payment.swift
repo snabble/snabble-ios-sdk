@@ -24,7 +24,7 @@ extension Shopper {
     }
 }
 
-extension Shopper: PaymentMethodManagerDelegate {
+extension Shopper: @preconcurrency PaymentMethodManagerDelegate {
     
     private func setAlertProvider(_ provider: AlertProviding) {
         let alertController = provider.alertController { _ in }
@@ -80,6 +80,7 @@ extension Shopper: PaymentMethodManagerDelegate {
     
     public func paymentMethodManager(didSelectPayment payment: SnabbleCore.Payment?) {
         logger.debug("didSelectPayment: \(payment.debugDescription)")
+        verifyPayment(payment)
     }
 }
 

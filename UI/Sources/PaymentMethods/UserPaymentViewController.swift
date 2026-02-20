@@ -71,14 +71,16 @@ public final class UserPaymentViewController: UIViewController {
 }
 
 extension UserPaymentViewController: UserViewControllerDelegate {
-    public func userViewController(_ viewController: UserViewController, didFinishWithUser user: User) {
-        if let nextViewController {
-            guard nextViewController.acceptUser(user: user) else {
-                return
+    nonisolated public func userViewController(_ viewController: UserViewController, didFinishWithUser user: User) {
+        Task { @MainActor in
+            if let nextViewController {
+                guard nextViewController.acceptUser(user: user) else {
+                    return
+                }
+                navigationController?.pushViewController(nextViewController, animated: true)
+            } else {
+                delegate?.userPaymentViewController(self, didAcceptUser: user)
             }
-            navigationController?.pushViewController(nextViewController, animated: true)
-        } else {
-            delegate?.userPaymentViewController(self, didAcceptUser: user)
         }
     }
 }

@@ -8,7 +8,7 @@ import UIKit
 import SnabbleCore
 import SnabbleAssetProviding
 
-public enum BarcodeDetectorArea {
+public enum BarcodeDetectorArea: Sendable {
     // a rectangle, centered vertically and about 30% of the view's height
     case rectangle
     // a square, centered vertically

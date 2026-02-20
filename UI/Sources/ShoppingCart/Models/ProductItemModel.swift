@@ -11,15 +11,15 @@ import SnabbleCore
 import SwiftUI
 import SnabbleAssetProviding
 
-open class ProductItemModel: CartItemModel, ShoppingCartItemCounting {
+open class ProductItemModel: CartItemModel, ShoppingCartItemCounting, @unchecked Sendable {
     public override var id: String {
         return item.uuid
     }
     let item: CartItem
     let lineItems: [CheckoutInfo.LineItem]
     
-    @Published public var discounts: [ShoppingCartItemDiscount]
-    @Published public var quantity: Int
+    public var discounts: [ShoppingCartItemDiscount]
+    public var quantity: Int
     
     init(item: CartItem, for lineItems: [CheckoutInfo.LineItem], discounts: [ShoppingCartItemDiscount] = [], showImages: Bool = true) {
         self.item = item
@@ -137,7 +137,10 @@ extension ProductItemModel: ShoppingCartItemBadging {
 }
 
 extension ProductItemModel {
-    private static var imageCache = [String: SwiftUI.Image]()
+    private nonisolated(unsafe) static let imageCache: NSCache<NSString, UIImage> = {
+        let cache = NSCache<NSString, UIImage>()
+        return cache
+    }()
 
     private func loadImage() {
         guard
@@ -152,14 +155,14 @@ extension ProductItemModel {
 
         self.leftDisplay = .image
 
-        if let img = ProductItemModel.imageCache[imgUrl] {
-            self.image = img
+        if let cachedUIImage = ProductItemModel.imageCache.object(forKey: imgUrl as NSString) {
+            self.image = SwiftUI.Image(uiImage: cachedUIImage)
             return
         }
         // SDK Supermarket hack to resolve wrong domain in data
         if url.host == "snabble.io" {
             let path = url.path
-            
+
             let newUrlString = (url.scheme ?? "https") + "://demodata.snabble.io" + path
             url = URL(string: newUrlString)!
         }
@@ -170,7 +173,7 @@ extension ProductItemModel {
 
             if let uiImage = UIImage(data: data) {
                 let image = SwiftUI.Image(uiImage: uiImage)
-                ProductItemModel.imageCache[imgUrl] = image
+                ProductItemModel.imageCache.setObject(uiImage, forKey: imgUrl as NSString)
                 DispatchQueue.main.async {
                     self?.image = image
                 }

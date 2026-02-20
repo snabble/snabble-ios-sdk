@@ -52,8 +52,8 @@ open class SepaAcceptViewController: UIHostingController<SepaAcceptView> {
 
 extension SepaAcceptViewController: SepaAcceptViewControllerDelegate {
         
-    func showErrorMessage(title: String?, message: String?) {
-        DispatchQueue.main.async {
+    nonisolated func showErrorMessage(title: String?, message: String?) {
+        Task { @MainActor in
             let alert = AlertView(title: title, message: message)
             
             alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .default) { _ in
@@ -89,25 +89,28 @@ extension SepaAcceptViewController: SepaAcceptViewControllerDelegate {
 
     }
 
-    public func sepaAcceptViewController(_ viewController: SepaAcceptViewController, userInfo: [String: Any]?) {
-        guard viewController == self else {
-            return
-        }
-        
-        if let action = userInfo?["action"] as? String {
-            switch action {
-            case "accept", "decline":
-                self.perform(action: action)
-                
-            case "authorizingFailed":
-                showErrorMessage(title: nil, message: Asset.localizedString(forKey: "Snabble.SEPA.authorizingError"))
+    nonisolated public func sepaAcceptViewController(_ viewController: SepaAcceptViewController, userInfo: [String: Any]?) {
+        let action = userInfo?["action"] as? String
+        Task { @MainActor in
+            guard viewController == self else {
+                return
+            }
 
-            case "cancelPaymentFailed":
-                showErrorMessage(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
-                                 message: Asset.localizedString(forKey: "Snabble.Payment.CancelError.message"))
-                
-            default:
-                print("unhandled action: \(action)")
+            if let action {
+                switch action {
+                case "accept", "decline":
+                    self.perform(action: action)
+                    
+                case "authorizingFailed":
+                    showErrorMessage(title: nil, message: Asset.localizedString(forKey: "Snabble.SEPA.authorizingError"))
+
+                case "cancelPaymentFailed":
+                    showErrorMessage(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
+                                     message: Asset.localizedString(forKey: "Snabble.Payment.CancelError.message"))
+                    
+                default:
+                    print("unhandled action: \(action)")
+                }
             }
         }
     }

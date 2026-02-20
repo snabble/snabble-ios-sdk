@@ -10,7 +10,7 @@ import Combine
 import SnabbleCore
 import SnabbleAssetProviding
 
-public struct InvoiceLoginInfo: Decodable {
+public struct InvoiceLoginInfo: Decodable, Sendable {
     public let username: String?
     public let contactPersonID: String?
     
@@ -43,7 +43,7 @@ extension Project {
     }
 
     public func getUserLoginInfo(with credentials: InvoiceLoginCredentials,
-                                 completion: @escaping (Result<InvoiceLoginInfo, SnabbleError>) -> Void) {
+                                 completion: @escaping @Sendable (Result<InvoiceLoginInfo, SnabbleError>) -> Void) {
         do {
             let data = try JSONEncoder().encode(credentials)
 
@@ -61,16 +61,11 @@ extension Project {
 }
 
 public final class InvoiceLoginModel: LoginViewModel {
-    @Published public var isLoggedIn = false
+    public var isLoggedIn = false
 
     private var paymentDetail: PaymentMethodDetail?
     
-    @Published public var loginInfo: InvoiceLoginInfo? {
-        willSet {
-            DispatchQueue.main.async {
-                self.objectWillChange.send()
-            }
-        }
+    public var loginInfo: InvoiceLoginInfo? {
         didSet {
             if let info = loginInfo, info.isValid(username: username) {
                 isLoggedIn = true
@@ -163,6 +158,13 @@ public final class InvoiceLoginProcessor: LoginProcessing, ObservableObject {
     
     private var loginPublisher: Future<InvoiceLoginInfo, LoginError> {
         Future { [weak self] promise in
+            final class PromiseBox: @unchecked Sendable {
+                let promise: (Result<InvoiceLoginInfo, LoginError>) -> Void
+                init(_ promise: @escaping (Result<InvoiceLoginInfo, LoginError>) -> Void) {
+                    self.promise = promise
+                }
+            }
+            
             guard let strongSelf = self, strongSelf.invoiceLoginModel.isValid else {
                 return promise(.failure(.loginFailed))
             }
@@ -173,13 +175,14 @@ public final class InvoiceLoginProcessor: LoginProcessing, ObservableObject {
                 return promise(.failure(.loginFailed))
             }
             let credentials = InvoiceLoginCredentials(username: username, password: password)
+            let box = PromiseBox(promise)
                                           
             strongSelf.invoiceLoginModel.project?.getUserLoginInfo(with: credentials) { result in
                 switch result {
                 case .success(let info):
-                    promise(.success(info))
+                    box.promise(.success(info))
                 case .failure:
-                    promise(.failure(.loginFailed))
+                    box.promise(.failure(.loginFailed))
                 }
             }
         }

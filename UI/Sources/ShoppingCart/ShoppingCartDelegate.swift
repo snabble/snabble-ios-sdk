@@ -7,6 +7,7 @@
 import SnabbleCore
 
 /// a protocol that users of `ShoppingCartViewController` must implement
+@MainActor
 public protocol ShoppingCartDelegate: AnalyticsDelegate, MessageDelegate {
     /// called to determine if starting the checkout process is allowed/possible,
     /// e.g. after asking the user's confirmation

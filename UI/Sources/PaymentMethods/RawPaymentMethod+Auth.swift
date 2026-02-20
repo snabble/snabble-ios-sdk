@@ -10,7 +10,7 @@ import SnabbleCore
 import SnabbleAssetProviding
 
 extension RawPaymentMethod: AlertProviding {
-    public func alertController(_ onDismiss: ((UIAlertAction) -> Void)?) -> UIAlertController {
+    public func alertController(_ onDismiss: (@Sendable (UIAlertAction) -> Void)?) -> UIAlertController {
         let mode = BiometricAuthentication.supportedBiometry
         let msg = mode == .none ?
             Asset.localizedString(forKey: "Snabble.PaymentMethods.NoCodeAlert.noBiometry")

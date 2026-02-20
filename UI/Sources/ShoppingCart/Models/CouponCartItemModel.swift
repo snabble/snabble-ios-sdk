@@ -10,7 +10,7 @@ import SnabbleCore
 
 open class CouponCartItemModel: CartItemModel, ShoppingCartItemCounting {
     
-    @Published public var quantity: Int
+    public var quantity: Int
     
     let cartCoupon: CartCoupon
     let lineItem: CheckoutInfo.LineItem?

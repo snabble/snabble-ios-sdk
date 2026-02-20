@@ -104,11 +104,13 @@ extension AppScannerViewController: ShoppingCartDelegate {
         let process = PaymentProcess(info, cart, shop: shop)
         process.paymentDelegate = self
         process.start(method, detail) { result in
-            switch result {
-            case .success(let viewController):
-                self.navigationController?.pushViewController(viewController, animated: true)
-            case .failure(let error):
-                self.showWarningMessage("Error creating payment process: \(error))")
+            Task { @MainActor in
+                switch result {
+                case .success(let viewController):
+                    self.navigationController?.pushViewController(viewController, animated: true)
+                case .failure(let error):
+                    self.showWarningMessage("Error creating payment process: \(error))")
+                }
             }
         }
     }

@@ -43,7 +43,7 @@ extension ShoppingCartViewModel {
 //                CouponItemView(itemModel: itemModel, showImages: showImages)
             }
         } else if case .voucher(let cartVoucher, let lineItems) = item {
-            VoucherItemView(voucher: cartVoucher.voucher, lineItems: lineItems) {
+            VoucherItemView(voucher: cartVoucher.voucher, lineItems: lineItems) { @Sendable in
                 self.trash(item: item)
             }
         }
@@ -51,7 +51,7 @@ extension ShoppingCartViewModel {
 }
 
 public struct ShoppingCartItemsView<Footer: View>: View {
-    @ObservedObject var cartModel: ShoppingCartViewModel
+    @Bindable var cartModel: ShoppingCartViewModel
     var footer: Footer
     var asList: Bool = true
     
@@ -66,7 +66,7 @@ public struct ShoppingCartItemsView<Footer: View>: View {
                 Section(footer: footer) {
                     ForEach(cartModel.items, id: \.id) { item in
                         cartModel.view(for: item)
-                            .environmentObject(cartModel)
+                            .environment(cartModel)
                     }
                     .onDelete(perform: delete)
                     .listRowInsets(EdgeInsets(top: 4, leading: 10, bottom: 4, trailing: 4))

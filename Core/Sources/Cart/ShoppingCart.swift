@@ -6,6 +6,7 @@
 
 import Foundation
 
+@MainActor
 public protocol InternalShoppingCartDelegate: AnyObject {
     func shoppingCart(_ shoppingCart: ShoppingCart, didChangeCustomerCard customerCard: String?)
     func shoppingCart(_ shoppingCart: ShoppingCart, violationsDetected violations: [CheckoutInfo.Violation])
@@ -57,7 +58,10 @@ public final class ShoppingCart: Codable, PaymentConsumer, @unchecked Sendable {
     public var customerCard: String? {
         didSet {
             self.updateProducts(self.customerCard)
-            delegate?.shoppingCart(self, didChangeCustomerCard: customerCard)
+            let card = customerCard
+            Task { @MainActor in
+                delegate?.shoppingCart(self, didChangeCustomerCard: card)
+            }
         }
     }
 
@@ -650,7 +654,9 @@ extension ShoppingCart {
                         message: error.details?.first?.message ?? "invalid cart item",
                         refersToItems: error.details?.compactMap(\.id)
                     )
-                    delegate?.shoppingCart(self, violationsDetected: [violation])
+                    Task { @MainActor in
+                        delegate?.shoppingCart(self, violationsDetected: [violation])
+                    }
                 }
                 completion(false)
             case .success(let info):
@@ -669,7 +675,9 @@ extension ShoppingCart {
                         .forEach {
                             remove(with: $0)
                     }
-                    delegate?.shoppingCart(self, violationsDetected: violations)
+                    Task { @MainActor in
+                        delegate?.shoppingCart(self, violationsDetected: violations)
+                    }
                 }
                 self.lastCheckoutInfoError = nil
                 self.save(postEvent: false)

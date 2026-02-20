@@ -66,7 +66,7 @@ private func getLocales() -> [Country] {
 }
 
 struct IBANHintView: View {
-    @ObservedObject var model: SepaDataModel
+    var model: SepaDataModel
     @State private var attributedString: NSAttributedString
 
     init(model: SepaDataModel) {
@@ -98,13 +98,13 @@ struct IBANHintView: View {
     var placeholder: some View {
         if #available(iOS 15.0, *) {
             Text(AttributedString(attributedString))
-                .truncationMode(model.lineBreakMode == .byTruncatingHead ? .head : .tail)
+                .truncationMode(.head)
                 .padding(.top, 4)
         } else {
             GeometryReader { geom in
                 UIKitLabel {
                     $0.attributedText = attributedString
-                    $0.lineBreakMode = model.lineBreakMode
+                    $0.lineBreakMode = .byTruncatingHead
                     $0.numberOfLines = 1
                 }
                 .frame(maxWidth: geom.size.width)
@@ -152,7 +152,7 @@ struct IBANHintView: View {
 }
 
 struct IBANErrorView: View {
-    @ObservedObject var model: SepaDataModel
+    var model: SepaDataModel
 
     @ViewBuilder
     var content: some View {
@@ -182,7 +182,7 @@ public struct CountryPicker: View {
 }
 
 public struct IbanCountryPicker: View {
-    @ObservedObject var model: SepaDataModel
+    @Bindable var model: SepaDataModel
 
     public var body: some View {
         if model.countries.count == 1, let country = model.countries.first {
@@ -200,7 +200,7 @@ public struct IbanCountryPicker: View {
 }
 
 public struct SepaDataEditorView: View {
-    @ObservedObject var model: SepaDataModel
+    @Bindable var model: SepaDataModel
     @State private var country: String
 
     public init(model: SepaDataModel) {
@@ -287,7 +287,7 @@ public struct SepaDataEditorView: View {
 }
 
 public struct SepaDataDisplayView: View {
-    @ObservedObject var model: SepaDataModel
+    var model: SepaDataModel
 
     public init(model: SepaDataModel) {
         self.model = model
@@ -349,7 +349,7 @@ public struct SepaDataDisplayView: View {
 }
 
 public struct SepaDataView: View {
-    @ObservedObject var model: SepaDataModel
+    var model: SepaDataModel
 
     public init(model: SepaDataModel) {
         self.model = model

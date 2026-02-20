@@ -9,7 +9,7 @@ import SwiftUI
 import SnabbleCore
 
 public struct ShoppingCartView: View {
-    @ObservedObject var cartModel: ShoppingCartViewModel
+    var cartModel: ShoppingCartViewModel
     let compactMode: Bool
     let listMode: Bool
     

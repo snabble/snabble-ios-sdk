@@ -11,8 +11,8 @@ import SnabbleCore
 import SnabbleAssetProviding
 
 struct VoucherItemView: View {
-    @EnvironmentObject var cartModel: ShoppingCartViewModel
-    
+    @Environment(ShoppingCartViewModel.self) var cartModel
+
     @ScaledMetric var imgSize: CGFloat = 22
 
     let voucher: Voucher

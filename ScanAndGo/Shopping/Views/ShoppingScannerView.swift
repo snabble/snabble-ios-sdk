@@ -34,8 +34,9 @@ public struct ScannerOverlay: View {
 }
 
 struct ShoppingScannerView: View {
-    @SwiftUI.Environment(\.safeAreaInsets) var insets
-    @ObservedObject var model: Shopper
+    @Environment(\.safeAreaInsets) var insets
+    @Environment(Shopper.self) var model
+    
     @Binding var minHeight: CGFloat
     
     @State private var topMargin: CGFloat = ScannerCartView.TopMargin
@@ -46,6 +47,8 @@ struct ShoppingScannerView: View {
     @State private var scanMessage: ScanMessage?
     
     var body: some View {
+        @Bindable var model = self.model
+        
         ZStack(alignment: .top) {
             BarcodeScannerView(detector: model.barcodeManager.barcodeDetector)
             ScannerOverlay(offset: $minHeight)
@@ -53,7 +56,7 @@ struct ShoppingScannerView: View {
                 .offset(x: 0, y: position - 114)
                 .opacity(model.scanningPaused || position == 0 ? 0 : 1)
             PullOverView(minHeight: $minHeight, expanded: $model.scanningPaused, paddingTop: $topMargin, position: $position) {
-                ScannerCartView(model: model, minHeight: $minHeight)
+                ScannerCartView(minHeight: $minHeight)
             }
             if model.processing || position == 0 {
                 ScannerProcessingView()
@@ -85,9 +88,9 @@ struct ShoppingScannerView: View {
                 }
             }
         }
-        .onReceive(model.$scanMessage) { scanMessage in
-            if scanMessage != nil {
-                self.scanMessage = scanMessage
+        .onChange(of: model.scanMessage) { _, newValue in
+            if newValue != nil {
+                self.scanMessage = newValue
                 model.startScanner()
                 withAnimation {
                     showHud = true

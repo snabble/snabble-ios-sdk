@@ -595,16 +595,16 @@ struct AbortRequest: Encodable {
     let aborted: Bool
 }
 
-public enum CandidateType: String, Decodable, Hashable {
+public enum CandidateType: String, Decodable, Hashable, Sendable {
     case debitCardIban = "debit_card_iban"
 }
 
-public struct OriginCandidate: Decodable {
+public struct OriginCandidate: Decodable, Sendable {
     public let links: CandidateLinks?
     public let origin: String?
     public let type: CandidateType?
 
-    public struct CandidateLinks: Decodable, Hashable {
+    public struct CandidateLinks: Decodable, Hashable, Sendable {
         public let _self: Link
         public let promote: Link
 

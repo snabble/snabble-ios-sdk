@@ -515,11 +515,16 @@ extension SepaEditViewController: UITextFieldDelegate {
 }
 
 extension SepaEditViewController: KeyboardHandling {
-    public func keyboardWillShow(_ info: KeyboardInfo) {
-        scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: info.keyboardHeight, right: 0)
+    nonisolated public func keyboardWillShow(_ info: KeyboardInfo) {
+        let keyboardHeight = info.keyboardHeight
+        Task { @MainActor in
+            scrollView.contentInset = UIEdgeInsets(top: 0, left: 0, bottom: keyboardHeight, right: 0)
+        }
     }
 
-    public func keyboardWillHide(_ info: KeyboardInfo) {
-        scrollView.contentInset = .zero
+    nonisolated public func keyboardWillHide(_ info: KeyboardInfo) {
+        Task { @MainActor in
+            scrollView.contentInset = .zero
+        }
     }
 }

@@ -41,7 +41,7 @@ extension SnabbleCI {
         AssetManager.shared.initialize(projectId, manifestUrl, downloadFiles: downloadFiles, completion: { })
     }
 
-    public static func getAsset(_ asset: ImageAsset, bundlePath: String? = nil, projectId: Identifier<Project>? = nil, completion: @escaping (UIImage?) -> Void) {
+    public static func getAsset(_ asset: ImageAsset, bundlePath: String? = nil, projectId: Identifier<Project>? = nil, completion: @escaping @Sendable (UIImage?) -> Void) {
         AssetManager.shared.getAsset(asset, bundlePath, projectId, completion)
     }
 
@@ -124,7 +124,7 @@ private struct AssetRequest {
     let completion: (UIImage?) -> Void
 }
 
-final class AssetManager {
+final class AssetManager: @unchecked Sendable {
     /// Thread-safety: Singleton initialized once, internal state protected by ReadWriteLock
     nonisolated(unsafe) static let shared = AssetManager()
 
@@ -139,7 +139,7 @@ final class AssetManager {
     ///   - bundlePath: bundle path of the fallback to use, e.g. "Checkout/$PROJECTID/checkout-offline"
     ///   - projectId: the project id. If nil, use `SnabbleUI.project.id`
     ///   - completion: called when the image has been retrieved
-    func getAsset(_ asset: ImageAsset, _ bundlePath: String?, _ projectId: Identifier<Project>?, _ completion: @escaping (UIImage?) -> Void) {
+    func getAsset(_ asset: ImageAsset, _ bundlePath: String?, _ projectId: Identifier<Project>?, _ completion: @escaping @Sendable (UIImage?) -> Void) {
         let projectId = projectId ?? SnabbleCI.project.id
         let name = asset.rawValue
         
@@ -148,7 +148,7 @@ final class AssetManager {
         } else {
             let interfaceStyle = UIScreen.main.traitCollection.userInterfaceStyle
             if let file = self.fileFor(name: name, projectId, interfaceStyle) {
-                self.downloadIfMissing(projectId, file) { fileUrl in
+                self.downloadIfMissing(projectId, file) { [completion] fileUrl in
                     if let fileUrl = fileUrl, let data = try? Data(contentsOf: fileUrl) {
                         let img = UIImage(data: data, scale: UIScreen.main.scale)
                         DispatchQueue.main.async {
@@ -307,7 +307,7 @@ final class AssetManager {
         }
     }
 
-    func initialize(_ projectId: Identifier<Project>, _ manifestUrl: String, downloadFiles: Bool, completion: @escaping () -> Void) {
+    func initialize(_ projectId: Identifier<Project>, _ manifestUrl: String, downloadFiles: Bool, completion: @escaping @Sendable () -> Void) {
         guard
             let manifestUrl = Snabble.shared.urlFor(manifestUrl),
             var components = URLComponents(url: manifestUrl, resolvingAgainstBaseURL: false)

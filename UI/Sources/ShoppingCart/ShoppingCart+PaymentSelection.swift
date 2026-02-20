@@ -10,10 +10,12 @@ import UIKit
 import SnabbleCore
 import SnabbleAssetProviding
 
+@MainActor
 protocol PaymentMethodSelectorDelegate: AnyObject {
     func paymentMethodSelector(_ paymentMethodSelector: PaymentMethodSelector, didSelectMethod: RawPaymentMethod?)
 }
 
+@MainActor
 final class PaymentMethodSelector {
     
     private weak var parentVC: (UIViewController & AnalyticsDelegate)?
