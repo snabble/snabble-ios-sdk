@@ -8,6 +8,7 @@
 import Foundation
 import Combine
 
+@MainActor
 protocol LoginProcessing {
     var loginModel: Loginable? { get }
 

@@ -60,11 +60,12 @@ extension Project {
     }
 }
 
+@MainActor
 public final class InvoiceLoginModel: LoginViewModel {
     public var isLoggedIn = false
 
     private var paymentDetail: PaymentMethodDetail?
-    
+
     public var loginInfo: InvoiceLoginInfo? {
         didSet {
             if let info = loginInfo, info.isValid(username: username) {
@@ -74,7 +75,7 @@ public final class InvoiceLoginModel: LoginViewModel {
             }
        }
     }
-    
+
     var project: Project?
 
     public init(paymentDetail: PaymentMethodDetail? = nil, project: Project? = nil) {
@@ -82,7 +83,7 @@ public final class InvoiceLoginModel: LoginViewModel {
         self.project = project
 
         super.init()
-        
+
         if let name = paymentUsername {
             self.username = name
         }
@@ -141,15 +142,17 @@ extension InvoiceLoginModel {
 }
 
 /// InvoiceLoginProcessor provides the logic to get customer card info using a login service
-public final class InvoiceLoginProcessor: LoginProcessing, ObservableObject {
-    
+@Observable
+@MainActor
+public final class InvoiceLoginProcessor: LoginProcessing {
+
     var loginModel: Loginable? {
         return self.invoiceLoginModel
     }
-        
-    @Published public var invoiceLoginModel: InvoiceLoginModel
-    @Published public var isWaiting = false
-    
+
+    public var invoiceLoginModel: InvoiceLoginModel
+    public var isWaiting = false
+
     var cancellables = Set<AnyCancellable>()
 
     init(invoiceLoginModel: InvoiceLoginModel) {

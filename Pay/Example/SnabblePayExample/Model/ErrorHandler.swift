@@ -34,8 +34,10 @@ struct ErrorInfo: Identifiable, Equatable {
     }
 }
 
-class ErrorHandler: ObservableObject {
+@Observable
+@MainActor
+class ErrorHandler {
     static let shared = ErrorHandler()
-    
-    @Published var error: ErrorInfo?
+
+    var error: ErrorInfo?
 }

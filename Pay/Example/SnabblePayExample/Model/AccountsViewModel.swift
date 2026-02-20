@@ -9,12 +9,14 @@ import Combine
 import SnabblePay
 import SnabbleLogger
 
-class AccountsViewModel: ObservableObject {
+@Observable
+@MainActor
+class AccountsViewModel {
     private var snabblePay: SnabblePay {
         return .shared
     }
 
-    @Published var accounts: [Account]? {
+    var accounts: [Account]? {
         didSet {
             if let selectedID = UserDefaults.selectedAccount, let account = accounts?.first(where: { $0.id.rawValue == selectedID }) {
                 selectedAccount = account
@@ -25,8 +27,8 @@ class AccountsViewModel: ObservableObject {
             }
         }
     }
-    @Published var accountCheck: Account.Check?
-    @Published var ordered: [Account]?
+    var accountCheck: Account.Check?
+    var ordered: [Account]?
     
     private func accountStack() -> [Account]? {
         guard let selected = selectedAccount else {
@@ -40,7 +42,7 @@ class AccountsViewModel: ObservableObject {
         return array.reversed()
     }
 
-    @Published var selectedAccountModel: AccountViewModel? {
+    var selectedAccountModel: AccountViewModel? {
         willSet {
             if let model = selectedAccountModel {
                 model.autostart = false
@@ -77,47 +79,52 @@ class AccountsViewModel: ObservableObject {
 
     func startAccountCheck() {
         snabblePay.accountCheck(withAppUri: "snabble-pay://account/check", city: "Bonn", countryCode: "DE") { [weak self] result in
-            switch result {
-            case .success(let accountCheck):
-                self?.accountCheck = accountCheck
-                if let model = self?.selectedAccountModel {
-                    model.refresh()
-                }
-                ErrorHandler.shared.error = nil
+            Task { @MainActor in
+                switch result {
+                case .success(let accountCheck):
+                    self?.accountCheck = accountCheck
+                    if let model = self?.selectedAccountModel {
+                        model.refresh()
+                    }
+                    ErrorHandler.shared.error = nil
 
-            case .failure(let error):
-                ErrorHandler.shared.error = ErrorInfo(error: error, action: "Start Account Check")
+                case .failure(let error):
+                    ErrorHandler.shared.error = ErrorInfo(error: error, action: "Start Account Check")
+                }
             }
         }
     }
 
     func loadAccounts() {
         snabblePay.accounts { [weak self]  result in
-            switch result {
-            case .success(let accounts):
-                self?.accounts = accounts
-                if let model = self?.selectedAccountModel {
-                    model.refresh()
+            Task { @MainActor in
+                switch result {
+                case .success(let accounts):
+                    self?.accounts = accounts
+                    if let model = self?.selectedAccountModel {
+                        model.refresh()
+                    }
+                    ErrorHandler.shared.error = nil
+
+                case .failure(let error):
+                    ErrorHandler.shared.error = ErrorInfo(error: error, action: "Loading Accounts")
                 }
-                ErrorHandler.shared.error = nil
-                
-            case .failure(let error):
-                ErrorHandler.shared.error = ErrorInfo(error: error, action: "Loading Accounts")
             }
        }
     }
     func delete(account: Account) {
         snabblePay.deleteAccount(withId: account.id) { [weak self] result in
-            switch result {
-            case .success(let account):
-                Logger.shared.debug("Account deleted: \(account.id)")
-                self?.loadAccounts()
-                
-            case .failure(let error):
-                ErrorHandler.shared.error = ErrorInfo(error: error, action: "Loading Accounts")
+            Task { @MainActor in
+                switch result {
+                case .success(let account):
+                    Logger.shared.debug("Account deleted: \(account.id)")
+                    self?.loadAccounts()
 
+                case .failure(let error):
+                    ErrorHandler.shared.error = ErrorInfo(error: error, action: "Loading Accounts")
+
+                }
             }
-            
         }
     }
 }

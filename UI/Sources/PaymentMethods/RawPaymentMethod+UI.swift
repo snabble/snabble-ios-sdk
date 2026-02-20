@@ -71,7 +71,7 @@ extension RawPaymentMethod {
         return nil
     }
     
-    private func externalBillingEditViewController(_ projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
+    @MainActor private func externalBillingEditViewController(_ projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
         guard
             let projectId = projectId,
             let project = Snabble.shared.project(for: projectId),
@@ -81,7 +81,7 @@ extension RawPaymentMethod {
         }
         if descriptor.acceptedOriginTypes?.contains(.contactPersonCredentials) == true {
             let model = InvoiceLoginProcessor(invoiceLoginModel: InvoiceLoginModel(project: project))
-            
+
             return InvoiceViewController(viewModel: model)
         }
         return nil

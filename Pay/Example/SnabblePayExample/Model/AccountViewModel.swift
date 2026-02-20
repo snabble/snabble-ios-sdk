@@ -9,7 +9,9 @@ import Combine
 import SnabblePay
 import SnabbleLogger
 
-class AccountViewModel: ObservableObject {
+@Observable
+@MainActor
+class AccountViewModel {
     private let snabblePay: SnabblePay = .shared
 
     let account: Account
@@ -53,32 +55,32 @@ class AccountViewModel: ObservableObject {
         self.needsReload = false
     }
 
-    @Published var mandate: Account.Mandate? {
+    var mandate: Account.Mandate? {
         didSet {
             if let mandateID = mandate?.id.rawValue, let html = mandate?.htmlText {
                 UserDefaults.standard.set(html, forKey: mandateID)
             }
         }
     }
-    @Published var needsReload: Bool
-    
+    var needsReload: Bool
+
     var mandateState: Account.Mandate.State {
         guard let mandate = mandate else {
             return account.mandateState
         }
         return mandate.state
     }
-    
+
     private var session: Session?
-    @Published var token: Session.Token? {
+    var token: Session.Token? {
         didSet {
             resetTimer()
             sessionUpdated.toggle()
         }
     }
-        
-    @Published var sessionUpdated = false
-    @Published var customName: String {
+
+    var sessionUpdated = false
+    var customName: String {
         didSet {
             if !customName.isEmpty {
                 UserDefaults.standard.set(customName, forKey: account.id.rawValue)
@@ -104,35 +106,42 @@ class AccountViewModel: ObservableObject {
                 if mandate.state != .pending {
                     needsReload.toggle()
                 }
-                self.objectWillChange.send()
             }
-            
+
         case .failure(let error):
             ErrorHandler.shared.error = ErrorInfo(error: error, action: action)
         }
     }
-    
+
     func createMandate() {
         if [.missing, .pending, .declined].contains(mandateState) {
             snabblePay.createMandate(forAccountId: account.id) { [weak self] result in
-                self?.update(action: "Create Mandate", result: result)
+                Task { @MainActor in
+                    self?.update(action: "Create Mandate", result: result)
+                }
             }
         } else {
             snabblePay.mandate(forAccountId: account.id) { [weak self] result in
-                self?.update(action: "Request Mandate", result: result)
+                Task { @MainActor in
+                    self?.update(action: "Request Mandate", result: result)
+                }
             }
         }
     }
 
     func decline(mandateId: Account.Mandate.ID) {
         snabblePay.declineMandate(withId: mandateId, forAccountId: account.id) { [weak self] result in
-            self?.update(action: "Decline Mandate", result: result)
+            Task { @MainActor in
+                self?.update(action: "Decline Mandate", result: result)
+            }
        }
     }
 
     func accept(mandateId: Account.Mandate.ID) {
         snabblePay.acceptMandate(withId: mandateId, forAccountId: account.id) { [weak self] result in
-            self?.update(action: "Accept Mandate", result: result)
+            Task { @MainActor in
+                self?.update(action: "Accept Mandate", result: result)
+            }
         }
     }
 
@@ -143,17 +152,19 @@ class AccountViewModel: ObservableObject {
             return
         }
         isLoading = true
-        
+
         snabblePay.startSession(withAccountId: account.id) { [weak self] result in
-            self?.isLoading = false
-            
-            switch result {
-            case .success(let session):
-                self?.session = session
-                self?.token = session.token
-                
-            case .failure(let error):
-                ErrorHandler.shared.error = ErrorInfo(error: error, action: "Start Session")
+            Task { @MainActor in
+                self?.isLoading = false
+
+                switch result {
+                case .success(let session):
+                    self?.session = session
+                    self?.token = session.token
+
+                case .failure(let error):
+                    ErrorHandler.shared.error = ErrorInfo(error: error, action: "Start Session")
+                }
             }
         }
     }
@@ -164,16 +175,18 @@ class AccountViewModel: ObservableObject {
         }
         isLoading = true
         snabblePay.refreshToken(withSessionId: session.id) { [weak self] result in
-            self?.isLoading = false
-            
-            switch result {
-            case .success(let token):
-                self?.token = token
+            Task { @MainActor in
+                self?.isLoading = false
 
-            case .failure(let error):
-                self?.token = nil
-                self?.sleep()
-                ErrorHandler.shared.error = ErrorInfo(error: error, action: "Refresh Token")
+                switch result {
+                case .success(let token):
+                    self?.token = token
+
+                case .failure(let error):
+                    self?.token = nil
+                    self?.sleep()
+                    ErrorHandler.shared.error = ErrorInfo(error: error, action: "Refresh Token")
+                }
             }
         }
     }
