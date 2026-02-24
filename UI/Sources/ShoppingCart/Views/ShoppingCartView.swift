@@ -9,14 +9,14 @@ import SwiftUI
 import SnabbleCore
 
 public struct ShoppingCartView: View {
-    var cartModel: ShoppingCartViewModel
+    @State var cartModel: ShoppingCartViewModel
     let compactMode: Bool
     let listMode: Bool
     
     public init(cartModel: ShoppingCartViewModel, 
                 compactMode: Bool = false,
                 listMode: Bool = true) {
-        self.cartModel = cartModel
+        self._cartModel = State(initialValue: cartModel)
         self.compactMode = compactMode
         self.listMode = listMode
     }
@@ -24,7 +24,7 @@ public struct ShoppingCartView: View {
     public init(shoppingCart: ShoppingCart, 
                 compactMode: Bool = false,
                 listMode: Bool = true) {
-        self.cartModel = ShoppingCartViewModel(shoppingCart: shoppingCart)
+        self._cartModel = State(initialValue: ShoppingCartViewModel(shoppingCart: shoppingCart))
         self.compactMode = compactMode
         self.listMode = listMode
     }
