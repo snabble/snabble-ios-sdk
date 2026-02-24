@@ -34,10 +34,23 @@ struct CartStepperView: View {
     var itemModel: ProductItemModel
     @Environment(ShoppingCartViewModel.self) var cartModel
     @ScaledMetric var scale: CGFloat = 1
+    
+    private var currentQuantity: Int {
+        // Find the current item in the cart to get the latest quantity
+        if let cartEntry = cartModel.items.first(where: { entry in
+            if case .cartItem(let item, _) = entry {
+                return item.uuid == itemModel.item.uuid
+            }
+            return false
+        }), case .cartItem(let item, _) = cartEntry {
+            return item.quantity
+        }
+        return itemModel.item.quantity
+    }
 
     @ViewBuilder
     var minusImage: some View {
-        Image(systemName: itemModel.quantity == 1 ? "trash" : "minus")
+        Image(systemName: currentQuantity == 1 ? "trash" : "minus")
             .foregroundColor(.projectPrimary())
             .frame(width: 22 * scale, height: 22 * scale)
     }
@@ -60,10 +73,11 @@ struct CartStepperView: View {
             }
             .buttonStyle(BorderedButtonStyle())
 
-            Text("\(itemModel.quantity)")
+            Text("\(currentQuantity)")
                 .font(.footnote)
                 .fontWeight(.bold)
                 .frame(minWidth: 20 * scale)
+                .id(currentQuantity) // Force view update when quantity changes
 
             Button( action: {
                 withAnimation {
