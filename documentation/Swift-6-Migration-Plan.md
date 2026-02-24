@@ -381,10 +381,75 @@ swiftlint --strict --quiet
 
 ---
 
-## Nächste Schritte
+## Migrationsstatus
 
-1. ~~Plan Review und Genehmigung~~ ✅
-2. Branch für Migration erstellen (`feature/swift-6.2-migration`)
-3. Phase 1 starten: Package.swift Update
-4. Dependencies Audit durchführen
-5. Iterativ durch die Phasen arbeiten
+### Abgeschlossen ✅
+
+**Phase 1: Foundation Setup (Abgeschlossen)**
+- ✅ Package.swift auf Swift 6.2 aktualisiert
+- ✅ Alle Module mit `.swiftLanguageMode(.v6)` konfiguriert
+- ✅ Dependencies verifiziert (GRDB, KeychainAccess, Datatrans, Pulley)
+- ✅ Build erfolgreich mit aktiviertem Strict Concurrency Checking
+
+**Phase 2: Strict Concurrency (Abgeschlossen)**
+- ✅ Alle Concurrency-Fehler behoben (0 Build-Errors)
+- ✅ MainActor-Isolation für UI-Komponenten und ViewModels
+- ✅ @Sendable für Completion Handler
+- ✅ Task { @MainActor } Wrapper für asynchrone Callbacks
+- ✅ nonisolated(unsafe) für Properties über Dispatch Queues hinweg
+- ✅ Protokoll-Isolation (LoginProcessing, PaymentDelegate, etc.)
+
+**Phase 3: @Observable Migration (Abgeschlossen - Alle 25 Klassen)**
+
+*UI Module (20 Klassen):*
+- ✅ ShoppingCartViewModel (mit NotificationCenter MainActor Fix)
+- ✅ CartItemModel, ProductItemModel, CouponCartItemModel
+- ✅ SepaDataModel, SepaAcceptModel (mit Combine Hybrid Pattern)
+- ✅ PaymentSubjectViewModel, InvoiceLoginModel, InvoiceLoginProcessor
+- ✅ PaymentMethodManager, BaseCheckViewModel, RatingModel
+- ✅ LoginViewModel, OnboardingViewModel, CouponViewModel, CheckoutModel
+- ✅ DynamicViewModel (NSObject + Decodable mit nonisolated(unsafe))
+- ✅ StartShoppingViewModel, AllStoresViewModel, ConnectWifiViewModel
+- ✅ CustomerCardViewModel
+
+*ScanAndGo Module (3 Klassen):*
+- ✅ Shopper (mit @Environment Pattern)
+- ✅ BarcodeManager
+- ✅ ActionManager
+
+*Pay Example App (4 Klassen):*
+- ✅ ErrorHandler
+- ✅ AccountViewModel (objectWillChange.send() entfernt)
+- ✅ AccountsViewModel (mit Task Wrappern)
+- ✅ MotionManager (mit Task Wrapper für Motion Updates)
+
+**UI Fixes:**
+- ✅ Shopping Cart Anzeige-Problem behoben (NotificationCenter Handler auf MainActor)
+- ✅ Pulley Drawer Höhenberechnung korrigiert (nonisolated(unsafe) für Properties)
+- ✅ Pulley Drawer Höhe aktualisiert sich dynamisch bei Warenkorb-Änderungen
+- ✅ Camera Barcode Detector Race Conditions behoben
+- ✅ ShoppingCartView @State Wrapper für @Observable ViewModel
+- ✅ Warenkorb Item-Anzahl aktualisiert sich in Echtzeit
+- ✅ CartEntry Equatable berücksichtigt Quantity für korrekte SwiftUI Updates
+
+### Nächste Schritte
+
+**Phase 4: UIKit zu SwiftUI Migration (Optional)**
+- Migration einfacher UIKit ViewControllers zu SwiftUI wo sinnvoll
+- Security-kritische und Hardware-abhängige Komponenten bleiben in UIKit
+
+**Phase 5: Example App Modernisierung (Optional)**
+- Umstellung von UIKit AppDelegate zu SwiftUI App
+- Moderne TabView Navigation implementieren
+- Legacy UIKit Patterns aufräumen
+
+**Phase 6: Dokumentation & Polish**
+- ✅ CLAUDE.md mit @Observable Patterns aktualisiert
+- Migrations-Learnings dokumentieren
+- Migrations-Guide für SDK-Konsumenten erstellen
+- README mit Swift 6.2 Requirements aktualisieren
+
+## Aktueller Branch
+
+Branch: `swift6-again`
+Letzter Commit: Phase 2 @Observable Migration complete
