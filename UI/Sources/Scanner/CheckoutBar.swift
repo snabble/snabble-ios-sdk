@@ -191,8 +191,9 @@ final class CheckoutBar: UIView {
             let formattedTotal = formatter.format(total)
             self.totalPriceLabel?.text = formattedTotal
             self.checkCheckoutLimits(total)
+            self.totalPriceLabel?.isHidden = false
         } else {
-            self.totalPriceLabel?.text = ""
+            self.totalPriceLabel?.isHidden = true
         }
 
         self.itemCountLabel?.text = Asset.localizedString(forKey: "Snabble.Shoppingcart.numberOfItems", arguments: numberOfItems)
