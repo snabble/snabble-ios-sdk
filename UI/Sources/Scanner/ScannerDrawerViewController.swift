@@ -10,10 +10,10 @@ import SnabbleCore
 import SnabbleAssetProviding
 
 final class ScannerDrawerViewController: UIViewController {
-    private var shoppingList: ShoppingList?
+    nonisolated(unsafe) private var shoppingList: ShoppingList?
     private var shoppingListTableVC: ScannerShoppingListViewController
 
-    private let shoppingCart: ShoppingCart
+    nonisolated(unsafe) private let shoppingCart: ShoppingCart
     private var shoppingCartVC: ShoppingCartViewController
     
     private let projectId: Identifier<Project>
@@ -267,6 +267,12 @@ final class ScannerDrawerViewController: UIViewController {
 
     @objc private func shoppingCartUpdated(_ notification: Notification) {
         checkoutBar?.updateTotals()
+        pulleyViewController?.setNeedsSupportedDrawerPositionsUpdate()
+        
+        // Update drawer height when cart changes
+        if let drawer = pulleyViewController, drawer.drawerPosition == .collapsed {
+            drawer.setDrawerPosition(position: .collapsed, animated: true)
+        }
     }
 
     func updateTotals() {
@@ -281,14 +287,11 @@ extension ScannerDrawerViewController: PulleyDrawerViewControllerDelegate {
     }
 
     nonisolated public func collapsedDrawerHeight(bottomSafeArea: CGFloat) -> CGFloat {
-        Task { @MainActor in
-            let heightForCartItems: CGFloat = min(CGFloat(shoppingCart.items.count) * cartItemHeight, cartItemHeight * 2.5)
-            let heightForListItems: CGFloat = min(CGFloat(shoppingList?.count ?? 0) * listItemHeight, listItemHeight * 2.5)
-            let heightForItems = !shoppingCart.items.isEmpty ? heightForCartItems : heightForListItems
-            let heightForSegmentedControl = shoppingList == nil ? 0 : segmentedControlHeight + separatorSpacerHeight
-            return minDrawerHeight + heightForSegmentedControl + totalsHeight + heightForItems + bottomSafeArea
-        }
-        return 100 // Default fallback for nonisolated context
+        let heightForCartItems: CGFloat = min(CGFloat(shoppingCart.items.count) * cartItemHeight, cartItemHeight * 2.5)
+        let heightForListItems: CGFloat = min(CGFloat(shoppingList?.count ?? 0) * listItemHeight, listItemHeight * 2.5)
+        let heightForItems = !shoppingCart.items.isEmpty ? heightForCartItems : heightForListItems
+        let heightForSegmentedControl = shoppingList == nil ? 0 : segmentedControlHeight + separatorSpacerHeight
+        return minDrawerHeight + heightForSegmentedControl + totalsHeight + heightForItems + bottomSafeArea
     }
 
     nonisolated public func drawerPositionDidChange(drawer: PulleyViewController, bottomSafeArea: CGFloat) {
