@@ -29,7 +29,7 @@ public struct Metadata: Decodable, @unchecked Sendable {
         self.brands = []
     }
 
-    nonisolated(unsafe) static let none = Metadata()
+    static let none = Metadata()
 
     public init(from decoder: Decoder) throws {
         let container = try decoder.container(keyedBy: CodingKeys.self)
