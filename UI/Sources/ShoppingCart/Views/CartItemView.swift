@@ -66,13 +66,15 @@ struct CartItemView: View {
             HStack {
                 Text(itemModel.regularPriceString ?? "")
                     .cartPrice()
+                    .opacity(itemModel.regularPriceString != nil ? 1 : 0)
                 Text(itemModel.reducedPriceString)
                     .strikethroughPrice()
             }
-            
+
         } else {
             Text(itemModel.regularPriceString ?? "")
                 .cartPrice()
+                .opacity(itemModel.regularPriceString != nil ? 1 : 0)
         }
     }
     
