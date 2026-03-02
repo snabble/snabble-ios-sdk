@@ -23,7 +23,10 @@ public struct ShopperView: View {
     @State private var bundles: [BarcodeManager.ScannedItem] = []
 
     @SwiftUI.Environment(\.dismiss) var dismiss
-
+    
+    public init() {
+    }
+    
     public var body: some View {
         @Bindable var model = model
 
