@@ -6,8 +6,6 @@
 //
 
 import SwiftUI
-import Combine
-
 import SnabbleCore
 
 private extension UserDefaults {
@@ -27,32 +25,35 @@ private extension UserDefaults {
     }
 }
 
-@Observable 
+@Observable
 public class PurchasesViewModel: LoadableObject, @unchecked Sendable {
-    typealias Output = [PurchaseProviding]
-    
+    public typealias Output = [PurchaseProviding]
+
     public let userDefaults: UserDefaults
     private let readStatusManager: ReceiptReadStatusManager
-    
+
     public var numberOfUnloaded: Int = 0 {
         didSet {
-            numberOfUnloadedPublisher.send(numberOfUnloaded)
+            let newValue = numberOfUnloaded
+            Task { @MainActor in
+                self.onNumberOfUnloadedChanged?(newValue)
+            }
         }
     }
 
     // New counter for unread
     public var numberOfUnread: Int = 0
     public var listRefreshTrigger: Int = 0
-    
-    var state: LoadingState<[PurchaseProviding]> = .idle
 
-    private var cancellables = Set<AnyCancellable>()
+    public var state: LoadingState<[PurchaseProviding]> = .idle
+
     private var imageCache: [Identifier<Project>: SwiftUI.Image] = [:]
-    
-    /// Emits some triigers the action
-    /// - `Output` is a `PurchaseProviding`
-    public let actionPublisher = PassthroughSubject<PurchaseProviding, Never>()
-    public let numberOfUnloadedPublisher = PassthroughSubject<Int, Never>()
+
+    /// Callback when a receipt action is triggered
+    nonisolated(unsafe) public var onAction: (@MainActor @Sendable (PurchaseProviding) -> Void)?
+
+    /// Callback when numberOfUnloaded changes
+    nonisolated(unsafe) public var onNumberOfUnloadedChanged: (@MainActor @Sendable (Int) -> Void)?
 
     public init(
         userDefaults: UserDefaults = .standard,

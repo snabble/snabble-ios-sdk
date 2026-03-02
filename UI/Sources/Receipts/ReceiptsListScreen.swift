@@ -6,20 +6,40 @@
 //
 
 import SwiftUI
-import Combine
-
 import SnabbleCore
 import SnabbleAssetProviding
+
+/// Hashable wrapper for PurchaseProviding to enable navigation
+public struct ReceiptNavigationItem: Hashable {
+    public let orderId: String
+    public let projectId: Identifier<Project>
+
+    public init(provider: PurchaseProviding) {
+        self.orderId = provider.id
+        self.projectId = provider.projectId
+    }
+
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(orderId)
+        hasher.combine(projectId)
+    }
+
+    public static func == (lhs: ReceiptNavigationItem, rhs: ReceiptNavigationItem) -> Bool {
+        lhs.orderId == rhs.orderId && lhs.projectId == rhs.projectId
+    }
+}
 
 public struct ReceiptsItemView: View {
     public let provider: PurchaseProviding
     public let image: SwiftUI.Image
     public let showReadState: Bool
-    
-    public init(provider: PurchaseProviding, image: SwiftUI.Image? = nil, showReadState: Bool = true) {
+    public let showChevron: Bool
+
+    public init(provider: PurchaseProviding, image: SwiftUI.Image? = nil, showReadState: Bool = true, showChevron: Bool = true) {
         self.provider = provider
         self.image = image ?? Image(systemName: "scroll")
         self.showReadState = showReadState
+        self.showChevron = showChevron
     }
 
     @ViewBuilder
@@ -49,9 +69,11 @@ public struct ReceiptsItemView: View {
                 Text(amount)
                     .font(.footnote)
             }
-            Image(systemName: "chevron.right")
-                .font(.footnote)
-                .foregroundColor(.secondary)
+            if showChevron {
+                Image(systemName: "chevron.right")
+                    .font(.footnote)
+                    .foregroundColor(.secondary)
+            }
         }
     }
 }
@@ -60,8 +82,13 @@ public struct ReceiptsListScreen: View {
     @State var viewModel: PurchasesViewModel
     @ViewProvider(.receiptsEmpty) var emptyView
 
-    public init(model: PurchasesViewModel = .init()) {
+    /// If true, provides built-in SwiftUI navigation to receipt detail.
+    /// If false, uses the onAction callback for custom navigation handling.
+    public let useBuiltInNavigation: Bool
+
+    public init(model: PurchasesViewModel = .init(), useBuiltInNavigation: Bool = true) {
         self._viewModel = State(initialValue: model)
+        self.useBuiltInNavigation = useBuiltInNavigation
     }
 
     public var body: some View {
@@ -69,12 +96,7 @@ public struct ReceiptsListScreen: View {
             VStack {
                 List {
                     ForEach(output, id: \.combinedID) { provider in
-                        ReceiptsItemView(provider: provider, image: viewModel.imageFor(projectId: provider.projectId))
-                            .contentShape(Rectangle())
-                            .onTapGesture {
-                                viewModel.markAsRead(receiptId: provider.id)
-                                viewModel.actionPublisher.send(provider)
-                            }
+                        receiptRow(for: provider)
                             .contextMenu {
                                 Button(action: {
                                     viewModel.markAllAsRead()
@@ -108,7 +130,13 @@ public struct ReceiptsListScreen: View {
         }, empty: {
             emptyView
         })
-        .onAppear {
+        .navigationDestination(for: ReceiptNavigationItem.self) { item in
+            ReceiptDetailScreen(orderId: item.orderId, projectId: item.projectId)
+                .onAppear {
+                    viewModel.markAsRead(receiptId: item.orderId)
+                }
+        }
+        .task {
             viewModel.reset()
         }
         .toolbar {
@@ -129,7 +157,24 @@ public struct ReceiptsListScreen: View {
         .navigationTitle(Asset.localizedString(forKey: "Snabble.Receipts.title"))
 
     }
+
+    @ViewBuilder
+    private func receiptRow(for provider: PurchaseProviding) -> some View {
+        if useBuiltInNavigation {
+            NavigationLink(value: ReceiptNavigationItem(provider: provider)) {
+                ReceiptsItemView(provider: provider, image: viewModel.imageFor(projectId: provider.projectId), showChevron: false)
+            }
+        } else {
+            ReceiptsItemView(provider: provider, image: viewModel.imageFor(projectId: provider.projectId))
+                .contentShape(Rectangle())
+                .onTapGesture {
+                    viewModel.markAsRead(receiptId: provider.id)
+                    viewModel.onAction?(provider)
+                }
+        }
+    }
 }
+
 extension PurchaseProviding {
     var combinedID: String {
         return "\(id)_\(isRead ? "read" : "unread")"

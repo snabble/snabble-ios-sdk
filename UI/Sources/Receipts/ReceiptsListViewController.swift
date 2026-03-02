@@ -7,7 +7,6 @@
 import UIKit
 import SnabbleCore
 import SwiftUI
-import Combine
 
 public protocol ReceiptsListDelegate: AnyObject {
     func handleAction(_ viewController: ReceiptsListViewController, on receipt: PurchaseProviding) -> Bool
@@ -16,7 +15,6 @@ public protocol ReceiptsListDelegate: AnyObject {
 /// A UIViewController wrapping SwiftUI's ReceiptsListViewController
 open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
 
-    private var cancellables = Set<AnyCancellable>()
     public weak var delegate: ReceiptsListDelegate?
     public weak var analyticsDelegate: AnalyticsDelegate?
     public weak var detailDelegate: ReceiptsDetailViewControllerDelegate?
@@ -27,26 +25,29 @@ open class ReceiptsListViewController: UIHostingController<ReceiptsListScreen> {
 
     public init() {
         let rootView = ReceiptsListScreen()
-        
+
         super.init(rootView: rootView)
-        
-        viewModel.actionPublisher
-            .sink { [unowned self] provider in
+
+        // Setup callbacks for the ViewModel
+        viewModel.onAction = { [weak self] provider in
+            guard let self else { return }
+            Task { @MainActor in
                 self.actionFor(provider: provider)
             }
-            .store(in: &cancellables)
-        
-        viewModel.numberOfUnloadedPublisher
-            .sink { [unowned self] value in
+        }
+
+        viewModel.onNumberOfUnloadedChanged = { [weak self] value in
+            guard let self else { return }
+            Task { @MainActor in
                 self.update(unloaded: value)
             }
-            .store(in: &cancellables)
-        
+        }
+
         NotificationCenter.default.addObserver(
             self,
             selector: #selector(update(_:)),
             name: .snabbleCartUpdated, object: nil)
-        
+
        NotificationCenter.default.addObserver(
             self,
             selector: #selector(update(_:)),

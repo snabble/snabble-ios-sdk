@@ -9,7 +9,7 @@ import Foundation
 
 import SnabbleCore
 
-public protocol PurchaseProviding {
+public protocol PurchaseProviding: Hashable {
     var id: String { get }
     var name: String { get }
     var amount: String? { get }

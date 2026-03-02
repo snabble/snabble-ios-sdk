@@ -11,9 +11,9 @@ import SnabbleCore
 
 @Observable
 public class LastPurchasesViewModel: LoadableObject, @unchecked Sendable {
-    typealias Output = [PurchaseProviding]
+    public typealias Output = [PurchaseProviding]
     
-    var projectId: Identifier<Project>? {
+    public var projectId: Identifier<Project>? {
         didSet {
             if projectId != oldValue {
                 load()
@@ -21,7 +21,7 @@ public class LastPurchasesViewModel: LoadableObject, @unchecked Sendable {
         }
     }
     
-    var state: LoadingState<[PurchaseProviding]> = .idle
+    public var state: LoadingState<[PurchaseProviding]> = .idle
 
     public func load() {
         guard let projectId = projectId, let project = Snabble.shared.project(for: projectId) else {
