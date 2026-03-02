@@ -61,13 +61,13 @@ public enum PaymentState: String, Decodable, UnknownCaseRepresentable, Sendable 
     case unauthorized
 
     /// Thread-safety: Immutable set initialized at static initialization
-    nonisolated(unsafe) public static let successStates = Set<PaymentState>([ .successful, .transferred ])
+    public static let successStates = Set<PaymentState>([ .successful, .transferred ])
 
     /// Thread-safety: Immutable set initialized at static initialization
-    nonisolated(unsafe) public static let endStates = Set<PaymentState>([ .successful, .failed, .transferred ])
+    public static let endStates = Set<PaymentState>([ .successful, .failed, .transferred ])
 
     /// Thread-safety: Constant enum value
-    nonisolated(unsafe) public static let unknownCase = PaymentState.unknown
+    public static let unknownCase = PaymentState.unknown
 }
 
 /// line items can be added by the backend.
@@ -93,7 +93,7 @@ public enum LineItemType: String, Codable, UnknownCaseRepresentable, Sendable {
     case depositReturn
     
     /// Thread-safety: Constant enum value
-    nonisolated(unsafe) public static let unknownCase = LineItemType.unknown
+    public static let unknownCase = LineItemType.unknown
 }
 
 // optional required information
@@ -107,9 +107,9 @@ public struct RequiredInformation: Codable, Sendable {
     }
 
     /// Thread-safety: Immutable struct constant
-    nonisolated(unsafe) public static let taxationInhouse = RequiredInformation(id: .taxation, value: TaxationValue.inHouse.rawValue)
+    public static let taxationInhouse = RequiredInformation(id: .taxation, value: TaxationValue.inHouse.rawValue)
     /// Thread-safety: Immutable struct constant
-    nonisolated(unsafe) public static let taxationTakeaway = RequiredInformation(id: .taxation, value: TaxationValue.takeaway.rawValue)
+    public static let taxationTakeaway = RequiredInformation(id: .taxation, value: TaxationValue.takeaway.rawValue)
 }
 
 public enum RequiredInformationType: String, Codable, Sendable {
@@ -257,21 +257,21 @@ public enum FulfillmentState: String, Decodable, UnknownCaseRepresentable, Senda
     case aborted, allocationFailed, allocationTimedOut, failed
 
     /// Thread-safety: Immutable set initialized at static initialization
-    nonisolated(unsafe) public static let workingStates: Set<FulfillmentState> =
+    public static let workingStates: Set<FulfillmentState> =
         [ .open, .allocating, .allocated, .processing ]
     /// Thread-safety: Immutable set initialized at static initialization
-    nonisolated(unsafe) public static let failureStates: Set<FulfillmentState> =
+    public static let failureStates: Set<FulfillmentState> =
         [ .aborted, .allocationFailed, .allocationTimedOut, .failed ]
     /// Thread-safety: Immutable set initialized at static initialization
-    nonisolated(unsafe) public static let endStates: Set<FulfillmentState> =
+    public static let endStates: Set<FulfillmentState> =
         [ .aborted, .allocationFailed, .allocationTimedOut, .failed, .processed ]
 
     /// Thread-safety: Immutable set initialized at static initialization
-    nonisolated(unsafe) public static let allocationFailureStates: Set<FulfillmentState> =
+    public static let allocationFailureStates: Set<FulfillmentState> =
         [ .allocationFailed, .allocationTimedOut ]
 
     /// Thread-safety: Constant enum value
-    nonisolated(unsafe) public static let unknownCase = FulfillmentState.unknown
+    public static let unknownCase = FulfillmentState.unknown
 }
 
 public struct Fulfillment: Decodable, Sendable {
@@ -312,7 +312,7 @@ public enum RoutingTarget: String, Decodable, UnknownCaseRepresentable, Sendable
     case gatekeeper
 
     /// Thread-safety: Constant enum value
-    nonisolated(unsafe) public static let unknownCase = Self.none
+    public static let unknownCase = Self.none
 }
 
 // MARK: - Checkout Process
