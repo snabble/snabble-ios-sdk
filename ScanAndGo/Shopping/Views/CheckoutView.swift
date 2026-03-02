@@ -16,7 +16,6 @@ import SnabbleUI
 struct CheckoutView: View {
     @AppStorage("io.snabble.sdk.scanAndGo.paymentMethod") private var paymentMethod: String?
     
-//    @State var model: Shopper
     @Environment(Shopper.self) var model
     @State private var disableCheckout: Bool = true
     
@@ -33,6 +32,7 @@ struct CheckoutView: View {
             })
             .store(in: &cancellables)
     }
+
     var body: some View {
         VStack {
             VStack {
@@ -41,10 +41,11 @@ struct CheckoutView: View {
                         .font(.footnote)
                         .foregroundColor(.secondary)
                     Spacer()
-                    Text(totalString)
+                    Text(totalString.isEmpty ? "0,00 €" :  totalString)
                         .font(.title2)
                         .fontWeight(.bold)
                         .foregroundStyle(model.totalPrice ?? 0 >= 0 ? Color.primary : Color.systemRed)
+                        .opacity(totalString.isEmpty ? 0.0 : 1.0)
                 }
                 HStack(spacing: 16) {
                     if model.hasValidPayment {
@@ -54,10 +55,16 @@ struct CheckoutView: View {
                         .frame(width: 88, height: 38)
                         
                         if model.paymentManager.selectedPayment != nil {
-                            PrimaryButtonView(title: Asset.localizedString(forKey: model.totalPrice ?? 0 > 0 ? "Snabble.Shoppingcart.BuyProducts.now" : "Snabble.Shoppingcart.completePurchase"),
-                                              disabled: $disableCheckout, onAction: {
-                                model.startCheckout()
-                            })
+                            PrimaryButtonView(
+                                title: Asset.localizedString(forKey: "Snabble.Shoppingcart.BuyProducts.now"),
+                                disabled: Binding(
+                                    get: { totalString.isEmpty || !model.canCheckout },
+                                    set: { _ in }
+                                ),
+                                onAction: {
+                                    model.startCheckout()
+                                }
+                            )
                         }
                     } else {
                         PaymentButtonView {
@@ -79,7 +86,7 @@ struct CheckoutView: View {
                         showPaymentSelector = false
                     }
                 }
-           }
+            }
             .padding([.leading, .trailing], 16)
             .padding(.bottom, 10)
             Divider()
@@ -89,17 +96,8 @@ struct CheckoutView: View {
         }
         .task {
             update()
-            let items = model.project.paymentItems(for: model.supportedShoppingCartPayments)
-                .filter({ model.projectPayments.contains($0.method) && $0.active == true && $0.methodDetail != nil })
-            if let name = paymentMethod, !items.isEmpty {
-                if let index = items.firstIndex(where: { $0.methodDetail?.displayName == name }) {
-                    model.paymentManager.setSelectedPaymentItem(items[index])
-                }
-            }
-            if model.paymentManager.selectedPayment == nil, let firstPayment = items.first {
-                model.paymentManager.setSelectedPaymentItem(firstPayment)
-            }
-       }
+            setupPayment()
+        }
         .onReceive(NotificationCenter.default.publisher(for: .snabbleCartUpdated)) { _ in
             update()
         }
@@ -109,5 +107,18 @@ struct CheckoutView: View {
         countString = model.numberOfItemsInCart
         totalString = model.totalPriceString
         disableCheckout = !model.canCheckout
+    }
+    
+    private func setupPayment() {
+        let items = model.project.paymentItems(for: model.supportedShoppingCartPayments)
+            .filter({ model.projectPayments.contains($0.method) && $0.active == true && $0.methodDetail != nil })
+        if let name = paymentMethod, !items.isEmpty {
+            if let index = items.firstIndex(where: { $0.methodDetail?.displayName == name }) {
+                model.paymentManager.setSelectedPaymentItem(items[index])
+            }
+        }
+        if model.paymentManager.selectedPayment == nil, let firstPayment = items.first {
+            model.paymentManager.setSelectedPaymentItem(firstPayment)
+        }
     }
 }
