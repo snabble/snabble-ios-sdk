@@ -1,0 +1,384 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Actions" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Aktionen"
+          }
+        }
+      }
+    },
+    "All Shops" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Alle Filialen"
+          }
+        }
+      }
+    },
+    "at %@" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "im %@"
+          }
+        }
+      }
+    },
+    "Cancel" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Abbruch"
+          }
+        }
+      }
+    },
+    "Check In at This Shop" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "In dieser Filiale einchecken"
+          }
+        }
+      }
+    },
+    "Checked In" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Eingecheckt"
+          }
+        }
+      }
+    },
+    "Customer Card" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kundenkarte"
+          }
+        }
+      }
+    },
+    "Developer" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Entwickler"
+          }
+        }
+      }
+    },
+    "Environment" : {
+
+    },
+    "Environment: %@" : {
+
+    },
+    "Imprint" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Impressum"
+          }
+        }
+      }
+    },
+    "Loading %@..." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lade %@…"
+          }
+        }
+      }
+    },
+    "Loading..." : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lade…"
+          }
+        }
+      }
+    },
+    "No Shop Selected" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Keine Filiale ausgewählt"
+          }
+        }
+      }
+    },
+    "Onboarding.accept" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Akzeptieren"
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Accept"
+          }
+        }
+      }
+    },
+    "Onboarding.message1" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Mit Snabble scannst du deinen Einkauf selbst und bezahlst direkt in der App. Ohne Anstehen und ohne deinen Einkauf aufs Band zu legen."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Using Snabble, you scan your purchase yourself and pay directly in the app. Without standing in line and without putting your purchase on the conveyor belt."
+          }
+        }
+      }
+    },
+    "Onboarding.message2" : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Gehe in eine teilnehmende Filiale, starte den Einkauf und halte den Barcode eines Artikels vor die Kamera."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Enter a participating store, start shopping and hold the barcode of an article in front of the camera."
+          }
+        }
+      }
+    },
+    "Payment Methods" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Zahlungsmethoden"
+          }
+        }
+      }
+    },
+    "Please accept the [terms](snabble://terms.html) of use and take note of the [privacy](snabble://privacy.html) policy." : {
+      "extractionState" : "manual",
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Bitte akzeptiere die [Nutzungsbedingungen](snabble://terms.html) und nimm unsere [Datenschutzhinweise](snabble://privacy.html) zur Kenntnis."
+          }
+        },
+        "en" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Please accept the [terms](snabble://terms.html) of use and take note of the [privacy](snabble://privacy.html) policy."
+          }
+        }
+      }
+    },
+    "Privacy Policy" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Datenschutzerklärung"
+          }
+        }
+      }
+    },
+    "Profile" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Profil"
+          }
+        }
+      }
+    },
+    "Receipts" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kassenbons"
+          }
+        }
+      }
+    },
+    "Reset App ID" : {
+
+    },
+    "Reset Client ID" : {
+
+    },
+    "Scan & Go Shopping" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einkaufen mit Scan & Go"
+          }
+        }
+      }
+    },
+    "Scan products and pay directly in the app" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Scanne Produkte und bezahle direkt in der App."
+          }
+        }
+      }
+    },
+    "Search shops" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Suche Filialen"
+          }
+        }
+      }
+    },
+    "Select a shop to start shopping" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Wähle eine Filiale aus"
+          }
+        }
+      }
+    },
+    "Select Shop" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filiale auswählen"
+          }
+        }
+      }
+    },
+    "Settings" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einstellungen"
+          }
+        }
+      }
+    },
+    "Shop" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filiale"
+          }
+        }
+      }
+    },
+    "Shopping" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einkaufen"
+          }
+        }
+      }
+    },
+    "Shops" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Filialen"
+          }
+        }
+      }
+    },
+    "Snabble" : {
+
+    },
+    "Snabble SDK" : {
+
+    },
+    "Snabble User" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Snabble Nutzer"
+          }
+        }
+      }
+    },
+    "Start" : {
+
+    },
+    "Start Shopping" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einkaufen starten"
+          }
+        }
+      }
+    },
+    "This feature is in development" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Diese Funktion ist in Entwicklung"
+          }
+        }
+      }
+    },
+    "Version %@" : {
+
+    },
+    "Web" : {
+
+    },
+    "WebView: %@" : {
+
+    }
+  },
+  "version" : "1.1"
+}
