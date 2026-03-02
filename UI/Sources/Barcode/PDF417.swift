@@ -12,8 +12,9 @@ enum PDF417: CodeRenderer {
         let lightImage = generate(for: string, inScale: scale, for: .light)
 
         if let darkImage = generate(for: string, inScale: scale, for: .dark) {
+            nonisolated(unsafe) let screenScale = UIScreen.main.scale
             let traitCollection = UITraitCollection { mutableTraits in
-                mutableTraits.displayScale = UIScreen.main.scale
+                mutableTraits.displayScale = screenScale
                 mutableTraits.userInterfaceStyle = .dark
             }
             lightImage?.imageAsset?.register(darkImage, with: traitCollection)
