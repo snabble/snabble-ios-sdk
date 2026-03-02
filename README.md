@@ -1,7 +1,7 @@
 # Snabble
 
 ![License](https://img.shields.io/github/license/mashape/apistatus.svg)
-![Swift 5.0](https://img.shields.io/badge/Swift-5.0-green.svg)
+![Swift 6.2](https://img.shields.io/badge/Swift-6.2-green.svg)
 [![Actions Status](https://github.com/snabble/snabble-ios-sdk/workflows/Lint/badge.svg)](https://github.com/snabble/snabble-ios-sdk/actions)
 [![Contact](https://img.shields.io/badge/Contact-%40snabble__io-blue)](https://twitter.com/snabble_io)
 
@@ -17,9 +17,18 @@ Prior to version 0.22.2 only Cocoapods is supported
 
 ## Requirements
 
-- Requires Xcode 15.4 or above
-- Requires iOS 17.0 or above
-- See [Package.swift](Package.swift) for supported platform versions.
+### Version 1.0.0+ (Swift 6.2)
+- **Xcode:** 17.0 or above
+- **iOS:** 17.0 or above
+- **Swift:** 6.2
+- **Breaking Changes:** See [SDK Consumer Migration Guide](documentation/SDK-Consumer-Migration-Guide.md)
+
+### Version 0.74.x and earlier
+- **Xcode:** 15.4 or above
+- **iOS:** 17.0 or above
+- **Swift:** 5.10
+
+See [Package.swift](Package.swift) for detailed platform versions.
 
 ### Installing from Xcode
 
