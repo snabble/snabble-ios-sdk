@@ -713,7 +713,7 @@ public struct Project: Decodable, Identifiable, @unchecked Sendable {
         self.updateable = UpdateableProperties()
     }
 
-    nonisolated(unsafe) public static let none = Project()
+    public static let none = Project()
 
     // find the currencySymbol for the given currencyCode
     private static func currencySymbol(for currencyCode: String, locale: String) -> String {
