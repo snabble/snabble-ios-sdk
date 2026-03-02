@@ -37,6 +37,7 @@ public class CheckInManager: NSObject, @unchecked Sendable {
     public var shop: Shop? {
         didSet {
             shopPublisher.send(shop)
+            shopContinuation?.yield(shop)
             if let shop = oldValue {
                 checkedInAt = nil
                 delegate?.checkInManager(self, didCheckOutOf: shop)
@@ -49,10 +50,53 @@ public class CheckInManager: NSObject, @unchecked Sendable {
         }
     }
 
+    // MARK: - Combine API (Legacy)
+
     /// Thread-safety: Combine publishers are thread-safe
+    @available(*, deprecated, message: "Use shopStream instead for modern Swift concurrency")
     nonisolated(unsafe) public var shopPublisher = CurrentValueSubject<Shop?, Never>(nil)
+
     /// Thread-safety: Combine publishers are thread-safe
+    @available(*, deprecated, message: "Use authorizationStream instead for modern Swift concurrency")
     nonisolated(unsafe) public let authorizationStatusSubject = PassthroughSubject<CLAuthorizationStatus, Never>()
+
+    // MARK: - AsyncStream API (Modern)
+
+    private var shopContinuation: AsyncStream<Shop?>.Continuation?
+    private var authorizationContinuation: AsyncStream<CLAuthorizationStatus>.Continuation?
+
+    /// Modern async stream for observing shop check-in changes
+    ///
+    /// Example usage:
+    /// ```swift
+    /// Task {
+    ///     for await shop in checkInManager.shopStream {
+    ///         print("Checked into: \(shop?.name ?? "none")")
+    ///     }
+    /// }
+    /// ```
+    public var shopStream: AsyncStream<Shop?> {
+        AsyncStream { continuation in
+            self.shopContinuation = continuation
+            continuation.yield(self.shop)
+        }
+    }
+
+    /// Modern async stream for observing location authorization changes
+    ///
+    /// Example usage:
+    /// ```swift
+    /// Task {
+    ///     for await status in checkInManager.authorizationStream {
+    ///         print("Authorization: \(status)")
+    ///     }
+    /// }
+    /// ```
+    public var authorizationStream: AsyncStream<CLAuthorizationStatus> {
+        AsyncStream { continuation in
+            self.authorizationContinuation = continuation
+        }
+    }
 
     private func trackCheckIn(with shop: Shop) {
         guard let location = locationManager.location, let project = shop.project else { return }
@@ -144,6 +188,7 @@ extension CheckInManager: CLLocationManagerDelegate {
             break
         }
         authorizationStatusSubject.send(manager.authorizationStatus)
+        authorizationContinuation?.yield(manager.authorizationStatus)
     }
 
     @available(iOS 14.0, *)
