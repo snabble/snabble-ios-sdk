@@ -1,4 +1,4 @@
-// swift-tools-version: 6.0
+// swift-tools-version: 6.2
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -67,7 +67,7 @@ let package = Package(
         .package(url: "https://github.com/pointfreeco/swift-tagged", from: "0.10.0"),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.6.1"),
         .package(url: "https://github.com/divadretlaw/WindowKit", from: "2.5.2"),
-        .package(url: "https://github.com/utilem/CameraZoomWheel.git", from: "1.0.4")
+        .package(url: "https://github.com/utilem/CameraZoomWheel.git", from: "2.0.0")
     ],
     targets: [
         .target(
@@ -75,8 +75,7 @@ let package = Package(
             dependencies: ["SwiftOTP", "KeychainAccess"],
             path: "Network/Sources",
             swiftSettings: [
-                .swiftLanguageMode(.v6),
-                .enableExperimentalFeature("StrictConcurrency=minimal")
+                .swiftLanguageMode(.v6)
             ]
         ),
         .testTarget(
@@ -97,8 +96,7 @@ let package = Package(
                 .process("Resources")
             ],
             swiftSettings: [
-                .swiftLanguageMode(.v6),
-                .enableExperimentalFeature("StrictConcurrency=minimal")
+                .swiftLanguageMode(.v6)
             ]
         ),
         .target(
@@ -115,8 +113,7 @@ let package = Package(
                 .process("Resources")
             ],
             swiftSettings: [
-                .swiftLanguageMode(.v6),
-                .enableExperimentalFeature("StrictConcurrency=minimal")
+                .swiftLanguageMode(.v6)
             ]
         ),
         .testTarget(
@@ -146,8 +143,7 @@ let package = Package(
                 .process("Resources")
             ],
             swiftSettings: [
-                .swiftLanguageMode(.v6),
-                .enableExperimentalFeature("StrictConcurrency=minimal")
+                .swiftLanguageMode(.v6)
             ]
         ),
         .target(
@@ -158,8 +154,7 @@ let package = Package(
             ],
             path: "Components/Sources",
             swiftSettings: [
-                .swiftLanguageMode(.v6),
-                .enableExperimentalFeature("StrictConcurrency=minimal")
+                .swiftLanguageMode(.v6)
             ]
         ),
         .target(
@@ -171,8 +166,7 @@ let package = Package(
             ],
             path: "Datatrans/Sources",
             swiftSettings: [
-                .swiftLanguageMode(.v6),
-                .enableExperimentalFeature("StrictConcurrency=minimal")
+                .swiftLanguageMode(.v6)
             ]
         ),
         .target(
@@ -182,8 +176,7 @@ let package = Package(
             ],
             path: "Pay/Sources/Logger",
             swiftSettings: [
-                .swiftLanguageMode(.v6),
-                .enableExperimentalFeature("StrictConcurrency=minimal")
+                .swiftLanguageMode(.v6)
             ]
         ),
         .target(
@@ -193,8 +186,7 @@ let package = Package(
             ],
             path: "Pay/Sources/Network",
             swiftSettings: [
-                .swiftLanguageMode(.v6),
-                .enableExperimentalFeature("StrictConcurrency=minimal")
+                .swiftLanguageMode(.v6)
             ]
         ),
         .target(
@@ -206,8 +198,7 @@ let package = Package(
             ],
             path: "Pay/Sources/Core",
             swiftSettings: [
-                .swiftLanguageMode(.v6),
-                .enableExperimentalFeature("StrictConcurrency=minimal")
+                .swiftLanguageMode(.v6)
             ]
         ),
         .target(
@@ -245,8 +236,7 @@ let package = Package(
             ],
             path: "PhoneAuth/Sources",
             swiftSettings: [
-                .swiftLanguageMode(.v6),
-                .enableExperimentalFeature("StrictConcurrency=minimal")
+                .swiftLanguageMode(.v6)
             ]
         ),
         .testTarget(
@@ -263,8 +253,7 @@ let package = Package(
             ],
             path: "User/Sources",
             swiftSettings: [
-                .swiftLanguageMode(.v6),
-                .enableExperimentalFeature("StrictConcurrency=minimal")
+                .swiftLanguageMode(.v6)
             ]
         ),
         .target(
@@ -276,10 +265,8 @@ let package = Package(
             ],
             path: "ScanAndGo",
             swiftSettings: [
-                .swiftLanguageMode(.v6),
-                .enableExperimentalFeature("StrictConcurrency=minimal")
+                .swiftLanguageMode(.v6)
             ]
         ),
-
     ]
 )
