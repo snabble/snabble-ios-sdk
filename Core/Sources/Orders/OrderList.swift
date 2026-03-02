@@ -19,7 +19,7 @@ public struct OrderList: Decodable, Sendable {
     }
 }
 
-public struct Order: Codable, Sendable {
+public struct Order: Codable, Sendable, Hashable {
     public let projectId: Identifier<Project>
     public let id: String
     public let date: Date
@@ -28,7 +28,7 @@ public struct Order: Codable, Sendable {
     public let price: Int
     public let links: OrderLinks
 
-    public struct OrderLinks: Codable, Sendable {
+    public struct OrderLinks: Codable, Sendable, Hashable {
         public let receipt: Link?
     }
 
