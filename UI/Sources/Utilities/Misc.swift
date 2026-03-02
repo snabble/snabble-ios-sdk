@@ -9,6 +9,16 @@ import UIKit
 import SnabbleAssetProviding
 import SnabbleComponents
 
+// MARK: - Screen Scale Helper
+
+extension UIScreen {
+    /// Thread-safe access to screen scale
+    @MainActor
+    static var safeScale: CGFloat {
+        main.scale
+    }
+}
+
 extension UIButton {
     /// add a "rounded button" appearance to this button
     public func makeSnabbleButton() {
