@@ -23,7 +23,8 @@ extension CodeRenderer {
             return nil
         }
 
-        let scale = CGFloat(scale) * UIScreen.main.scale
+        let screenScale = UIScreen.main.scale
+        let scale = CGFloat(scale) * screenScale
         let codeSize = CGSize(width: ciImage.extent.size.width * scale,
                               height: ciImage.extent.size.height * scale)
         let quietZone = scale * CGFloat(additionalQuietZone)
@@ -45,7 +46,7 @@ extension CodeRenderer {
         context.draw(cgImage, in: drawRect)
 
         if let rawImage = UIGraphicsGetImageFromCurrentImageContext(), let cgImage = rawImage.cgImage {
-            return UIImage(cgImage: cgImage, scale: UIScreen.main.scale, orientation: orientation)
+            return UIImage(cgImage: cgImage, scale: screenScale, orientation: orientation)
         }
 
         return nil
