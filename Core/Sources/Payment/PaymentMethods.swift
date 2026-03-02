@@ -42,7 +42,7 @@ public enum RawPaymentMethod: String, Decodable, CaseIterable, Swift.Identifiabl
     }
 
     /// Thread-safety: Immutable constant array defined at compile time
-    nonisolated(unsafe) public static let orderedMethods: [RawPaymentMethod] = [
+    public static let orderedMethods: [RawPaymentMethod] = [
         // customer-specific methods
         .customerCardPOS, .externalBilling,
 
@@ -60,7 +60,7 @@ public enum RawPaymentMethod: String, Decodable, CaseIterable, Swift.Identifiabl
     // roughly sorted by popularity
     // Apple Pay is not included here, needs separate treatment
     /// Thread-safety: Immutable constant array defined at compile time
-    nonisolated(unsafe) public static let preferredOnlineMethods: [RawPaymentMethod] = [
+    public static let preferredOnlineMethods: [RawPaymentMethod] = [
         .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .giropayOneKlick
     ]
 
