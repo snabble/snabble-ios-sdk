@@ -31,7 +31,7 @@ struct SavedCart: Codable {
 
 public final class OfflineCarts: @unchecked Sendable {
     /// Thread-safety: Singleton accessed from multiple threads. All mutations protected by serial DispatchQueue.
-    nonisolated(unsafe) public static let shared = OfflineCarts()
+    public static let shared = OfflineCarts()
 
     private var inProgress = false
     private var pendingCarts = 0
