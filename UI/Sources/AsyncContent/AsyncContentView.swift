@@ -11,13 +11,13 @@ import SwiftUI
 import SnabbleAssetProviding
 import SnabbleComponents
 
-protocol LoadableObject {
+public protocol LoadableObject {
     associatedtype Output
     var state: LoadingState<Output> { get }
     func load()
 }
 
-enum LoadingState<Value> {
+public enum LoadingState<Value> {
     case idle
     case loading
     case failed(Error)
