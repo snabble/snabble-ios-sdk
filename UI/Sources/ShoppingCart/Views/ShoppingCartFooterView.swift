@@ -42,6 +42,7 @@ public struct ShoppingCartFooterView: View {
         } else {
             HStack(spacing: 0) {
                 Text("")
+                    .opacity(0)
             }
         }
     }
