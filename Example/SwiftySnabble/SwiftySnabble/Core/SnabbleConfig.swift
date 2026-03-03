@@ -1,9 +1,8 @@
 //
 //  SnabbleConfig.swift
-//  SnabbleSampleApp
+//  Snabble Sample App
 //
-//  Created by Andreas Osberghaus on 06.09.22.
-//  Copyright © 2022 snabble. All rights reserved.
+//  Copyright (c) 2026 snabble GmbH. All rights reserved.
 //
 
 import Foundation

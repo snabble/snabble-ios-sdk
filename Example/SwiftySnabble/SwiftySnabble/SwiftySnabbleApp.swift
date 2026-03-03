@@ -2,7 +2,7 @@
 //  SwiftySnabbleApp.swift
 //  SwiftySnabble
 //
-//  Created by Uwe Tilemann on 26.02.26.
+//  Copyright (c) 2026 snabble GmbH. All rights reserved.
 //
 
 import SwiftUI

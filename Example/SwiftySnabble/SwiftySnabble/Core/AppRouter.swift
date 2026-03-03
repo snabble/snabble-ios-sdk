@@ -2,7 +2,7 @@
 //  AppRouter.swift
 //  Snabble Sample App
 //
-//  Copyright (c) 2025 snabble GmbH. All rights reserved.
+//  Copyright (c) 2026 snabble GmbH. All rights reserved.
 //
 
 import SwiftUI

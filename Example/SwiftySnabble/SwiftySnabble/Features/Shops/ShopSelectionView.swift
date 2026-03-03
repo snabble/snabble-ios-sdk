@@ -2,7 +2,7 @@
 //  ShopSelectionView.swift
 //  SwiftySnabble
 //
-//  Created by Uwe Tilemann on 02.03.26.
+//  Copyright (c) 2026 snabble GmbH. All rights reserved.
 //
 
 import SwiftUI
