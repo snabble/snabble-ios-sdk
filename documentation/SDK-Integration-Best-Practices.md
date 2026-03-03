@@ -2,7 +2,7 @@
 
 **Skill for:** Building SwiftUI apps with Snabble SDK
 **Target Audience:** iOS developers integrating the Snabble SDK
-**Last Updated:** 2026-02-26
+**Last Updated:** 2026-03-03
 
 ---
 
@@ -181,7 +181,7 @@ struct DashboardView: View {
 
 ### Type-Safe Router Pattern
 
-**Pattern:** Create an observable router with enum-based destinations.
+**Pattern:** Create an observable router with tab-specific navigation paths and enum-based destinations.
 
 ```swift
 // Core/AppRouter.swift
@@ -191,29 +191,39 @@ import SnabbleCore
 @Observable
 @MainActor
 final class AppRouter {
-    var path: NavigationPath = NavigationPath()
+    // Tab-specific navigation paths using dictionary
+    private var paths: [AppTab: NavigationPath] = [:]
+
+    subscript(tab: AppTab) -> NavigationPath {
+        get { paths[tab] ?? NavigationPath() }
+        set { paths[tab] = newValue }
+    }
+
+    var selectedTab: AppTab
     var presentedSheet: SheetDestination?
     var presentedFullScreen: FullScreenDestination?
+
+    enum AppTab {
+        case start, shops, shopping, receipts, profile
+    }
 
     // Push destinations (in NavigationStack)
     enum Destination: Hashable {
         case shopDetail(Shop)
         case webView(URL)
         case profile
-        case receipt(Order)
+        case receipt
     }
 
     // Sheet presentations
     enum SheetDestination: Identifiable {
         case onboarding
         case shopSelection
-        case settings
 
         var id: String {
             switch self {
             case .onboarding: return "onboarding"
             case .shopSelection: return "shopSelection"
-            case .settings: return "settings"
             }
         }
     }
@@ -229,9 +239,28 @@ final class AppRouter {
         }
     }
 
+    init(selectedTab: AppTab = .start) {
+        self.selectedTab = selectedTab
+    }
+
     // Navigation methods
-    func navigate(to destination: Destination) {
+    func navigate(to destination: Destination, for tab: AppTab? = nil) {
+        let targetTab = tab ?? selectedTab
+        var path = paths[targetTab] ?? NavigationPath()
         path.append(destination)
+        paths[targetTab] = path
+    }
+
+    func pop(for tab: AppTab? = nil) {
+        let targetTab = tab ?? selectedTab
+        guard var path = paths[targetTab], !path.isEmpty else { return }
+        path.removeLast()
+        paths[targetTab] = path
+    }
+
+    func popToRoot(for tab: AppTab? = nil) {
+        let targetTab = tab ?? selectedTab
+        paths[targetTab] = NavigationPath()
     }
 
     func showSheet(_ sheet: SheetDestination) {
@@ -240,10 +269,6 @@ final class AppRouter {
 
     func showFullScreen(_ destination: FullScreenDestination) {
         presentedFullScreen = destination
-    }
-
-    func popToRoot() {
-        path.removeLast(path.count)
     }
 
     func dismissSheet() {
@@ -275,11 +300,9 @@ extension AppRouter {
     func view(for sheet: SheetDestination) -> some View {
         switch sheet {
         case .onboarding:
-            OnboardingView()
+            OnboardingViewWrapper()
         case .shopSelection:
             ShopSelectionView()
-        case .settings:
-            SettingsView()
         }
     }
 
@@ -293,46 +316,72 @@ extension AppRouter {
 }
 ```
 
-### Root View with Navigation
+### Root View with Tab-Specific Navigation
 
 ```swift
 // Features/Root/RootView.swift
 struct RootView: View {
     @Environment(AppRouter.self) private var router
-    @State private var selectedTab: Tab = .dashboard
-
-    enum Tab: String, CaseIterable {
-        case dashboard, shops, shopping, receipts, profile
-
-        var title: String {
-            rawValue.capitalized
-        }
-
-        var icon: String {
-            switch self {
-            case .dashboard: return "house.fill"
-            case .shops: return "building.2.fill"
-            case .shopping: return "cart.fill"
-            case .receipts: return "receipt.fill"
-            case .profile: return "person.fill"
-            }
-        }
-    }
+    @Environment(AppState.self) private var appState
 
     var body: some View {
-        TabView(selection: $selectedTab) {
-            ForEach(Tab.allCases, id: \.self) { tab in
-                NavigationStack(path: $router.path) {
-                    tabView(for: tab)
-                        .navigationDestination(for: AppRouter.Destination.self) { destination in
-                            router.view(for: destination)
-                        }
-                }
-                .tabItem {
-                    Label(tab.title, systemImage: tab.icon)
-                }
-                .tag(tab)
+        @Bindable var router = router
+
+        TabView(selection: $router.selectedTab) {
+            NavigationStack(path: $router[.start]) {
+                DashboardView()
+                    .navigationDestination(for: AppRouter.Destination.self) { destination in
+                        router.view(for: destination)
+                    }
             }
+            .tabItem {
+                Label("Start", systemImage: "house.fill")
+            }
+            .tag(AppRouter.AppTab.start)
+
+            NavigationStack(path: $router[.shops]) {
+                ShopListView()
+                    .navigationDestination(for: AppRouter.Destination.self) { destination in
+                        router.view(for: destination)
+                    }
+            }
+            .tabItem {
+                Label("Shops", systemImage: "storefront.fill")
+            }
+            .tag(AppRouter.AppTab.shops)
+
+            NavigationStack(path: $router[.shopping]) {
+                ShoppingLandingView()
+                    .navigationDestination(for: AppRouter.Destination.self) { destination in
+                        router.view(for: destination)
+                    }
+            }
+            .tabItem {
+                Label("Shopping", systemImage: "cart.fill")
+            }
+            .tag(AppRouter.AppTab.shopping)
+
+            NavigationStack(path: $router[.receipts]) {
+                ReceiptsView()
+                    .navigationDestination(for: AppRouter.Destination.self) { destination in
+                        router.view(for: destination)
+                    }
+            }
+            .tabItem {
+                Label("Receipts", systemImage: "receipt.fill")
+            }
+            .tag(AppRouter.AppTab.receipts)
+
+            NavigationStack(path: $router[.profile]) {
+                ProfileView()
+                    .navigationDestination(for: AppRouter.Destination.self) { destination in
+                        router.view(for: destination)
+                    }
+            }
+            .tabItem {
+                Label("Profile", systemImage: "person.fill")
+            }
+            .tag(AppRouter.AppTab.profile)
         }
         .sheet(item: $router.presentedSheet) { sheet in
             router.view(for: sheet)
@@ -341,25 +390,33 @@ struct RootView: View {
             router.view(for: destination)
         }
     }
-
-    @ViewBuilder
-    private func tabView(for tab: Tab) -> some View {
-        switch tab {
-        case .dashboard: DashboardView()
-        case .shops: ShopListView()
-        case .shopping: ShoppingLandingView()
-        case .receipts: ReceiptsView()
-        case .profile: ProfileView()
-        }
-    }
 }
 ```
 
 **✅ Benefits:**
-- Type-safe navigation (compiler prevents invalid states)
-- All navigation logic in one place
-- Easy to test
-- Clear separation between push/sheet/fullScreen
+- **Tab-isolated navigation** - Each tab maintains its own navigation stack
+- **Type-safe navigation** - Compiler prevents invalid states
+- **Scalable architecture** - Easy to add new tabs without modifying router
+- **State preservation** - Navigation state persists when switching tabs
+- **Clean subscript syntax** - `router[.shops]` is elegant and readable
+- **Centralized logic** - All navigation in one place
+
+**Usage Examples:**
+```swift
+// Navigate in current tab
+router.navigate(to: .shopDetail(shop))
+
+// Navigate in specific tab
+router.navigate(to: .shopDetail(shop), for: .shops)
+
+// Present modals
+router.showFullScreen(.shopping(shop))
+router.showSheet(.shopSelection)
+
+// Pop navigation
+router.pop()                    // Pop in current tab
+router.popToRoot(for: .shops)  // Clear entire stack in shops tab
+```
 
 ---
 
@@ -682,76 +739,78 @@ struct ShopDetailView: View {
 
 ### Receipts/Orders List
 
+**Pattern:** Use the SDK's built-in `ReceiptsListScreen` component with `PurchasesViewModel`.
+
 ```swift
 // Features/Receipts/ReceiptsView.swift
 import SwiftUI
-import SnabbleCore
+import SnabbleUI
 
 struct ReceiptsView: View {
+    @State private var model = PurchasesViewModel()
+
+    var body: some View {
+        ReceiptsListScreen(model: model)  // SDK's SwiftUI component
+            .navigationTitle("Receipts")
+            .refreshable {
+                model.load()
+            }
+    }
+}
+```
+
+**✅ Benefits:**
+- Pre-built UI with SDK styling
+- Automatic receipt fetching and caching
+- Built-in empty state handling
+- Pull-to-refresh support
+- Unread receipt badge support
+
+**Alternative:** For custom UI, you can create your own view:
+
+```swift
+// Custom implementation (if needed)
+struct CustomReceiptsView: View {
     @Environment(AppState.self) private var appState
     @Environment(AppRouter.self) private var router
-    @State private var orders: [Order] = []
+    @State private var model = PurchasesViewModel()
 
     var body: some View {
         Group {
-            if orders.isEmpty {
-                ContentUnavailableView(
-                    "No Receipts",
-                    systemImage: "receipt",
-                    description: Text("Your purchase receipts will appear here")
-                )
-            } else {
-                List(orders) { order in
-                    Button {
-                        router.navigate(to: .receipt(order))
-                    } label: {
-                        ReceiptRowView(order: order)
+            switch model.state {
+            case .idle, .loading:
+                ProgressView()
+            case .loaded(let purchases):
+                if purchases.isEmpty {
+                    ContentUnavailableView(
+                        "No Receipts",
+                        systemImage: "receipt",
+                        description: Text("Your purchase receipts will appear here")
+                    )
+                } else {
+                    List(purchases, id: \.id) { purchase in
+                        Button {
+                            // Navigate to detail view
+                        } label: {
+                            ReceiptRowView(purchase: purchase)
+                        }
                     }
                 }
+            case .failed(let error):
+                ContentUnavailableView(
+                    "Error Loading Receipts",
+                    systemImage: "exclamationmark.triangle",
+                    description: Text(error.localizedDescription)
+                )
             }
         }
         .navigationTitle("Receipts")
         .task {
-            await loadOrders()
+            model.load()
         }
-    }
-
-    private func loadOrders() async {
-        guard let project = appState.project else { return }
-
-        // Load orders from SDK
-        if let orderList = try? await OrderList.load(for: project) {
-            orders = orderList.orders
+        .refreshable {
+            model.load()
         }
-    }
-}
-
-struct ReceiptRowView: View {
-    let order: Order
-
-    var body: some View {
-        HStack(spacing: 12) {
-            Image(systemName: "receipt.fill")
-                .font(.title2)
-                .foregroundColor(.blue)
-                .frame(width: 40)
-
-            VStack(alignment: .leading, spacing: 4) {
-                Text(order.shopName ?? "Unknown Shop")
-                    .font(.headline)
-
-                Text(order.date, style: .date)
-                    .font(.subheadline)
-                    .foregroundColor(.secondary)
-            }
-
-            Spacer()
-
-            Text(order.price.formattedPrice)
-                .font(.headline)
-                .foregroundColor(.primary)
-        }
-        .padding(.vertical, 8)
     }
 }
 ```
@@ -1152,4 +1211,4 @@ See the complete SwiftySnabble sample app in:
 - Review SDK documentation
 - Contact Snabble support
 
-**Last Updated:** 2026-02-26
+**Last Updated:** 2026-03-03

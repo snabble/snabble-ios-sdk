@@ -1,138 +1,345 @@
-# SwiftySnabble - Moderne SwiftUI Sample App
+# SwiftySnabble - Modern SwiftUI Sample App
 
-Eine moderne SwiftUI-basierte Beispiel-App für das Snabble iOS SDK mit Swift 6.2.
+A modern SwiftUI-based sample app for the Snabble iOS SDK using Swift 6.2.
 
-## 📱 Überblick
+## 📱 Overview
 
-SwiftySnabble ist eine vollständig in SwiftUI entwickelte Sample App, die Best Practices für die Integration des Snabble SDK demonstriert. Sie verwendet moderne Swift 6.2 Features wie @Observable, async/await und type-safe Navigation.
+SwiftySnabble is a fully SwiftUI-based sample app demonstrating best practices for integrating the Snabble SDK. It uses modern Swift 6.2 features like @Observable, async/await, and type-safe navigation.
 
-## 🏗️ Projekt-Setup
+## 🏗️ Architecture
 
-### Aktuelles Setup
+### Directory Structure
 
-Das Projekt ist als **eigenständiges Xcode-Projekt** angelegt:
-- `SwiftySnabble.xcodeproj` - Eigenständiges Projekt
-- Lokale Package-Referenz zum SDK
-- Separates Git-Repository im `main` Branch
-
-### Integration in SnabbleSampleApp.xcodeproj (Optional)
-
-Wenn du SwiftySnabble als zusätzliches Target im Haupt-Projekt haben möchtest:
-
-#### Option 1: Als Workspace (Empfohlen)
-
-1. **Workspace erstellen:**
-   ```bash
-   cd Example
-   # In Xcode: File > New > Workspace
-   # Speichere als: SnabbleExamples.xcworkspace
-   ```
-
-2. **Projekte hinzufügen:**
-   - Drag & Drop `SnabbleSampleApp.xcodeproj` ins Workspace
-   - Drag & Drop `SwiftySnabble/SwiftySnabble.xcodeproj` ins Workspace
-
-3. **Vorteile:**
-   - ✅ Beide Projekte bleiben unabhängig
-   - ✅ Shared Schemes
-   - ✅ Einfaches Wechseln zwischen Apps
-   - ✅ Gemeinsame Package-Referenzen
-
-#### Option 2: Als zusätzliches Target
-
-1. **Öffne SnabbleSampleApp.xcodeproj**
-
-2. **Neues Target erstellen:**
-   - File > New > Target
-   - iOS > App
-   - Name: "SwiftySnabble"
-   - Interface: SwiftUI
-   - Language: Swift
-   - Lifecycle: SwiftUI App
-
-3. **Source-Dateien hinzufügen:**
-   - Wähle alle Dateien aus `SwiftySnabble/SwiftySnabble/`
-   - Drag & Drop ins Projekt
-   - Target Membership: Nur "SwiftySnabble" auswählen
-
-4. **Package Dependencies:**
-   - Project Settings > Package Dependencies
-   - Füge das SDK Package hinzu (falls nicht vorhanden)
-   - Wähle "SwiftySnabble" Target
-   - Füge folgende Dependencies hinzu:
-     - SnabbleCore
-     - SnabbleUI
-     - SnabbleScanAndGo
-     - SnabbleAssetProviding
-     - SnabbleComponents
-
-5. **Build Settings:**
-   - Target: SwiftySnabble
-   - Swift Language Version: Swift 6
-   - Strict Concurrency Checking: Complete
-   - iOS Deployment Target: 17.0
-
-6. **Info.plist konfigurieren:**
-   - Kopiere Permissions aus altem Info.plist:
-     - NSCameraUsageDescription
-     - NSLocationWhenInUseUsageDescription
-     - etc.
-
-#### Option 3: Separates Projekt behalten (Aktuell)
-
-Das ist die aktuelle und empfohlene Lösung:
-
-**Vorteile:**
-- ✅ Vollständig unabhängig
-- ✅ Eigenes Git-Repository
-- ✅ Keine Konflikte mit UIKit-Version
-- ✅ Einfacher zu warten
-- ✅ Kann separat versioniert werden
-
-**Struktur:**
 ```
-Example/
-├── SnabbleSampleApp.xcodeproj    # UIKit Version
-├── Snabble/                       # UIKit Source
-├── SwiftySnabble/                 # SwiftUI Version
-│   ├── SwiftySnabble.xcodeproj   # Eigenes Projekt
-│   └── SwiftySnabble/            # SwiftUI Source
-└── README.md
+SwiftySnabble/
+├── Core/
+│   ├── AppState.swift              # Global state management
+│   ├── AppRouter.swift             # Type-safe navigation
+│   ├── AppAssetProvider.swift      # SDK asset provider
+│   └── SnabbleConfig.swift         # API configuration
+├── Features/
+│   ├── Root/
+│   │   └── RootView.swift         # Main TabView
+│   ├── Dashboard/
+│   │   └── DashboardView.swift    # Home screen
+│   ├── Shops/
+│   │   ├── ShopListView.swift     # Shop list with search
+│   │   ├── ShopDetailView.swift   # Shop details
+│   │   └── ShopSelectionView.swift # Sheet for shop selection
+│   ├── Shopping/
+│   │   ├── ShoppingView.swift     # Shopping flow entry
+│   │   ├── CheckedInShopCard.swift # Dashboard card
+│   │   └── SelectShopCard.swift   # Empty state card
+│   ├── Receipts/
+│   │   └── ReceiptsView.swift     # Order history
+│   ├── Profile/
+│   │   ├── ProfileView.swift      # Profile screen
+│   │   ├── PaymentMethodsViewWrapper.swift # Payment management
+│   │   ├── EnvironmentSelectorView.swift   # Dev tools
+│   │   └── HTMLContentView.swift  # Terms & Privacy
+│   └── Onboarding/
+│       └── OnboardingViewWrapper.swift # First-run onboarding
+├── Support/
+│   ├── Assets.xcassets            # Images and colors
+│   ├── Localizable.xcstrings      # Localization (EN/DE)
+│   ├── Onboarding.json            # Onboarding config
+│   ├── terms.html                 # Terms of service
+│   └── imprint.html               # Legal imprint
+└── SwiftySnabbleApp.swift         # @main entry point
 ```
 
-## 🎯 Features
+### Key Architecture Patterns
 
-### 5 Haupt-Tabs
+#### 1. Navigation Router Pattern
 
-1. **Start (Dashboard)**
-   - Hero-Card für eingecheckten Shop
-   - Quick Actions Grid
-   - Letzte Einkäufe
+Type-safe navigation using a centralized router with tab-specific paths:
 
-2. **Filialen**
-   - Suchbare Shop-Liste
-   - Shop-Details
-   - Check-in Management
+```swift
+@Observable
+@MainActor
+final class AppRouter {
+    // Tab-specific navigation paths
+    private var paths: [AppTab: NavigationPath] = [:]
 
-3. **Einkaufen**
-   - ShopperView aus SnabbleScanAndGo
-   - Barcode-Scanner
-   - Warenkorb
-   - Payment
+    subscript(tab: AppTab) -> NavigationPath {
+        get { paths[tab] ?? NavigationPath() }
+        set { paths[tab] = newValue }
+    }
 
-4. **Kassenbon**
-   - Order-Historie
-   - Pull-to-Refresh
-   - Receipt-Details
+    var selectedTab: AppTab
+    var presentedSheet: SheetDestination?
+    var presentedFullScreen: FullScreenDestination?
 
-5. **Profil**
-   - Zahlungsmethoden
-   - Einstellungen
-   - Developer-Tools
+    // Navigation methods
+    func navigate(to destination: Destination, for tab: AppTab? = nil)
+    func pop(for tab: AppTab? = nil)
+    func popToRoot(for tab: AppTab? = nil)
+    func showSheet(_ sheet: SheetDestination)
+    func showFullScreen(_ destination: FullScreenDestination)
+}
+```
+
+**Benefits:**
+- Each tab maintains its own navigation stack
+- Type-safe navigation destinations
+- Centralized navigation logic
+- Easy to test and maintain
+
+**Usage:**
+```swift
+// Navigate in current tab
+router.navigate(to: .shopDetail(shop))
+
+// Navigate in specific tab
+router.navigate(to: .receipt, for: .start)
+
+// Present sheets and full screens
+router.showFullScreen(.shopping(shop))
+router.showSheet(.shopSelection)
+```
+
+#### 2. Global State Management
+
+Observable state pattern for app-wide data:
+
+```swift
+@Observable
+@MainActor
+final class AppState {
+    var project: Project?
+    var shops: [Shop] = []
+    var checkedInShop: Shop?
+    var recentOrders: [Order] = []
+
+    init() {
+        Task {
+            await loadData()
+        }
+    }
+}
+```
+
+**Usage in views:**
+```swift
+@Environment(AppState.self) private var appState
+
+var body: some View {
+    if let shop = appState.checkedInShop {
+        CheckedInShopCard(shop: shop)
+    }
+}
+```
+
+#### 3. Feature-Based Modularization
+
+Each feature is self-contained with its own views and logic:
+
+```
+Features/
+├── Dashboard/        # Home screen with quick actions
+├── Shops/           # Shop browsing and selection
+├── Shopping/        # Scan & Go shopping flow
+├── Receipts/        # Order history
+├── Profile/         # User settings
+└── Onboarding/      # First-run experience
+```
+
+## 🎯 SDK Integration Best Practices
+
+### 1. App Initialization
+
+```swift
+@main
+struct SwiftySnabbleApp: App {
+    @State private var appState = AppState()
+    @State private var router = AppRouter()
+    @State private var assetProvider = AppAssetProvider()
+
+    init() {
+        setupSnabble()
+    }
+
+    private func setupSnabble() {
+        // Initialize SDK
+        Snabble.setup(
+            appId: Config.appId,
+            appSecret: Config.appSecret,
+            environment: DeveloperMode.environmentMode
+        )
+
+        // Set custom asset provider
+        Snabble.setAssetProvider(assetProvider)
+    }
+}
+```
+
+### 2. Asset Provider Integration
+
+Custom asset provider for SDK theming:
+
+```swift
+@Observable
+@MainActor
+class AppAssetProvider: AssetProviding {
+    public func image(named name: String) -> UIImage? {
+        return UIImage(named: name)
+    }
+
+    public func color(named name: String) -> UIColor? {
+        return UIColor(named: name)
+    }
+
+    public func imageDataAsset(named name: String) -> NSDataAsset? {
+        return NSDataAsset(name: name)
+    }
+}
+```
+
+### 3. Scanner Integration
+
+Using the SnabbleScanAndGo module:
+
+```swift
+struct ShoppingView: View {
+    @State private var shopper: Shopper
+
+    init(shop: Shop) {
+        _shopper = State(initialValue: Shopper(shop: shop))
+    }
+
+    var body: some View {
+        NavigationStack {
+            ShopperView()
+                .environment(shopper)
+        }
+    }
+}
+```
+
+### 4. Payment Methods Management
+
+Wrapping UIKit payment controller in SwiftUI:
+
+```swift
+struct PaymentMethodsViewWrapper: View {
+    var project: SnabbleCore.Project?
+    @State private var paymentVC: PaymentMethodListViewController?
+
+    var body: some View {
+        if let paymentVC, let project {
+            ContainerView(viewController: paymentVC)
+                .toolbar {
+                    ToolbarItem(placement: .primaryAction) {
+                        Button(action: {
+                            paymentVC.addPaymentMethod(
+                                for: project.id,
+                                analyticsDelegate: nil
+                            )
+                        }, label: {
+                            Label("Add Payment", systemImage: "plus")
+                        })
+                    }
+                }
+        } else {
+            SnabbleEmptyView(
+                title: "Payments.emptyMessage".localized,
+                image: Image("CardPayment"),
+                imageWidth: 200
+            )
+        }
+    }
+}
+```
+
+### 5. Receipts Integration
+
+Using SDK's receipts list view:
+
+```swift
+struct ReceiptsView: View {
+    @State private var model = PurchasesViewModel()
+
+    var body: some View {
+        ReceiptsListScreen(model: model)
+            .navigationTitle("Receipts")
+            .refreshable {
+                model.load()
+            }
+    }
+}
+```
+
+### 6. Onboarding Configuration
+
+JSON-based onboarding with localization:
+
+```json
+{
+    "configuration": {
+        "imageSource": "Onboarding/onboarding-logo"
+    },
+    "items": [
+        {
+            "imageSource": "Onboarding/onboarding-image-1",
+            "text": "Onboarding.message1"
+        },
+        {
+            "imageSource": "Onboarding/onboarding-image-2",
+            "text": "Onboarding.message2"
+        },
+        {
+            "imageSource": "Onboarding/onboarding-image-3",
+            "text": "Please accept the [terms](snabble://terms.html)...",
+            "link": "imprint.html",
+            "customButtonTitle": "Onboarding.accept"
+        }
+    ]
+}
+```
+
+**Localization:**
+- Strings in `Onboarding.json` use localization keys
+- Keys are defined in `Localizable.xcstrings`
+- SDK's `OnboardingItem.attributedString` automatically localizes using `NSLocalizedString`
+
+### 7. Localization Strategy
+
+Using Xcode String Catalogs (`.xcstrings`):
+
+```json
+{
+  "sourceLanguage": "en",
+  "strings": {
+    "Onboarding.message1": {
+      "extractionState": "manual",
+      "localizations": {
+        "en": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Using Snabble, you scan..."
+          }
+        },
+        "de": {
+          "stringUnit": {
+            "state": "translated",
+            "value": "Mit Snabble scannst du..."
+          }
+        }
+      }
+    }
+  }
+}
+```
+
+**Benefits:**
+- Single source of truth for all translations
+- Xcode's built-in localization editor
+- Automatic string extraction
+- Type-safe localization with `String(localized:)`
 
 ## 🚀 Development
 
-### Voraussetzungen
+### Prerequisites
 
 - Xcode 16.4+
 - iOS 17.0+
@@ -144,13 +351,13 @@ Example/
 ```bash
 cd Example/SwiftySnabble
 open SwiftySnabble.xcodeproj
-# ⌘R zum Starten
+# ⌘R to run
 ```
 
 ### Configuration
 
 1. **API Credentials:**
-   Bearbeite `Core/SnabbleConfig.swift`:
+   Edit `Core/SnabbleConfig.swift`:
    ```swift
    enum Config {
        static let appId = "your-app-id"
@@ -159,60 +366,138 @@ open SwiftySnabble.xcodeproj
    ```
 
 2. **Environment:**
-   Im Profil-Tab kann zwischen Environments gewechselt werden:
+   Switch environments in Profile tab:
    - Production
    - Staging
    - Testing
 
-## 🏛️ Architektur
+## 🎨 Design Patterns
 
-### Verzeichnisstruktur
+### 1. Composition over Inheritance
 
-```
-SwiftySnabble/
-├── Core/
-│   ├── AppState.swift              # Global State
-│   ├── AppRouter.swift             # Navigation
-│   ├── AppAssetProvider.swift      # Asset Provider
-│   └── SnabbleConfig.swift         # API Config
-├── Features/
-│   ├── Root/RootView.swift         # TabView
-│   ├── Dashboard/
-│   ├── Shops/
-│   ├── Shopping/
-│   ├── Receipts/
-│   ├── Profile/
-│   └── Onboarding/
-└── SwiftySnabbleApp.swift          # @main Entry
-```
-
-### Navigation Pattern
-
-Router-basierte Navigation mit Type Safety:
+Break down complex views into smaller, reusable components:
 
 ```swift
-@Observable
-class AppRouter {
-    var path: NavigationPath
-    var presentedSheet: SheetDestination?
-    var presentedFullScreen: FullScreenDestination?
+// ✅ Good - Composed views
+struct DashboardView: View {
+    var body: some View {
+        ScrollView {
+            VStack(spacing: 24) {
+                if let shop = appState.checkedInShop {
+                    CheckedInShopCard(shop: shop)
+                } else {
+                    SelectShopCard()
+                }
+                QuickActionsGrid()
+            }
+        }
+    }
+}
+
+// ❌ Bad - Monolithic view
+struct DashboardView: View {
+    var body: some View {
+        ScrollView {
+            VStack {
+                // 200+ lines of view code...
+            }
+        }
+    }
 }
 ```
 
-### State Management
+### 2. Environment-Based Dependency Injection
+
+Use `@Environment` for shared dependencies:
 
 ```swift
-@Observable
-@MainActor
-final class AppState {
-    var project: Project?
-    var shops: [Shop] = []
-    var checkedInShop: Shop?
-    var recentOrders: [Order] = []
+// In root view
+@main
+struct SwiftySnabbleApp: App {
+    @State private var appState = AppState()
+    @State private var router = AppRouter()
+
+    var body: some Scene {
+        WindowGroup {
+            RootView()
+                .environment(appState)
+                .environment(router)
+        }
+    }
+}
+
+// In feature views
+struct ShopListView: View {
+    @Environment(AppRouter.self) private var router
+    @Environment(AppState.self) private var appState
 }
 ```
 
-## 🆚 Vergleich UIKit vs SwiftUI
+### 3. Navigation Separation
+
+Keep navigation logic out of business logic:
+
+```swift
+// ✅ Good - Navigation in router
+router.navigate(to: .shopDetail(shop), for: .shops)
+
+// ❌ Bad - Direct navigation in view
+@State private var isShowingDetail = false
+```
+
+### 4. Async Task Management
+
+Use structured concurrency with `.task`:
+
+```swift
+struct PaymentMethodsViewWrapper: View {
+    @State private var paymentVC: PaymentMethodListViewController?
+
+    var body: some View {
+        content
+            .task {
+                if paymentVC == nil, let projectId = project?.id {
+                    paymentVC = PaymentMethodListViewController(
+                        for: projectId,
+                        nil
+                    )
+                }
+            }
+    }
+}
+```
+
+## 📦 SDK Dependencies
+
+The app integrates these SDK modules via Swift Package Manager:
+
+- **SnabbleCore** - Core business logic and models
+- **SnabbleUI** - Pre-built UI components
+- **SnabbleScanAndGo** - Complete shopping flow (`ShopperView`)
+- **SnabbleAssetProviding** - Asset provider protocol
+- **SnabbleComponents** - Reusable UI components
+
+## 🔧 Troubleshooting
+
+### Build Errors
+
+**Problem:** "Cannot find type 'Shopper' in scope"
+**Solution:** Add `SnabbleScanAndGo` package dependency
+
+**Problem:** "Module compiled with Swift 5.x cannot be imported"
+**Solution:** Set Swift Language Version to Swift 6 in Build Settings
+
+**Problem:** Concurrency errors
+**Solution:** Enable "Strict Concurrency Checking: Complete"
+
+### Package Dependencies
+
+If local package is not found:
+1. File > Packages > Reset Package Caches
+2. Verify package path in Project Settings
+3. Clean and rebuild (⌘⇧K then ⌘B)
+
+## 🆚 UIKit vs SwiftUI Comparison
 
 | Feature | UIKit (Snabble) | SwiftUI (SwiftySnabble) |
 |---------|-----------------|-------------------------|
@@ -224,63 +509,29 @@ final class AppState {
 | Concurrency | Callbacks | async/await |
 | Previews | ❌ | ✅ |
 | Code Lines | ~2000 | ~1200 |
+| Swift Version | 5.x | 6.2 |
 
-## 📚 Weitere Infos
-
-### SDK Integration
-
-Die App integriert das SDK via Swift Package Manager:
-- **Local Package**: `../../` (relativ zum Projekt)
-- **Dependencies**:
-  - SnabbleCore
-  - SnabbleUI
-  - SnabbleScanAndGo
-  - SnabbleAssetProviding
-  - SnabbleComponents
-
-### Key Components
-
-**AppRouter** - Type-safe Navigation
-```swift
-router.navigate(to: .shopDetail(shop))
-router.showFullScreen(.shopping(shop))
-```
-
-**AppState** - Global State Management
-```swift
-@Environment(AppState.self) var appState
-```
-
-**ShopperView** - Scanner Integration
-```swift
-ShopperView()
-    .environment(shopper)
-```
-
-## 🔧 Troubleshooting
-
-### Build Errors
-
-**Problem:** "Cannot find type 'Shopper' in scope"
-**Lösung:** Füge `SnabbleScanAndGo` Package Dependency hinzu
-
-**Problem:** "Module compiled with Swift 5.x cannot be imported"
-**Lösung:** Setze Swift Language Version auf Swift 6 in Build Settings
-
-**Problem:** "Concurrency errors"
-**Lösung:** Enable "Strict Concurrency Checking: Complete"
-
-### Package Dependencies
-
-Falls das lokale Package nicht gefunden wird:
-1. File > Packages > Reset Package Caches
-2. Überprüfe Package-Pfad in Project Settings
-3. Neu builden (⌘⇧K dann ⌘B)
-
-## 📄 Lizenz
+## 📄 License
 
 Copyright © 2026 snabble GmbH. All rights reserved.
 
 ---
 
-**Empfehlung:** Behalte das separierte Projekt-Setup. Es ist cleaner, wartbarer und ermöglicht unabhängige Entwicklung beider Sample Apps.
+## 🤝 Contributing
+
+When adding new features:
+
+1. Follow the feature-based directory structure
+2. Use `@Observable` for state management
+3. Keep navigation logic in `AppRouter`
+4. Add localization keys to `Localizable.xcstrings`
+5. Create Xcode Previews for all views
+6. Use `#Preview` macro for quick iteration
+7. Follow Swift 6 concurrency best practices
+
+## 📚 Further Reading
+
+- [Snabble SDK Documentation](https://docs.snabble.io/)
+- [Swift 6 Migration Guide](../../documentation/Swift-6-Migration-Plan-EN.md)
+- [SwiftUI Navigation Guide](https://developer.apple.com/documentation/swiftui/navigation)
+- [@Observable Documentation](https://developer.apple.com/documentation/observation/observable())
