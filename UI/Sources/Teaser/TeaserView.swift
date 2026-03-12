@@ -98,5 +98,18 @@ public struct TeaserView: View {
             }
         }
     }
+}
 
+public struct TeaserComponent: View {
+    @State private var model = TeaserModel()
+
+    public init(model: TeaserModel = .init()) {
+        self.model = model
+    }
+
+    public var body: some View {
+        if !model.teasers.isEmpty {
+            TeaserView(model: model)
+        }
+    }
 }
