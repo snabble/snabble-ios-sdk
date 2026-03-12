@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		766BCCCA2F62C23A00D8FFAF /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = 766BCCC92F62C23A00D8FFAF /* Snabble */; };
 		76DF385B2F5075A80050F4EC /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = 76DF385A2F5075A80050F4EC /* Snabble */; };
 /* End PBXBuildFile section */
 
@@ -27,6 +28,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				766BCCCA2F62C23A00D8FFAF /* Snabble in Frameworks */,
 				76DF385B2F5075A80050F4EC /* Snabble in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -71,6 +73,7 @@
 			name = SwiftySnabble;
 			packageProductDependencies = (
 				76DF385A2F5075A80050F4EC /* Snabble */,
+				766BCCC92F62C23A00D8FFAF /* Snabble */,
 			);
 			productName = SwiftySnabble;
 			productReference = 76DF38052F50740F0050F4EC /* SwiftySnabble.app */;
@@ -102,7 +105,7 @@
 			mainGroup = 76DF37FC2F50740F0050F4EC;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				76DF38592F5075A80050F4EC /* XCLocalSwiftPackageReference "../../../snabble-ios-sdk" */,
+				766BCCC82F62C23A00D8FFAF /* XCLocalSwiftPackageReference "../../../snabble-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 76DF38062F50740F0050F4EC /* Products */;
@@ -371,13 +374,17 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		76DF38592F5075A80050F4EC /* XCLocalSwiftPackageReference "../../../snabble-ios-sdk" */ = {
+		766BCCC82F62C23A00D8FFAF /* XCLocalSwiftPackageReference "../../../snabble-ios-sdk" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../../../snabble-ios-sdk";
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		766BCCC92F62C23A00D8FFAF /* Snabble */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Snabble;
+		};
 		76DF385A2F5075A80050F4EC /* Snabble */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Snabble;
