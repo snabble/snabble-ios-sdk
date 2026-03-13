@@ -30,7 +30,11 @@ struct WebViewRepresentable: UIViewRepresentable {
 
     func updateUIView(_ uiView: WKWebView, context: Context) {
         if let url = self.url {
-            uiView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
+            if url.scheme == "https" {
+                uiView.load(URLRequest(url: url))
+            } else {
+                uiView.loadFileURL(url, allowingReadAccessTo: url.deletingLastPathComponent())
+            }
         } else if let string = self.string {
             uiView.loadHTMLString(string, baseURL: self.url)
         }
