@@ -4,7 +4,7 @@ name: SwiftLint, nameSpecified: , owner: realm, version: 0.59.0, source: https:/
 
 name: CameraZoomWheel, nameSpecified: CameraZoomWheel, owner: utilem, version: 1.1.0, source: https://github.com/utilem/CameraZoomWheel
 
-name: DeviceKit, nameSpecified: DeviceKit, owner: devicekit, version: 5.7.0, source: https://github.com/devicekit/DeviceKit
+name: DeviceKit, nameSpecified: DeviceKit, owner: devicekit, version: 5.8.0, source: https://github.com/devicekit/DeviceKit
 
 name: GRDB.swift, nameSpecified: GRDB.swift, owner: groue, version: 6.29.3, source: https://github.com/groue/GRDB.swift
 
@@ -20,7 +20,7 @@ name: swift-asn1, nameSpecified: swift-asn1, owner: apple, version: 1.5.1, sourc
 
 name: swift-crypto, nameSpecified: swift-crypto, owner: apple, version: 3.15.1, source: https://github.com/apple/swift-crypto
 
-name: swift-log, nameSpecified: swift-log, owner: apple, version: 1.9.0, source: https://github.com/apple/swift-log
+name: swift-log, nameSpecified: swift-log, owner: apple, version: 1.10.1, source: https://github.com/apple/swift-log
 
 name: swift-tagged, nameSpecified: swift-tagged, owner: pointfreeco, version: 0.10.0, source: https://github.com/pointfreeco/swift-tagged
 
