@@ -9,20 +9,23 @@ import SnabbleCore
 import SnabbleAssetProviding
 
 public final class PaymentMethodListViewController: UITableViewController {
+    private let manager: PaymentMethodListManager
     private weak var analyticsDelegate: AnalyticsDelegate?
-
-    private(set) var projectId: Identifier<Project>?
-    private var data: [PaymentGroup] = [] {
-        didSet {
-            tableView.backgroundView?.isHidden = !data.isEmpty
-        }
-    }
     private(set) weak var emptyViewController: PaymentEmptyViewController?
 
     public init(for projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) {
-        self.projectId = projectId
+        self.manager = PaymentMethodListManager(projectId: projectId)
         self.analyticsDelegate = analyticsDelegate
         super.init(style: .insetGrouped)
+    }
+
+    // Convenience accessor for backwards compatibility
+    public var projectId: Identifier<Project>? {
+        return manager.projectId
+    }
+
+    private var data: [PaymentGroup] {
+        return manager.paymentGroups
     }
 
     required init?(coder: NSCoder) {
@@ -58,12 +61,9 @@ public final class PaymentMethodListViewController: UITableViewController {
 
     override public func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-        
-        if let projectId {
-            data = Snabble.shared.project(for: projectId)?.availablePayments() ?? []
-        } else {
-            data = []
-        }
+
+        manager.loadPayments()
+        updateEmptyState()
         tableView.reloadData()
     }
 
@@ -71,9 +71,13 @@ public final class PaymentMethodListViewController: UITableViewController {
         super.viewDidAppear(animated)
         self.analyticsDelegate?.track(.viewPaymentMethodList)
 
-        if data.isEmpty && projectId != nil {
+        if manager.isEmpty && projectId != nil {
             addMethod()
         }
+    }
+
+    private func updateEmptyState() {
+        tableView.backgroundView?.isHidden = !manager.isEmpty
     }
 
     @objc private func addMethod() {
@@ -208,8 +212,8 @@ extension PaymentMethodListViewController {
 
     override public func tableView(_ tableView: UITableView, commit editingStyle: UITableViewCell.EditingStyle, forRowAt indexPath: IndexPath) {
         if let detail = payment(at: indexPath).detail {
-            PaymentMethodDetails.remove(detail)
-            data[indexPath.section].remove(at: indexPath.row)
+            manager.removePayment(detail)
+            updateEmptyState()
             tableView.deleteRows(at: [indexPath], with: .automatic)
         }
     }

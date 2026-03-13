@@ -19,41 +19,20 @@ extension String {
 }
 
 struct PaymentMethodsViewWrapper: View {
-
     var project: SnabbleCore.Project?
-    
-    @State private var paymentVC: PaymentMethodListViewController?
-    
-    @ViewBuilder
-    var content: some View {
-        if let paymentVC, let project {
-            ContainerView(viewController: paymentVC)
-                .toolbar {
-                    ToolbarItem(placement: .primaryAction) {
-                        Button(action: {
-                            paymentVC.addPaymentMethod(for: project.id, analyticsDelegate: nil)
-                        }, label: {
-                            Label("Add Payment", systemImage: "plus")
-                        })
-                    }
-                }
-        } else {
-            SnabbleEmptyView(
-                title: "Payments.emptyMessage".localized,
-                image: Image("CardPayment"),
-                imageWidth: 200)
-        }
-    }
 
     var body: some View {
-        content
-            .task {
-                if paymentVC == nil, let projectId = project?.id {
-                    paymentVC = PaymentMethodListViewController(for: projectId, nil)
-                }
+        Group {
+            if let projectId = project?.id {
+                PaymentMethodListView(projectId: projectId, analyticsDelegate: nil)
+            } else {
+                SnabbleEmptyView(
+                    title: "Payments.emptyMessage".localized,
+                    image: Image("CardPayment"),
+                    imageWidth: 200
+                )
             }
-            .navigationTitle("Payment Methods")
-            .navigationBarTitleDisplayMode(.inline)
+        }
     }
 }
 
