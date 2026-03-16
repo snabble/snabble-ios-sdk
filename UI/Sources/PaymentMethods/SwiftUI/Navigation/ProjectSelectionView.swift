@@ -2,7 +2,7 @@
 //  ProjectSelectionView.swift
 //
 //
-//  Created by Claude Code on 12.03.26.
+//  Created by Uwe Tilemann on 12.03.26.
 //
 
 import SwiftUI
@@ -127,6 +127,8 @@ public struct PaymentMethodProjectNavigationView: View {
 
 /// Internal view that handles navigation between project selection and payment methods
 struct ProjectSelectionList: View {
+    @Environment(\.dismiss) private var dismiss
+
     @State private var manager: PaymentMethodListManager
     @State private var entries: [PaymentMethodListManager.ProjectEntry] = []
     @State private var selectedEntry: PaymentMethodListManager.ProjectEntry?
@@ -185,7 +187,11 @@ struct ProjectSelectionList: View {
                 PaymentMethodAddSheet(
                     projectId: entry.projectId,
                     analyticsDelegate: analyticsDelegate
-                )
+                ) { _ in
+                    dismiss()
+                    loadEntries()
+                }
+                .presentationDetents([.medium])
             }
         }
         .task {

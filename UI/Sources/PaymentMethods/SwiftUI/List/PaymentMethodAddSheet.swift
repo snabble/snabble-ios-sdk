@@ -2,26 +2,45 @@
 //  PaymentMethodAddSheet.swift
 //
 //
-//  Created by Claude Code on 12.03.26.
+//  Created by Uwe Tilemann on 12.03.26.
 //
 
 import SwiftUI
 import SnabbleCore
 import SnabbleAssetProviding
+import LocalAuthentication
 
 // MARK: - Add Payment Sheet
 
 struct PaymentMethodAddSheet: View {
+    @Environment(\.dismiss) private var dismiss
+
     let projectId: Identifier<SnabbleCore.Project>
     weak var analyticsDelegate: AnalyticsDelegate?
 
     @State private var manager: PaymentMethodListManager
-    @Environment(\.dismiss) private var dismiss
+    @State private var showAuthAlert = false
+    @State private var deniedMethod: RawPaymentMethod?
 
-    init(projectId: Identifier<SnabbleCore.Project>, analyticsDelegate: AnalyticsDelegate?) {
+    let onAction: (RawPaymentMethod) -> Void
+
+    init(projectId: Identifier<SnabbleCore.Project>, analyticsDelegate: AnalyticsDelegate?, onAction: @escaping (RawPaymentMethod) -> Void) {
         self.projectId = projectId
         self.analyticsDelegate = analyticsDelegate
         _manager = State(wrappedValue: PaymentMethodListManager(projectId: projectId))
+        self.onAction = onAction
+    }
+
+    private func handleMethodSelection(_ method: RawPaymentMethod) {
+        // Check if adding is allowed (biometric/passcode requirement)
+        if !method.isAddingAllowed {
+            deniedMethod = method
+            showAuthAlert = true
+            return
+        }
+
+        // Notify parent and let it handle navigation
+        onAction(method)
     }
 
     var body: some View {
@@ -60,14 +79,21 @@ struct PaymentMethodAddSheet: View {
                     }
                 }
             }
+            .alert(
+                Asset.localizedString(forKey: "Snabble.PaymentMethods.noDeviceCode"),
+                isPresented: $showAuthAlert
+            ) {
+                Button(Asset.localizedString(forKey: "Snabble.ok"), role: .cancel) { }
+            } message: {
+                Text(authAlertMessage)
+            }
         }
     }
 
-    private func handleMethodSelection(_ method: RawPaymentMethod) {
-        // For now, this is a placeholder.
-        // In a full implementation, we would need to handle navigation to the appropriate
-        // edit view controller or SwiftUI view based on the payment method type.
-        // This is complex because each payment method has different requirements.
-        dismiss()
+    private var authAlertMessage: String {
+        let mode = BiometricAuthentication.supportedBiometry
+        return mode == .none ?
+            Asset.localizedString(forKey: "Snabble.PaymentMethods.NoCodeAlert.noBiometry")
+            : Asset.localizedString(forKey: "Snabble.PaymentMethods.NoCodeAlert.biometry")
     }
 }

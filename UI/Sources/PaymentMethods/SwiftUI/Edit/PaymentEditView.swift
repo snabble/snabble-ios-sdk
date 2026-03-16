@@ -2,7 +2,7 @@
 //  PaymentEditView.swift
 //
 //
-//  Created by Claude Code on 12.03.26.
+//  Created by Uwe Tilemann on 12.03.26.
 //
 
 import SwiftUI
@@ -12,18 +12,19 @@ import SnabbleAssetProviding
 // MARK: - Payment Method Edit View
 
 public struct PaymentEditView: View {
-    @Environment(\.dismiss) private var dismiss
 
     private let payment: Payment
     private let manager: PaymentMethodListManager
     private weak var analyticsDelegate: AnalyticsDelegate?
+    private let onDelete: (Payment) -> Void
 
     @State private var showDeleteAlert = false
 
-    public init(payment: Payment, manager: PaymentMethodListManager, analyticsDelegate: AnalyticsDelegate? = nil) {
+    public init(payment: Payment, manager: PaymentMethodListManager, analyticsDelegate: AnalyticsDelegate? = nil, onDelete: @escaping ((Payment) -> Void)) {
         self.payment = payment
         self.manager = manager
         self.analyticsDelegate = analyticsDelegate
+        self.onDelete = onDelete
     }
 
     public var body: some View {
@@ -43,16 +44,15 @@ public struct PaymentEditView: View {
             ) {
                 Button(Asset.localizedString(forKey: "Snabble.no"), role: .cancel) { }
                 Button(Asset.localizedString(forKey: "Snabble.yes"), role: .destructive) {
-                    handleDelete()
+                    onDelete(payment)
                 }
             }
     }
 
     private func handleDelete() {
         guard let detail = payment.detail else { return }
-
+        
         PaymentMethodDetails.remove(detail)
         analyticsDelegate?.track(.paymentMethodDeleted(detail.displayName))
-        dismiss()
     }
 }

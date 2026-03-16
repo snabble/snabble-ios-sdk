@@ -2,7 +2,7 @@
 //  PaymentMethodListManager.swift
 //
 //
-//  Created by Claude Code on 12.03.26.
+//  Created by Uwe Tilemann on 12.03.26.
 //
 
 import Foundation

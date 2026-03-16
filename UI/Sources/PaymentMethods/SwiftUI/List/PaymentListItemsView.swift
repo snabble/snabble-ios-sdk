@@ -2,7 +2,7 @@
 //  PaymentListItemsView.swift
 //
 //
-//  Created by Claude Code on 12.03.26.
+//  Created by Uwe Tilemann on 12.03.26.
 //
 
 import SwiftUI
@@ -36,7 +36,10 @@ public struct PaymentListItemsView: View {
                                 }
                             }
                             .navigationDestination(item: $selectedPayment) { payment in
-                                PaymentEditView(payment: payment, manager: manager, analyticsDelegate: analyticsDelegate)
+                                PaymentEditView(payment: payment, manager: manager, analyticsDelegate: analyticsDelegate) { payment in
+                                    delete(payment: payment)
+                                    selectedPayment = nil
+                                }
                             }
                     }
                     .onDelete { indexSet in
@@ -60,15 +63,18 @@ public struct PaymentListItemsView: View {
         }
     }
 
+    private func delete(payment: Payment) {
+        if let detail = payment.detail {
+            manager.removePayment(detail)
+            analyticsDelegate?.track(.paymentMethodDeleted(detail.displayName))
+       }
+   }
     private func handleDelete(in group: PaymentGroup, at indexSet: IndexSet) {
         for index in indexSet {
             guard index < group.items.count else { continue }
             let payment = group.items[index]
 
-            if let detail = payment.detail {
-                manager.removePayment(detail)
-                analyticsDelegate?.track(.paymentMethodDeleted(detail.displayName))
-           }
+            delete(payment: payment)
         }
     }
 }

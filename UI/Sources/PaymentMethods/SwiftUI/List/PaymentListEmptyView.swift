@@ -2,7 +2,7 @@
 //  PaymentListEmptyView.swift
 //
 //
-//  Created by Claude Code on 12.03.26.
+//  Created by Uwe Tilemann on 12.03.26.
 //
 
 import SwiftUI
@@ -21,7 +21,7 @@ public struct PaymentListEmptyView: View {
                     .foregroundStyle(.secondary)
             }
 
-            Text(Asset.localizedString(forKey: "Snabble.PaymentMethods.empty"))
+            Text(Asset.localizedString(forKey: "Snabble.Payment.EmptyState.message"))
                 .font(.headline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)

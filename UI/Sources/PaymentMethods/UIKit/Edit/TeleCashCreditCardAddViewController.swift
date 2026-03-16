@@ -183,16 +183,28 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
             delegate.telecashCreditCardAddViewControllerDidComplete(self)
         } else if
             let viewControllers = navigationController?.viewControllers,
-            let viewController = viewControllers.first(where: { viewController in
-                viewController is UserPaymentViewController
-            }),
-            let firstIndex = viewControllers.firstIndex(of: viewController),
-            firstIndex > viewControllers.startIndex {
-            let vcIndex = viewControllers.index(before: firstIndex)
-            let viewController = viewControllers[vcIndex]
-            navigationController?.popToViewController(viewController, animated: true)
+            let userPaymentVC = viewControllers.first(where: { $0 is UserPaymentViewController }) {
+
+            // Check if UserPaymentViewController is at the root of the UIKit navigation stack
+            if viewControllers.first == userPaymentVC {
+                // We're being called from SwiftUI via ContainerView
+                // The UserPaymentViewController is the root of the UIKit navigation
+                // Pop to root to trigger SwiftUI navigation cleanup
+                navigationController?.popToRootViewController(animated: true)
+            } else {
+                // Traditional UIKit flow - pop to before UserPaymentViewController
+                if let userPaymentIndex = viewControllers.firstIndex(of: userPaymentVC),
+                   userPaymentIndex > viewControllers.startIndex {
+                    let targetIndex = viewControllers.index(before: userPaymentIndex)
+                    let targetVC = viewControllers[targetIndex]
+                    navigationController?.popToViewController(targetVC, animated: true)
+                } else {
+                    navigationController?.popViewController(animated: true)
+                }
+            }
         } else {
-            navigationController?.popToRootViewController(animated: true)
+            // No UserPaymentViewController found, just pop once
+            navigationController?.popViewController(animated: true)
         }
     }
 
@@ -272,12 +284,14 @@ extension TeleCashCreditCardAddViewController: WKScriptMessageHandler {
             let connectGatewayReponse = try JSONDecoder().decode(ConnectGatewayResponse.self, from: jsonData)
             if let ccData = TeleCashCreditCardData(connectGatewayReponse, projectId, certificate: cert.data) {
                 deletePreAuth()
-                
+
                 let detail = PaymentMethodDetail(ccData)
                 if let delegate {
                     delegate.telecashCreditCardAddViewController(self, didTokenizePaymentMethodDetail: detail)
                 } else {
                     PaymentMethodDetails.save(detail)
+                    // Notify SwiftUI that payment method was added successfully
+                    NotificationCenter.default.post(name: .paymentMethodAdded, object: nil)
                 }
                 goBack()
             } else {

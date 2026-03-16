@@ -13,9 +13,11 @@ import SnabbleAssetProviding
 
 public struct PaymentMethodListView: View {
     @State private var manager: PaymentMethodListManager
-    @State private var showingAddSheet = false
 
     private weak var analyticsDelegate: AnalyticsDelegate?
+
+    @State private var showingAddSheet = false
+    @State private var selectedMethod: RawPaymentMethod?
 
     public init(projectId: Identifier<SnabbleCore.Project>, analyticsDelegate: AnalyticsDelegate? = nil) {
         _manager = State(wrappedValue: PaymentMethodListManager(projectId: projectId))
@@ -46,8 +48,28 @@ public struct PaymentMethodListView: View {
                 PaymentMethodAddSheet(
                     projectId: projectId,
                     analyticsDelegate: analyticsDelegate
-                )
+                ) { method in
+                    // Check if adding is allowed
+                    guard method.isAddingAllowed else {
+                        return
+                    }
+
+                    // Close sheet first
+                    showingAddSheet = false
+
+                    // Then navigate to add view
+                    Task { @MainActor in
+                        // Small delay to ensure sheet dismissal animation completes
+                        try? await Task.sleep(nanoseconds: 300_000_000) // 0.3 seconds
+                        selectedMethod = method
+                    }
+                }
                 .presentationDetents([.medium])
+            }
+        }
+        .navigationDestination(item: $selectedMethod) { method in
+            if let projectId = manager.projectId {
+                method.addView(projectId: projectId, analyticsDelegate: analyticsDelegate)
             }
         }
         .task {
@@ -58,6 +80,25 @@ public struct PaymentMethodListView: View {
                 // Auto-show add sheet if no payments exist
                 showingAddSheet = true
             }
+        }
+        .onAppear {
+            // Reload payments when returning from add view
+            manager.loadPayments()
+
+            // Reset navigation state when returning to list
+            selectedMethod = nil
+        }
+        .onChange(of: selectedMethod) { oldValue, newValue in
+            // When returning from add view (selectedMethod becomes nil)
+            if oldValue != nil && newValue == nil {
+                manager.loadPayments()
+            }
+        }
+        .onReceive(NotificationCenter.default.publisher(for: .paymentMethodAdded)) { _ in
+            // Payment method was successfully added from UIKit ViewController
+            // Reset navigation state and reload payments
+            selectedMethod = nil
+            manager.loadPayments()
         }
     }
 }

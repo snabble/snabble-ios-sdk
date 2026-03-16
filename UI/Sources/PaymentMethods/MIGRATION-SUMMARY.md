@@ -1,6 +1,6 @@
 # Payment Methods - SwiftUI Migration Summary
 
-## ✅ Migration Complete - Phase 1-2c
+## ✅ Migration Complete - Phase 1-2d
 
 This document summarizes the successful migration of the Payment Methods module from UIKit to SwiftUI, following clean architecture principles with shared business logic and SwiftUI best practices.
 
@@ -255,7 +255,8 @@ UI/Sources/PaymentMethods/
 │       └── PaymentTokenView.swift
 │
 ├── Extensions/
-│   ├── Payment+EditView.swift             (Payment extension for routing)
+│   ├── Payment+EditView.swift             (Payment extension for edit routing)
+│   ├── RawPaymentMethod+AddView.swift     (RawPaymentMethod extension for add routing)
 │   ├── RawPaymentMethod+UI.swift
 │   ├── RawPaymentMethod+Auth.swift
 │   └── TeleCash+User.swift
@@ -416,6 +417,94 @@ navigationController?.pushViewController(addVC, animated: true)
 
 **All payment methods are now accessible from SwiftUI via `PaymentMethodListView`!**
 
+---
+
+## Phase 2d: Add Payment Sheet Implementation ✅
+
+### Goal
+Implement the `handleMethodSelection` method in `PaymentMethodAddSheet` to properly handle adding new payment methods in SwiftUI, migrating logic from the UIKit `PaymentMethodAddViewController`.
+
+### Implementation
+
+#### 1. Created RawPaymentMethod+AddView.swift (215 lines)
+**Purpose:** Provides SwiftUI `addView` method for routing to appropriate payment method add flows
+
+**Key Features:**
+- `addView(projectId:analyticsDelegate:)` - Routes to correct add view based on payment type
+- Checks project configuration and payment descriptor settings
+- Handles SEPA (Payone vs Legacy), Credit Card (TeleCash/Payone/Datatrans), Giropay, Invoice Login
+- Falls back to unavailable view for unsupported methods
+
+**Add View Container Structs:**
+1. `GiropayAddView` - Wraps `GiropayEditViewController` (nil detail = add mode)
+2. `SepaAddView` - Wraps legacy `SepaEditViewController`
+3. `PayoneSepaAddView` - Wraps `SepaDataEditViewController` with new model
+4. `TeleCashCreditCardAddView` - Wraps `TeleCashCreditCardAddViewController` with user validation flow
+5. `PayoneCreditCardAddView` - Wraps `PayoneCreditCardEditViewController`
+6. `InvoiceLoginAddView` - Wraps `InvoiceViewController` with login processor
+7. `DatatransAddView` - Wraps Datatrans SDK entry with optional user validation
+
+#### 2. Updated PaymentMethodAddSheet.swift
+**Changes:**
+- Added `@State private var selectedMethod: RawPaymentMethod?` for navigation
+- Added `@State private var showAuthAlert = false` for biometric authentication alerts
+- Implemented `handleMethodSelection(_ method:)` with proper logic:
+  - Checks `method.isAddingAllowed` (biometric/passcode requirement)
+  - Shows authentication alert if not allowed
+  - Sets `selectedMethod` to trigger navigation
+- Added `.navigationDestination(item: $selectedMethod)` for state-based navigation
+- Added `.alert` for biometric authentication requirement
+- Imported `LocalAuthentication` for `BiometricAuthentication` access
+
+#### 3. Migration from UIKit Logic
+**UIKit Pattern (PaymentMethodAddViewController:118-142):**
+```swift
+private func addMethod(for projectId: Identifier<Project>) {
+    let methods = project.paymentMethods
+        .filter { $0.visible }
+        .sorted { $0.displayName < $1.displayName }
+
+    let sheet = SelectionSheetController(...)
+    methods.forEach { method in
+        let action = SelectionSheetAction(title: method.displayName, image: method.icon) { [self] _ in
+            if method.isAddingAllowed(showAlertOn: self),
+                let controller = method.editViewController(with: projectId, analyticsDelegate) {
+                navigationController?.pushViewController(controller, animated: true)
+            }
+        }
+        sheet.addAction(action)
+    }
+    self.present(sheet, animated: true)
+}
+```
+
+**SwiftUI Pattern (PaymentMethodAddSheet):**
+```swift
+private func handleMethodSelection(_ method: RawPaymentMethod) {
+    // Check if adding is allowed (biometric/passcode requirement)
+    if !method.isAddingAllowed {
+        showAuthAlert = true
+        return
+    }
+
+    // Navigate to add view
+    selectedMethod = method
+}
+
+// In body:
+.navigationDestination(item: $selectedMethod) { method in
+    method.addView(projectId: projectId, analyticsDelegate: analyticsDelegate)
+}
+.alert(...) { /* biometric auth alert */ }
+```
+
+### Benefits
+✅ **State-based Navigation** - Uses SwiftUI's recommended pattern with `@State` + `navigationDestination`
+✅ **Biometric Auth Handling** - Native SwiftUI alert instead of UIAlertController
+✅ **Type-Safe Routing** - Extension-based routing with compiler checks
+✅ **Reusable Add Views** - Separate container view structs for each payment type
+✅ **Backwards Compatible** - Wraps existing UIKit ViewControllers seamlessly
+
 ### ContainerView Integration
 
 All UIKit edit ViewControllers are now accessible in SwiftUI using the `ContainerView` wrapper:
@@ -513,6 +602,115 @@ struct SepaEditView: View {
 
 ---
 
+## Phase 2e: Navigation Fixes & UIKit-SwiftUI Communication ✅
+
+### Problem
+After implementing the add payment flow, several navigation issues emerged:
+
+1. **Delete Navigation Issue**: After deleting a payment method, the view didn't dismiss automatically
+2. **Add Navigation Issue**: After successfully adding a payment method, the user was returned to the UserPaymentViewController instead of PaymentMethodListView
+3. **UIKit-SwiftUI Boundary**: ContainerView wraps UIKit ViewControllers, making it difficult for SwiftUI to know when UIKit navigation completes
+
+### Solution
+
+#### 1. State-Based Navigation for Delete
+**Problem:** Using `dismiss()` from parent view doesn't dismiss child navigation destination.
+
+**Fix:** Set `selectedPayment = nil` to trigger SwiftUI navigation cleanup.
+
+```swift
+// In PaymentListItemsView.swift
+.navigationDestination(item: $selectedPayment) { payment in
+    PaymentEditView(payment: payment, manager: manager, analyticsDelegate: analyticsDelegate) { payment in
+        delete(payment: payment)
+        selectedPayment = nil  // ✅ This dismisses the destination
+    }
+}
+```
+
+#### 2. NotificationCenter for UIKit → SwiftUI Communication
+**Problem:** UIKit ViewControllers inside ContainerView can't directly communicate navigation state to SwiftUI.
+
+**Fix:** Use NotificationCenter to signal successful save from UIKit to SwiftUI.
+
+**Step 1:** Define notification constant (Notification+PaymentMethods.swift)
+```swift
+extension Notification.Name {
+    /// Posted when a payment method is successfully added from UIKit ViewControllers
+    static let paymentMethodAdded = Notification.Name("snabble.paymentMethodAdded")
+}
+```
+
+**Step 2:** Post notification after successful save (TeleCashCreditCardAddViewController.swift)
+```swift
+private func save(_ jsonObject: Any) {
+    // ... save logic ...
+    if let ccData = TeleCashCreditCardData(...) {
+        if let delegate {
+            delegate.telecashCreditCardAddViewController(self, didTokenizePaymentMethodDetail: detail)
+        } else {
+            PaymentMethodDetails.save(detail)
+            // Notify SwiftUI that payment method was added successfully
+            NotificationCenter.default.post(name: .paymentMethodAdded, object: nil)
+        }
+        goBack()
+    }
+}
+```
+
+**Step 3:** Listen for notification in SwiftUI (PaymentMethodListView.swift)
+```swift
+.onReceive(NotificationCenter.default.publisher(for: .paymentMethodAdded)) { _ in
+    // Payment method was successfully added from UIKit ViewController
+    // Reset navigation state and reload payments
+    selectedMethod = nil
+    manager.loadPayments()
+}
+```
+
+#### 3. Smart Navigation Handling in UIKit
+**Problem:** `TeleCashCreditCardAddViewController` has a complex navigation stack with `UserPaymentViewController`.
+
+**Fix:** Detect SwiftUI context and use `popToRootViewController` when called from ContainerView.
+
+```swift
+private func goBack() {
+    if let delegate {
+        delegate.telecashCreditCardAddViewControllerDidComplete(self)
+    } else if
+        let viewControllers = navigationController?.viewControllers,
+        let userPaymentVC = viewControllers.first(where: { $0 is UserPaymentViewController }) {
+
+        // Check if UserPaymentViewController is at the root of the UIKit navigation stack
+        if viewControllers.first == userPaymentVC {
+            // We're being called from SwiftUI via ContainerView
+            // Pop to root to trigger SwiftUI navigation cleanup
+            navigationController?.popToRootViewController(animated: true)
+        } else {
+            // Traditional UIKit flow - pop to before UserPaymentViewController
+            // ... existing logic ...
+        }
+    } else {
+        navigationController?.popViewController(animated: true)
+    }
+}
+```
+
+### Benefits
+✅ **Clean Navigation** - Proper dismiss after delete and add operations
+✅ **UIKit-SwiftUI Bridge** - NotificationCenter provides clean communication
+✅ **Context-Aware** - UIKit code detects SwiftUI vs UIKit navigation context
+✅ **State-Based** - Uses SwiftUI's recommended pattern with state binding
+✅ **Backwards Compatible** - Doesn't break existing UIKit-only flows
+
+### Files Modified
+1. **Notification+PaymentMethods.swift** (new) - Defines `.paymentMethodAdded` notification
+2. **PaymentListItemsView.swift** - Changed `dismiss()` to `selectedPayment = nil`
+3. **PaymentMethodListView.swift** - Added `.onReceive` to listen for payment added notification
+4. **TeleCashCreditCardAddViewController.swift** - Posts notification after save, smart navigation in `goBack()`
+
+---
+
 ## Testing Strategy
 
 ### Unit Tests (Recommended)
@@ -579,6 +777,8 @@ The Payment Methods module has been successfully migrated to a modern, SwiftUI-r
 ✅ **Phase 2a:** UIKit ViewControllers refactored to use shared models
 ✅ **Phase 2b:** Pure SwiftUI views created for first-party features
 ✅ **Phase 2c:** Container views refactored to separate View structs
+✅ **Phase 2d:** Add payment sheet fully implemented with state-based navigation
+✅ **Phase 2e:** Navigation fixes and UIKit-SwiftUI communication via NotificationCenter
 
 **Result:**
 - Clean separation of concerns
@@ -588,6 +788,8 @@ The Payment Methods module has been successfully migrated to a modern, SwiftUI-r
 - Ready for future iOS features
 - Backwards compatible with existing integrations
 - Follows SwiftUI best practices (avoid `@ViewBuilder` for large blocks)
+- Robust UIKit-SwiftUI navigation bridge via NotificationCenter
+- State-based navigation for reliable dismiss/pop behavior
 
 The migration demonstrates best practices for gradual UIKit → SwiftUI migration while maintaining backwards compatibility and supporting third-party integrations.
 
