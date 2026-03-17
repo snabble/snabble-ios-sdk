@@ -35,17 +35,17 @@ public struct PaymentListItemsView: View {
                                     selectedPayment = nil
                                 }
                             }
-                            .navigationDestination(item: $selectedPayment) { payment in
-                                PaymentEditView(payment: payment, manager: manager, analyticsDelegate: analyticsDelegate) { payment in
-                                    delete(payment: payment)
-                                    selectedPayment = nil
-                                }
-                            }
                     }
                     .onDelete { indexSet in
                         handleDelete(in: group, at: indexSet)
                     }
                 }
+            }
+        }
+        .navigationDestination(item: $selectedPayment) { payment in
+            PaymentEditView(payment: payment, manager: manager, analyticsDelegate: analyticsDelegate) { payment in
+                delete(payment: payment)
+                selectedPayment = nil
             }
         }
     }
