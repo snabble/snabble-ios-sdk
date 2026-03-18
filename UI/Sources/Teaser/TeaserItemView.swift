@@ -16,6 +16,11 @@ public struct TeaserItemView: View {
     
     @State private var isLoading = false
     @State private var image: UIImage?
+    
+    public init(teaser: CustomizationConfig.Teaser, action: @escaping (_ action: UIImage?) -> Void) {
+        self.teaser = teaser
+        self.action = action
+    }
 
     @ViewBuilder
     var imageView: some View {
@@ -58,12 +63,11 @@ public struct TeaserItemView: View {
             .padding(.top, 12)
         }
         .animation(.default, value: image)
-        .contentShape(Rectangle())
-        .onTapGesture {
-            action(image)
-        }
         .task {
             await loadImage()
+            // Call action after image is loaded, but only if action closure does something
+            // This allows both NavigationLink and callback-based navigation
+            action(image)
         }
     }
     
