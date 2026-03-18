@@ -10,16 +10,16 @@ import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleComponents
 
-struct CouponCardView: View {
+public struct CouponCardView: View {
     let coupon: Coupon
     @State private var viewModel: CouponViewModel
 
-    init(coupon: Coupon) {
+    public init(coupon: Coupon) {
         self.coupon = coupon
         self._viewModel = State(initialValue: CouponViewModel(coupon: coupon))
     }
 
-    var body: some View {
+    public var body: some View {
         VStack(spacing: 0) {
             // Image area (200pt height)
             ZStack {
