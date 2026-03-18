@@ -19,7 +19,7 @@ public struct PaymentMethodListView: View {
     @State private var showingAddSheet = false
     @State private var selectedMethod: RawPaymentMethod?
 
-    public init(projectId: Identifier<SnabbleCore.Project>, analyticsDelegate: AnalyticsDelegate? = nil) {
+    public init(projectId: Identifier<SnabbleCore.Project>?, analyticsDelegate: AnalyticsDelegate? = nil) {
         _manager = State(wrappedValue: PaymentMethodListManager(projectId: projectId))
         self.analyticsDelegate = analyticsDelegate
     }
