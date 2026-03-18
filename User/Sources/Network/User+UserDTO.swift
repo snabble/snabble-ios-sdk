@@ -9,6 +9,8 @@ import Foundation
 
 extension SnabbleUser.User {
     static func fromDTO(_ user: UserDTO) -> Self {
+        // Use the convenience initializer with separate address properties
+        // which internally creates the Address object
         self.init(
             id: user.id,
             metadata: .init(
