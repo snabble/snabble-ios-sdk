@@ -48,9 +48,13 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             SnabbleCI.register(project)
             snabble.checkInManager.delegate = self
             snabble.checkInManager.startUpdating()
+            // Check for developer check-in
 
             // initialize the product database for this project
             snabble.setupProductDatabase(for: project) { [unowned self] _ in
+                snabble.checkInManager.verifyDeveloperCheckin()
+                appState.checkedInShop = snabble.checkInManager.shop
+
                 transitionView(with: project.shops)
             }
         }
