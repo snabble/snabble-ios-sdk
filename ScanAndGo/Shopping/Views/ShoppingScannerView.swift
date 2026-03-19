@@ -38,13 +38,19 @@ struct ShoppingScannerView: View {
     @Environment(Shopper.self) var model
     
     @Binding var minHeight: CGFloat
-    
+    let configuration: ShopperConfiguration
+
     @State private var topMargin: CGFloat = ScannerCartView.TopMargin
     @State private var showHud: Bool = false
     @State private var zoomLevel: CGFloat = 1
     @State private var zoomSteps: [ZoomStep] = ZoomStep.defaultSteps
     @State private var position: CGFloat = 0
     @State private var scanMessage: ScanMessage?
+    
+    init(minHeight: Binding<CGFloat>, configuration: ShopperConfiguration = .init()) {
+        self._minHeight = minHeight
+        self.configuration = configuration
+    }
     
     var body: some View {
         @Bindable var model = self.model
@@ -56,7 +62,7 @@ struct ShoppingScannerView: View {
                 .offset(x: 0, y: position - 114)
                 .opacity(model.scanningPaused || position == 0 ? 0 : 1)
             PullOverView(minHeight: $minHeight, expanded: $model.scanningPaused, paddingTop: $topMargin, position: $position) {
-                ScannerCartView(minHeight: $minHeight)
+                ScannerCartView(minHeight: $minHeight, offset: configuration.drawerOffset)
             }
             if model.processing || position == 0 {
                 ScannerProcessingView()
