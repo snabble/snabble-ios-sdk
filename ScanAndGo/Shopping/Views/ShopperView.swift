@@ -10,6 +10,19 @@ import SwiftUI
 import SnabbleAssetProviding
 import SnabbleComponents
 
+public struct ShopperConfiguration {
+    let drawerOffset: CGFloat
+    let showDismiss: Bool
+    
+    public init(
+        drawerOffset: CGFloat = 0,
+        showDismiss: Bool = true
+    ) {
+        self.drawerOffset = drawerOffset
+        self.showDismiss = showDismiss
+    }
+}
+
 /// A view that manages the shopping session for a user, integrating with the Shopper model to handle barcode scanning, displaying scan messages, and error handling.
 public struct ShopperView: View {
     @Environment(Shopper.self) private var model
@@ -23,14 +36,16 @@ public struct ShopperView: View {
     @State private var bundles: [BarcodeManager.ScannedItem] = []
 
     @SwiftUI.Environment(\.dismiss) var dismiss
+    let configuration: ShopperConfiguration
     
-    public init() {
+    public init(configuration: ShopperConfiguration = .init()) {
+        self.configuration = configuration
     }
     
     public var body: some View {
         @Bindable var model = model
 
-        ShoppingScannerView(minHeight: $minHeight)
+        ShoppingScannerView(minHeight: $minHeight, configuration: configuration)
             .edgesIgnoringSafeArea(.bottom)
             .animation(.easeInOut, value: model.scannedItem)
             .navigationDestination(isPresented: $model.isNavigating) {
@@ -112,25 +127,44 @@ public struct ShopperView: View {
                 }
             }
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button(action: {
-                        dismiss()
-                    }, label: {
-                        Text(keyed: "Snabble.done")
-                    })
-                }
-                ToolbarItemGroup(placement: .topBarTrailing) {
-                    Button(action: {
-                        model.flashlight.toggle()
-                    }, label: {
-                        Image(systemName: model.flashlight == true ? "flashlight.on.fill" : "flashlight.off.fill")
-                    })
-                    Button(action: {
-                        model.stopScanner()
-                        showSearch.toggle()
-                    }, label: {
-                        Image(systemName: "magnifyingglass")
-                    })
+                if configuration.showDismiss {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button(action: {
+                            dismiss()
+                        }, label: {
+                            Text(keyed: "Snabble.done")
+                        })
+                    }
+                    ToolbarItemGroup(placement: .topBarTrailing) {
+                        Button(action: {
+                            model.flashlight.toggle()
+                        }, label: {
+                            Image(systemName: model.flashlight == true ? "flashlight.on.fill" : "flashlight.off.fill")
+                        })
+                        Button(action: {
+                            model.stopScanner()
+                            showSearch.toggle()
+                        }, label: {
+                            Image(systemName: "magnifyingglass")
+                        })
+                    }
+                } else {
+                    ToolbarItemGroup(placement: .topBarLeading) {
+                        Button(action: {
+                            model.flashlight.toggle()
+                        }, label: {
+                            Image(systemName: model.flashlight == true ? "flashlight.on.fill" : "flashlight.off.fill")
+                        })
+                    }
+                    ToolbarItemGroup(placement: .topBarTrailing) {
+                        Button(action: {
+                            model.stopScanner()
+                            showSearch.toggle()
+                        }, label: {
+                            Image(systemName: "magnifyingglass")
+                        })
+                    }
+
                 }
             }
     }
