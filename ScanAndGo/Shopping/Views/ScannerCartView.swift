@@ -23,9 +23,11 @@ struct ScannerCartView: View {
     
     @ScaledMetric private var barHeight = CGFloat(74)
     @ScaledMetric private var visibleRowHeight = CGFloat(58)
-
-    init(minHeight: Binding<CGFloat>) {
+    let offset: CGFloat
+    
+    init(minHeight: Binding<CGFloat>, offset: CGFloat = 0) {
         self._minHeight = minHeight
+        self.offset = offset
     }
     
     var body: some View {
@@ -48,6 +50,6 @@ struct ScannerCartView: View {
         let avg = visibleRowHeight
         
         // swiftlint:disable:next empty_count
-        minHeight = barHeight + (count == 0 ? 0 : (count > 1 ? avg + avg : avg))
+        minHeight = barHeight + offset + (count == 0 ? 0 : (count > 1 ? avg + avg : avg))
     }
 }
