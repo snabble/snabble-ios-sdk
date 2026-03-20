@@ -27,7 +27,8 @@ struct BarcodeSearchRowView: View {
         VStack(alignment: .leading) {
             Text(codeString)
             Text(product.name)
-                .font(.caption)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
         }
         .padding(.horizontal)
         .containerRelativeFrame(.horizontal, alignment: .leading)
