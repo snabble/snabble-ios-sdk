@@ -12,7 +12,7 @@ import LocalAuthentication
 
 // MARK: - Add Payment Sheet
 
-struct PaymentMethodAddSheet: View {
+public struct PaymentMethodAddSheet: View {
     @Environment(\.dismiss) private var dismiss
 
     let projectId: Identifier<SnabbleCore.Project>
@@ -24,7 +24,7 @@ struct PaymentMethodAddSheet: View {
 
     let onAction: (RawPaymentMethod) -> Void
 
-    init(projectId: Identifier<SnabbleCore.Project>, analyticsDelegate: AnalyticsDelegate?, onAction: @escaping (RawPaymentMethod) -> Void) {
+    public init(projectId: Identifier<SnabbleCore.Project>, analyticsDelegate: AnalyticsDelegate? = nil, onAction: @escaping (RawPaymentMethod) -> Void) {
         self.projectId = projectId
         self.analyticsDelegate = analyticsDelegate
         _manager = State(wrappedValue: PaymentMethodListManager(projectId: projectId))
@@ -43,7 +43,7 @@ struct PaymentMethodAddSheet: View {
         onAction(method)
     }
 
-    var body: some View {
+    public var body: some View {
         NavigationStack {
             List {
                 ForEach(manager.availableMethods, id: \.rawValue) { method in
