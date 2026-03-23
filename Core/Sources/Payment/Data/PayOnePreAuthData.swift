@@ -7,13 +7,13 @@
 
 import Foundation
 
-public struct PayonePreAuthData: Encodable {
+public struct PayonePreAuthData: Encodable, Sendable {
     let pseudoCardPAN: String
     let lastname: String
     let email: String
     let address: Address
     
-    struct Address: Encodable {
+    struct Address: Encodable, Sendable {
         let street: String
         let zip: String
         let city: String

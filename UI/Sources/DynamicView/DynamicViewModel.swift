@@ -20,8 +20,8 @@ public struct DynamicAction {
 
 @Observable
 public class DynamicViewModel: NSObject, Decodable {
-    nonisolated(unsafe) private var _configuration: DynamicViewConfiguration
-    nonisolated(unsafe) private var _widgets: [Widget]
+    nonisolated private var _configuration: DynamicViewConfiguration
+    nonisolated private var _widgets: [Widget]
     
     public var configuration: DynamicViewConfiguration { _configuration }
     public var widgets: [Widget] { _widgets }

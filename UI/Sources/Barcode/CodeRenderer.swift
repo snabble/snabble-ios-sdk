@@ -11,6 +11,7 @@ import CoreImage
 protocol CodeRenderer { }
 
 extension CodeRenderer {
+    @MainActor
     static func render(_ image: CIImage?,
                        scale: Int,
                        additionalQuietZone: Int,

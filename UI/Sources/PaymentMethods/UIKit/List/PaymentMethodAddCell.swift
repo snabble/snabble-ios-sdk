@@ -87,10 +87,14 @@ final class PaymentMethodAddCell: UITableViewCell {
     func configure(with viewModel: PaymentMethodAddCellViewModel) {
         nameLabel?.text = viewModel.name
 
-        projectId = viewModel.projectId
-        SnabbleCI.getAsset(.storeIcon, projectId: viewModel.projectId) { [weak self] img in
-            if self?.projectId == viewModel.projectId {
-                self?.icon?.image = img
+        let modelProjectId = viewModel.projectId
+        
+        projectId = modelProjectId
+        SnabbleCI.getAsset(.storeIcon, projectId: modelProjectId) { img in
+            Task { @MainActor [weak self] in
+                if self?.projectId == modelProjectId {
+                    self?.icon?.image = img
+                }
             }
         }
         countLabel?.text = viewModel.count

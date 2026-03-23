@@ -7,6 +7,7 @@
 
 import SwiftUI
 import SnabbleCore
+import SnabbleComponents
 
 open class CouponCartItemModel: CartItemModel, ShoppingCartItemCounting {
     

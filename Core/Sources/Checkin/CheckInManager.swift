@@ -36,7 +36,6 @@ public class CheckInManager: NSObject, @unchecked Sendable {
     /// Current checked in `Shop`
     public var shop: Shop? {
         didSet {
-            shopPublisher.send(shop)
             shopContinuation?.yield(shop)
             if let shop = oldValue {
                 checkedInAt = nil
@@ -187,7 +186,6 @@ extension CheckInManager: CLLocationManagerDelegate {
         @unknown default:
             break
         }
-        authorizationStatusSubject.send(manager.authorizationStatus)
         authorizationContinuation?.yield(manager.authorizationStatus)
     }
 

@@ -40,6 +40,9 @@ struct ScannerCartView: View {
         .onReceive(NotificationCenter.default.publisher(for: .snabbleCartUpdated)) { _ in
             update()
         }
+        .onChange(of: model.cartModel.items) {
+            update()
+        }
         .task {
             update()
         }

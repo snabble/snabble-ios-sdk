@@ -7,52 +7,37 @@
 
 import Foundation
 import SwiftUI
-import Combine
 import SnabbleCore
 
-@Observable
-private class AllStoresViewModel {
-    var widget: WidgetButton?
+public struct WidgetAllStoresView: View {
+    let widget: WidgetAllStores
+    let action: (WidgetAllStores) -> Void
 
-    private var cancellables = Set<AnyCancellable>()
+    @State private var buttonWidget: WidgetButton?
 
-    init(widget: WidgetAllStores) {
-        Snabble.shared.checkInManager.shopPublisher
-            .sink { [weak self] shop in
+    public var body: some View {
+        Group {
+            if let buttonWidget {
+                WidgetButtonView(widget: buttonWidget) { _ in
+                    action(widget)
+                }
+            }
+        }
+        .task {
+            for await shop in Snabble.shared.checkInManager.shopStream {
                 if shop != nil {
-                    self?.widget = WidgetButton(
+                    buttonWidget = WidgetButton(
                         id: widget.id,
                         text: "Snabble.DynamicView.AllStores.button"
                     )
                 } else {
-                    self?.widget = WidgetButton(
+                    buttonWidget = WidgetButton(
                         id: widget.id,
                         text: "Snabble.DynamicView.AllStores.button",
                         foregroundColorSource: "onProjectPrimary",
                         backgroundColorSource: "projectPrimary"
                     )
                 }
-            }
-            .store(in: &cancellables)
-    }
-}
-
-public struct WidgetAllStoresView: View {
-    let widget: WidgetAllStores
-    let action: (WidgetAllStores) -> Void
-
-    @State private var viewModel: AllStoresViewModel
-
-    init(widget: WidgetAllStores, action: @escaping (WidgetAllStores) -> Void) {
-        self.widget = widget
-        self.action = action
-        self._viewModel = State(wrappedValue: AllStoresViewModel(widget: widget))
-    }
-
-    public var body: some View {
-        if let widget = viewModel.widget {
-            WidgetButtonView(widget: widget) { _ in
-                action(self.widget)
             }
         }
     }

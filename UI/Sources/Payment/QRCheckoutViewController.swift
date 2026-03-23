@@ -227,7 +227,9 @@ final class QRCheckoutViewController: UIViewController {
         let poller = PaymentProcessPoller(self.process, SnabbleCI.project)
         poller.waitFor([.paymentSuccess]) { events in
             if let success = events[.paymentSuccess] {
-                self.paymentFinished(success, poller.updatedProcess)
+                Task { @MainActor [weak self] in
+                    self?.paymentFinished(success, poller.updatedProcess)
+                }
             }
         }
         self.poller = poller
@@ -277,8 +279,10 @@ final class QRCheckoutViewController: UIViewController {
             self.cart.generateNewUUID()
         }
 
-        let checkoutSteps = CheckoutStepsViewController(shop: shop, shoppingCart: cart, checkoutProcess: process)
-        checkoutSteps.paymentDelegate = delegate
-        self.navigationController?.pushViewController(checkoutSteps, animated: true)
+        // FIXME: CheckoutStepsViewController deleted - needs SwiftUI replacement for SDK 1.0
+        // let checkoutSteps = CheckoutStepsViewController(shop: shop, shoppingCart: cart, checkoutProcess: process)
+        // checkoutSteps.paymentDelegate = delegate
+        // Temporary: Call delegate directly
+        delegate?.checkoutFinished(cart, process)
     }
 }

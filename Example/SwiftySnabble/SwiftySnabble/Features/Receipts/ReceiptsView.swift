@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-import SnabbleUI
+import SnabbleReceipts
 
 struct ReceiptsView: View {
     @State private var model = PurchasesViewModel()

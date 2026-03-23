@@ -43,7 +43,7 @@ extension ShoppingCartViewModel {
 //                CouponItemView(itemModel: itemModel, showImages: showImages)
             }
         } else if case .voucher(let cartVoucher, let lineItems) = item {
-            VoucherItemView(voucher: cartVoucher.voucher, lineItems: lineItems) { @Sendable in
+            VoucherItemView(voucher: cartVoucher.voucher, lineItems: lineItems) { @MainActor in
                 self.trash(item: item)
             }
         }

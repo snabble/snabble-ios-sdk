@@ -224,6 +224,7 @@ public final class SepaEditViewController: UIViewController {
         self.analyticsDelegate?.track(.viewPaymentMethodDetail)
     }
 
+    @MainActor
     @objc private func saveButtonTapped(_ sender: Any) {
         guard
             let country = self.ibanCountryField.text,
@@ -262,8 +263,12 @@ public final class SepaEditViewController: UIViewController {
 
         if showError {
             Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { _ in
-                self.fadeText(self.ibanLabel, Asset.localizedString(forKey: "Snabble.Payment.SEPA.iban"))
-                self.fadeText(self.nameLabel, Asset.localizedString(forKey: "Snabble.Payment.SEPA.name"))
+                Task { @MainActor [weak self] in
+                    guard let self else { return }
+                    
+                    self.fadeText(self.ibanLabel, Asset.localizedString(forKey: "Snabble.Payment.SEPA.iban"))
+                    self.fadeText(self.nameLabel, Asset.localizedString(forKey: "Snabble.Payment.SEPA.name"))
+                }
             }
         }
 
@@ -301,7 +306,9 @@ public final class SepaEditViewController: UIViewController {
 
             project.perform(request) { (_: Result<Empty, SnabbleError>, response) in
                 if response?.statusCode == 201 { // created
-                    self.goBack()
+                    Task { @MainActor [weak self] in
+                        self?.goBack()
+                    }
                 }
             }
         }
@@ -311,6 +318,7 @@ public final class SepaEditViewController: UIViewController {
         navigationController?.popViewController(animated: true)
     }
 
+    @MainActor
     @objc private func deleteButtonTapped(_ sender: Any) {
         guard let detail = self.detail else {
             return

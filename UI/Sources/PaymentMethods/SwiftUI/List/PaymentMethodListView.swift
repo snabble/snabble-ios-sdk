@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+
 import SnabbleCore
 import SnabbleAssetProviding
 
@@ -76,7 +77,7 @@ public struct PaymentMethodListView: View {
             manager.loadPayments()
             analyticsDelegate?.track(.viewPaymentMethodList)
 
-            if manager.isEmpty, let projectId = manager.projectId {
+            if manager.isEmpty, manager.projectId != nil {
                 // Auto-show add sheet if no payments exist
                 showingAddSheet = true
             }

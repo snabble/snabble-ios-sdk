@@ -46,9 +46,11 @@ public final class TeaserModel {
         let fullUrlString = "\(Snabble.shared.environment.apiURLString)\(urlString)"
         
         return await withCheckedContinuation { continuation in
-            project.fetchImage(urlString: fullUrlString) { [weak self] image in
+            project.fetchImage(urlString: fullUrlString) { image in
                 if let image = image {
-                    self?.imageCache[urlString] = image
+                    Task { @MainActor [weak self] in
+                        self?.imageCache[urlString] = image
+                    }
                 }
                 continuation.resume(returning: image)
             }

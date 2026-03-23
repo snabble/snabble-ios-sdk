@@ -68,7 +68,7 @@ public struct ScannedCode: Codable, Sendable {
 }
 
 /// a coupon entry in a shopping cart
-public struct CartCoupon: Codable {
+public struct CartCoupon: Codable, Sendable {
     public let uuid: String
     public let coupon: Coupon
     public let scannedCode: String?
@@ -80,7 +80,7 @@ public struct CartCoupon: Codable {
 }
 
 /// a voucher entry in a shopping cart
-public struct CartVoucher: Codable {
+public struct CartVoucher: Codable, Sendable {
     public let uuid: String
     public let voucher: Voucher
 

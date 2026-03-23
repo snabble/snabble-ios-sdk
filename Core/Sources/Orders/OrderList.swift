@@ -38,6 +38,24 @@ public struct Order: Codable, Sendable, Hashable {
     }
 }
 
+// MARK: - PurchaseProviding Conformance
+extension Order: PurchaseProviding {
+    public var name: String { shopName }
+    public var amount: String? {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .currency
+        formatter.currencyCode = "EUR"  // FIXME: Should use project currency
+        return formatter.string(from: NSNumber(value: Double(price) / 100.0))
+    }
+    public var time: String {
+        let formatter = DateFormatter()
+        formatter.timeStyle = .short
+        return formatter.string(from: date)
+    }
+    public var loaded: Bool { links.receipt != nil }
+    public var isRead: Bool { false }  // FIXME: Implement read status tracking
+}
+
 extension OrderList {
     public static func load(_ project: Project, completion: @escaping @Sendable (Result<OrderList, SnabbleError>) -> Void ) {
         var url: String?
@@ -115,7 +133,7 @@ extension Order {
         }
     }
    
-    public static func download(_ project: Project, receipt: Link?, completion: @escaping (Result<URL, Error>) -> Void ) {
+    public static func download(_ project: Project, receipt: Link?, completion: @escaping @Sendable (Result<URL, Error>) -> Void ) {
         guard let link = receipt?.href else {
             Log.error("error downloading receipt: no receipt link?!?")
             return completion(.failure(SnabbleError.noRequest))
@@ -143,7 +161,7 @@ extension Order {
         }
     }
     
-    private func download(_ project: Project, _ targetPath: URL, completion: @escaping (Result<URL, Error>) -> Void ) {
+    private func download(_ project: Project, _ targetPath: URL, completion: @escaping @Sendable (Result<URL, Error>) -> Void ) {
         
         Order.download(project, receipt: self.links.receipt) { result in
             switch result {

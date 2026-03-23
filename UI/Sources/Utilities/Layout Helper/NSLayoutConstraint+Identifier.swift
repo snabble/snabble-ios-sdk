@@ -24,6 +24,7 @@ extension Array where Element: NSLayoutConstraint {
     ///
     /// - Parameter identifier: The identifier to be searched.
     /// - Returns: The first constraint with the identifier
+    @MainActor
     public func first(with identifier: String) -> Element? {
         first(where: { constraint in
             constraint.identifier == identifier

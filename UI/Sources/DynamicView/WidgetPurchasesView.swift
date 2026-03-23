@@ -8,8 +8,9 @@
 import SwiftUI
 import Combine
 import SnabbleCore
+import SnabbleComponents
 
-extension Array where Element == PurchaseProviding {
+extension Array where Element == any PurchaseProviding {
     var title: String {
         return count > 1 ? "Snabble.DynamicView.lastPurchases" : "Snabble.DynamicView.lastPurchase"
     }
@@ -20,7 +21,7 @@ public struct WidgetLastPurchasesView: View {
     let configuration: DynamicViewConfiguration
     let action: (DynamicAction) -> Void
     
-    @State var projectId: Identifier<Project>
+    @State var projectId: Identifier<SnabbleCore.Project>
     
     init(widget: WidgetLastPurchases, configuration: DynamicViewConfiguration, action: @escaping (DynamicAction) -> Void) {
         self.widget = widget
@@ -62,7 +63,7 @@ public struct WidgetLastPurchasesView: View {
         }
     }
     
-    private func load(projectId: Identifier<Project>) async -> [PurchaseProviding] {
+    private func load(projectId: Identifier<SnabbleCore.Project>) async -> [any PurchaseProviding] {
         guard let project = Snabble.shared.project(for: projectId) else {
             return []
         }
@@ -82,7 +83,7 @@ public struct WidgetLastPurchasesView: View {
 }
 
 private struct WidgetOrderView: View {
-    let provider: PurchaseProviding
+    let provider: any PurchaseProviding
 
     public var body: some View {
         VStack(alignment: .leading) {

@@ -11,8 +11,8 @@ import SnabbleComponents
 
 public struct ShopView: View {
     @SwiftUI.Environment(\.projectTrait) private var project
-    
-    var shop: ShopProviding
+
+    var shop: any ShopProviding
 
     @State var viewModel: ShopsViewModel
     @State private var showingAlert = false

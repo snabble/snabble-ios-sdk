@@ -10,7 +10,7 @@ import UIKit
 import SnabbleCore
 
 extension Project {
-    func fetchImage(urlString: String, completion: @escaping (UIImage?) -> Void) {
+    func fetchImage(urlString: String, completion: @escaping @Sendable (UIImage?) -> Void) {
         request(.get, urlString, timeout: 3) { request in
             guard let request = request else {
                 return completion(nil)

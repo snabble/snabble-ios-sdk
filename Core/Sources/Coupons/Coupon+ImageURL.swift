@@ -17,17 +17,13 @@ private extension Format {
 }
 
 extension Coupon {
-    /// map image resolution names to what best fits @3x/@2x
-    private static var imageSizes: [String] {
-        let defaultSizes = [ "xhdpi", "hdpi", "mdpi", "ldpi", "thumbnail" ]
+    /// map image resolution names to what best fits @3x/@2x (assumes @3x for nonisolated contexts)
+    nonisolated private static var imageSizes: [String] {
 #if os(iOS)
-        var sizes = defaultSizes
-        if UIScreen.main.scale >= 3 {
-            sizes.insert("xxhdpi", at: 0)
-        }
-        return sizes
+        // Default to @3x resolution order for modern devices when called from nonisolated context
+        return ["xxhdpi", "xhdpi", "hdpi", "mdpi", "ldpi", "thumbnail"]
 #else
-        return defaultSizes
+        return ["xhdpi", "hdpi", "mdpi", "ldpi", "thumbnail"]
 #endif
     }
 

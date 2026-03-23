@@ -39,7 +39,7 @@ extension InternalBarcodeDetector.State: CustomStringConvertible {
 }
 
 @Observable
-open class InternalBarcodeDetector: NSObject, Zoomable {
+open class InternalBarcodeDetector: NSObject, Zoomable, @unchecked Sendable {
     public static var batterySaverTimeout: TimeInterval { 90 }
     public static var batterySaverKey: String { "io.snabble.sdk.batterySaver" }
     public static var zoomValueKey: String { "io.snabble.sdk.zoomValue" }
@@ -99,10 +99,10 @@ open class InternalBarcodeDetector: NSObject, Zoomable {
     }
     public let statePublisher = PassthroughSubject<InternalBarcodeDetector.State, Never>()
 
-    nonisolated(unsafe) public var previewLayer: AVCaptureVideoPreviewLayer?
+    public var previewLayer: AVCaptureVideoPreviewLayer?
     public var permissionGranted = false // Flag for permission
 
-    nonisolated(unsafe) public let sessionQueue: DispatchQueue
+    nonisolated public let sessionQueue: DispatchQueue
 
     public weak var batterySaverTimer: Timer?
     public var scanDebounce: TimeInterval = 3
@@ -258,8 +258,8 @@ open class InternalBarcodeDetector: NSObject, Zoomable {
     nonisolated open func setROI(rect roi: CGRect) {
         // These properties are accessed across dispatch queues with manual synchronization
         nonisolated(unsafe) let previewLayer = self.previewLayer
-        nonisolated(unsafe) let sessionQueue = self.sessionQueue
         nonisolated(unsafe) let metadataOutput = self.metadataOutput
+        let sessionQueue = self.sessionQueue
 
         DispatchQueue.main.async {
             let rect = previewLayer?.metadataOutputRectConverted(fromLayerRect: roi)
@@ -287,7 +287,8 @@ open class InternalBarcodeDetector: NSObject, Zoomable {
     }
     private func requestCameraPermission() {
         sessionQueue.suspend()
-        AVCaptureDevice.requestAccess(for: .video) { [unowned self] granted in
+        AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
+            guard let self else { return }
             self.permissionGranted = granted
             self.sessionQueue.resume()
         }

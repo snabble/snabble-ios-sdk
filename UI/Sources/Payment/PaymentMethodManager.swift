@@ -23,7 +23,8 @@ public protocol PaymentMethodManagerDelegate: AnyObject {
 }
 
 @Observable
-public final class PaymentMethodManager {
+@MainActor
+public final class PaymentMethodManager: Sendable {
     public var selectedPayment: Payment?
     public var hasMethodsToSelect: Bool = true
     
@@ -47,21 +48,25 @@ public final class PaymentMethodManager {
         self.setDefaultPaymentMethod()
         
         let nc = NotificationCenter.default
-        _ = nc.addObserver(forName: .snabblePaymentMethodAdded, object: nil, queue: OperationQueue.main) { [weak self] notification in
+        _ = nc.addObserver(forName: .snabblePaymentMethodAdded, object: nil, queue: OperationQueue.main) { notification in
             guard let detail = notification.userInfo?["detail"] as? PaymentMethodDetail else {
                 return
             }
-            self?.details = PaymentMethodDetails.read().filter { detail in
-                SnabbleCI.project.paymentMethods.available.contains { $0 == detail.rawMethod }
+            Task { @MainActor [weak self] in
+                self?.details = PaymentMethodDetails.read().filter { detail in
+                    SnabbleCI.project.paymentMethods.available.contains { $0 == detail.rawMethod }
+                }
+                self?.selectMethodIfValid(detail)
             }
-            self?.selectMethodIfValid(detail)
         }
         
         _ = nc.addObserver(forName: .snabblePaymentMethodDeleted, object: nil, queue: OperationQueue.main) { [weak self] _ in
-            self?.details = PaymentMethodDetails.read().filter { detail in
-                SnabbleCI.project.paymentMethods.available.contains { $0 == detail.rawMethod }
+            Task { @MainActor [weak self] in
+                self?.details = PaymentMethodDetails.read().filter { detail in
+                    SnabbleCI.project.paymentMethods.available.contains { $0 == detail.rawMethod }
+                }
+                self?.selectMethodIfValid()
             }
-            self?.selectMethodIfValid()
         }
     }
     
@@ -157,15 +162,16 @@ public final class PaymentMethodManager {
 
 public protocol SheetProviding {
     typealias DismissHandler = () -> Void
-    func sheetController(_ onDismiss: DismissHandler?) -> UIViewController
+    @MainActor func sheetController(_ onDismiss: DismissHandler?) -> UIViewController
 }
 
 public protocol AlertProviding {
     typealias DismissHandler = @Sendable (UIAlertAction) -> Void
-    func alertController(_ onDismiss: DismissHandler?) -> UIAlertController
+    @MainActor func alertController(_ onDismiss: DismissHandler?) -> UIAlertController
 }
 
 extension PaymentMethodManager: SheetProviding {
+    @MainActor
     public func sheetController(_ onDismiss: DismissHandler? = { }) -> UIViewController {
         let title = Asset.localizedString(forKey: "Snabble.Shoppingcart.howToPay")
         let sheet = AlertController(title: title, message: nil, preferredStyle: .actionSheet)

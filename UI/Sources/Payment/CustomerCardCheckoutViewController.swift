@@ -8,6 +8,7 @@ import UIKit
 import SnabbleCore
 import SnabbleAssetProviding
 
+@MainActor
 final class CustomerCardCheckoutViewController: UIViewController {
     private weak var iconWrapper: UIView?
     private weak var iconImageView: UIImageView?
@@ -215,10 +216,12 @@ final class CustomerCardCheckoutViewController: UIViewController {
         super.viewDidAppear(animated)
 
         Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { _ in
-            UIView.animate(withDuration: 0.2) {
-                self.paidButton?.alpha = 1
+            Task { @MainActor [weak self] in
+                UIView.animate(withDuration: 0.2) {
+                    self?.paidButton?.alpha = 1
+                }
+                self?.paidButton?.isUserInteractionEnabled = true
             }
-            self.paidButton?.isUserInteractionEnabled = true
         }
     }
 
@@ -231,12 +234,16 @@ final class CustomerCardCheckoutViewController: UIViewController {
     private func setupIcons() {
         SnabbleCI.getAsset(.checkoutOffline, bundlePath: "Checkout/\(SnabbleCI.project.id)/checkout-offline") { img in
             if let img = img {
-                self.iconImageView?.image = img
-                self.iconImageHeight?.constant = img.size.height
-                self.iconWrapper?.isHidden = false
-                let scaledArrowWrapperHeight = UIFontMetrics.default.scaledValue(for: self.arrowIconHeight)
-                self.arrowWrapper?.heightAnchor.constraint(equalToConstant: scaledArrowWrapperHeight).usingPriority(.defaultHigh + 1).isActive = true
-                self.arrowWrapper?.isHidden = false
+                Task { @MainActor [weak self] in
+                    guard let self else { return }
+                    
+                    self.iconImageView?.image = img
+                    self.iconImageHeight?.constant = img.size.height
+                    self.iconWrapper?.isHidden = false
+                    let scaledArrowWrapperHeight = UIFontMetrics.default.scaledValue(for: self.arrowIconHeight)
+                    self.arrowWrapper?.heightAnchor.constraint(equalToConstant: scaledArrowWrapperHeight).usingPriority(.defaultHigh + 1).isActive = true
+                    self.arrowWrapper?.isHidden = false
+                }
             }
         }
     }
@@ -244,8 +251,10 @@ final class CustomerCardCheckoutViewController: UIViewController {
     @objc private func paidButtonTapped(_ sender: Any) {
         self.cart.removeAll(endSession: true, keepBackup: true)
 
-        let checkoutSteps = CheckoutStepsViewController(shop: shop, shoppingCart: cart, checkoutProcess: process)
-        checkoutSteps.paymentDelegate = delegate
-        self.navigationController?.pushViewController(checkoutSteps, animated: true)
+        // FIXME: CheckoutStepsViewController deleted - needs SwiftUI replacement for SDK 1.0
+        // let checkoutSteps = CheckoutStepsViewController(shop: shop, shoppingCart: cart, checkoutProcess: process)
+        // checkoutSteps.paymentDelegate = delegate
+        // Temporary: Call delegate directly
+        delegate?.checkoutFinished(cart, process)
     }
 }

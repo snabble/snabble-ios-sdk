@@ -230,10 +230,14 @@ public final class GiropayEditViewController: UIViewController {
                         return
                     }
 
-                    self.webView?.load(URLRequest(url: webUrl))
-                    self.clientAuthorization = authResult.links._self.href
+                    Task { @MainActor in
+                        self.webView?.load(URLRequest(url: webUrl))
+                        self.clientAuthorization = authResult.links._self.href
+                    }
                 case .failure(let error):
-                    self.errorView?.isHidden = false
+                    Task { @MainActor in
+                        self.errorView?.isHidden = false
+                    }
                     print(error)
                 }
             }
@@ -295,13 +299,12 @@ public final class GiropayEditViewController: UIViewController {
 }
 
 extension GiropayEditViewController: WKNavigationDelegate {
-    public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+    public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction) async -> WKNavigationActionPolicy {
         print("navigation action: \(navigationAction)")
 
         if navigationAction.navigationType == .linkActivated, let url = navigationAction.request.url {
-            UIApplication.shared.open(url)
-            decisionHandler(.cancel)
-            return
+            await UIApplication.shared.open(url)
+            return .cancel
         }
 
         // handle our redirect URLs
@@ -313,30 +316,39 @@ extension GiropayEditViewController: WKNavigationDelegate {
                     let auth = self.clientAuthorization,
                     let data = GiropayData(cert.data, auth, self.authData)
                 else {
-                    return
+                    return .allow
                 }
 
                 let detail = PaymentMethodDetail(data)
                 PaymentMethodDetails.save(detail)
 
-                self.goBack()
+                await MainActor.run {
+                    self.goBack()
+                }
+                return .allow
             case RedirectStatus.failure.url:
                 self.clientAuthorization = nil
                 let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.Giropay.AuthorizationFailed.title"),
                                               message: Asset.localizedString(forKey: "Snabble.Giropay.AuthorizationFailed.message"),
                                               preferredStyle: .alert)
 
-                self.present(alert, animated: true)
-                self.goBack()
+                await MainActor.run {
+                    self.present(alert, animated: true)
+                    self.goBack()
+                }
+                return .allow
             case RedirectStatus.cancelled.url:
                 self.clientAuthorization = nil
-                self.goBack()
+                await MainActor.run {
+                    self.goBack()
+                }
+                return .allow
             default:
                 break
             }
         }
 
-        decisionHandler(.allow)
+        return .allow
     }
 
     private func goBack() {

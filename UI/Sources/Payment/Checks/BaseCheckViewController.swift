@@ -6,10 +6,10 @@
 import UIKit
 import SwiftUI
 import SnabbleCore
-import Combine
 import SnabbleAssetProviding
 
 @Observable
+@MainActor
 open class BaseCheckViewModel: CheckViewModel, @unchecked Sendable {
     public var checkModel: CheckModel
     public var codeImage: UIImage?
@@ -23,17 +23,14 @@ open class BaseCheckViewModel: CheckViewModel, @unchecked Sendable {
     public var idString: String {
         return String(checkModel.checkoutProcess.id.suffix(4))
     }
-    nonisolated(unsafe) private var cancellables = Set<AnyCancellable>()
 
     public init(checkModel: CheckModel) {
         self.checkModel = checkModel
         self.checkModel.continuation = checkContinuation(_:)
         
-        self.checkModel.assetPublisher()
-            .sink { [unowned self] image in
-                self.headerImage = image
-            }
-            .store(in: &cancellables)
+        Task {
+            self.headerImage = await self.checkModel.loadAsset()
+        }
         updateCodeImage()
     }
 
@@ -97,6 +94,7 @@ open class BaseCheckViewController<Content: View>: UIHostingController<Content>,
     }
 }
 
+@MainActor
 extension CheckViewModelProviding where Self: UIViewController {
     var checkModel: CheckModel {
         guard let checkModel = viewModel?.checkModel else {

@@ -8,6 +8,7 @@ import UIKit
 import SnabbleCore
 import Combine
 import SnabbleAssetProviding
+import SnabbleComponents
 
 public final class PaymentMethodStartCheck: @unchecked Sendable {
     private var method: PaymentMethod
@@ -38,18 +39,20 @@ public final class PaymentMethodStartCheck: @unchecked Sendable {
             if case .payoneSepa = detail?.methodData {
                 self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.SEPA.payNow"), completion)
             } else {
-                let view = SepaOverlayView(frame: .zero)
-                let viewModel = SepaOverlayView.ViewModel(project: SnabbleCI.project)
-                view.configure(with: viewModel)
-                
-                view.closeButton?.addTarget(self, action: #selector(dismissOverlay(_:)), for: .touchUpInside)
-                view.successButton?.addTarget(self, action: #selector(sepaSuccessButtonTapped(_:)), for: .touchUpInside)
-                
-                let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(sepaShowDetailsTapped(_:)))
-                view.textLabel?.addGestureRecognizer(tapGestureRecognizer)
-                view.textLabel?.isUserInteractionEnabled = true
-                
-                presenter.showOverlay(with: view)
+                Task { @MainActor in
+                    let view = SepaOverlayView(frame: .zero)
+                    let viewModel = SepaOverlayView.ViewModel(project: SnabbleCI.project)
+                    view.configure(with: viewModel)
+                    
+                    view.closeButton?.addTarget(self, action: #selector(dismissOverlay(_:)), for: .touchUpInside)
+                    view.successButton?.addTarget(self, action: #selector(sepaSuccessButtonTapped(_:)), for: .touchUpInside)
+                    
+                    let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(sepaShowDetailsTapped(_:)))
+                    view.textLabel?.addGestureRecognizer(tapGestureRecognizer)
+                    view.textLabel?.isUserInteractionEnabled = true
+                    
+                    presenter.showOverlay(with: view)
+                }
             }
             
         case .visa, .mastercard, .americanExpress:
@@ -64,15 +67,17 @@ public final class PaymentMethodStartCheck: @unchecked Sendable {
             self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.PostFinanceCard.payNow"), completion)
         case .externalBilling:
             if let detail = self.detail, detail.originType == .contactPersonCredentials, case .invoiceByLogin = detail.methodData {
-                let viewController = PaymentSubjectViewController()
-                viewController.viewModel.actionPublisher
-                    .receive(on: RunLoop.main)
-                    .sink { [weak self] userDict in
-                        self?.performAction(viewModel: viewController.viewModel, userDict: userDict)
-                    }
-                    .store(in: &cancellables)
-
-                presenter.showOverlay(with: viewController)
+                Task { @MainActor in
+                    let viewController = PaymentSubjectViewController()
+                    viewController.viewModel.actionPublisher
+                        .receive(on: RunLoop.main)
+                        .sink { [weak self] userDict in
+                            self?.performAction(viewModel: viewController.viewModel, userDict: userDict)
+                        }
+                        .store(in: &cancellables)
+                    
+                    presenter.showOverlay(with: viewController)
+                }
             } else {
                 completion(true)
             }
@@ -81,6 +86,7 @@ public final class PaymentMethodStartCheck: @unchecked Sendable {
         }
     }
    
+    @MainActor
     private func performAction(viewModel: PaymentSubjectViewModel, userDict: [String: Any]?) {
         guard let presenter = self.presenter,
               let completionHandler = self.completionHandler,
@@ -100,11 +106,13 @@ public final class PaymentMethodStartCheck: @unchecked Sendable {
     }
 
     // MARK: - Sepa
+    @MainActor
     @objc private func dismissOverlay(_ sender: Any) {
         presenter?.dismissOverlay()
         completionHandler?(false)
     }
 
+    @MainActor
     @objc private func sepaSuccessButtonTapped(_ sender: UIButton) {
         guard
             let presenter = presenter,
@@ -117,6 +125,7 @@ public final class PaymentMethodStartCheck: @unchecked Sendable {
         self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.SEPA.payNow"), completionHandler)
     }
 
+    @MainActor
     @objc private func sepaShowDetailsTapped(_ gestureRecognizer: UITapGestureRecognizer) {
         let msg = SnabbleCI.project.messages?.sepaMandate ?? ""
         let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.SEPA.mandate"), message: msg, preferredStyle: .alert)

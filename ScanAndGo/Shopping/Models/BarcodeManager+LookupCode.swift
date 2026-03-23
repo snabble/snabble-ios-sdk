@@ -9,7 +9,6 @@ import SwiftUI
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleUI
 
 public enum ScannerLookup: Sendable {
     case product(ScannedProduct)
@@ -37,7 +36,7 @@ extension BarcodeManager.ScannedItem: CustomStringConvertible {
 }
 
 extension BarcodeManager: BarcodeScanning {
-    public func scannedCodeResult(_ result: SnabbleUI.BarcodeResult) {
+    public func scannedCodeResult(_ result: BarcodeResult) {
         self.handleScannedCode(result.code, withFormat: result.format)
     }
 }

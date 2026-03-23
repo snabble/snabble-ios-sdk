@@ -8,11 +8,12 @@ import UIKit
 import CoreImage
 
 enum PDF417: CodeRenderer {
+    @MainActor
     public static func generate(for string: String, scale: Int) -> UIImage? {
         let lightImage = generate(for: string, inScale: scale, for: .light)
 
         if let darkImage = generate(for: string, inScale: scale, for: .dark) {
-            nonisolated(unsafe) let screenScale = UIScreen.main.scale
+            let screenScale = UIScreen.main.scale
             let traitCollection = UITraitCollection { mutableTraits in
                 mutableTraits.displayScale = screenScale
                 mutableTraits.userInterfaceStyle = .dark
@@ -23,6 +24,7 @@ enum PDF417: CodeRenderer {
         return lightImage
     }
 
+    @MainActor
     private static func generate(for string: String, inScale scale: Int, for userInterfaceStyle: UIUserInterfaceStyle) -> UIImage? {
         // print("generate pdf417 for \(string)")
         guard

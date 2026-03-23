@@ -10,6 +10,8 @@ import UIKit
 import CoreImage
 
 public enum Code128: CodeRenderer {
+
+    @MainActor
     public static func generate(for string: String, scale: Int) -> UIImage? {
         // print("generate code128 for \(string)")
         guard

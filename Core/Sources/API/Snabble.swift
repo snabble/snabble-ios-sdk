@@ -350,7 +350,7 @@ public class Snabble: @unchecked Sendable {
     
     /// Set up database for project
     /// - Parameter project: `Project` associated to setup the product database
-    public func setupProductDatabase(for project: Project, completion: @escaping (ProductStoreAvailability) -> Void) {
+    public func setupProductDatabase(for project: Project, completion: @escaping @Sendable (ProductStoreAvailability) -> Void) {
         productDatabase(for: project).setup(completion: completion)
     }
     
@@ -504,7 +504,9 @@ extension Snabble {
         var machine = [CChar](repeating: 0, count: size)
         sysctlbyname("hw.machine", &machine, &size, nil, 0)
         
-        return String(cString: machine)
+        // Remove null terminator and decode as UTF-8
+        let bytes = machine.prefix(while: { $0 != 0 }).map { UInt8(bitPattern: $0) }
+        return String(decoding: bytes, as: UTF8.self)
     }()
 
     /// HTTP headerFields using user agent keys defined in https://wicg.github.io/ua-client-hints/

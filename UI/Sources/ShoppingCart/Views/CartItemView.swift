@@ -8,6 +8,7 @@
 import SwiftUI
 import SnabbleCore
 import SnabbleAssetProviding
+import SnabbleComponents
 
 extension Text {
     func cartPrice() -> some View {

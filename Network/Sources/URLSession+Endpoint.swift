@@ -58,13 +58,14 @@ extension URLSession {
 extension URLSession {
     func downloadTaskPublisher(for url: URL) -> AnyPublisher<URL, URLError> {
         Future<URL, URLError> { promise in
+            nonisolated(unsafe) let unsafePromise = promise
             let task = self.downloadTask(with: url) { location, _, error in
                 if let error = error as? URLError {
-                    promise(.failure(error))
+                    unsafePromise(.failure(error))
                 } else if let location = location {
-                    promise(.success(location))
+                    unsafePromise(.success(location))
                 } else {
-                    promise(.failure(URLError(.unknown)))
+                    unsafePromise(.failure(URLError(.unknown)))
                 }
             }
             task.resume()

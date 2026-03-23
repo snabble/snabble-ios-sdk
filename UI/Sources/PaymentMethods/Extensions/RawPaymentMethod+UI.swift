@@ -71,7 +71,8 @@ extension RawPaymentMethod {
         return nil
     }
     
-    @MainActor private func externalBillingEditViewController(_ projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
+    @MainActor
+    private func externalBillingEditViewController(_ projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
         guard
             let projectId = projectId,
             let project = Snabble.shared.project(for: projectId),
@@ -87,7 +88,8 @@ extension RawPaymentMethod {
         return nil
     }
 
-    @MainActor private func sepaEditViewController(_ projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
+    @MainActor
+    private func sepaEditViewController(_ projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
         guard
             let projectId = projectId,
             let project = Snabble.shared.project(for: projectId),
@@ -102,6 +104,7 @@ extension RawPaymentMethod {
         }
     }
     
+    @MainActor
     private func creditCardEditViewController(_ projectId: Identifier<Project>?, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController? {
         guard
             let projectId = projectId,
@@ -138,6 +141,7 @@ extension RawPaymentMethod {
         return nil
     }
 
+    @MainActor
     func checkoutDisplayViewController(shop: Shop,
                                        checkoutProcess: CheckoutProcess?,
                                        shoppingCart: ShoppingCart,
@@ -186,9 +190,12 @@ extension RawPaymentMethod {
                 .twint,
                 .postFinanceCard,
                 .gatekeeperTerminal:
-            let checkoutSteps = CheckoutStepsViewController(shop: shop, shoppingCart: shoppingCart, checkoutProcess: checkoutProcess!)
-            checkoutSteps.paymentDelegate = delegate
-            paymentDisplay = checkoutSteps
+            // FIXME: CheckoutStepsViewController deleted - needs SwiftUI replacement for SDK 1.0
+            // let checkoutSteps = CheckoutStepsViewController(shop: shop, shoppingCart: shoppingCart, checkoutProcess: checkoutProcess!)
+            // checkoutSteps.paymentDelegate = delegate
+            // Temporary: Call delegate directly and use placeholder
+            delegate?.checkoutFinished(shoppingCart, checkoutProcess)
+            paymentDisplay = UIViewController()  // FIXME: Return proper view controller
         }
         paymentDisplay.hidesBottomBarWhenPushed = true
 

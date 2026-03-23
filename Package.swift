@@ -10,10 +10,23 @@ let package = Package(
         .iOS(.v17)
     ],
     products: [
+        // Complete SDK (convenience)
         .library(
             name: "Snabble",
-            targets: ["SnabbleAssetProviding", "SnabbleCore", "SnabbleUI", "SnabblePhoneAuth", "SnabbleScanAndGo", "SnabbleUser", "SnabbleComponents"]
+            targets: [
+                "SnabbleAssetProviding",
+                "SnabbleCore",
+                "SnabbleReceipts",
+                "SnabbleCoupons",
+                "SnabbleScanAndGo",
+                "SnabbleUser",
+                "SnabblePhoneAuth",
+                "SnabbleComponents",
+                "SnabbleUI"
+            ]
         ),
+
+        // Core modules
         .library(
             name: "SnabbleAssetProviding",
             targets: ["SnabbleAssetProviding"]
@@ -23,13 +36,25 @@ let package = Package(
             targets: ["SnabbleCore"]
         ),
         .library(
-            name: "SnabbleUI",
-            targets: ["SnabbleAssetProviding", "SnabbleUI"]
-        ),
-        .library(
             name: "SnabbleComponents",
             targets: ["SnabbleAssetProviding", "SnabbleComponents"]
         ),
+        .library(
+            name: "SnabbleNetwork",
+            targets: ["SnabbleNetwork"]
+        ),
+
+        // Feature packages (modular - SDK 1.0)
+        .library(
+            name: "SnabbleReceipts",
+            targets: ["SnabbleReceipts"]
+        ),
+        .library(
+            name: "SnabbleCoupons",
+            targets: ["SnabbleCoupons"]
+        ),
+
+        // Other modules
         .library(
             name: "SnabbleDatatrans",
             targets: ["SnabbleDatatrans"]
@@ -39,10 +64,6 @@ let package = Package(
             targets: ["SnabblePay"]
         ),
         .library(
-            name: "SnabbleNetwork",
-            targets: ["SnabbleNetwork"]
-        ),
-        .library(
             name: "SnabblePhoneAuth",
             targets: ["SnabblePhoneAuth"]
         ),
@@ -50,9 +71,16 @@ let package = Package(
             name: "SnabbleScanAndGo",
             targets: ["SnabbleScanAndGo"]
         ),
-       .library(
+        .library(
             name: "SnabbleUser",
-            targets: ["SnabbleUser", "SnabbleAssetProviding"])
+            targets: ["SnabbleUser", "SnabbleAssetProviding"]
+        ),
+
+        // Legacy UI (deprecated - only payment ViewControllers remain)
+        .library(
+            name: "SnabbleUI",
+            targets: ["SnabbleAssetProviding", "SnabbleUI"]
+        )
     ],
     dependencies: [
         .package(url: "https://github.com/lachlanbell/SwiftOTP", from: "3.0.2"),
@@ -62,7 +90,7 @@ let package = Package(
         .package(url: "https://github.com/datatrans/ios-sdk.git", from: "3.7.3"),
         .package(url: "https://github.com/sberrevoets/SDCAlertView.git", from: "12.0.4"),
         .package(url: "https://github.com/devicekit/DeviceKit.git", from: "5.5.0"),
-        .package(url: "https://github.com/snabble/Pulley.git", from: "2.9.2"),
+        // Pulley removed - legacy scanner deleted
         .package(url: "https://github.com/chrs1885/WCAG-Colors.git", from: "1.0.0"),
         .package(url: "https://github.com/pointfreeco/swift-tagged", from: "0.10.0"),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.6.1"),
@@ -126,13 +154,34 @@ let package = Package(
                 .process("Resources")
             ]
         ),
+        // Feature Modules (minimal for SDK 1.0 - only pure SwiftUI without SnabbleCI)
+        .target(
+            name: "SnabbleReceipts",
+            dependencies: [
+                "SnabbleCore",
+                "SnabbleComponents",
+                "SnabbleUI"  // Uses SnabbleCI.getAsset (global state - needs refactoring for SDK 2.0)
+            ],
+            path: "Receipts/Sources",
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
+        .target(
+            name: "SnabbleCoupons",
+            dependencies: [
+                "SnabbleCore",
+                "SnabbleComponents"
+            ],
+            path: "Coupons/Sources",
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
+
+        // UI Module (includes ShoppingCart, ShopFinder, DynamicView, PaymentMethods)
         .target(
             name: "SnabbleUI",
             dependencies: [
                 "SnabbleCore",
                 "SDCAlertView",
                 "DeviceKit",
-                "Pulley",
                 "WCAG-Colors",
                 "SnabbleUser",
                 "SnabbleComponents",
@@ -262,6 +311,7 @@ let package = Package(
                 "SnabbleCore",
                 "SnabbleAssetProviding",
                 "SnabbleUI",
+                "CameraZoomWheel"
             ],
             path: "ScanAndGo",
             swiftSettings: [

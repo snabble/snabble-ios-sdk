@@ -116,7 +116,7 @@ public enum ErrorResponseType: String, UnknownCaseRepresentable, Sendable {
     public static let unknownCase = ErrorResponseType.unknown
 }
 
-public struct ErrorResponse: Decodable, Equatable {
+public struct ErrorResponse: Decodable, Equatable, Sendable {
     public let rawType: String
     public let message: String?
     public let sku: String?

@@ -44,7 +44,9 @@ struct ProjectPaymentEntryRow: View {
     private func loadStoreIcon() async {
         await MainActor.run {
             SnabbleCI.getAsset(.storeIcon, projectId: entry.projectId) { image in
-                storeIcon = image
+                Task { @MainActor in
+                    storeIcon = image
+                }
             }
         }
     }

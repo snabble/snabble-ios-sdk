@@ -79,9 +79,10 @@ final class ConnectWifiViewModel {
         config.joinOnce = false
         isJoiningNetwork = true
         NEHotspotConfigurationManager.shared.apply(config) { [weak self] error in
-            self?.isJoiningNetwork = false
-
-            self?.networkError = error
+            Task { @MainActor [weak self] in
+                self?.isJoiningNetwork = false
+                self?.networkError = error
+            }
 
             // after a short delay, try to access an url in the hope that
             // this forces any captive portal login screens to appear

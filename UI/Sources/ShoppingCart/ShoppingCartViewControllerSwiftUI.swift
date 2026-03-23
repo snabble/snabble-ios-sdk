@@ -10,6 +10,7 @@ import UIKit
 import SwiftUI
 import Combine
 import SnabbleCore
+import SnabbleComponents
 
 public protocol ShoppingCartViewControllerDelegate: AnyObject {
     func shoppingCartViewController(_ viewController: ShoppingCartViewController, didSelectActionOnShop shop: ShopProviding)

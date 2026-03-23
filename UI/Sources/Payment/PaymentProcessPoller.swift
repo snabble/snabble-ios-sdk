@@ -7,7 +7,7 @@
 import Foundation
 import SnabbleCore
 
-public enum PaymentEvent {
+public enum PaymentEvent: Sendable {
     case paymentSuccess
 
     case receipt

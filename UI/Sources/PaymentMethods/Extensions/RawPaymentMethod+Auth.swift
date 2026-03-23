@@ -10,6 +10,7 @@ import SnabbleCore
 import SnabbleAssetProviding
 
 extension RawPaymentMethod: AlertProviding {
+    @MainActor
     public func alertController(_ onDismiss: (@Sendable (UIAlertAction) -> Void)?) -> UIAlertController {
         let mode = BiometricAuthentication.supportedBiometry
         let msg = mode == .none ?
@@ -31,8 +32,10 @@ extension RawPaymentMethod {
     
     func isAddingAllowed(showAlertOn viewController: UIViewController) -> Bool {
         if !isAddingAllowed {
-            let alert = self.alertController(nil)
-            viewController.present(alert, animated: true)
+            Task { @MainActor in
+                let alert = self.alertController(nil)
+                viewController.present(alert, animated: true)
+            }
             return false
         } else {
             return true

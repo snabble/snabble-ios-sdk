@@ -7,49 +7,39 @@
 
 import Foundation
 import SwiftUI
-import Combine
 import SnabbleCore
 
-@Observable
-private class StartShoppingViewModel {
-    var widget: WidgetButton?
+public struct WidgetStartShoppingView: View {
+    let widget: WidgetStartShopping
+    let action: (WidgetStartShopping) -> Void
 
-    private var cancellables = Set<AnyCancellable>()
+    @State private var shoppingButton: WidgetButton?
 
-    init(widget: WidgetStartShopping) {
-        Snabble.shared.checkInManager.shopPublisher
-            .sink { [weak self] shop in
+    init(widget: WidgetStartShopping, action: @escaping (WidgetStartShopping) -> Void) {
+        self.widget = widget
+        self.action = action
+    }
+
+    public var body: some View {
+        Group {
+            if let shoppingButton {
+                WidgetButtonView(widget: shoppingButton) { _ in
+                    action(self.widget)
+                }
+            }
+        }
+        .task {
+            for await shop in Snabble.shared.checkInManager.shopStream {
                 if shop != nil {
-                    self?.widget = WidgetButton(
+                    shoppingButton = WidgetButton(
                         id: "Snabble.DynamicView.StartShopping.button",
                         text: "Snabble.DynamicView.StartShopping.button",
                         foregroundColorSource: "onProjectPrimary",
                         backgroundColorSource: "projectPrimary"
                     )
                 } else {
-                    self?.widget = nil
+                    shoppingButton = nil
                 }
-            }
-            .store(in: &cancellables)
-    }
-}
-
-public struct WidgetStartShoppingView: View {
-    let widget: WidgetStartShopping
-    let action: (WidgetStartShopping) -> Void
-
-    @State private var viewModel: StartShoppingViewModel
-
-    init(widget: WidgetStartShopping, action: @escaping (WidgetStartShopping) -> Void) {
-        self.widget = widget
-        self.action = action
-        self._viewModel = State(wrappedValue: StartShoppingViewModel(widget: widget))
-    }
-
-    public var body: some View {
-        if let widget = viewModel.widget {
-            WidgetButtonView(widget: widget) { _ in
-                action(self.widget)
             }
         }
     }

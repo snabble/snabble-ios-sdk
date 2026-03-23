@@ -56,14 +56,21 @@ final class CheckoutStepsViewModel {
     func startTimer() {
         checkoutProcessTimer?.invalidate()
         checkoutProcessTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { [weak self] _ in
-            guard let project = self?.shop.project else { return }
-            self?.checkoutProcess?.update(project,
-                                         taskCreated: { [weak self] in
-                self?.processSessionTask = $0
-            },
-                                         completion: { [weak self] result in
-                self?.update(result)
-            })
+            Task { @MainActor [weak self] in
+                guard let self, let project = self.shop.project else { return }
+                
+                self.checkoutProcess?.update(
+                    project,
+                    taskCreated: { [weak self] in
+                        self?.processSessionTask = $0
+                    },
+                    completion: { result in
+                        Task { @MainActor [weak self] in
+                            self?.update(result)
+                        }
+                    }
+                )
+            }
         }
     }
 

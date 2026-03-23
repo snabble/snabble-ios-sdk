@@ -8,6 +8,7 @@
 import SwiftUI
 
 import SnabbleCore
+import SnabbleComponents
 
 @Observable
 @MainActor
@@ -103,7 +104,7 @@ extension AppRouter {
         case .shopDetail(let shop):
             ShopDetailView(shop: shop)
         case .webView(let url):
-            WebViewWrapper(url: url)
+            WebView(url: url)
         case .profile:
             ProfileView()
         case .receipt:
@@ -129,13 +130,3 @@ extension AppRouter {
         }
     }
 }
-
-struct WebViewWrapper: View {
-    let url: URL
-
-    var body: some View {
-        Text("WebView: \(url.absoluteString)")
-            .navigationTitle("Web")
-    }
-}
-

@@ -126,12 +126,20 @@ private struct AssetRequest {
 
 final class AssetManager: @unchecked Sendable {
     /// Thread-safety: Singleton initialized once, internal state protected by ReadWriteLock
-    nonisolated(unsafe) static let shared = AssetManager()
+    static let shared = AssetManager()
 
     private var manifests = [Identifier<Project>: Manifest]()
     private var lock = ReadWriteLock()
 
     private weak var redownloadTimer: Timer?
+    
+    /// Cached screen scale, initialized on main thread
+    private let screenScale: CGFloat
+    
+    private init() {
+        // Must be called from main thread during app initialization
+        self.screenScale = MainActor.assumeIsolated { UIScreen.main.scale }
+    }
 
     /// Get a named asset, or its local fallback
     /// - Parameters:
@@ -143,14 +151,21 @@ final class AssetManager: @unchecked Sendable {
         let projectId = projectId ?? SnabbleCI.project.id
         let name = asset.rawValue
         
-        if let image = self.getLocallyCachedImage(named: name, projectId) {
-            completion(image)
-        } else {
-            let interfaceStyle = UIScreen.main.traitCollection.userInterfaceStyle
+        Task { @MainActor in
+            if let image = self.getLocallyCachedImage(named: name, projectId) {
+                completion(image)
+            } else {
+                let interfaceStyle = UIScreen.main.traitCollection.userInterfaceStyle
+                self.processAssetRequest(name: name, projectId: projectId, interfaceStyle: interfaceStyle, bundlePath: bundlePath, completion: completion)
+            }
+        }
+    }
+    
+    private func processAssetRequest(name: String, projectId: Identifier<Project>, interfaceStyle: UIUserInterfaceStyle, bundlePath: String?, completion: @escaping @Sendable (UIImage?) -> Void) {
             if let file = self.fileFor(name: name, projectId, interfaceStyle) {
                 self.downloadIfMissing(projectId, file) { [completion] fileUrl in
                     if let fileUrl = fileUrl, let data = try? Data(contentsOf: fileUrl) {
-                        let img = UIImage(data: data, scale: UIScreen.main.scale)
+                        let img = UIImage(data: data, scale: self.screenScale)
                         DispatchQueue.main.async {
                             completion(img)
                         }
@@ -168,7 +183,6 @@ final class AssetManager: @unchecked Sendable {
                 let img = UIImage.fromBundle(bundlePath)
                 completion(img)
             }
-        }
     }
 
     private func oppositeStyle(for style: UIUserInterfaceStyle) -> UIUserInterfaceStyle {
@@ -181,7 +195,13 @@ final class AssetManager: @unchecked Sendable {
 
     // download the "opposite" of `file`, if it exists
     private func downloadOpposite(for file: Manifest.File, _ projectId: Identifier<Project>, named name: String) {
-        let interfaceStyle = UIScreen.main.traitCollection.userInterfaceStyle
+        Task { @MainActor in
+            let interfaceStyle = UIScreen.main.traitCollection.userInterfaceStyle
+            self.performDownloadOpposite(for: file, projectId, named: name, interfaceStyle: interfaceStyle)
+        }
+    }
+    
+    private func performDownloadOpposite(for file: Manifest.File, _ projectId: Identifier<Project>, named name: String, interfaceStyle: UIUserInterfaceStyle) {
         let oppositeStyle = oppositeStyle(for: interfaceStyle)
         guard
             oppositeStyle != interfaceStyle,
@@ -194,16 +214,17 @@ final class AssetManager: @unchecked Sendable {
         self.downloadIfMissing(projectId, oppositeFile) { _ in }
     }
 
+    @MainActor
     private func getLocallyCachedImage(named name: String, _ projectId: Identifier<Project>) -> UIImage? {
         guard let lightData = getLocallyCachedData(named: name, projectId, .light) else {
             return nil
         }
 
-        let lightImage = UIImage(data: lightData, scale: UIScreen.main.scale)
+        let lightImage = UIImage(data: lightData, scale: screenScale)
 
-        if let darkData = getLocallyCachedData(named: name, projectId, .dark), let darkImage = UIImage(data: darkData, scale: UIScreen.main.scale) {
+        if let darkData = getLocallyCachedData(named: name, projectId, .dark), let darkImage = UIImage(data: darkData, scale: screenScale) {
             let traitCollection = UITraitCollection { mutableTraits in
-                mutableTraits.displayScale = UIScreen.main.scale
+                mutableTraits.displayScale = screenScale
                 mutableTraits.userInterfaceStyle = .dark
             }
 
@@ -318,7 +339,7 @@ final class AssetManager: @unchecked Sendable {
         let fmt = NumberFormatter()
         fmt.minimumFractionDigits = 0
         fmt.numberStyle = .decimal
-        let variant = fmt.string(for: UIScreen.main.scale)!
+        let variant = fmt.string(for: screenScale)!
 
         components.queryItems = [
             URLQueryItem(name: "variant", value: "\(variant)x")
@@ -391,7 +412,7 @@ final class AssetManager: @unchecked Sendable {
 
     private func downloadIfMissing(_ projectId: Identifier<Project>, _ file: Manifest.File, completion: @escaping (URL?) -> Void) {
         guard
-            let localName = file.localName(UIScreen.main.scale),
+            let localName = file.localName(screenScale),
             let cacheUrl = AssetManager.shared.cacheDirectory(projectId)
         else {
             return
@@ -407,7 +428,7 @@ final class AssetManager: @unchecked Sendable {
             let downloadDelegate = AssetDownloadDelegate(projectId, localName, file.defaultsKey(projectId), completion)
             let session = URLSession(configuration: .default, delegate: downloadDelegate, delegateQueue: nil)
 
-            if let remoteUrl = file.remoteURL(for: UIScreen.main.scale) {
+            if let remoteUrl = file.remoteURL(for: screenScale) {
                 let request = Snabble.request(url: remoteUrl, json: false)
                 let task = session.downloadTask(with: request)
                 task.resume()
@@ -439,7 +460,7 @@ final class AssetManager: @unchecked Sendable {
     }
 }
 
-private final class AssetDownloadDelegate: NSObject, URLSessionDownloadDelegate {
+private final class AssetDownloadDelegate: NSObject, URLSessionDownloadDelegate, @unchecked Sendable {
     private let projectId: Identifier<Project>
     private let localName: String
     private let key: String

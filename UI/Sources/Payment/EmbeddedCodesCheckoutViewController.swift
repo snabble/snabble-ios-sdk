@@ -283,11 +283,14 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { _ in
-            UIView.animate(withDuration: 0.2) {
-                self.paidButton?.alpha = 1
+        Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { [weak self] _ in
+            Task { @MainActor in
+                guard let self else { return }
+                UIView.animate(withDuration: 0.2) {
+                    self.paidButton?.alpha = 1
+                }
+                self.paidButton?.isUserInteractionEnabled = true
             }
-            self.paidButton?.isUserInteractionEnabled = true
         }
     }
 
@@ -383,15 +386,18 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             cart.removeAll(endSession: true, keepBackup: true)
             Snabble.clearInFlightCheckout()
 
-            let checkoutSteps = CheckoutStepsViewController(shop: shop, shoppingCart: cart, checkoutProcess: process)
-            checkoutSteps.paymentDelegate = delegate
-            navigationController?.pushViewController(checkoutSteps, animated: true)
+            // FIXME: CheckoutStepsViewController deleted - needs SwiftUI replacement for SDK 1.0
+            // let checkoutSteps = CheckoutStepsViewController(shop: shop, shoppingCart: cart, checkoutProcess: process)
+            // checkoutSteps.paymentDelegate = delegate
+            // Temporary: Call delegate directly
+            delegate?.checkoutFinished(cart, process)
         }
     }
 
     private func setupIcon() {
-        SnabbleCI.getAsset(.checkoutOffline, bundlePath: "Checkout/\(SnabbleCI.project.id)/checkout-offline") { img in
-            if let img = img {
+        SnabbleCI.getAsset(.checkoutOffline, bundlePath: "Checkout/\(SnabbleCI.project.id)/checkout-offline") { [weak self] img in
+            Task { @MainActor in
+                guard let self, let img else { return }
                 self.topIcon?.image = img
                 self.topIcon?.heightAnchor.constraint(equalToConstant: img.size.height).usingPriority(.required - 1).isActive = true
                 self.topWrapper?.isHidden = false

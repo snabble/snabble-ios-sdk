@@ -18,12 +18,14 @@ public enum QRCode: CodeRenderer {
     }
     // swiftlint:enable identifier_name
 
+    @MainActor
     public static func generate(for string: String, scale: Int, _ correctionLevel: CorrectionLevel = .L) -> UIImage? {
         let lightImage = generate(for: string, inScale: scale, withCorrectionLevel: correctionLevel, for: .light)
 
         if let darkImage = generate(for: string, inScale: scale, withCorrectionLevel: correctionLevel, for: .dark) {
+            let displayScale = UIScreen.main.scale
             let traitCollection = UITraitCollection { mutableTraits in
-                mutableTraits.displayScale = UIScreen.main.scale
+                mutableTraits.displayScale = displayScale
                 mutableTraits.userInterfaceStyle = .dark
             }
             lightImage?.imageAsset?.register(darkImage, with: traitCollection)
@@ -32,6 +34,7 @@ public enum QRCode: CodeRenderer {
         return lightImage
     }
 
+    @MainActor
     private static func generate(for string: String, inScale scale: Int, withCorrectionLevel correctionLevel: CorrectionLevel, for userInterfaceStyle: UIUserInterfaceStyle) -> UIImage? {
         guard
             let data = string.data(using: .isoLatin1, allowLossyConversion: false),

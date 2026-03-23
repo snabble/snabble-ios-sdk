@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum HTTPError: Error {
+public enum HTTPError: Error, Sendable {
     case invalid(HTTPURLResponse, ClientError?)
     case unknown(URLResponse)
     case unexpected(Error)

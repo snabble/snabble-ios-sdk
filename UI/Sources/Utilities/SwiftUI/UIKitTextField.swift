@@ -24,6 +24,7 @@ extension UITextField {
     }
 }
 
+@MainActor
 protocol TextChangeFormatter {
     func textFieldShouldEndEditing(_ textField: UITextField) -> Bool
     // swiftlint:disable large_tuple
@@ -32,6 +33,7 @@ protocol TextChangeFormatter {
 }
 
 extension FormatterSelectionHint {
+    @MainActor
     func updateKeyboard(for textField: UITextField) {
         if let currentKeyboard: UIKeyboardType = self.currentControlChar == .digits ? .numberPad : .default,
            currentKeyboard != textField.keyboardType {

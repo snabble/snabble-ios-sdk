@@ -1,5 +1,5 @@
 {
-  "originHash" : "f837d9f0b5ff63ae1d7bc87c17a57f1cb4c3f4c5ed98e67ccc2019c12c611f20",
+  "originHash" : "f8a7b3309acac1799a0a459ba482619f4575e4937efb2dc442f8f24d04b7ab6a",
   "pins" : [
     {
       "identity" : "camerazoomwheel",
@@ -44,15 +44,6 @@
       "state" : {
         "revision" : "84e546727d66f1adc5439debad16270d0fdd04e7",
         "version" : "4.2.2"
-      }
-    },
-    {
-      "identity" : "pulley",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/snabble/Pulley.git",
-      "state" : {
-        "revision" : "1728c7ce69857134db82ad82300772a4364d2af5",
-        "version" : "2.9.2"
       }
     },
     {

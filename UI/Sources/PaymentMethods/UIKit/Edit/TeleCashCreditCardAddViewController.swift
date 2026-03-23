@@ -160,15 +160,17 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
                     return
                 }
                 project.perform(request) { [self] (result: Result<TeleCashAuthorizationResult, SnabbleError>) in
-                    switch result {
-                    case .success(let authResult):
-                        deletePreAuthUrl = "\(Snabble.shared.environment.apiURLString)\(authResult.links._self.href)"
-                        let formURL = "\(Snabble.shared.environment.apiURLString)\(authResult.links.tokenizationForm.href)"
-                        loadForm(url: formURL, forCreditCardBrand: brand)
+                    Task { @MainActor [self] in
+                        switch result {
+                        case .success(let authResult):
+                            deletePreAuthUrl = "\(Snabble.shared.environment.apiURLString)\(authResult.links._self.href)"
+                            let formURL = "\(Snabble.shared.environment.apiURLString)\(authResult.links.tokenizationForm.href)"
+                            loadForm(url: formURL, forCreditCardBrand: brand)
 
-                    case .failure(let error):
-                        print(error)
-                        return showError()
+                        case .failure(let error):
+                            print(error)
+                            return showError()
+                        }
                     }
                 }
             }
@@ -248,14 +250,13 @@ public final class TeleCashCreditCardAddViewController: UIViewController {
 }
 
 extension TeleCashCreditCardAddViewController: WKNavigationDelegate {
-    public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction, decisionHandler: @escaping (WKNavigationActionPolicy) -> Void) {
+    public func webView(_ webView: WKWebView, decidePolicyFor navigationAction: WKNavigationAction) async -> WKNavigationActionPolicy {
         if navigationAction.navigationType == .linkActivated, let url = navigationAction.request.url {
-            UIApplication.shared.open(url)
-            decisionHandler(.cancel)
-            return
+            await UIApplication.shared.open(url)
+            return .cancel
         }
 
-        decisionHandler(.allow)
+        return .allow
     }
 }
 
@@ -395,19 +396,23 @@ public struct TelecashView: UIViewControllerRepresentable {
         Coordinator(parent: self)
     }
     
-    public class Coordinator: TelecashCreditCardAddViewControllerDelegate {
-        let parent: TelecashView
+    public class Coordinator: @unchecked Sendable, TelecashCreditCardAddViewControllerDelegate {
+        var parent: TelecashView
         
         init(parent: TelecashView) {
             self.parent = parent
         }
         
         public func telecashCreditCardAddViewControllerDidComplete(_ controller: TeleCashCreditCardAddViewController) {
-            parent.didComplete?()
+            Task { @MainActor [parent] in
+                parent.didComplete?()
+            }
         }
         
         public func telecashCreditCardAddViewController(_ controller: TeleCashCreditCardAddViewController, didTokenizePaymentMethodDetail paymentMethodDetail: PaymentMethodDetail) {
-            parent.paymentMethodDetail = paymentMethodDetail
+            Task { @MainActor [parent] in
+                parent.paymentMethodDetail = paymentMethodDetail
+            }
         }
     }
 }

@@ -26,15 +26,19 @@ public struct ScannerOverlay: View {
     public var body: some View {
         VStack {
             Spacer()
-            overlay
-                .padding(.bottom, offset)
+            HStack {
+                Spacer()
+                overlay
+                Spacer()
+            }
+            .padding(.bottom, offset)
             Spacer()
         }
     }
 }
 
 struct ShoppingScannerView: View {
-    @Environment(\.safeAreaInsets) var insets
+//    @Environment(\.safeAreaInsets) var insets
     @Environment(Shopper.self) var model
     
     @Binding var minHeight: CGFloat
@@ -58,7 +62,17 @@ struct ShoppingScannerView: View {
         ZStack(alignment: .top) {
             BarcodeScannerView(detector: model.barcodeManager.barcodeDetector)
             ScannerOverlay(offset: $minHeight)
-            ZoomControl(zoomLevel: $zoomLevel, steps: zoomSteps)
+                .background {
+                    if model.barcodeManager.barcodeDetector.previewLayer == nil {
+                        LinearGradient(
+                            colors: [Color.projectPrimary(), .white],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
+                }
+           ZoomControl(zoomLevel: $zoomLevel, steps: zoomSteps)
                 .offset(x: 0, y: position - 114)
                 .opacity(model.scanningPaused || position == 0 ? 0 : 1)
             PullOverView(minHeight: $minHeight, expanded: $model.scanningPaused, paddingTop: $topMargin, position: $position) {

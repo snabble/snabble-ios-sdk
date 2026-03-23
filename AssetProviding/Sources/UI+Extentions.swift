@@ -30,20 +30,21 @@ public extension UITabBarController {
         return self.tabBar.frame.size.width
     }
 }
-
-private struct SafeAreaInsetsKey: EnvironmentKey {
-    static var defaultValue: EdgeInsets {
-        UIApplication.shared.sceneKeyWindow?.safeAreaInsets.swiftUIInsets ?? EdgeInsets()
-    }
-}
-private extension UIEdgeInsets {
-    var swiftUIInsets: EdgeInsets {
-        EdgeInsets(top: top, leading: left, bottom: bottom, trailing: right)
-    }
-}
-
-extension EnvironmentValues {
-    public var safeAreaInsets: EdgeInsets {
-        self[SafeAreaInsetsKey.self]
-    }
-}
+//
+//private struct SafeAreaInsetsKey: EnvironmentKey {
+//    static var defaultValue: EdgeInsets {
+//        EdgeInsets()
+//    }
+//}
+//
+//private extension UIEdgeInsets {
+//    var swiftUIInsets: EdgeInsets {
+//        EdgeInsets(top: top, leading: left, bottom: bottom, trailing: right)
+//    }
+//}
+//
+//extension EnvironmentValues {
+//    public var safeAreaInsets: EdgeInsets {
+//        self[SafeAreaInsetsKey.self]
+//    }
+//}

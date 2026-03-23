@@ -10,6 +10,7 @@ import UIKit
 import SnabbleCore
 
 public extension ExitToken {
+    @MainActor
     var image: UIImage? {
         guard let format = format, let value = value else {
             return nil

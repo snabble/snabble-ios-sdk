@@ -8,6 +8,7 @@ import UIKit
 import SnabbleCore
 import SnabbleAssetProviding
 
+@MainActor
 public final class PaymentMethodListViewController: UITableViewController {
     private let manager: PaymentMethodListManager
     private weak var analyticsDelegate: AnalyticsDelegate?
@@ -33,9 +34,11 @@ public final class PaymentMethodListViewController: UITableViewController {
     }
 
     deinit {
-        emptyViewController?.willMove(toParent: nil)
-        emptyViewController?.view.removeFromSuperview()
-        emptyViewController?.removeFromParent()
+        MainActor.assumeIsolated {
+            emptyViewController?.willMove(toParent: nil)
+            emptyViewController?.view.removeFromSuperview()
+            emptyViewController?.removeFromParent()
+        }
     }
 
     override public func viewDidLoad() {

@@ -31,7 +31,7 @@ public enum Gatekeeper {
     }
 }
 
-public final class GatekeeperViewModel: BaseCheckViewModel {
+public final class GatekeeperViewModel: BaseCheckViewModel, @unchecked Sendable {
     override func updateCodeImage() {
         self.codeImage = QRCode.generate(for: self.checkModel.codeContent, scale: 5)
     }

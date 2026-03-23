@@ -10,7 +10,8 @@ import SnabbleCore
 import SnabbleAssetProviding
 
 /// Manage the payment process
-public final class PaymentProcess: @unchecked Sendable {
+@MainActor
+public final class PaymentProcess {
     let signedCheckoutInfo: SignedCheckoutInfo
     let cart: ShoppingCart
     let shop: Shop
@@ -186,36 +187,33 @@ public final class PaymentProcess: @unchecked Sendable {
     }
 
     private func startFailed(_ method: PaymentMethod, shop: Shop, _ error: SnabbleError?, _ completion: @escaping @Sendable (_ result: Result<UIViewController, SnabbleError>) -> Void ) {
-        Task { @MainActor in
-            var handled = false
-            if let error = error {
-                handled = self.paymentDelegate?.handlePaymentError(method, error) ?? false
-            }
-            if !handled {
-                let checkoutDisplay = method.rawMethod.checkoutDisplayViewController(shop: shop, checkoutProcess: nil, shoppingCart: self.cart, delegate: self.paymentDelegate)
-                // if method.rawMethod.offline, let processor = method.processor(nil, shop: shop, self.cart, self.paymentDelegate) {
-                if method.rawMethod.offline, let display = checkoutDisplay {
-                    completion(.success(display))
-                    OfflineCarts.shared.saveCartForLater(self.cart)
-                } else {
-                    self.paymentDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
-                }
+        var handled = false
+        if let error = error {
+            handled = self.paymentDelegate?.handlePaymentError(method, error) ?? false
+        }
+        if !handled {
+            let checkoutDisplay = method.rawMethod.checkoutDisplayViewController(shop: shop, checkoutProcess: nil, shoppingCart: self.cart, delegate: self.paymentDelegate)
+            // if method.rawMethod.offline, let processor = method.processor(nil, shop: shop, self.cart, self.paymentDelegate) {
+            if method.rawMethod.offline, let display = checkoutDisplay {
+                completion(.success(display))
+                OfflineCarts.shared.saveCartForLater(self.cart)
+            } else {
+                self.paymentDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
             }
         }
     }
 
     private func startBlurOverlayTimer() {
         self.hudTimer?.invalidate()
-        self.hudTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: false) { _ in
-            self.showBlurOverlay()
+        self.hudTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: false) { [weak self] _ in
+            Task { @MainActor in
+                self?.showBlurOverlay()
+            }
         }
     }
 
     func track(_ event: AnalyticsEvent) {
-        let capturedEvent = event
-        Task { @MainActor in
-            self.paymentDelegate?.track(capturedEvent)
-        }
+        self.paymentDelegate?.track(event)
     }
 
     // MARK: - blur
@@ -223,15 +221,12 @@ public final class PaymentProcess: @unchecked Sendable {
     private var blurView: UIView?
 
     private func showBlurOverlay() {
-        Task { @MainActor in
-            guard let view = self.paymentDelegate?.view else {
-                return
-            }
-            self.createBlurView(for: view)
+        guard let view = self.paymentDelegate?.view else {
+            return
         }
+        self.createBlurView(for: view)
     }
 
-    @MainActor
     private func createBlurView(for view: UIView) {
 
         let blurEffect = UIBlurEffect(style: .dark)
@@ -304,64 +299,66 @@ extension PaymentProcess {
         let id = self.cart.uuid
         
         self.signedCheckoutInfo.createCheckoutProcess(project, id: id, paymentMethod: method, timeout: Self.createTimeout) { result in
-            self.hudTimer?.invalidate()
-            UIApplication.shared.sceneKeyWindow?.isUserInteractionEnabled = true
-            self.hideBlurOverlay()
-            
-            func checkViolation(for process: CheckoutProcess) -> CheckoutInfo.Violation? {
+            Task { @MainActor [weak self] in
+                guard let self else { return }
                 
-                guard let violation = process.voucherViolation else {
-                    return nil
-                }
-                
-                if self.cart.vouchers.containsUUIDs(from: violation.refersToItems) {
-                    return violation
-                } else {
-                    return nil
-                }
-            }
-            
-            func checkoutProcess(process: CheckoutProcess) {
-
-                if let violation = checkViolation(for: process) {
-                    Task { @MainActor in
-                        self.cart.delegate?.shoppingCart(self.cart, violationsDetected: [violation])
-                    }
-                    return
-                }
-
-                let checkoutVC = Self.checkoutViewController(for: process,
-                                                             shop: self.shop,
-                                                             cart: self.cart,
-                                                             paymentDelegate: self.paymentDelegate)
-
-                if let viewController = checkoutVC {
-                    completion(.success(viewController))
-                } else {
-                    Task { @MainActor in
-                        self.paymentDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
-                    }
-                }
-            }
-            
-            func errorHandler(error: SnabbleError) {
-                if !error.isUrlError(.timedOut) {
-                    self.cart.generateNewUUID()
-                }
-                self.startFailed(method, shop: self.shop, error, completion)
-            }
-                        
-            switch result.result {
-            case .success(let process):
-                Snabble.storeInFlightCheckout(url: process.links._self.href,
-                                              shop: self.shop,
-                                              cart: self.cart)
-                checkoutProcess(process: process)
-
-            case .failure(let error):
-                errorHandler(error: error)
+                self.handleCheckoutResult(result, method: method, completion: completion)
             }
         }
+    }
+
+    private func handleCheckoutResult(_ result: RawResult<CheckoutProcess, SnabbleError>, method: PaymentMethod, completion: @escaping @Sendable (Result<UIViewController, SnabbleError>) -> Void) {
+        self.hudTimer?.invalidate()
+        UIApplication.shared.sceneKeyWindow?.isUserInteractionEnabled = true
+        self.hideBlurOverlay()
+        
+        switch result.result {
+        case .success(let process):
+            Snabble.storeInFlightCheckout(url: process.links._self.href,
+                                          shop: self.shop,
+                                          cart: self.cart)
+            self.handleCheckoutProcess(process: process, completion: completion)
+            
+        case .failure(let error):
+            self.handleCheckoutError(error: error, method: method, completion: completion)
+        }
+    }
+    
+    private func handleCheckoutProcess(process: CheckoutProcess, completion: @escaping @Sendable (Result<UIViewController, SnabbleError>) -> Void) {
+        if let violation = checkViolation(for: process) {
+            self.cart.delegate?.shoppingCart(self.cart, violationsDetected: [violation])
+            return
+        }
+
+        let checkoutVC = Self.checkoutViewController(for: process,
+                                                     shop: self.shop,
+                                                     cart: self.cart,
+                                                     paymentDelegate: self.paymentDelegate)
+
+        if let viewController = checkoutVC {
+            completion(.success(viewController))
+        } else {
+            self.paymentDelegate?.showWarningMessage(Asset.localizedString(forKey: "Snabble.Payment.errorStarting"))
+        }
+    }
+    
+    private func checkViolation(for process: CheckoutProcess) -> CheckoutInfo.Violation? {
+        guard let violation = process.voucherViolation else {
+            return nil
+        }
+        
+        if self.cart.vouchers.containsUUIDs(from: violation.refersToItems) {
+            return violation
+        } else {
+            return nil
+        }
+    }
+    
+    private func handleCheckoutError(error: SnabbleError, method: PaymentMethod, completion: @escaping @Sendable (Result<UIViewController, SnabbleError>) -> Void) {
+        if !error.isUrlError(.timedOut) {
+            self.cart.generateNewUUID()
+        }
+        self.startFailed(method, shop: self.shop, error, completion)
     }
 
     static func checkoutViewController(for process: CheckoutProcess,
@@ -372,13 +369,16 @@ extension PaymentProcess {
             return nil
         }
         guard process.paymentState != .successful || process.paymentState != .failed else {
-            let checkoutStepsViewController = CheckoutStepsViewController(
-                shop: shop,
-                shoppingCart: cart,
-                checkoutProcess: process
-            )
-            checkoutStepsViewController.paymentDelegate = paymentDelegate
-            return checkoutStepsViewController
+            // FIXME: CheckoutStepsViewController deleted - needs SwiftUI replacement for SDK 1.0
+            // let checkoutStepsViewController = CheckoutStepsViewController(
+            //     shop: shop,
+            //     shoppingCart: cart,
+            //     checkoutProcess: process
+            // )
+            // checkoutStepsViewController.paymentDelegate = paymentDelegate
+            // Temporary: Call delegate directly and return a placeholder
+            paymentDelegate?.checkoutFinished(cart, process)
+            return UIViewController()  // FIXME: Return proper view controller
         }
         switch process.routingTarget {
         case .none:

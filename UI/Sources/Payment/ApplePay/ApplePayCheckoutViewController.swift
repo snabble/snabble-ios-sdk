@@ -136,11 +136,12 @@ final class ApplePayCheckoutViewController: UIViewController {
             // can't use `Project.perform` here since we have to deal with "204 NO CONTENT" as the "success" response
             let start = Date.timeIntervalSinceReferenceDate
             let session = Snabble.urlSession
+            // Capture values before async closure to avoid concurrency warning
+            let requestURL = request.url?.absoluteString ?? "n/a"
+            let requestMethod = request.httpMethod ?? ""
             let task = session.dataTask(with: request) { data, response, error in
                 let elapsed = Date.timeIntervalSinceReferenceDate - start
-                let url = request.url?.absoluteString ?? "n/a"
-                let method = request.httpMethod ?? ""
-                Log.info("\(method) \(url) took \(elapsed)s")
+                Log.info("\(requestMethod) \(requestURL) took \(elapsed)s")
                 
                 if let data = data, let raw = String(bytes: data, encoding: .utf8) {
                     Log.info("raw response: \(raw)")
@@ -259,7 +260,9 @@ extension ApplePayCheckoutViewController: PKPaymentAuthorizationViewControllerDe
         
         poller.waitFor([.paymentSuccess]) { events in
             if events[.paymentSuccess] != nil {
-                self.paymentFinished(poller.updatedProcess)
+                Task { @MainActor in
+                    self.paymentFinished(poller.updatedProcess)
+                }
             }
         }
         
@@ -269,10 +272,14 @@ extension ApplePayCheckoutViewController: PKPaymentAuthorizationViewControllerDe
     private func paymentFinished(_ checkoutProcess: CheckoutProcess) {
         self.poller = nil
         
-        let paymentDisplay = CheckoutStepsViewController(shop: shop,
-                                                         shoppingCart: shoppingCart,
-                                                         checkoutProcess: checkoutProcess)
-        paymentDisplay.paymentDelegate = delegate
-        self.navigationController?.pushViewController(paymentDisplay, animated: true)
+        // FIXME: CheckoutStepsViewController deleted - needs SwiftUI replacement for SDK 1.0
+        // let paymentDisplay = CheckoutStepsViewController(shop: shop,
+        //                                                  shoppingCart: shoppingCart,
+        //                                                  checkoutProcess: checkoutProcess)
+        // paymentDisplay.paymentDelegate = delegate
+        // self.navigationController?.pushViewController(paymentDisplay, animated: true)
+
+        // Temporary: Call delegate directly
+        delegate?.checkoutFinished(shoppingCart, checkoutProcess)
     }
 }

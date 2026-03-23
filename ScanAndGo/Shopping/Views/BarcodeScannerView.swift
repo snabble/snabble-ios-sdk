@@ -38,15 +38,9 @@ class BarcodeScannerViewController: UIViewController {
         
         if let previewLayer = detector.previewLayer {
             addLayer(previewLayer, to: self)
-        } else {
-            logger.warning("camera preview is not available")
-#if targetEnvironment(simulator)
-            let layer = CAGradientLayer()
-            layer.colors = [UIColor.projectPrimary().cgColor, UIColor.white.cgColor]
-            addLayer(layer, to: self)
-#endif
         }
     }
+
     private func addLayer(_ layer: CALayer, to viewController: UIViewController) {
         let frame = viewController.view.bounds
         let insets = UIApplication.shared.sceneKeyWindow?.safeAreaInsets ?? UIEdgeInsets()
@@ -65,7 +59,7 @@ class BarcodeScannerViewController: UIViewController {
 }
 
 public struct BarcodeScannerView: UIViewControllerRepresentable {
-    @SwiftUI.Environment(\.safeAreaInsets) var insets
+//    @SwiftUI.Environment(\.safeAreaInsets) var insets
     
     public let detector: InternalBarcodeDetector
     
@@ -84,6 +78,7 @@ public struct BarcodeScannerView: UIViewControllerRepresentable {
         Coordinator(self)
     }
 
+    @MainActor
     public class Coordinator: NSObject {
         var parent: BarcodeScannerView
         private var subscriptions = Set<AnyCancellable>()
@@ -123,12 +118,7 @@ public struct BarcodeScanner: UIViewRepresentable {
         
         if let preview = detector.previewLayer {
             containerView.setupPreviewLayer(preview)
-        } else {
-            let layer = CAGradientLayer()
-            layer.colors = [UIColor.projectPrimary().cgColor, UIColor.white.cgColor]
-            containerView.setupPreviewLayer(layer)
         }
-        
         return containerView
     }
     
@@ -144,6 +134,7 @@ public struct BarcodeScanner: UIViewRepresentable {
         Coordinator(self)
     }
 
+    @MainActor
     public class Coordinator: NSObject {
         var parent: BarcodeScanner
         private var subscriptions = Set<AnyCancellable>()
@@ -186,6 +177,7 @@ public class ScannerContainerView: UIView {
     func updatePreviewLayerFrame() {
         guard let previewLayer = previewLayer else { return }
         
+
         // Frame nur aktualisieren wenn sich die Größe geändert hat
         let newFrame = self.bounds
         if !previewLayer.frame.equalTo(newFrame) {

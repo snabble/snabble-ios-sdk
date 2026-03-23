@@ -7,10 +7,11 @@ import SwiftUI
 import SnabbleCore
 import SnabbleAssetProviding
 
-final class SupervisorViewModel: BaseCheckViewModel {
+final class SupervisorViewModel: BaseCheckViewModel, @unchecked Sendable {
     override func updateCodeImage() {
         self.codeImage = PDF417.generate(for: self.checkModel.codeContent, scale: 2)
     }
+
     // supervisors are only concerned with checks: if there are failed checks, bail out,
     // and if all checks pass, finalize the checkout
     override func checkContinuation(_ process: CheckoutProcess) -> CheckModel.CheckResult {

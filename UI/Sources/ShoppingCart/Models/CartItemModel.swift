@@ -9,6 +9,7 @@ import Foundation
 import Combine
 import SnabbleCore
 import SwiftUI
+import SnabbleComponents
 
 public enum LeftDisplay {
     case none

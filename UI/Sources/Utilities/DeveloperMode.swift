@@ -11,13 +11,13 @@ import KeychainAccess
 import SnabbleAssetProviding
 
 extension CheckInManager {
-    func shop(for provider: ShopProviding) -> Shop? {
+    func shop(for provider: any ShopProviding) -> Shop? {
         return projects
             .flatMap({ $0.shops })
             .first(where: { $0.id == provider.id })
     }
     
-    func isCheckedIn(for provider: ShopProviding) -> Bool {
+    func isCheckedIn(for provider: any ShopProviding) -> Bool {
         return shop?.id == provider.id
     }
     
@@ -31,7 +31,7 @@ extension CheckInManager {
         }
     }
 
-    func developerCheckin(at fakeShop: ShopProviding, persist: Bool = false) {
+    func developerCheckin(at fakeShop: any ShopProviding, persist: Bool = false) {
         if persist {
             UserDefaults.standard.set("\(fakeShop.id)", forKey: DeveloperMode.Keys.checkInShop.rawValue)
         }
@@ -132,7 +132,7 @@ public extension DeveloperMode {
     }
 
     @MainActor
-    static func toggleCheckIn(for shop: ShopProviding) {
+    static func toggleCheckIn(for shop: any ShopProviding) {
         guard showCheckIn else {
             return
         }
@@ -187,6 +187,7 @@ public extension DeveloperMode {
 
 public extension DeveloperMode {
     
+    @MainActor
     static func resetAppId(viewController: DynamicViewController) {
         let alert = UIAlertController(title: "Create new app user id?", message: "You will irrevocably lose all previous orders.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .destructive) { _ in
@@ -196,6 +197,7 @@ public extension DeveloperMode {
         viewController.present(alert, animated: true)
     }
     
+    @MainActor
     static func resetClientId(viewController: DynamicViewController) {
         let alert = UIAlertController(title: "Create new client id?", message: "You will irrevocably lose all previous orders.", preferredStyle: .alert)
         alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .destructive) { _ in

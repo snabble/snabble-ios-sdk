@@ -98,6 +98,7 @@ extension CheckoutStep {
         fullBrightness = false
     }
 
+    @MainActor
     init(exitToken: ExitToken, paymentState: PaymentState) {
         status = paymentState == .failed ? .aborted : .from(exitToken: exitToken)
         text = Asset.localizedString(forKey: "Snabble.PaymentStatus.ExitCode.title")
@@ -184,16 +185,17 @@ extension CheckoutStep {
     """)
     }()
     /// Thread-safety: Mock data for testing, immutable once initialized
-    nonisolated(unsafe) static let mockOriginCandidate: OriginCandidate = {
+    static let mockOriginCandidate: OriginCandidate = {
         return loadJSON("""
     { }
     """)
     }()
     /// Thread-safety: Mock data for testing, immutable
-    nonisolated(unsafe) static let savedIbans: Set<String> = []
+    static let savedIbans: Set<String> = []
     
-    /// Thread-safety: Mock data for testing, immutable once initialized
-    nonisolated(unsafe) static let mockModel: [CheckoutStep] = {
+    /// Thread-safety: Mock data for testing, initialized on main actor
+    @MainActor
+    static let mockModel: [CheckoutStep] = {
         return [
             CheckoutStep(paymentState: .pending),
             CheckoutStep(paymentState: .successful),
