@@ -6,7 +6,7 @@
 //
 
 import UIKit
-@preconcurrency import SDCAlertView
+// @preconcurrency import SDCAlertView
 
 import SnabbleCore
 import SnabbleAssetProviding
@@ -24,7 +24,7 @@ public protocol PaymentMethodManagerDelegate: AnyObject {
 
 @Observable
 @MainActor
-public final class PaymentMethodManager: Sendable {
+public final class PaymentMethodManager {
     public var selectedPayment: Payment?
     public var hasMethodsToSelect: Bool = true
     
@@ -170,38 +170,38 @@ public protocol AlertProviding {
     @MainActor func alertController(_ onDismiss: DismissHandler?) -> UIAlertController
 }
 
-extension PaymentMethodManager: SheetProviding {
-    @MainActor
-    public func sheetController(_ onDismiss: DismissHandler? = { }) -> UIViewController {
-        let title = Asset.localizedString(forKey: "Snabble.Shoppingcart.howToPay")
-        let sheet = AlertController(title: title, message: nil, preferredStyle: .actionSheet)
-        sheet.outsideTapHandler = onDismiss
-        sheet.visualStyle = .snabbleActionSheet
-        
-        let actions = project.paymentActions(for: paymentConsumer)
-
-        let isAnyActive = actions.contains { $0.active == true && $0.method.offline == false }
-
-        // add an action for each method
-        for action in actions {
-            let icon = isAnyActive && !(action.active || action.methodDetail != nil) ? action.icon?.grayscale() : action.icon
-            let alertAction = AlertAction(attributedTitle: action.title, style: .normal) { [self] _ in
-                if action.selectable {
-                    setSelectedPaymentItem(action.item)
-                    onDismiss?()
-                }
-            }
-            alertAction.imageView.image = icon
-            alertAction.imageView.setContentCompressionResistancePriority(.required, for: .vertical)
-
-            sheet.addAction(alertAction)
-        }
-
-        // add the cancel action
-        sheet.addAction(AlertAction(title: Asset.localizedString(forKey: "Snabble.cancel"), style: .preferred) { _ in
-            onDismiss?()
-        })
-        
-        return sheet
-    }
-}
+// extension PaymentMethodManager: SheetProviding {
+//    @MainActor
+//    public func sheetController(_ onDismiss: DismissHandler? = { }) -> UIViewController {
+//        let title = Asset.localizedString(forKey: "Snabble.Shoppingcart.howToPay")
+//        let sheet = AlertController(title: title, message: nil, preferredStyle: .actionSheet)
+//        sheet.outsideTapHandler = onDismiss
+//        sheet.visualStyle = .snabbleActionSheet
+//        
+//        let actions = project.paymentActions(for: paymentConsumer)
+//
+//        let isAnyActive = actions.contains { $0.active == true && $0.method.offline == false }
+//
+//        // add an action for each method
+//        for action in actions {
+//            let icon = isAnyActive && !(action.active || action.methodDetail != nil) ? action.icon?.grayscale() : action.icon
+//            let alertAction = AlertAction(attributedTitle: action.title, style: .normal) { [self] _ in
+//                if action.selectable {
+//                    setSelectedPaymentItem(action.item)
+//                    onDismiss?()
+//                }
+//            }
+//            alertAction.imageView.image = icon
+//            alertAction.imageView.setContentCompressionResistancePriority(.required, for: .vertical)
+//
+//            sheet.addAction(alertAction)
+//        }
+//
+//        // add the cancel action
+//        sheet.addAction(AlertAction(title: Asset.localizedString(forKey: "Snabble.cancel"), style: .preferred) { _ in
+//            onDismiss?()
+//        })
+//        
+//        return sheet
+//    }
+// }

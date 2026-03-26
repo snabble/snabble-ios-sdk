@@ -103,6 +103,11 @@ extension PaymentMethodListManager {
         public let name: String
         public let count: Int
 
+        public var isEmpty: Bool {
+            // swiftlint:disable:next:empty_count
+            isEmpty
+        }
+
         public init(project: Project, count: Int) {
             self.id = project.id.rawValue
             self.projectId = project.id

@@ -103,7 +103,7 @@ extension PaymentMethodAddViewController {
             navigationTarget = PaymentMethodAddViewController(brandId: brandId, self.analyticsDelegate)
         } else {
             // show/add methods for this specific project
-            if entry.count == 0 {
+            if entry.isEmpty {
                 self.addMethod(for: entry.projectId)
             } else {
                 navigationTarget = PaymentMethodListViewController(for: entry.projectId, self.analyticsDelegate)

@@ -15,7 +15,6 @@ public struct TeleCashCreditCardDisplayView: View {
     let detail: PaymentMethodDetail
     weak var analyticsDelegate: AnalyticsDelegate?
 
-
     private var brand: CreditCardBrand?
     private var cardNumber: String?
     private var expirationDate: String?
@@ -79,7 +78,7 @@ public struct TeleCashCreditCardDisplayView: View {
 
 }
 
-//#Preview("Visa Card") {
+// #Preview("Visa Card") {
 //    NavigationStack {
 //        // Create a mock detail for preview
 //        let mockData = TeleCashCreditCardData(
@@ -99,9 +98,9 @@ public struct TeleCashCreditCardDisplayView: View {
 //            analyticsDelegate: nil
 //        )
 //    }
-//}
+// }
 //
-//#Preview("Mastercard") {
+// #Preview("Mastercard") {
 //    NavigationStack {
 //        let mockData = TeleCashCreditCardData(
 //            brand: .mastercard,
@@ -120,4 +119,4 @@ public struct TeleCashCreditCardDisplayView: View {
 //            analyticsDelegate: nil
 //        )
 //    }
-//}
+// }
