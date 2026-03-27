@@ -9,7 +9,6 @@ import SwiftUI
 import Combine
 
 import SnabbleCore
-import SnabbleUI
 
 import SnabbleAssetProviding
 import CameraZoomWheel
@@ -38,9 +37,8 @@ public struct ScannerOverlay: View {
 }
 
 struct ShoppingScannerView: View {
-//    @Environment(\.safeAreaInsets) var insets
-    @Environment(Shopper.self) var model
-    
+    let model: Shopper
+
     @Binding var minHeight: CGFloat
     let configuration: ShopperConfiguration
 
@@ -50,8 +48,9 @@ struct ShoppingScannerView: View {
     @State private var zoomSteps: [ZoomStep] = ZoomStep.defaultSteps
     @State private var position: CGFloat = 0
     @State private var scanMessage: ScanMessage?
-    
-    init(minHeight: Binding<CGFloat>, configuration: ShopperConfiguration = .init()) {
+
+    init(model: Shopper, minHeight: Binding<CGFloat>, configuration: ShopperConfiguration = .init()) {
+        self.model = model
         self._minHeight = minHeight
         self.configuration = configuration
     }
@@ -76,7 +75,7 @@ struct ShoppingScannerView: View {
                 .offset(x: 0, y: position - 114)
                 .opacity(model.scanningPaused || position == 0 ? 0 : 1)
             PullOverView(minHeight: $minHeight, expanded: $model.scanningPaused, paddingTop: $topMargin, position: $position) {
-                ScannerCartView(minHeight: $minHeight, offset: configuration.drawerOffset)
+                ScannerCartView(model: model, minHeight: $minHeight, offset: configuration.drawerOffset)
             }
             if model.processing || position == 0 {
                 ScannerProcessingView()

@@ -51,14 +51,14 @@ extension APIError: ToModel {
 }
 
 /// Validation error on the server
-public struct ValidationError {
+public struct ValidationError: Sendable {
     /// Defined error cause
     public let reason: Reason
     /// Optional hint to understand the error
     public let message: String?
 
     /// Known validation error reasons
-    public enum Reason: String, Decodable {
+    public enum Reason: String, Decodable, Sendable {
         /// Internal Server Error
         case internalError = "internal_error"
         /// Unauthorized

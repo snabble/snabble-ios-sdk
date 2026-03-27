@@ -14,73 +14,106 @@ let package = Package(
         .library(
             name: "Snabble",
             targets: [
-                "SnabbleAssetProviding",
+                // Layer 1 (Foundation)
                 "SnabbleCore",
-                "SnabbleReceipts",
-                "SnabbleCoupons",
-                "SnabbleScanAndGo",
-                "SnabbleUser",
-                "SnabblePhoneAuth",
+                "SnabbleNetwork",
+                "SnabbleAssetProviding",
+                // Layer 2 (UI Promitives)
                 "SnabbleComponents",
-                "SnabbleUI"
+                "SnabbleAssets",
+                // Layer 3 (Domain Features):
+                "SnabbleShops",
+                "SnabbleCart",
+                "SnabbleUser",
+                "SnabbleReceipts",
+                // Layer 4 (Payment):
+                "SnabblePayment",
+                // Layer 6 (Complete Flows)
+                "SnabbleScanAndGo",
+                "SnabblePhoneAuth",
+                "SnabbleCoupons",
+                "SnabbleDynamicView",
+                "SnabbleOnboarding",
+                "SnabbleTeaser",
             ]
         ),
 
         // Core modules
         .library(
-            name: "SnabbleAssetProviding",
-            targets: ["SnabbleAssetProviding"]
-        ),
-        .library(
             name: "SnabbleCore",
             targets: ["SnabbleCore"]
-        ),
-        .library(
-            name: "SnabbleComponents",
-            targets: ["SnabbleAssetProviding", "SnabbleComponents"]
         ),
         .library(
             name: "SnabbleNetwork",
             targets: ["SnabbleNetwork"]
         ),
-
+        .library(
+            name: "SnabbleAssetProviding",
+            targets: ["SnabbleAssetProviding"]
+        ),
+        .library(
+            name: "SnabbleComponents",
+            targets: ["SnabbleAssetProviding", "SnabbleComponents"]
+        ),
         // Feature packages (modular - SDK 1.0)
         .library(
+            name: "SnabbleAssets",
+            targets: ["SnabbleCore", "SnabbleComponents", "SnabbleAssets"]
+        ),
+        .library(
+            name: "SnabblePayment",
+            targets: ["SnabbleAssets", "SnabblePayment"]
+        ),
+        .library(
+            name: "SnabbleShops",
+            targets: ["SnabbleShops"]
+        ),
+        .library(
+            name: "SnabbleCart",
+            targets: ["SnabbleCart", "SnabbleShops"]
+        ),
+        .library(
+            name: "SnabbleUser",
+            targets: ["SnabbleUser", "SnabbleAssetProviding"]
+        ),
+        .library(
             name: "SnabbleReceipts",
-            targets: ["SnabbleReceipts"]
-        ),
-        .library(
-            name: "SnabbleCoupons",
-            targets: ["SnabbleCoupons"]
-        ),
-
-        // Other modules
-        .library(
-            name: "SnabbleDatatrans",
-            targets: ["SnabbleDatatrans"]
-        ),
-        .library(
-            name: "SnabblePay",
-            targets: ["SnabblePay"]
-        ),
-        .library(
-            name: "SnabblePhoneAuth",
-            targets: ["SnabblePhoneAuth"]
+            targets: ["SnabbleAssets", "SnabbleReceipts"]
         ),
         .library(
             name: "SnabbleScanAndGo",
             targets: ["SnabbleScanAndGo"]
         ),
         .library(
-            name: "SnabbleUser",
-            targets: ["SnabbleUser", "SnabbleAssetProviding"]
+            name: "SnabbleDynamicView",
+            targets: ["SnabbleDynamicView"]
         ),
-
-        // Legacy UI (deprecated - only payment ViewControllers remain)
         .library(
-            name: "SnabbleUI",
-            targets: ["SnabbleAssetProviding", "SnabbleUI"]
-        )
+            name: "SnabblePhoneAuth",
+            targets: ["SnabblePhoneAuth"]
+        ),
+        .library(
+            name: "SnabbleOnboarding",
+            targets: ["SnabbleOnboarding"]
+        ),
+       .library(
+            name: "SnabbleCoupons",
+            targets: ["SnabbleCoupons"]
+        ),
+        .library(
+             name: "SnabbleTeaser",
+             targets: ["SnabbleTeaser"]
+         ),
+
+        // Other modules
+        .library(
+            name: "SnabbleDatatrans",
+            targets: ["SnabblePayment", "SnabbleDatatrans"]
+        ),
+        .library(
+            name: "SnabblePay",
+            targets: ["SnabblePay"]
+        ),
     ],
     dependencies: [
         .package(url: "https://github.com/lachlanbell/SwiftOTP", from: "3.0.2"),
@@ -153,13 +186,73 @@ let package = Package(
                 .process("Resources")
             ]
         ),
+        .target(
+            name: "SnabbleComponents",
+            dependencies: [
+                "SnabbleAssetProviding",
+                "WindowKit"
+            ],
+            path: "Components/Sources",
+            swiftSettings: [
+                .swiftLanguageMode(.v6)
+            ]
+        ),
+        .target(
+            name: "SnabbleAssets",
+            dependencies: [
+                "SnabbleCore",
+                "SnabbleComponents",
+            ],
+            path: "Assets/Sources",
+            resources: [
+                .process("Resources")
+            ],
+            swiftSettings: [
+                .swiftLanguageMode(.v6)
+            ]
+        ),
         // Feature Modules (minimal for SDK 1.0 - only pure SwiftUI without SnabbleCI)
+        .target(
+            name: "SnabblePayment",
+            dependencies: [
+                "SnabbleCore",
+                "SnabbleComponents",
+                "SnabbleAssets",
+                "SnabbleCart",
+                "SnabbleReceipts",
+                "DeviceKit",
+            ],
+            path: "Payment/Sources",
+            resources: [
+                .process("Resources")
+            ],
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
+        .target(
+            name: "SnabbleShops",
+            dependencies: [
+                "SnabbleCore",
+                "SnabbleAssets"
+            ],
+            path: "Shops/Sources",
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
+        .target(
+            name: "SnabbleCart",
+            dependencies: [
+                "SnabbleCore",
+                "SnabbleShops",
+                "SnabbleAssets"
+           ],
+            path: "Cart/Sources",
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
         .target(
             name: "SnabbleReceipts",
             dependencies: [
                 "SnabbleCore",
                 "SnabbleComponents",
-                "SnabbleUI"  // Uses SnabbleCI.getAsset (global state - needs refactoring for SDK 2.0)
+                "SnabbleAssets"
             ],
             path: "Receipts/Sources",
             swiftSettings: [.swiftLanguageMode(.v6)]
@@ -173,42 +266,41 @@ let package = Package(
             path: "Coupons/Sources",
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
-
-        // UI Module (includes ShoppingCart, ShopFinder, DynamicView, PaymentMethods)
         .target(
-            name: "SnabbleUI",
+            name: "SnabbleTeaser",
             dependencies: [
                 "SnabbleCore",
-                "DeviceKit",
-                "WCAG-Colors",
-                "SnabbleUser",
                 "SnabbleComponents",
-                "CameraZoomWheel"
+                "SnabbleAssets",
+           ],
+            path: "Teaser/Sources",
+            swiftSettings: [.swiftLanguageMode(.v6)]
+        ),
+       .target(
+            name: "SnabbleDynamicView",
+            dependencies: [
+                "SnabbleCore",
+                "SnabbleAssets",
             ],
-            path: "UI/Sources",
-            resources: [
-                .process("Resources")
-            ],
-            swiftSettings: [
-                .swiftLanguageMode(.v6)
-            ]
+            path: "DynamicView/Sources",
+            swiftSettings: [.swiftLanguageMode(.v6)]
         ),
         .target(
-            name: "SnabbleComponents",
+            name: "SnabbleOnboarding",
             dependencies: [
-                "SnabbleAssetProviding",
-                "WindowKit"
+                "SnabbleCore",
+                "SnabbleAssets",
             ],
-            path: "Components/Sources",
-            swiftSettings: [
-                .swiftLanguageMode(.v6)
-            ]
+            path: "Onboarding/Sources",
+            swiftSettings: [.swiftLanguageMode(.v6)]
         ),
+        
         .target(
             name: "SnabbleDatatrans",
             dependencies: [
                 "SnabbleCore",
-                "SnabbleUI",
+                "SnabbleAssets",
+                "SnabblePayment",
                 .product(name: "Datatrans", package: "ios-sdk"),
             ],
             path: "Datatrans/Sources",
@@ -251,17 +343,17 @@ let package = Package(
         .target(
             name: "TestHelper",
             dependencies: [],
-            path: "Pay/Tests/Helper"
+            path: "Pay/Tests/Helper",
         ),
         .testTarget(
             name: "SnabblePayCoreTests",
             dependencies: [
                 "SnabblePay",
-                "TestHelper"
+                "TestHelper",
             ],
             path: "Pay/Tests/Core",
             resources: [
-                .process("Resources")
+                .process("Resources"),
             ]
         ),
         .testTarget(
@@ -272,7 +364,7 @@ let package = Package(
             ],
             path: "Pay/Tests/Network",
             resources: [
-                .process("Resources")
+                .process("Resources"),
             ]
         ),
         .target(
@@ -308,8 +400,10 @@ let package = Package(
             dependencies: [
                 "SnabbleCore",
                 "SnabbleAssetProviding",
-                "SnabbleUI",
-                "CameraZoomWheel"
+                "SnabbleAssets",
+                "SnabbleCart",
+                "SnabblePayment",
+                "CameraZoomWheel",
             ],
             path: "ScanAndGo",
             swiftSettings: [

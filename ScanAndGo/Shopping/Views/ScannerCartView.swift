@@ -10,30 +10,31 @@ import Combine
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleUI
+import SnabbleCart
 
 struct ScannerCartView: View {
-    @Environment(Shopper.self) var model
-    
+    let model: Shopper
+
     static let TopMargin = CGFloat(20)
 
     @Binding var minHeight: CGFloat
-    
+
     @State private var compactMode: Bool = true
-    
+
     @ScaledMetric private var barHeight = CGFloat(74)
     @ScaledMetric private var visibleRowHeight = CGFloat(58)
     let offset: CGFloat
-    
-    init(minHeight: Binding<CGFloat>, offset: CGFloat = 0) {
+
+    init(model: Shopper, minHeight: Binding<CGFloat>, offset: CGFloat = 0) {
+        self.model = model
         self._minHeight = minHeight
         self.offset = offset
     }
     
     var body: some View {
         VStack(spacing: 0) {
-            CheckoutView()
-            SnabbleUI.ShoppingCartView(cartModel: model.cartModel, compactMode: compactMode)
+            CheckoutView(model: model)
+            ShoppingCartView(cartModel: model.cartModel, compactMode: compactMode)
             // Without this Spacer(), we have a transparent background
             Spacer(minLength: 1)
         }

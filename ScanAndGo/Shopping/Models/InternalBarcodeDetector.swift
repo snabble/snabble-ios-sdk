@@ -13,7 +13,6 @@ import AVFoundation
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleUI
 import CameraZoomWheel
 
 public protocol BarcodeCameraDelegate: AnyObject {

@@ -25,8 +25,8 @@ public struct ShopperConfiguration {
 
 /// A view that manages the shopping session for a user, integrating with the Shopper model to handle barcode scanning, displaying scan messages, and error handling.
 public struct ShopperView: View {
-    @Environment(Shopper.self) private var model
     @AppStorage(UserDefaults.scanningDisabledKey) var expanded: Bool = false
+    @SwiftUI.Environment(\.dismiss) var dismiss
 
     @State private var showSearch: Bool = false
     @State private var showError: Bool = false
@@ -35,17 +35,18 @@ public struct ShopperView: View {
     @State private var minHeight: CGFloat = 0
     @State private var bundles: [BarcodeManager.ScannedItem] = []
 
-    @SwiftUI.Environment(\.dismiss) var dismiss
+    let model: Shopper
     let configuration: ShopperConfiguration
     
-    public init(configuration: ShopperConfiguration = .init()) {
+    public init(model: Shopper, configuration: ShopperConfiguration = .init()) {
+        self.model = model
         self.configuration = configuration
     }
     
     public var body: some View {
         @Bindable var model = model
 
-        ShoppingScannerView(minHeight: $minHeight, configuration: configuration)
+        ShoppingScannerView(model: model, minHeight: $minHeight, configuration: configuration)
             .edgesIgnoringSafeArea(.bottom)
             .animation(.easeInOut, value: model.scannedItem)
             .navigationDestination(isPresented: $model.isNavigating) {

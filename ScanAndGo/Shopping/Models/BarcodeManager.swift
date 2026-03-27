@@ -10,7 +10,6 @@ import OSLog
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleUI
 import Combine
 
 /// Protocol for processing scanned barcodes.

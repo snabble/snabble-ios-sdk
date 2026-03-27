@@ -7,8 +7,6 @@
 
 import SwiftUI
 
-import SnabbleUI
-
 struct ScanMessageView: View {
     var message: ScanMessage?
     @Binding var isPresented: Bool

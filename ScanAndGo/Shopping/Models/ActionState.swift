@@ -8,7 +8,7 @@
 import SwiftUI
 import OSLog
 import Combine
-import SnabbleUI
+
 import SnabbleAssetProviding
 import SnabbleComponents
 

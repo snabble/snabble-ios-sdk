@@ -9,6 +9,7 @@
 /* Begin PBXBuildFile section */
 		761C0E092F7145730000BFF1 /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = 761C0E082F7145730000BFF1 /* Snabble */; };
 		766BCCCA2F62C23A00D8FFAF /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = 766BCCC92F62C23A00D8FFAF /* Snabble */; };
+		76CFCD1E2F76B7F500166D12 /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = 76CFCD1D2F76B7F500166D12 /* Snabble */; };
 		76DF385B2F5075A80050F4EC /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = 76DF385A2F5075A80050F4EC /* Snabble */; };
 /* End PBXBuildFile section */
 
@@ -31,6 +32,7 @@
 			files = (
 				761C0E092F7145730000BFF1 /* Snabble in Frameworks */,
 				766BCCCA2F62C23A00D8FFAF /* Snabble in Frameworks */,
+				76CFCD1E2F76B7F500166D12 /* Snabble in Frameworks */,
 				76DF385B2F5075A80050F4EC /* Snabble in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -79,6 +81,7 @@
 				76DF385A2F5075A80050F4EC /* Snabble */,
 				766BCCC92F62C23A00D8FFAF /* Snabble */,
 				761C0E082F7145730000BFF1 /* Snabble */,
+				76CFCD1D2F76B7F500166D12 /* Snabble */,
 			);
 			productName = SwiftySnabble;
 			productReference = 76DF38052F50740F0050F4EC /* SwiftySnabble.app */;
@@ -110,7 +113,7 @@
 			mainGroup = 76DF37FC2F50740F0050F4EC;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				761C0E072F7145730000BFF1 /* XCLocalSwiftPackageReference "../../snabble-ios-sdk" */,
+				76CFCD1C2F76B7F500166D12 /* XCLocalSwiftPackageReference "../../snabble-ios-sdk" */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 76DF38062F50740F0050F4EC /* Products */;
@@ -434,7 +437,7 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		761C0E072F7145730000BFF1 /* XCLocalSwiftPackageReference "../../snabble-ios-sdk" */ = {
+		76CFCD1C2F76B7F500166D12 /* XCLocalSwiftPackageReference "../../snabble-ios-sdk" */ = {
 			isa = XCLocalSwiftPackageReference;
 			relativePath = "../../snabble-ios-sdk";
 		};
@@ -446,6 +449,10 @@
 			productName = Snabble;
 		};
 		766BCCC92F62C23A00D8FFAF /* Snabble */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Snabble;
+		};
+		76CFCD1D2F76B7F500166D12 /* Snabble */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Snabble;
 		};

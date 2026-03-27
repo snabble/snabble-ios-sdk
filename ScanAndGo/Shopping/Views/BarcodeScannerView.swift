@@ -12,7 +12,6 @@ import AVFoundation
 import Combine
 
 import SnabbleAssetProviding
-import SnabbleUI
 
 class BarcodeScannerViewController: UIViewController {
     let detector: InternalBarcodeDetector

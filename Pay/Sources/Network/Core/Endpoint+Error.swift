@@ -8,7 +8,7 @@
 import Foundation
 
 extension Endpoints {
-    public struct Error: Decodable, Equatable {
+    public struct Error: Decodable, Equatable, Sendable {
         public let reason: Reason
         public let message: String?
 
@@ -21,7 +21,7 @@ extension Endpoints {
             case error
         }
 
-        public enum Reason: String, Decodable {
+        public enum Reason: String, Decodable, Sendable {
             case internalError = "internal_error"
             case unauthorized = "unauthorized"
             case userNotFound = "user_not_found"

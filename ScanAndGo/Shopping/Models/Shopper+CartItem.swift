@@ -9,7 +9,6 @@ import Foundation
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleUI
 
 extension CartItem: Equatable {
     public static func == (lhs: SnabbleCore.CartItem, rhs: SnabbleCore.CartItem) -> Bool {

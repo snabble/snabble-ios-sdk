@@ -1,5 +1,5 @@
 {
-  "originHash" : "f8a7b3309acac1799a0a459ba482619f4575e4937efb2dc442f8f24d04b7ab6a",
+  "originHash" : "ebe20470384c4bbe21acc6a8639272ebcea182fff7682d95c566bbb089063a0e",
   "pins" : [
     {
       "identity" : "camerazoomwheel",
@@ -44,15 +44,6 @@
       "state" : {
         "revision" : "84e546727d66f1adc5439debad16270d0fdd04e7",
         "version" : "4.2.2"
-      }
-    },
-    {
-      "identity" : "sdcalertview",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/sberrevoets/SDCAlertView.git",
-      "state" : {
-        "revision" : "47014c1b6b629761874bb7585951f0c0d90d7823",
-        "version" : "12.0.4"
       }
     },
     {

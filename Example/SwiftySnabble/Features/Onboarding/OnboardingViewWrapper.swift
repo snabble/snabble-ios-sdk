@@ -7,8 +7,8 @@
 
 import SwiftUI
 
-import SnabbleUI
 import SnabbleAssetProviding
+import SnabbleOnboarding
 
 struct OnboardingViewWrapper: View {
     @Environment(\.dismiss) private var dismiss

@@ -86,7 +86,6 @@ struct PullOverView<Content>: View where Content: View {
 }
 
 struct PullView: ViewModifier {
-//    @SwiftUI.Environment(\.safeAreaInsets) var insets
     
     @Binding var minHeight: CGFloat
     @Binding var expanded: Bool

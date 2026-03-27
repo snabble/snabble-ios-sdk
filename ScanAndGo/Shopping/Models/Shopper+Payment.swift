@@ -8,9 +8,11 @@
 import UIKit
 
 import SwiftUI
+
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleUI
+import SnabbleAssets
+import SnabblePayment
 
 extension Shopper {
     var project: Project {
@@ -39,7 +41,7 @@ extension Shopper: @preconcurrency PaymentMethodManagerDelegate {
         hasValidPayment = acceptPayment(method: payment.method, detail: payment.detail)
     }
     
-    public func paymentMethodManager(didSelectItem item: SnabbleUI.PaymentMethodItem) {
+    public func paymentMethodManager(didSelectItem item: PaymentMethodItem) {
         logger.debug("didSelectItem: \(item.title)")
         guard item.selectable else {
             return
@@ -80,7 +82,10 @@ extension Shopper: @preconcurrency PaymentMethodManagerDelegate {
 
 extension Shopper: PaymentDelegate {
     public func checkoutFinished(_ cart: SnabbleCore.ShoppingCart, _ process: SnabbleCore.CheckoutProcess?) {
-        logger.debug("checkout finished")
+        logger.debug("checkout finished with state: \(process?.paymentState.rawValue ?? "unknown")")
+
+        // CheckoutStepsViewController handles cart clearing, we just dismiss navigation
+        self.isNavigating = false
     }
     
     public var view: UIView! {

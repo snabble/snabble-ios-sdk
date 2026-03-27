@@ -4,11 +4,11 @@
 //
 //  Created by Uwe Tilemann on 27.06.24.
 //
-
 import SwiftUI
 
 import SnabbleCore
 import SnabbleAssetProviding
+import SnabblePayment
 
 extension ShoppingCart {
     func taxationInfoRequired() -> Bool {
@@ -48,8 +48,10 @@ extension Shopper {
                     
                     let detail = self.paymentManager.selectedPayment?.detail
                     self.gotoPayment(paymentMethod, detail, info, shoppingCart) { didStart in
-                        if !didStart {
-                            self.startScanner()
+                        Task { @MainActor in
+                            if !didStart {
+                                self.startScanner()
+                            }
                         }
                     }
                 case .failure(let error):

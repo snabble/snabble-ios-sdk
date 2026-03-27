@@ -109,16 +109,23 @@ extension SignedCheckoutInfo {
 
             let data = try JSONSerialization.data(withJSONObject: dict, options: [])
             let url = self.links.checkoutProcess.href + "/" + id
+            Log.info("calling project.request for checkout process")
             project.request(.put, url, body: data, timeout: timeout) { request in
+                Log.info("project.request callback called")
                 guard let request = request else {
+                    Log.error("request is nil, returning noRequest error")
                     return completion(RawResult.failure(SnabbleError.noRequest))
                 }
 
+                Log.info("calling project.performRaw")
                 project.performRaw(request) { (result: RawResult<CheckoutProcess, SnabbleError>) in
+                    Log.info("project.performRaw callback called")
                     switch result.result {
                     case .success:
+                        Log.info("createCheckoutProcess succeeded, calling completion")
                         completion(result)
                     case .failure(let error):
+                        Log.error("createCheckoutProcess failed: \(error)")
                         if let statusCode = error.statusCode, statusCode == 409 || statusCode == 403 {
                             // this means that somehow we already have a process with this id in the backend.
                             // GET that process, and return it to the caller
@@ -135,6 +142,7 @@ extension SignedCheckoutInfo {
             }
         } catch {
             Log.error("error serializing request body: \(error)")
+            completion(RawResult.failure(SnabbleError.invalid))
         }
     }
 }

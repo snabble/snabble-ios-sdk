@@ -9,7 +9,6 @@ import Foundation
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleUI
 
 extension ShoppingCart {
     public func cartItem(for item: BarcodeManager.ScannedItem, project: Project) -> CartItem {

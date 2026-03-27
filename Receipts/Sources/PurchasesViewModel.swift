@@ -6,9 +6,10 @@
 //
 
 import SwiftUI
+
 import SnabbleCore
 import SnabbleComponents
-import SnabbleUI
+import SnabbleAssets
 
 private extension UserDefaults {
     private var receiptKey: String {

@@ -11,6 +11,9 @@ import SnabbleCore
 import SnabbleUI
 import SnabbleAssetProviding
 import SnabbleComponents
+import SnabbleAssets
+import SnabbleOnboarding
+import SnabbleShops
 
 @main
 struct SwiftySnabbleApp: App {

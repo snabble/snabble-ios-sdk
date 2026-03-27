@@ -47,15 +47,6 @@
       }
     },
     {
-      "identity" : "sdcalertview",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/sberrevoets/SDCAlertView.git",
-      "state" : {
-        "revision" : "eda84764885b55b30c334384afee5f8f06ac48de",
-        "version" : "12.0.5"
-      }
-    },
-    {
       "identity" : "swift-asn1",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-asn1.git",

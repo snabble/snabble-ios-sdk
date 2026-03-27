@@ -9,7 +9,7 @@ import SwiftUI
 import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleComponents
-import SnabbleUI
+//import SnabbleAssets
 
 /// Hashable wrapper for PurchaseProviding to enable navigation
 public struct ReceiptNavigationItem: Hashable {

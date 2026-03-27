@@ -1,0 +1,25 @@
+//
+//  WidgetVersionView.swift
+//  Snabble
+//
+//  Created by Uwe Tilemann on 15.09.22.
+//
+
+import SwiftUI
+
+import SnabbleAssets
+
+public struct WidgetVersionView: View {
+    let widget: WidgetVersion
+    let action: (Widget) -> Void
+    
+    public var body: some View {
+        Text(widget.versionString)
+            .onTapGesture(count: 5) {
+                DeveloperMode.toggle()
+            }
+            .onTapGesture {
+                action(widget)
+            }
+    }
+}

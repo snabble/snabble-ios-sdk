@@ -12,7 +12,9 @@ import Combine
 import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleComponents
-import SnabbleUI
+import SnabbleAssets
+import SnabbleCart
+import SnabblePayment
 
 extension UserDefaults {
     public static let scanningDisabledKey: String = "io.snabble.sdk.scanningDisabled"
@@ -97,6 +99,10 @@ public final class Shopper: BarcodeProcessing, Equatable {
 
     let logger = Logger(subsystem: "io.snabble.sdk.ScanAndGo", category: "Shopper")
     private var subscriptions = Set<AnyCancellable>()
+    private var paymentProcess: PaymentProcess?
+
+    /// The successful checkout process to display in the success screen
+    public var successfulCheckoutProcess: CheckoutProcess?
     
     /// Initializes a new Shopper with the specified shop and barcode detector.
     ///
@@ -191,19 +197,28 @@ public final class Shopper: BarcodeProcessing, Equatable {
             barcodeManager.barcodeDetector.setTorch(flashlight)
         }
     }
-    public var isNavigating: Bool = false {
-        didSet {
-            if !isNavigating {
+    private var _isNavigating: Bool = false
+
+    public var isNavigating: Bool {
+        get { _isNavigating }
+        set {
+            logger.debug("isNavigating changed to: \(newValue)")
+            _isNavigating = newValue
+            if !newValue {
                 controller = nil
                 self.startScanner()
             }
         }
     }
+
     public var controller: UIViewController? {
         didSet {
-            if controller != nil {
+            if let controller {
+                logger.debug("controller set: \(String(describing: type(of: controller)))")
                 self.stopScanner()
-                isNavigating = true
+                _isNavigating = true
+            } else {
+                logger.debug("controller set to nil")
             }
         }
     }
@@ -256,21 +271,27 @@ extension Shopper: ShoppingCartDelegate {
         _ detail: SnabbleCore.PaymentMethodDetail?,
         _ info: SnabbleCore.SignedCheckoutInfo,
         _ cart: SnabbleCore.ShoppingCart,
-        _ didStartPayment: @escaping (Bool) -> Void) {
+        _ didStartPayment: @escaping @Sendable (Bool) -> Void) {
             
             logger.debug("starting PaymentProcess: \(method.displayName)")
             
             let process = PaymentProcess(info, cart, shop: barcodeManager.shop)
             process.paymentDelegate = self
+            self.paymentProcess = process // Keep strong reference
+            
             process.start(method, detail) { result in
                 Task { @MainActor in
                     switch result {
                     case .success(let viewController):
                         self.controller = viewController
-
+                        didStartPayment(true)
+                        
                     case .failure(let error):
                         self.showWarningMessage("Error creating payment process: \(error))")
+                        didStartPayment(false)
                     }
+                    // Clear reference after completion
+                    self.paymentProcess = nil
                 }
             }
             

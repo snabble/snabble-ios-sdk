@@ -70,8 +70,7 @@ struct ShoppingView: View {
 
     var body: some View {
         NavigationStack {
-            ShopperView()
-                .environment(shopper)
+            ShopperView(model: shopper)
                 .actionState()
         }
     }

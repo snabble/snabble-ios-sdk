@@ -10,7 +10,6 @@ import SwiftUI
 import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleComponents
-import SnabbleUI
 
 struct BarcodeSearchRowView: View {
     let product: Product
