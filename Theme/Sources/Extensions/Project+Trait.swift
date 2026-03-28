@@ -8,6 +8,7 @@
 //
 
 import SnabbleCore
+import SnabbleComponents
 
 extension SnabbleCore.Project {
     public var trait: SnabbleComponents.Project {
