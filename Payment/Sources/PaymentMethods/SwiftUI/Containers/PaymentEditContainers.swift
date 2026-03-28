@@ -6,8 +6,10 @@
 //
 
 import SwiftUI
+
 import SnabbleCore
 import SnabbleComponents
+import SnabbleUser
 
 // MARK: - Payment Edit Container Views
 
@@ -69,7 +71,7 @@ struct PayoneCreditCardEditView: View {
 
     var body: some View {
         ContainerView(
-            viewController: PayoneCreditCardEditViewController(detail, prefillData: Snabble.shared.userProvider?.getUser())
+            viewController: PayoneCreditCardEditViewController(detail, prefillData: Snabble.shared.userProvider?.getUser() as? User)
         )
         .navigationBarTitleDisplayMode(.inline)
     }

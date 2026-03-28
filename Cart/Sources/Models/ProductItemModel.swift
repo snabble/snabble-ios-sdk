@@ -10,7 +10,7 @@ import SwiftUI
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleAssets
+import SnabbleTheme
 
 open class ProductItemModel: CartItemModel, ShoppingCartItemCounting, @unchecked Sendable {
     public override var id: String {

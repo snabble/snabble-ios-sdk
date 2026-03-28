@@ -9,7 +9,7 @@ import Combine
 import Observation
 
 import SnabbleCore
-import SnabbleAssets
+import SnabbleTheme
 
 @Observable
 public final class SepaAcceptModel: @unchecked Sendable {

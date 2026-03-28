@@ -6,7 +6,6 @@
 
 import Foundation
 import CoreLocation
-import SnabbleUser
 import SnabbleNetwork
 import Combine
 
@@ -59,6 +58,11 @@ public struct Config {
     /// Custom Properties
     public var customProperties: [CustomProperty: Any] = [:]
 
+    /// The snabble domain name
+    public var domainName: String {
+        environment.name
+    }
+
     /// Initialize the configuration for Snabble
     /// - Parameters:
     ///   - appId: Provide your personal `appId`
@@ -68,12 +72,6 @@ public struct Config {
         self.appId = appId
         self.environment = environment
         self.secret = secret
-    }
-}
-
-extension Config: SnabbleUser.Configurable, SnabbleNetwork.Configurable {
-    public var domainName: String {
-        environment.name
     }
 }
 
@@ -395,39 +393,6 @@ public class Snabble: @unchecked Sendable {
 }
 
 extension Snabble {
-    /**
-     SnabbleSDK client identification
-
-     Stored in the keychain. Survives an uninstallation
-
-     - Important: [Apple Developer Forum Thread 36442](https://developer.apple.com/forums/thread/36442?answerId=281900022#281900022)
-    */
-    public static var clientId: String {
-        SnabbleUser.Client.id
-    }
-
-    // MARK: - app user id
-
-    /**
-     SnabbleSDK application user identification
-
-     Stored in the keychain. Survives an uninstallation
-
-     - Important: [Apple Developer Forum Thread 36442](https://developer.apple.com/forums/thread/36442?answerId=281900022#281900022)
-    */
-    public var appUser: AppUser? {
-        get {
-            AppUser.get(forConfig: config)
-        }
-        set {
-            AppUser.set(newValue, forConfig: config)
-            tokenRegistry.invalidate()
-            OrderList.clearCache()
-        }
-    }
-}
-
-extension Snabble {
     public func urlFor(_ url: String) -> URL? {
         URL(string: absoluteUrl(url))
     }
@@ -451,7 +416,7 @@ extension Snabble {
 extension Snabble {
     public static func request(url: URL, timeout: TimeInterval? = nil, json: Bool = true) -> URLRequest {
         var request = URLRequest(url: url)
-        request.addValue(Snabble.clientId, forHTTPHeaderField: "Client-Id")
+        request.addValue(Client.id, forHTTPHeaderField: "Client-Id")
 
         if let userAgent = Snabble.userAgent {
             request.addValue(userAgent, forHTTPHeaderField: "User-Agent")

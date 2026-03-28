@@ -11,7 +11,7 @@ import SwiftUI
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleAssets
+import SnabbleTheme
 import SnabblePayment
 
 extension Shopper {

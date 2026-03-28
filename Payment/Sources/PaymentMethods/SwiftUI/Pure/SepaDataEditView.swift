@@ -10,7 +10,7 @@ import SwiftUI
 import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleComponents
-import SnabbleAssets
+import SnabbleTheme
 
 /// Pure SwiftUI view for editing SEPA payment data
 /// Replaces SepaDataEditViewController for SwiftUI-native flows

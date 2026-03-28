@@ -10,7 +10,7 @@ import Combine
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleAssets
+import SnabbleTheme
 
 public struct InvoiceLoginInfo: Decodable, Sendable {
     public let username: String?

@@ -18,9 +18,9 @@ let package = Package(
                 "SnabbleCore",
                 "SnabbleNetwork",
                 "SnabbleAssetProviding",
-                // Layer 2 (UI Promitives)
+                // Layer 2 (UI Primitives)
                 "SnabbleComponents",
-                "SnabbleAssets",
+                "SnabbleTheme",
                 // Layer 3 (Domain Features):
                 "SnabbleShops",
                 "SnabbleCart",
@@ -28,7 +28,7 @@ let package = Package(
                 "SnabbleReceipts",
                 // Layer 4 (Payment):
                 "SnabblePayment",
-                // Layer 6 (Complete Flows)
+                // Layer 5 (Complete Flows)
                 "SnabbleScanAndGo",
                 "SnabblePhoneAuth",
                 "SnabbleCoupons",
@@ -57,12 +57,12 @@ let package = Package(
         ),
         // Feature packages (modular - SDK 1.0)
         .library(
-            name: "SnabbleAssets",
-            targets: ["SnabbleCore", "SnabbleComponents", "SnabbleAssets"]
+            name: "SnabbleTheme",
+            targets: ["SnabbleCore", "SnabbleComponents", "SnabbleTheme"]
         ),
         .library(
             name: "SnabblePayment",
-            targets: ["SnabbleAssets", "SnabblePayment"]
+            targets: ["SnabbleTheme", "SnabblePayment"]
         ),
         .library(
             name: "SnabbleShops",
@@ -78,7 +78,7 @@ let package = Package(
         ),
         .library(
             name: "SnabbleReceipts",
-            targets: ["SnabbleAssets", "SnabbleReceipts"]
+            targets: ["SnabbleTheme", "SnabbleReceipts"]
         ),
         .library(
             name: "SnabbleScanAndGo",
@@ -165,8 +165,7 @@ let package = Package(
                 "SwiftOTP",
                 .product(name: "GRDB", package: "GRDB.swift"),
                 "ZIPFoundation",
-                "SnabbleUser",
-                "SnabbleComponents"
+                "SnabbleNetwork"
             ],
             path: "Core/Sources",
             resources: [
@@ -198,12 +197,14 @@ let package = Package(
             ]
         ),
         .target(
-            name: "SnabbleAssets",
+            name: "SnabbleTheme",
             dependencies: [
                 "SnabbleCore",
                 "SnabbleComponents",
+                "SnabbleAssetProviding",
+                "KeychainAccess",
             ],
-            path: "Assets/Sources",
+            path: "Theme/Sources",
             resources: [
                 .process("Resources")
             ],
@@ -217,9 +218,11 @@ let package = Package(
             dependencies: [
                 "SnabbleCore",
                 "SnabbleComponents",
-                "SnabbleAssets",
+                "SnabbleTheme",
                 "SnabbleCart",
                 "SnabbleReceipts",
+                "SnabbleAssetProviding",
+                "SnabbleUser",
                 "DeviceKit",
             ],
             path: "Payment/Sources",
@@ -232,7 +235,7 @@ let package = Package(
             name: "SnabbleShops",
             dependencies: [
                 "SnabbleCore",
-                "SnabbleAssets"
+                "SnabbleTheme"
             ],
             path: "Shops/Sources",
             swiftSettings: [.swiftLanguageMode(.v6)]
@@ -242,7 +245,7 @@ let package = Package(
             dependencies: [
                 "SnabbleCore",
                 "SnabbleShops",
-                "SnabbleAssets"
+                "SnabbleTheme"
            ],
             path: "Cart/Sources",
             swiftSettings: [.swiftLanguageMode(.v6)]
@@ -252,7 +255,7 @@ let package = Package(
             dependencies: [
                 "SnabbleCore",
                 "SnabbleComponents",
-                "SnabbleAssets"
+                "SnabbleTheme"
             ],
             path: "Receipts/Sources",
             swiftSettings: [.swiftLanguageMode(.v6)]
@@ -271,7 +274,7 @@ let package = Package(
             dependencies: [
                 "SnabbleCore",
                 "SnabbleComponents",
-                "SnabbleAssets",
+                "SnabbleTheme",
            ],
             path: "Teaser/Sources",
             swiftSettings: [.swiftLanguageMode(.v6)]
@@ -280,7 +283,7 @@ let package = Package(
             name: "SnabbleDynamicView",
             dependencies: [
                 "SnabbleCore",
-                "SnabbleAssets",
+                "SnabbleTheme",
             ],
             path: "DynamicView/Sources",
             swiftSettings: [.swiftLanguageMode(.v6)]
@@ -289,7 +292,7 @@ let package = Package(
             name: "SnabbleOnboarding",
             dependencies: [
                 "SnabbleCore",
-                "SnabbleAssets",
+                "SnabbleTheme",
             ],
             path: "Onboarding/Sources",
             swiftSettings: [.swiftLanguageMode(.v6)]
@@ -299,7 +302,7 @@ let package = Package(
             name: "SnabbleDatatrans",
             dependencies: [
                 "SnabbleCore",
-                "SnabbleAssets",
+                "SnabbleTheme",
                 "SnabblePayment",
                 .product(name: "Datatrans", package: "ios-sdk"),
             ],
@@ -388,7 +391,8 @@ let package = Package(
             dependencies: [
                 "SnabbleAssetProviding",
                 "SnabbleNetwork",
-                "SnabbleComponents"
+                "SnabbleComponents",
+                "SnabbleCore"
             ],
             path: "User/Sources",
             swiftSettings: [
@@ -400,9 +404,10 @@ let package = Package(
             dependencies: [
                 "SnabbleCore",
                 "SnabbleAssetProviding",
-                "SnabbleAssets",
+                "SnabbleTheme",
                 "SnabbleCart",
                 "SnabblePayment",
+                "SnabbleComponents",
                 "CameraZoomWheel",
             ],
             path: "ScanAndGo",

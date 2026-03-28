@@ -9,7 +9,7 @@ import UIKit
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleAssets
+import SnabbleTheme
 
 extension PaymentPovider {
     public var icon: UIImage? {

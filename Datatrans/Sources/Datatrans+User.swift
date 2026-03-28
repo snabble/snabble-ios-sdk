@@ -10,9 +10,7 @@ import UIKit
 
 import SnabbleAssetProviding
 import SnabbleUser
-import SnabbleAssets
-import SnabbleUser
-
+import SnabbleTheme
 struct DatatransUser: Codable {
     let name: String?
     let email: String?
@@ -89,4 +87,3 @@ extension DatatransUser {
                              address: address)
     }
 }
-

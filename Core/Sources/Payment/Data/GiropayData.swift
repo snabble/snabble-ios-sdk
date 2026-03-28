@@ -37,7 +37,7 @@ public struct GiropayData: Codable, EncryptedPaymentData, Equatable, Sendable {
     }
 
     public init?(_ gatewayCert: Data?, _ authorizationURI: String, _ auth: GiropayAuthorization) {
-        let requestOrigin = GiropayOrigin(clientID: Snabble.clientId, customerAuthorizationURI: authorizationURI)
+        let requestOrigin = GiropayOrigin(clientID: Client.id, customerAuthorizationURI: authorizationURI)
 
         guard
             let encrypter = PaymentDataEncrypter(gatewayCert),

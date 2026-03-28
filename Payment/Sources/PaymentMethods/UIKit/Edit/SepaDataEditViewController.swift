@@ -12,7 +12,7 @@ import Combine
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleAssets
+import SnabbleTheme
 
 /// Methods for managing callbacks for widges
 @MainActor

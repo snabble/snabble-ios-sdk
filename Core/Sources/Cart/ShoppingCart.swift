@@ -623,7 +623,7 @@ public extension Notification.Name {
 // MARK: backend connection
 extension ShoppingCart {
     func createCart() -> Cart {
-        return Cart(self, clientId: Snabble.clientId, appUserId: Snabble.shared.appUser?.id)
+        return Cart(self, clientId: Client.id, appUserId: Snabble.shared.appUser?.id)
     }
 
     func createCheckoutInfo(userInitiated: Bool = false, completion: @escaping @Sendable (Bool) -> Void) {

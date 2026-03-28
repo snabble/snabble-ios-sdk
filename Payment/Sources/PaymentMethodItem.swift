@@ -9,7 +9,7 @@ import Foundation
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleAssets
+import SnabbleTheme
 
 public struct PaymentMethodItem: Swift.Identifiable, PaymentPovider {
     public let id = UUID()

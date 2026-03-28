@@ -11,7 +11,7 @@ import SwiftUI
 import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleComponents
-import SnabbleAssets
+import SnabbleTheme
 
 public struct PaymentSubjectView: View {
     @Bindable var viewModel: PaymentSubjectViewModel

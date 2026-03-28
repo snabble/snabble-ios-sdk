@@ -9,7 +9,7 @@ import UIKit
 import SnabbleCore
 import SnabbleComponents
 import SnabbleAssetProviding
-import SnabbleAssets
+import SnabbleTheme
 
 @MainActor
 public protocol SepaEditViewControllerDelegate: AnyObject {

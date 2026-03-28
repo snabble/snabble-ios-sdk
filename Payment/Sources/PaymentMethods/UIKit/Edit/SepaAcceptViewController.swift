@@ -11,7 +11,7 @@ import SwiftUI
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleAssets
+import SnabbleTheme
 
 /// Methods for managing callbacks for widges
 public protocol SepaAcceptViewControllerDelegate: AnyObject {

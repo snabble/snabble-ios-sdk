@@ -9,7 +9,7 @@ import Combine
 import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleComponents
-import SnabbleAssets
+import SnabbleTheme
 
 public final class PaymentMethodStartCheck: @unchecked Sendable {
     private var method: PaymentMethod

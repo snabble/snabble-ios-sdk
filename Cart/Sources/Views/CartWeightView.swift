@@ -11,7 +11,7 @@ import Combine
 
 import SnabbleAssetProviding
 import SnabbleComponents
-import SnabbleAssets
+import SnabbleTheme
 
 extension ShoppingCartViewModel {
     func updateQuantity(_ string: Binding<String>, for itemModel: ProductItemModel) {

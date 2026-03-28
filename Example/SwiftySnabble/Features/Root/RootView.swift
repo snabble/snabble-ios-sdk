@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-import SnabbleUI
+import SnabbleTheme
 
 struct RootView: View {
     @Environment(AppRouter.self) private var router

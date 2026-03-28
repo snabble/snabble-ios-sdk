@@ -8,7 +8,7 @@
 import Foundation
 import SwiftUI
 
-import SnabbleAssets
+import SnabbleTheme
 
 public struct DynamicViewConfiguration: Decodable, ImageSourcing {
     public let imageSource: String?

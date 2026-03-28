@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-import SnabbleAssets
+import SnabbleTheme
 
 public struct WidgetVersionView: View {
     let widget: WidgetVersion

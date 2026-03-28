@@ -9,7 +9,7 @@
 
 import Foundation
 
-import SnabbleAssets
+import SnabbleTheme
 
 /// The OnboadingItem holds the info for one page
 ///

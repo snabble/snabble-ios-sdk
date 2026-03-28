@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-import SnabbleAssets
+import SnabbleTheme
 
 struct ProjectPaymentEntryRow: View {
     let entry: PaymentMethodListManager.ProjectEntry

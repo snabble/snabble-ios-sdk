@@ -162,7 +162,7 @@ struct PayoneCreditCardAddView: View {
         ContainerView(
             viewController: PayoneCreditCardEditViewController(
                 brand: brand,
-                prefillData: Snabble.shared.userProvider?.getUser(),
+                prefillData: Snabble.shared.userProvider?.getUser() as? User,
                 projectId
             )
         )

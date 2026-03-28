@@ -10,7 +10,7 @@ import Combine
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleAssets
+import SnabbleTheme
 
 @MainActor
 public protocol CheckViewModel {

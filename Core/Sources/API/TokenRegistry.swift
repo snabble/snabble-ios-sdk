@@ -215,10 +215,10 @@ public final class TokenRegistry: @unchecked Sendable {
 
     private func retrieveToken(for projectId: Identifier<Project>, _ date: Date? = nil, completion: @escaping @Sendable (TokenData?) -> Void) {
         if let appUser = Snabble.shared.appUser {
-            if verboseToken { Log.debug("retrieveToken p=\(projectId.rawValue) app=\(self.appId) client=\(Snabble.clientId) au=\(appUser), date=\(String(describing: date))") }
+            if verboseToken { Log.debug("retrieveToken p=\(projectId.rawValue) app=\(self.appId) client=\(Client.id) au=\(appUser), date=\(String(describing: date))") }
             self.retrieveTokenForUser(for: projectId, appUser, date, completion: completion)
         } else {
-            if verboseToken { Log.debug("retrieveToken+User p=\(projectId.rawValue) app=\(self.appId) client=\(Snabble.clientId) date=\(String(describing: date))") }
+            if verboseToken { Log.debug("retrieveToken+User p=\(projectId.rawValue) app=\(self.appId) client=\(Client.id) date=\(String(describing: date))") }
             self.retrieveAppUserAndToken(for: projectId, date, completion: completion)
         }
     }

@@ -4,9 +4,21 @@ This guide explains the structure and architecture of the Snabble iOS SDK for de
 
 ## Overview
 
-The Snabble iOS SDK is a modular Swift Package Manager-based retail SDK that provides self-scanning and checkout functionality for iOS applications. It uses a clean architecture with distinct module responsibilities.
+The Snabble iOS SDK is a modular Swift Package Manager-based retail SDK that provides self-scanning and checkout functionality for iOS applications. It uses a **clean layered architecture** with distinct module responsibilities and **no circular dependencies** (resolved 2026-03-27).
+
+See `documentation/Circular-Dependencies-Analysis.md` for details about the resolved circular dependencies.
 
 ## Module Architecture
+
+The SDK follows a strict layered architecture:
+
+![Architecture Diagram](architecture.svg)
+
+```
+Layer 1 (Foundation) → Layer 2 (UI Primitives) → Layer 3 (Domain Features) → Layer 4 (Payment) → Layer 5 (Complete Flows)
+```
+
+Modules can only depend on modules from lower layers, ensuring no circular dependencies.
 
 ### Core Modules
 
@@ -55,40 +67,8 @@ The foundation of the SDK containing all business logic, data models, and offlin
 
 ---
 
-#### 2. **SnabbleUI** - UIKit Components (Legacy)
-**Location:** `UI/Sources/`
-
-UIKit-based UI components. Being gradually replaced by SwiftUI.
-
-**Key Components:**
-- **Scanner** (`Scanner/`)
-  - `ScannerViewController.swift` - Camera-based barcode scanner
-  - `ScannerDrawerViewController.swift` - Shopping cart drawer (Pulley)
-  - `BarcodeDetector.swift` - Barcode detection logic
-
-- **Shopping Cart** (`ShoppingCart/`)
-  - `ShoppingCartViewController.swift` - Cart list view (UIKit)
-  - Legacy - Use SwiftUI `ShoppingCartView` instead
-
-- **Payment** (`Payment/`)
-  - `PaymentMethodViewController.swift` - Payment method selection
-  - `PaymentProcess.swift` - Payment workflow orchestration
-
-- **Receipts** (`Receipts/`)
-  - `ReceiptsViewController.swift` - Receipt history list
-  - `ReceiptsDetailViewController.swift` - PDF receipt viewer (QLPreviewController)
-
-- **Coupons** (`Coupons/`)
-  - ✅ `CouponsViewControllerSwiftUI.swift` - **NEW SwiftUI implementation**
-  - ✅ `CouponCardView.swift` - SwiftUI coupon card
-  - ✅ `CouponsView.swift` - SwiftUI coupon list
-  - `CouponsViewController.swift` - **Legacy UIKit (deprecated)**
-
-**Migration Status:** Gradually migrating to SwiftUI (see SnabbleScanAndGo)
-
----
-
-#### 3. **SnabbleScanAndGo** - Modern SwiftUI Scan & Shop
+#### 2. **SnabbleScanAndGo** - Complete SwiftUI Scan & Shop
+**Layer:** 5 (Complete Flows)
 **Location:** `ScanAndGo/Sources/`
 
 **⭐ Modern SwiftUI implementation - use this for new features!**
@@ -126,44 +106,84 @@ ShopperView(model: shopper)
 
 ---
 
-#### 4. **SnabbleNetwork** - API Communication
+#### 3. **SnabbleNetwork** - API Communication
+**Layer:** 1 (Foundation)
 **Location:** `Network/Sources/`
 
 **Key Components:**
-- `NetworkManager.swift` - HTTP client
-- `APIEndpoints.swift` - API endpoint definitions
-- Authentication handling
-- Request/response models
+- API communication layer
+- Authentication token management
+- AppUser keychain storage
+- Configurable protocol
+
+**Dependencies:**
+- SwiftOTP, KeychainAccess
 
 ---
 
-#### 5. **SnabblePay** - Payment Processing
-**Location:** `Pay/Sources/`
+#### 4. **SnabbleComponents** - UI Primitives
+**Layer:** 2 (UI Primitives)
+**Location:** `Components/Sources/`
 
 **Key Components:**
-- **Payment Methods** (`PaymentMethods/`)
-  - `PaymentMethodManager.swift` - @Observable payment method state
-  - `PaymentMethod.swift` - Payment method models
-  - `PaymentDelegate.swift` - Payment lifecycle callbacks
+- Reusable SwiftUI components
+- Buttons, dialogs, toasts
+- Web views
+- User notification toggles
 
-- **Payment Providers**
-  - `SEPAPayment.swift` - SEPA direct debit
-  - `GiropayPayment.swift` - Giropay integration
-  - `PayonePayment.swift` - Payone integration
-  - See `SnabbleDatatrans` for Twint/PostFinance
-
-**Integration:**
-```swift
-extension MyViewController: PaymentDelegate {
-    func checkoutFinished(_ cart: ShoppingCart, _ process: CheckoutProcess?) {
-        // Handle successful payment
-    }
-}
-```
+**Dependencies:**
+- SnabbleAssetProviding, WindowKit
+- **No Core dependency** ✅ (improved 2026-03-28)
 
 ---
 
-#### 6. **SnabbleDatatrans** - Datatrans Payment (Optional)
+#### 5. **SnabbleTheme** - Theme & Assets
+**Layer:** 2 (UI Primitives)
+**Location:** `Theme/Sources/`
+
+**Key Components:**
+- Asset management
+- Theme provider
+- Project trait system (moved from Components 2026-03-28)
+- Custom colors and fonts
+
+**Dependencies:**
+- SnabbleCore, SnabbleComponents, SnabbleAssetProviding, KeychainAccess
+
+---
+
+#### 6. **SnabbleUser** - User Management
+**Layer:** 3 (Domain Features)
+**Location:** `User/Sources/`
+
+**Key Components:**
+- User profile management
+- Client ID & AppUser public API
+- Consent management
+- UserProviding protocol
+
+**Dependencies:**
+- SnabbleAssetProviding, SnabbleNetwork, SnabbleComponents, SnabbleCore
+
+---
+
+#### 7. **SnabblePayment** - Payment Processing
+**Layer:** 4 (Payment)
+**Location:** `Payment/Sources/`
+
+**Key Components:**
+- Payment method management
+- Multi-provider support (Payone, Datatrans, Apple Pay)
+- Payment UI (UIKit & SwiftUI)
+- Checkout flow integration
+
+**Dependencies:**
+- SnabbleCore, SnabbleComponents, SnabbleTheme, SnabbleCart, SnabbleReceipts, SnabbleAssetProviding, SnabbleUser, DeviceKit
+
+---
+
+#### 8. **SnabbleDatatrans** - Datatrans Payment (Optional)
+**Layer:** 4 (Payment)
 **Location:** `Datatrans/Sources/`
 
 **Payment Methods:**
@@ -189,24 +209,17 @@ DatatransFactory.initialize()
 
 ---
 
-#### 7. **SnabbleUser** - User Management
-**Location:** `User/Sources/`
-
-**Key Components:**
-- User profile management
-- Authentication state
-- User preferences
-
----
-
-#### 8. **SnabbleAssetProviding** - Theming & Assets
+#### 9. **SnabbleAssetProviding** - Asset Protocol
+**Layer:** 1 (Foundation)
 **Location:** `AssetProviding/Sources/`
 
 **Key Components:**
-- `Asset.swift` - Asset loading
-- `Asset+Color.swift` - Custom color schemes
-- `Asset+Font.swift` - Custom fonts
+- Asset protocol definitions
+- Color and font protocols
 - Localization strings (8 languages)
+
+**Dependencies:**
+- WCAG-Colors
 
 **Customization:**
 ```swift
@@ -221,12 +234,36 @@ Asset.provider = YourApp()
 
 ---
 
-#### 9. **SnabbleComponents** - Reusable SwiftUI Components
-**Location:** `Components/Sources/`
+## Additional Modules
 
-**Key Components:**
-- **Buttons** (`SwiftUI/View/Buttons/`)
-  - `PrimaryButtonView.swift`
+### Domain Features (Layer 3)
+- **SnabbleShops**: Shop management and location services
+- **SnabbleCart**: Shopping cart UI components
+- **SnabbleReceipts**: Receipt history and PDF viewer
+- **SnabbleCoupons**: Coupon management and UI
+- **SnabbleTeaser**: Marketing teasers
+- **SnabbleDynamicView**: Dynamic UI configuration
+- **SnabbleOnboarding**: Onboarding flows
+
+### Complete Flows (Layer 5)
+- **SnabblePhoneAuth**: Phone number authentication
+
+For detailed documentation on specific modules, see their individual README files in:
+- `Core/README.md`
+- `Network/README.md`
+- `User/README.md`
+- `Components/README.md`
+- `Theme/README.md`
+- `Payment/README.md`
+- `ScanAndGo/README.md`
+
+---
+
+## Legacy Components
+
+The following directories contain legacy code that has been mostly replaced:
+- **UI/**: Legacy UIKit utilities (see `UI/README.md`)
+- **ShopFinder/**: Empty directory marked for removal (see `ShopFinder/README.md`)
   - `SecondaryButtonView.swift`
   - `ButtonStyles.swift`
 

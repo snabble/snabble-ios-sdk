@@ -6,7 +6,7 @@
 import Foundation
 
 import SnabbleCore
-import SnabbleAssets
+import SnabbleTheme
 
 /// map payment methods to icons and the UIViewControllers that implement them
 extension PaymentMethod {

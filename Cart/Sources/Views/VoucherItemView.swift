@@ -9,7 +9,7 @@ import SwiftUI
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleAssets
+import SnabbleTheme
 
 struct VoucherItemView: View {
     @Environment(ShoppingCartViewModel.self) var cartModel

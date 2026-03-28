@@ -8,7 +8,7 @@
 import SwiftUI
 
 import SnabbleCore
-import SnabbleAssets
+import SnabbleTheme
 
 @Observable
 @MainActor

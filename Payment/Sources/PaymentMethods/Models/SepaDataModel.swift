@@ -10,7 +10,7 @@ import Combine
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleAssets
+import SnabbleTheme
 
 public enum SepaStrings: String {
     case iban

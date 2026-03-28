@@ -60,7 +60,7 @@ extension OrderList {
     public static func load(_ project: Project, completion: @escaping @Sendable (Result<OrderList, SnabbleError>) -> Void ) {
         var url: String?
         if let clientOrdersUrl = Snabble.shared.links.clientOrders?.href {
-            url = clientOrdersUrl.replacingOccurrences(of: "{clientID}", with: Snabble.clientId)
+            url = clientOrdersUrl.replacingOccurrences(of: "{clientID}", with: Client.id)
         }
 
         if let appUserId = Snabble.shared.appUser?.id {
@@ -82,7 +82,7 @@ extension OrderList {
         }
     }
 
-    static func clearCache() {
+    public static func clearCache() {
         let fileManager = FileManager.default
         // swiftlint:disable:next force_try
         let cacheDir = try! fileManager.url(for: .documentDirectory, in: .userDomainMask, appropriateFor: nil, create: true)

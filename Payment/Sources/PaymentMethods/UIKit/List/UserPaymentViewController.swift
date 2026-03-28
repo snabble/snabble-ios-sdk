@@ -42,9 +42,11 @@ public final class UserPaymentViewController: UIViewController {
     public override func loadView() {
         let view = UIView(frame: UIScreen.main.bounds)
         
-        let userViewController = UserViewController(user: Snabble.shared.userProvider?.getUser(),
-                                                    fields: fields,
-                                                    requiredFields: requiredFields)
+        let userViewController = UserViewController(
+            user: Snabble.shared.userProvider?.getUser() as? User,
+            fields: fields,
+            requiredFields: requiredFields
+        )
         
         addChild(userViewController)
         view.addSubview(userViewController.view)

@@ -9,7 +9,7 @@ import Foundation
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleAssets
+import SnabbleTheme
 
 public extension ShoppingCart {
     static let textFieldMagic: Int = 0x4711

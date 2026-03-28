@@ -7,7 +7,7 @@ import SwiftUI
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleAssets
+import SnabbleTheme
 
 final class SupervisorViewModel: BaseCheckViewModel, @unchecked Sendable {
     override func updateCodeImage() {

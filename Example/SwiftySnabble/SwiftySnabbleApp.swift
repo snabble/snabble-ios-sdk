@@ -8,10 +8,9 @@
 import SwiftUI
 
 import SnabbleCore
-import SnabbleUI
 import SnabbleAssetProviding
 import SnabbleComponents
-import SnabbleAssets
+import SnabbleTheme
 import SnabbleOnboarding
 import SnabbleShops
 

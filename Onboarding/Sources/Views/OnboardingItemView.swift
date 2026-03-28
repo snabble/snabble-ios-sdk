@@ -11,7 +11,7 @@ import SwiftUI
 
 import SnabbleAssetProviding
 import SnabbleComponents
-import SnabbleAssets
+import SnabbleTheme
 
 struct URLModifier: ViewModifier {
     @Binding var url: URL?

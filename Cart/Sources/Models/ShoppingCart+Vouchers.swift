@@ -9,7 +9,7 @@ import SnabbleCore
 
 import SnabbleAssetProviding
 import SnabbleComponents
-import SnabbleAssets
+import SnabbleTheme
 
 extension VoucherType {
     var name: String {

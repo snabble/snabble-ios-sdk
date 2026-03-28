@@ -7,7 +7,7 @@
 import UIKit
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleAssets
+import SnabbleTheme
 
 @MainActor
 final class CustomerCardCheckoutViewController: UIViewController {

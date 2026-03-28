@@ -39,7 +39,9 @@ Search for the Snabble Apple SDK using the repo's URL:
 https://github.com/snabble/snabble-ios-sdk.git
 ```
 
-Next, set the **Dependency Rule** to be `Up to Next Major Version` and specify `0.22.2` as the lower bound.
+Next, set the **Dependency Rule** to be `Up to Next Major Version` and specify `1.0.0` as the lower bound.
+
+**Note:** For SDK versions before 1.0.0, specify `0.22.2` as the lower bound.
 
 Then, select **Add Package**.
 
@@ -56,10 +58,12 @@ dependencies:[
   .package(
     name: "Snabble",
     url: "https://github.com/snabble/snabble-ios-sdk.git",
-    .upToNextMajor(from: "0.22.2")
+    .upToNextMajor(from: "1.0.0")
   )
 ]
 ```
+
+**Note:** For SDK versions before 1.0.0, use `from: "0.22.2"`
 
 Then, in any target that depends on a Firebase product, add it to the `dependencies`
 array of that target:
@@ -100,6 +104,23 @@ Note that support for these payment methods also requires changes to your app's 
 
 Snabble follows [semantic versioning](https://semver.org/) rules.
 Note that we are currently in initial development, with major version 0. Anything may change at any time.
+
+## Architecture
+
+The Snabble iOS SDK follows a clean **layered architecture** with no circular dependencies:
+
+![Architecture Diagram](documentation/architecture.svg)
+
+**Key Features:**
+- ✅ 5-layer modular structure (Foundation → UI Primitives → Domain Features → Payment → Complete Flows)
+- ✅ No circular dependencies (resolved 2026-03-27, improved 2026-03-28)
+- ✅ All dependencies explicit and verified from Package.swift
+- ✅ Swift 6.2 with strict concurrency checking
+- ✅ Clean separation of concerns
+
+For detailed architecture documentation, see:
+- [SDK Architecture Guide](documentation/SDK-Architecture.md)
+- [Circular Dependencies Analysis](documentation/Circular-Dependencies-Analysis.md)
 
 ## Documentation
 

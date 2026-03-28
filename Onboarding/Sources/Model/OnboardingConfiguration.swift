@@ -10,7 +10,7 @@
 import Foundation
 import SwiftUI
 
-import SnabbleAssets
+import SnabbleTheme
 
 public struct OnboardingConfiguration: Codable, ImageSourcing {
     /// optional string of onboarding image logo to display

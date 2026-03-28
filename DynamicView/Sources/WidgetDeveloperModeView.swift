@@ -7,7 +7,7 @@
 import SwiftUI
 import Combine
 
-import SnabbleAssets
+import SnabbleTheme
 
 @Observable
 public class DeveloperModeViewModel: NSObject {

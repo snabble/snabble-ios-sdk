@@ -114,4 +114,3 @@ public protocol UserValidation: UIViewController {
 }
 
 public typealias UserInputConformance = UserValidation & UserFieldProviding
-

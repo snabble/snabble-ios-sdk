@@ -8,7 +8,7 @@ import DeviceKit
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleAssets
+import SnabbleTheme
 
 final class EmbeddedCodesCheckoutViewController: UIViewController {
     private weak var scrollView: UIScrollView?

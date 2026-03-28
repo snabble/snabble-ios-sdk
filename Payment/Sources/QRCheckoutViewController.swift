@@ -8,7 +8,7 @@ import UIKit
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleAssets
+import SnabbleTheme
 import SnabbleCart
 
 final class QRCheckoutViewController: UIViewController {

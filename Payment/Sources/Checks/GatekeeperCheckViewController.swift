@@ -8,7 +8,7 @@ import Combine
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleAssets
+import SnabbleTheme
 
 public protocol GatekeeperProviding: AnyObject {
     /// Providing an optional `UIViewController` for the given `GatekeeperViewModel`

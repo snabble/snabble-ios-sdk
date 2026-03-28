@@ -12,7 +12,7 @@ import Combine
 import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleComponents
-import SnabbleAssets
+import SnabbleTheme
 import SnabbleCart
 import SnabblePayment
 

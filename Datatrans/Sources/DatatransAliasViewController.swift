@@ -8,9 +8,9 @@ import Datatrans
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleAssets
+import SnabbleTheme
 import SnabbleUser
-//import SnabblePayment
+// import SnabblePayment
 
 public final class DatatransAliasViewController: UIViewController {
     private weak var containerView: UIStackView?

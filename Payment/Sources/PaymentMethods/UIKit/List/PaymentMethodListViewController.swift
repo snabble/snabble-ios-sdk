@@ -8,7 +8,8 @@ import UIKit
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleAssets
+import SnabbleTheme
+import SnabbleUser
 
 @MainActor
 public final class PaymentMethodListViewController: UITableViewController {
@@ -188,7 +189,7 @@ extension PaymentMethodListViewController {
             case .giropayAuthorization:
                 editVC = GiropayEditViewController(detail, for: projectId, with: self.analyticsDelegate)
             case .payoneCreditCard:
-                editVC = PayoneCreditCardEditViewController(detail, prefillData: Snabble.shared.userProvider?.getUser())
+                editVC = PayoneCreditCardEditViewController(detail, prefillData: Snabble.shared.userProvider?.getUser() as? User)
             case .tegutEmployeeCard:
                 editVC = nil
             case .invoiceByLogin:

@@ -8,7 +8,7 @@ import UIKit
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleAssets
+import SnabbleTheme
 
 private extension PaymentMethodAddCell.ViewModel {
     init(entry: PaymentMethodListManager.ProjectEntry) {

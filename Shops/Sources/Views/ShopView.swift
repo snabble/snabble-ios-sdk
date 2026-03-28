@@ -10,7 +10,7 @@ import SwiftUI
 import SnabbleCore
 import SnabbleComponents
 import SnabbleAssetProviding
-import SnabbleAssets
+import SnabbleTheme
 
 extension CheckInManager {
     func shop(for provider: any ShopProviding) -> Shop? {

@@ -9,7 +9,7 @@ import Foundation
 import SwiftUI
 
 import SnabbleCore
-import SnabbleAssets
+import SnabbleTheme
 
 public protocol Widget: Decodable {
     var id: String { get }

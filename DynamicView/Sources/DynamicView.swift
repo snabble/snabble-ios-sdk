@@ -8,7 +8,7 @@
 import Combine
 import SwiftUI
 
-import SnabbleAssets
+import SnabbleTheme
 
 public struct DynamicView: View {
     public var viewModel: DynamicViewModel
