@@ -27,7 +27,7 @@ This directory contains both UIKit (legacy) and SwiftUI implementations for paym
 #### 1. Show Payment Methods for a Single Project
 
 ```swift
-import SnabbleUI
+import SnabbleTheme
 
 // In your SwiftUI view
 PaymentMethodListView(

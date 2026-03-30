@@ -334,7 +334,7 @@ After restructuring, some files will have broken imports.
 
 ```bash
 # Find all Swift files importing SnabbleUI
-grep -r "import SnabbleUI" --include="*.swift" . | grep -v ".build"
+grep -r "import SnabbleTheme" --include="*.swift" . | grep -v ".build"
 ```
 
 ### 5.2 Update Imports Based on Usage
@@ -343,7 +343,7 @@ grep -r "import SnabbleUI" --include="*.swift" . | grep -v ".build"
 
 ```swift
 // OLD
-import SnabbleUI
+import SnabbleTheme
 
 // NEW - depending on what's used:
 import SnabblePaymentMethods  // For PaymentMethodListView
@@ -358,7 +358,7 @@ import SnabbleShopFinder      // For ShopListView
 ```swift
 // In ScanAndGo/Shopping/Models/Shopper.swift
 // OLD
-import SnabbleUI
+import SnabbleTheme
 
 // NEW
 import SnabbleShoppingCart
@@ -389,7 +389,7 @@ In `Example/SwiftySnabble/Package.swift` (if exists) or Xcode project:
 ```swift
 // In SwiftySnabble source files
 // OLD
-import SnabbleUI
+import SnabbleTheme
 
 // NEW
 import SnabbleScanAndGo
@@ -516,7 +516,7 @@ Create `MIGRATION-FROM-0.73.md`:
 
 ### Before (0.73)
 ```swift
-import SnabbleUI
+import SnabbleTheme
 
 let receipts = ReceiptsListScreen()
 let payment = PaymentMethodListView()

@@ -16,6 +16,7 @@ public struct ReceiptDetailScreen: View {
     let projectId: Identifier<Project>
 
     @State private var receiptURL: URL?
+    @State private var supportEmail: String?
     @State private var isLoading = true
     @State private var error: Error?
     @State private var showShareSheet = false
@@ -79,9 +80,11 @@ public struct ReceiptDetailScreen: View {
         }
         .sheet(isPresented: $showMailComposer) {
             if let url = receiptURL {
-                MailComposerView(
-                    receiptURL: url,
-                    order: order
+                MailComposerViewController(
+                    recipients: supportEmail != nil ? [supportEmail!] : [],
+                    subject: "Receipt Problem Report",
+                    messageBody: mailBody(),
+                    url: url
                 )
             }
         }
@@ -94,7 +97,22 @@ public struct ReceiptDetailScreen: View {
             await loadReceipt()
         }
     }
+    
+    private func mailBody() -> String {
+        var body = "I would like to report a problem with this receipt.\n\n"
+        
+        if let order = order {
+            let formatter = DateFormatter()
+            formatter.dateStyle = .medium
+            formatter.timeStyle = .short
+            body += "Order ID: \(order.id)\n"
+            body += "Date: \(formatter.string(from: order.date))\n\n"
+        }
+        body += "Please describe the problem:\n\n"
 
+        return body
+    }
+    
     private func loadReceipt() async {
         guard let project = Snabble.shared.project(for: projectId) ?? Snabble.shared.projects.first else {
             self.error = ReceiptError.missingProject
@@ -107,6 +125,7 @@ public struct ReceiptDetailScreen: View {
             let url = try await getReceiptURL(order: order, project: project)
             self.order = order
             self.receiptURL = url
+            self.supportEmail = project.rawLinks["supportEmail"]?.href
         } catch {
             self.error = error
         }
@@ -204,63 +223,45 @@ private struct ShareSheet: UIViewControllerRepresentable {
     }
 }
 
-/// UIViewControllerRepresentable wrapper for MFMailComposeViewController
-private struct MailComposerView: UIViewControllerRepresentable {
-    let receiptURL: URL
-    let order: Order?
-    @Environment(\.dismiss) private var dismiss
+struct MailComposerViewController: UIViewControllerRepresentable {
+    @Environment(\.dismiss) var dismiss
+    var recipients: [String]
+    var subject: String
+    var messageBody: String
+    let url: URL
 
-    func makeUIViewController(context: Context) -> UINavigationController {
-        let composer = MFMailComposeViewController()
-        composer.mailComposeDelegate = context.coordinator
+    func makeUIViewController(context: Context) -> MFMailComposeViewController {
+        let mailComposer = MFMailComposeViewController()
+        mailComposer.mailComposeDelegate = context.coordinator
+        mailComposer.setToRecipients(recipients)
+        mailComposer.setSubject(subject)
+        mailComposer.setMessageBody(messageBody, isHTML: false)
         
-        composer.setSubject("Receipt Problem Report")
-        
-        var body = "I would like to report a problem with this receipt.\n\n"
-        if let order = order {
-            let formatter = DateFormatter()
-            formatter.dateStyle = .medium
-            formatter.timeStyle = .short
-            body += "Order ID: \(order.id)\n"
-            body += "Date: \(formatter.string(from: order.date))\n\n"
-        }
-        body += "Please describe the problem:\n\n"
-        
-        composer.setMessageBody(body, isHTML: false)
-        
-        if let data = try? Data(contentsOf: receiptURL) {
-            composer.addAttachmentData(
+        if let data = try? Data(contentsOf: url) {
+            mailComposer.addAttachmentData(
                 data,
                 mimeType: "application/pdf",
                 fileName: "receipt.pdf"
             )
         }
-        
-        let navigationController = UINavigationController(rootViewController: composer)
-        return navigationController
+        return mailComposer
     }
 
-    func updateUIViewController(_ uiViewController: UINavigationController, context: Context) {
-        // No updates needed
-    }
+    func updateUIViewController(_ uiViewController: MFMailComposeViewController, context: Context) {}
 
     func makeCoordinator() -> Coordinator {
-        Coordinator(onDismiss: { dismiss() })
+        return Coordinator(self)
     }
 
-    class Coordinator: NSObject, MFMailComposeViewControllerDelegate {
-        let onDismiss: () -> Void
+    class Coordinator: NSObject, @preconcurrency MFMailComposeViewControllerDelegate {
+        var parent: MailComposerViewController
 
-        init(onDismiss: @escaping () -> Void) {
-            self.onDismiss = onDismiss
+        init(_ parent: MailComposerViewController) {
+            self.parent = parent
         }
 
-        func mailComposeController(
-            _ controller: MFMailComposeViewController,
-            didFinishWith result: MFMailComposeResult,
-            error: Error?
-        ) {
-            onDismiss()
+        @MainActor func mailComposeController(_ controller: MFMailComposeViewController, didFinishWith result: MFMailComposeResult, error: Error?) {
+            parent.dismiss()
         }
     }
 }

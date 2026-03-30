@@ -52,7 +52,7 @@ For a full-featured app, import these modules:
 
 ```swift
 import SnabbleCore          // Business logic, cart, products
-import SnabbleUI            // UI components (UIKit-based)
+import SnabbleTheme            // UI components (UIKit-based)
 import SnabbleScanAndGo     // ShopperView (SwiftUI scan & go)
 import SnabbleComponents    // SwiftUI components (HTMLView, etc.)
 import SnabbleAssetProviding // Theming and branding
@@ -744,7 +744,7 @@ struct ShopDetailView: View {
 ```swift
 // Features/Receipts/ReceiptsView.swift
 import SwiftUI
-import SnabbleUI
+import SnabbleTheme
 
 struct ReceiptsView: View {
     @State private var model = PurchasesViewModel()

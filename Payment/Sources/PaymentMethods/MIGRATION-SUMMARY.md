@@ -329,7 +329,7 @@ UI/Sources/PaymentMethods/
 
 #### Single Project Payment List
 ```swift
-import SnabbleUI
+import SnabbleTheme
 
 NavigationStack {
     PaymentMethodListView(

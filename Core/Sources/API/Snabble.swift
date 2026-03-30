@@ -3,11 +3,11 @@
 //
 //  Copyright © 2020 snabble. All rights reserved.
 //
-
 import Foundation
 import CoreLocation
-import SnabbleNetwork
 import Combine
+
+import SnabbleNetwork
 
 /// Thread-safety: Global debug variable, set once during testing/debugging
 nonisolated(unsafe) public var globalButterOverflow: String?
