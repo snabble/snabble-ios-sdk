@@ -84,7 +84,6 @@ public extension ProductProviding {
 // MARK: - async/await variants
 
 public extension ProductProviding {
-            promise(Result.success(products))
     func productBy(sku: String, shopId: Identifier<Shop>, forceDownload: Bool = false) async throws -> Product {
         try await withCheckedThrowingContinuation { continuation in
             productBy(sku: sku, shopId: shopId, forceDownload: forceDownload) { result in
