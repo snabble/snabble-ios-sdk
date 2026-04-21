@@ -17,6 +17,7 @@ extension PaymentPovider {
     }
 }
 
+@MainActor
 public protocol PaymentMethodManagerDelegate: AnyObject {
     func paymentMethodManager(didSelectItem: PaymentMethodItem)
     func paymentMethodManager(didSelectPayment: Payment?)

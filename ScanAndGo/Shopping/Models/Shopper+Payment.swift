@@ -20,12 +20,13 @@ extension Shopper {
     }
 }
 
-extension Shopper: @preconcurrency PaymentMethodManagerDelegate {
-    
+extension Shopper: PaymentMethodManagerDelegate {
+
     private func setAlertProvider(_ provider: AlertProviding) {
         let alertController = provider.alertController { _ in }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            self.sendAction(.alert(self.alert(alertController)))
+        Task {
+            try? await Task.sleep(for: .seconds(0.3))
+            sendAction(.alert(alert(alertController)))
         }
     }
     
@@ -50,12 +51,13 @@ extension Shopper: @preconcurrency PaymentMethodManagerDelegate {
         let detail = item.methodDetail
         
         guard !restrictedPayments.contains(method) else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                self.sendAction(.alert(
+            Task {
+                try? await Task.sleep(for: .seconds(0.3))
+                sendAction(.alert(
                     Alert(title: Text(Asset.localizedString(forKey: "Snabble.Payment.Unavailable.title")),
                           message: Text(Asset.localizedString(forKey: "Snabble.Payment.Unavailable.message")))
                 ))
-                self.paymentManager.selectedPayment = nil
+                paymentManager.selectedPayment = nil
             }
             return
         }
