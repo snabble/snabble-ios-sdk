@@ -5,7 +5,7 @@
 //  Created by Uwe Tilemann on 10.11.22.
 //
 
-@preconcurrency import UIKit
+import UIKit
 import SnabbleCore
 import KeychainAccess
 import SnabbleAssetProviding
