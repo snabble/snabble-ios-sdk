@@ -231,7 +231,7 @@
 				DEVELOPMENT_TEAM = 53K7JS449L;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -294,7 +294,7 @@
 				DEVELOPMENT_TEAM = 53K7JS449L;
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
-				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GCC_C_LANGUAGE_STANDARD = gnu17;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -328,7 +328,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "Scan your products";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Face ID access is required to protect online payments.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Needed to show stores in your vicinity and enable shopping in them.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Needed to show stores in your vicinity and enable shopping in them.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -379,7 +379,7 @@
 				INFOPLIST_KEY_NSCameraUsageDescription = "Scan your products";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Face ID access is required to protect online payments.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Needed to show stores in your vicinity and enable shopping in them.";
-				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "";
+				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Needed to show stores in your vicinity and enable shopping in them.";
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
