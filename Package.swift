@@ -32,7 +32,6 @@ let package = Package(
                 "SnabbleScanAndGo",
                 "SnabblePhoneAuth",
                 "SnabbleCoupons",
-                "SnabbleDynamicView",
                 "SnabbleOnboarding",
                 "SnabbleTeaser",
             ]
@@ -83,10 +82,6 @@ let package = Package(
         .library(
             name: "SnabbleScanAndGo",
             targets: ["SnabbleScanAndGo"]
-        ),
-        .library(
-            name: "SnabbleDynamicView",
-            targets: ["SnabbleDynamicView"]
         ),
         .library(
             name: "SnabblePhoneAuth",
@@ -277,15 +272,6 @@ let package = Package(
                 "SnabbleTheme",
            ],
             path: "Teaser/Sources",
-            swiftSettings: [.swiftLanguageMode(.v6)]
-        ),
-       .target(
-            name: "SnabbleDynamicView",
-            dependencies: [
-                "SnabbleCore",
-                "SnabbleTheme",
-            ],
-            path: "DynamicView/Sources",
             swiftSettings: [.swiftLanguageMode(.v6)]
         ),
         .target(
