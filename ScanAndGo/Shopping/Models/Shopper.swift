@@ -50,7 +50,6 @@ public protocol ShoppingProvider: AnyObject {
 /// ```
 @Observable
 @MainActor
-@dynamicMemberLookup
 public final class Shopper: BarcodeProcessing, Equatable {
     let id = UUID()
 
@@ -86,15 +85,12 @@ public final class Shopper: BarcodeProcessing, Equatable {
     public var projectPayments: [RawPaymentMethod] {
         project.availablePaymentMethods.filter({ !restrictedPayments.contains($0) })
     }
-    /// Provides a dynamic member lookup for retrieving payment icons.
-    ///
-    /// - Parameter member: The member name to lookup.
-    /// - Returns: The payment icon if available, otherwise nil.
-   subscript(dynamicMember member: String) -> UIImage? {
-        if member == "paymentIcon", hasValidPayment  {
-            return paymentManager.selectedPayment?.method.icon
+
+    public var paymentIcon: UIImage? {
+        guard hasValidPayment else {
+            return nil
         }
-        return nil
+        return paymentManager.selectedPayment?.method.icon
     }
 
     let logger = Logger(subsystem: "io.snabble.sdk.ScanAndGo", category: "Shopper")
