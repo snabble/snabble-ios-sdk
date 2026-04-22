@@ -4,7 +4,7 @@
 //  Copyright © 2021 snabble. All rights reserved.
 //
 
-@preconcurrency import PassKit
+import PassKit
 
 import SnabbleCore
 import SnabbleAssetProviding
@@ -108,7 +108,11 @@ final class ApplePayCheckoutViewController: UIViewController {
     
     // POST the payment authorization token we get from the PassKit API to our backend
     private func performPayment(with process: CheckoutProcess,
-                                and payment: PKPayment,
+                                encryptedOrigin: String,
+                                paymentNetwork: String?,
+                                lastName: String?,
+                                isoCountryCode: String?,
+                                state: String?,
                                 completion: @escaping @Sendable (_ success: Bool) -> Void) {
         guard let authorizeUrl = process.links.authorizePayment?.href else {
             return completion(false)
@@ -120,17 +124,19 @@ final class ApplePayCheckoutViewController: UIViewController {
             }
             
             var body = [
-                "encryptedOrigin": payment.token.paymentData.base64EncodedString()
+                "encryptedOrigin": encryptedOrigin
             ]
-            if let network = payment.token.paymentMethod.network {
-                body["paymentNetwork"] = network.rawValue
+            if let network = paymentNetwork {
+                body["paymentNetwork"] = network
             }
-            if let familyName = payment.billingContact?.name?.familyName {
+            if let familyName = lastName {
                 body["lastName"] = familyName
             }
-            if let postalAddress = payment.billingContact?.postalAddress {
-                body["countryCode"] = postalAddress.isoCountryCode
-                body["state"] = postalAddress.state
+            if let isoCountry = isoCountryCode {
+                body["countryCode"] = isoCountry
+            }
+            if let stateValue = state {
+                body["state"] = stateValue
             }
             // swiftlint:disable:next force_try
             let data = try! JSONSerialization.data(withJSONObject: body, options: [])
@@ -251,9 +257,20 @@ extension ApplePayCheckoutViewController: PKPaymentAuthorizationViewControllerDe
         }
         
         let box = CompletionBox(completion)
+        // Extract Sendable values before crossing actor boundary (PKPayment is not Sendable)
+        let encryptedOrigin = payment.token.paymentData.base64EncodedString()
+        let paymentNetwork = payment.token.paymentMethod.network?.rawValue
+        let lastName = payment.billingContact?.name?.familyName
+        let isoCountryCode = payment.billingContact?.postalAddress?.isoCountryCode
+        let state = payment.billingContact?.postalAddress?.state
         Task { @MainActor in
             authorized = true
-            self.performPayment(with: self.checkoutProcess, and: payment) { success in
+            self.performPayment(with: self.checkoutProcess,
+                                encryptedOrigin: encryptedOrigin,
+                                paymentNetwork: paymentNetwork,
+                                lastName: lastName,
+                                isoCountryCode: isoCountryCode,
+                                state: state) { success in
                 let status: PKPaymentAuthorizationStatus = success ? .success : .failure
                 box.completion(PKPaymentAuthorizationResult(status: status, errors: nil))
             }
