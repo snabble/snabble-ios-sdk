@@ -72,6 +72,7 @@ struct ShoppingView: View {
         NavigationStack {
             ShopperView(model: shopper)
                 .actionState()
+                .navigationBarHidden(false)
         }
     }
 }
