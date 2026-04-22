@@ -37,6 +37,7 @@ extension Shopper: PaymentMethodManagerDelegate {
     func verifyPayment(_ payment: Payment?) {
         guard let payment = paymentManager.selectedPayment, !restrictedPayments.contains(payment.method) else {
             hasValidPayment = false
+            logger.debug("didSelectPayment failed: \(payment.debugDescription)")
             return
         }
         hasValidPayment = acceptPayment(method: payment.method, detail: payment.detail)
@@ -77,7 +78,6 @@ extension Shopper: PaymentMethodManagerDelegate {
     }
     
     public func paymentMethodManager(didSelectPayment payment: SnabbleCore.Payment?) {
-        logger.debug("didSelectPayment: \(payment.debugDescription)")
         verifyPayment(payment)
     }
 }
