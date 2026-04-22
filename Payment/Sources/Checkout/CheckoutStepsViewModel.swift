@@ -31,7 +31,7 @@ final class CheckoutStepsViewModel {
     let shoppingCart: ShoppingCart
     let shop: Shop
 
-    private weak var checkoutProcessTimer: Timer?
+    private var checkoutProcessTimerTask: Task<Void, Never>?
     private var processSessionTask: URLSessionDataTask?
 
     weak var delegate: CheckoutStepsViewModelDelegate?
@@ -54,28 +54,27 @@ final class CheckoutStepsViewModel {
     }
 
     func startTimer() {
-        checkoutProcessTimer?.invalidate()
-        checkoutProcessTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { [weak self] _ in
-            Task { @MainActor [weak self] in
-                guard let self, let project = self.shop.project else { return }
-                
-                self.checkoutProcess?.update(
-                    project,
-                    taskCreated: { [weak self] in
-                        self?.processSessionTask = $0
-                    },
-                    completion: { result in
-                        Task { @MainActor [weak self] in
-                            self?.update(result)
-                        }
+        checkoutProcessTimerTask?.cancel()
+        checkoutProcessTimerTask = Task { [weak self] in
+            do { try await Task.sleep(for: .seconds(1)) } catch { return }
+            guard let self, let project = self.shop.project else { return }
+            self.checkoutProcess?.update(
+                project,
+                taskCreated: { [weak self] in
+                    self?.processSessionTask = $0
+                },
+                completion: { result in
+                    Task { @MainActor [weak self] in
+                        self?.update(result)
                     }
-                )
-            }
+                }
+            )
         }
     }
 
     func stopTimer() {
-        checkoutProcessTimer?.invalidate()
+        checkoutProcessTimerTask?.cancel()
+        checkoutProcessTimerTask = nil
 
         processSessionTask?.cancel()
         processSessionTask = nil
