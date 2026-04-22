@@ -15,7 +15,7 @@ public struct WindowDialog<DialogContent: View>: ViewModifier {
     let duration: TimeInterval?
     let dialogContent: DialogContent
     
-    @State private var workItem: DispatchWorkItem?
+    @State private var dismissTask: Task<Void, Never>?
     
     public init(isPresented: Binding<Bool>,
                 duration: TimeInterval?,
@@ -47,24 +47,25 @@ public struct WindowDialog<DialogContent: View>: ViewModifier {
     
     private func enableAutomaticDismiss(duration: TimeInterval?) {
         if let duration, duration > 0 {
-            workItem?.cancel()
-            
-            let task = DispatchWorkItem {
-                dismiss()
+            dismissTask?.cancel()
+            dismissTask = Task { @MainActor in
+                do {
+                    try await Task.sleep(for: .seconds(duration))
+                    dismiss()
+                } catch {
+                    // Task was cancelled
+                }
             }
-            
-            workItem = task
-            DispatchQueue.main.asyncAfter(deadline: .now() + duration, execute: task)
         }
     }
-    
+
     private func dismiss() {
         withAnimation {
             isPresented = false
         }
-        
-        workItem?.cancel()
-        workItem = nil
+
+        dismissTask?.cancel()
+        dismissTask = nil
     }
 }
 
