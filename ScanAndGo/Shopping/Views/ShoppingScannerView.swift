@@ -81,6 +81,7 @@ struct ShoppingScannerView: View {
                 ScannerProcessingView()
             }
         }
+        .edgesIgnoringSafeArea(.bottom)
         .hud(isPresented: $showHud) {
             ScanMessageView(message: scanMessage, isPresented: $showHud)
         }
