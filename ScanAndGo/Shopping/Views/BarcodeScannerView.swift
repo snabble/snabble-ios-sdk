@@ -50,7 +50,7 @@ class BarcodeScannerViewController: UIViewController {
         logger.debug("preview layer size: \(rect.width) x \(rect.height)")
         
         if layer.superlayer == nil {
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 viewController.view.layer.addSublayer(layer)
             }
         }

@@ -165,7 +165,8 @@ open class BarcodeCamera: BarcodeDetector, @unchecked Sendable {
             overlay.centerYOffset = offset
         }
 
-        DispatchQueue.main.async { [self] in
+        Task { @MainActor [weak self] in
+            guard let self else { return }
             overlay.layoutIfNeeded()
             let rect = previewLayer?.metadataOutputRectConverted(fromLayerRect: overlay.roi)
             sessionQueue.async { [self] in
@@ -262,7 +263,7 @@ open class BarcodeCamera: BarcodeDetector, @unchecked Sendable {
             return
         }
         lastScannedTime = .now
-        DispatchQueue.main.async {
+        Task { @MainActor in
             self.delegate?.scannedCodeResult(result)
         }
     }

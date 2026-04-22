@@ -60,7 +60,8 @@ public struct UIKitTextView: UIViewRepresentable {
         public func textViewShouldBeginEditing(_ textView: UITextView) -> Bool {
             if let scrollView = textView.enclosingScrollView {
                 let rect = textView.convert(textView.frame, to: scrollView )
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.5) {
+                Task { @MainActor in
+                    try? await Task.sleep(for: .seconds(0.5))
                     scrollView.scrollRectToVisible(rect, animated: true)
                 }
             }

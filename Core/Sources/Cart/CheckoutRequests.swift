@@ -160,7 +160,8 @@ extension CheckoutProcess {
                     completion(result)
                 case .failure(let error):
                     if case .urlError = error {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
+                        Task { @MainActor in
+                            try? await Task.sleep(for: .seconds(1))
                             Self.fetch(for: project, url: url, completion)
                         }
                     } else {

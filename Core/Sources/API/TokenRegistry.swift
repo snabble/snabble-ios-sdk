@@ -179,10 +179,11 @@ public final class TokenRegistry: @unchecked Sendable {
         let refreshIn = earliest.refresh.timeIntervalSinceReferenceDate - now
 
         if self.verboseToken { Log.debug("start refresh timer: run refresh in \(refreshIn)s") }
-        DispatchQueue.main.async {
+        Task { @MainActor [weak self] in
+            guard let self else { return }
             self.refreshTimer?.invalidate()
-            self.refreshTimer = Timer.scheduledTimer(withTimeInterval: max(1, refreshIn), repeats: false) { _ in
-                self.refreshTokens()
+            self.refreshTimer = Timer.scheduledTimer(withTimeInterval: max(1, refreshIn), repeats: false) { [weak self] _ in
+                self?.refreshTokens()
             }
         }
     }

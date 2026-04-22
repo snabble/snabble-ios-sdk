@@ -68,12 +68,12 @@ public enum BiometricAuthentication {
                 }
                 let capturedSuccess = success
                 let capturedError = error
-                DispatchQueue.main.async {
+                Task { @MainActor in
                     box.reply(capturedSuccess, capturedError)
                 }
             }
         } else {
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 box.reply(false, nil)
             }
         }

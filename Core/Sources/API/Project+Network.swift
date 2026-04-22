@@ -367,7 +367,7 @@ extension Project {
             // handle URL errors
             if let error = error {
                 let urlError = self.snabbleError(for: error, method, url)
-                DispatchQueue.main.async {
+                Task { @MainActor in
                     completion(.failure(urlError), nil, nil)
                 }
                 return
@@ -381,15 +381,16 @@ extension Project {
             else {
                 // handle HTTP error responses
                 let httpError = self.snabbleError(for: response, method, url, data)
-                DispatchQueue.main.async {
-                    completion(.failure(httpError), nil, response as? HTTPURLResponse)
+                let httpUrlResponse = response as? HTTPURLResponse
+                Task { @MainActor in
+                    completion(.failure(httpError), nil, httpUrlResponse)
                 }
                 return
             }
 
             // handle empty response
             if data.isEmpty {
-                DispatchQueue.main.async {
+                Task { @MainActor in
                     completion(.failure(SnabbleError.empty), nil, httpResponse)
                 }
                 return
@@ -404,14 +405,14 @@ extension Project {
                 if returnRaw {
                     json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]
                 }
-                DispatchQueue.main.async {
+                Task { @MainActor in
                     completion(.success(result), json, httpResponse)
                 }
             } catch {
                 Log.error("error parsing response from \(url): \(error)")
                 let body = String(bytes: data, encoding: .utf8) ?? ""
                 Log.error("raw response body: \(body)")
-                DispatchQueue.main.async {
+                Task { @MainActor in
                     completion(.failure(SnabbleError.invalid), nil, httpResponse)
                 }
             }

@@ -126,7 +126,7 @@ extension Order {
             completion(.success(targetUrl))
         } else {
             self.download(project, targetUrl) { result in
-                DispatchQueue.main.async {
+                Task { @MainActor in
                     completion(result)
                 }
             }

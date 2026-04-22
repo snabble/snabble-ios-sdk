@@ -82,14 +82,14 @@ public class CouponViewModel {
         }
         imageTask?.cancel()
         imageTask = URLSession.shared.dataTask(with: imageUrl) { [weak self] data, _, _ in
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 guard let data = data else {
                     return completion?(nil) ?? ()
                 }
 
                 let image = UIImage(data: data)
                 self?.image = image
-                
+
                 completion?(image)
             }
         }

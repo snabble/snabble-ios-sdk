@@ -554,9 +554,11 @@ extension ShoppingCart {
         }
 
         if postEvent {
-            DispatchQueue.main.async {
+            Task { @MainActor [weak self] in
+                guard let self else { return }
                 self.eventTimer?.invalidate()
-                self.eventTimer = Timer.scheduledTimer(withTimeInterval: self.saveDelay, repeats: false) { _ in
+                self.eventTimer = Timer.scheduledTimer(withTimeInterval: self.saveDelay, repeats: false) { [weak self] _ in
+                    guard let self else { return }
                     CartEvent.cart(self)
                 }
             }

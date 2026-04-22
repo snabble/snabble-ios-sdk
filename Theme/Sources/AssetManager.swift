@@ -167,11 +167,11 @@ final class AssetManager: @unchecked Sendable {
                 self.downloadIfMissing(projectId, file) { [completion] fileUrl in
                     if let fileUrl = fileUrl, let data = try? Data(contentsOf: fileUrl) {
                         let img = UIImage(data: data, scale: self.screenScale)
-                        DispatchQueue.main.async {
+                        Task { @MainActor in
                             completion(img)
                         }
                     } else {
-                        DispatchQueue.main.async {
+                        Task { @MainActor in
                             let img = UIImage.fromBundle(bundlePath)
                             completion(img)
                         }
@@ -387,7 +387,7 @@ final class AssetManager: @unchecked Sendable {
     }
 
     func rescheduleDownloads() {
-        DispatchQueue.main.async {
+        Task { @MainActor [self] in
             self.redownloadTimer?.invalidate()
             self.redownloadTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) { _ in
                 for projectId in self.manifests.keys {
@@ -511,8 +511,8 @@ private final class AssetDownloadDelegate: NSObject, URLSessionDownloadDelegate,
                 let oldUrl = cacheDirUrl.appendingPathComponent(oldLocal)
                 try? fileManager.removeItem(at: oldUrl)
             }
-            DispatchQueue.main.asyncAfter(deadline: .now()) {
-                self.completion(targetLocation)
+            Task { @MainActor [weak self] in
+                self?.completion(targetLocation)
             }
         } catch {
             Log.error("Error saving asset for key \(self.key): \(error)")

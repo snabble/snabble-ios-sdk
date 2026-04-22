@@ -16,7 +16,7 @@ public struct ShopperConfiguration {
     
     public init(
         drawerOffset: CGFloat = 0,
-        showDismiss: Bool = true
+        showDismiss: Bool = true,
     ) {
         self.drawerOffset = drawerOffset
         self.showDismiss = showDismiss
@@ -45,9 +45,8 @@ public struct ShopperView: View {
     
     public var body: some View {
         @Bindable var model = model
-
+        
         ShoppingScannerView(model: model, minHeight: $minHeight, configuration: configuration)
-            .edgesIgnoringSafeArea(.bottom)
             .animation(.easeInOut, value: model.scannedItem)
             .navigationDestination(isPresented: $model.isNavigating) {
                 model.navigationDestination(isPresented: $model.isNavigating)
@@ -62,7 +61,8 @@ public struct ShopperView: View {
             .sheet(isPresented: $showSearch) {
                 BarcodeSearchView(model: model.barcodeManager) { code, format, template in
                     self.showSearch.toggle()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                    Task { @MainActor in
+                        try? await Task.sleep(for: .seconds(0.25))
                         model.barcodeManager.handleScannedCode(code, withFormat: format, withTemplate: template)
                     }
                 }
@@ -165,20 +165,22 @@ public struct ShopperView: View {
                             Image(systemName: "magnifyingglass")
                         })
                     }
-
+                    
                 }
             }
     }
     
     private func selectItem(_ item: BarcodeManager.ScannedItem?) {
         guard let item else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(0.25))
                 model.scannedItem = nil
                 model.startScanner()
             }
             return
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(0.25))
             model.addScannedItem(item)
             model.scannedItem = nil
             model.startScanner()

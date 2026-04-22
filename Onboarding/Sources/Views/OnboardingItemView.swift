@@ -107,7 +107,7 @@ struct OnboardingItemView: View {
         guard attributedText == nil, item.text.containsHTML == true else { return }
 
         // create attributedText on main thread since HTML formatter will crash SwiftUI
-        DispatchQueue.main.async {
+        Task { @MainActor in
             self.attributedText = Asset.localizedString(forKey: item.text).attributedStringFromHTML
         }
     }

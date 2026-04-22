@@ -175,7 +175,7 @@ extension ProductItemModel {
             if let uiImage = UIImage(data: data) {
                 let image = SwiftUI.Image(uiImage: uiImage)
                 ProductItemModel.imageCache.setObject(uiImage, forKey: imgUrl as NSString)
-                DispatchQueue.main.async {
+                Task { @MainActor in
                     self?.image = image
                 }
             }

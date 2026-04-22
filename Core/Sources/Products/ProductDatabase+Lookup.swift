@@ -175,7 +175,7 @@ extension ProductDatabase {
         if error != .notFound {
             self.logError(msg)
         }
-        DispatchQueue.main.async {
+        Task { @MainActor in
             completion(.failure(error))
         }
     }

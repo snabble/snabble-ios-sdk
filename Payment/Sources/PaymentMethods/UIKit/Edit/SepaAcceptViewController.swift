@@ -81,9 +81,7 @@ extension SepaAcceptViewController: SepaAcceptViewControllerDelegate {
                     break
                 }
 
-                DispatchQueue.main.async {
-                    self.dismiss()
-                }
+                self.dismiss()
             } catch {
                 showErrorMessage(title: nil, message: Asset.localizedString(forKey: "Snabble.SEPA.authorizingError"))
             }

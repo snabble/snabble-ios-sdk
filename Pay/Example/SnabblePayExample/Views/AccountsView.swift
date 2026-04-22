@@ -102,16 +102,15 @@ struct AccountsView: View {
                 }
                 .onChange(of: animationStarted) { value in
                     if value == true {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + inTime + 0.1) {
+                        Task { @MainActor in
+                            try? await Task.sleep(for: .seconds(inTime + 0.1))
                             withAnimation(.easeOut(duration: outTime)) {
                                 animationStarted = false
                                 animationOffset = 0
                                 zIndex = 0
-                                
-                                DispatchQueue.main.asyncAfter(deadline: .now() + inTime + 0.15) {
-                                    viewModel.selectedAccountModel?.refresh()
-                                }
                             }
+                            try? await Task.sleep(for: .seconds(inTime + 0.15))
+                            viewModel.selectedAccountModel?.refresh()
                         }
                     }
                 }
