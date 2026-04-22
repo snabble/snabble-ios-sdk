@@ -45,7 +45,7 @@ public final class CheckModel: CheckoutProcessing, CheckModelDelegate, @unchecke
     public let shoppingCart: ShoppingCart
     public let shop: Shop
     
-    private weak var processTimer: Timer?
+    private var processTimerTask: Task<Void, Never>?
     private var sessionTask: URLSessionTask?
     
     public weak var paymentDelegate: PaymentDelegate?
@@ -66,25 +66,24 @@ public final class CheckModel: CheckoutProcessing, CheckModelDelegate, @unchecke
     
     // MARK: - polling timer
     private func startTimer() {
-        self.processTimer?.invalidate()
-        self.processTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { [weak self] _ in
+        self.processTimerTask?.cancel()
+        self.processTimerTask = Task { [weak self] in
+            do { try await Task.sleep(for: .seconds(1)) } catch { return }
             guard let self else { return }
-            Task { @MainActor in
-                let project = SnabbleCI.project
-                self.checkoutProcess.update(project,
-                                            taskCreated: { self.sessionTask = $0 },
-                                            completion: { result in
-                                                Task { @MainActor in
-                                                    self.update(result)
-                                                }
-                                            })
-            }
+            let project = SnabbleCI.project
+            self.checkoutProcess.update(project,
+                                        taskCreated: { self.sessionTask = $0 },
+                                        completion: { result in
+                                            Task { @MainActor in
+                                                self.update(result)
+                                            }
+                                        })
         }
     }
     
     private func stopTimer() {
-        self.processTimer?.invalidate()
-        self.processTimer = nil
+        self.processTimerTask?.cancel()
+        self.processTimerTask = nil
         
         self.sessionTask?.cancel()
         self.sessionTask = nil
@@ -138,7 +137,7 @@ public final class CheckModel: CheckoutProcessing, CheckModelDelegate, @unchecke
     }
     
     public func cancelPayment() {
-        guard processTimer != nil else { return }
+        guard processTimerTask != nil else { return }
 
         Task { @MainActor in
             self.paymentDelegate?.track(.paymentCancelled)

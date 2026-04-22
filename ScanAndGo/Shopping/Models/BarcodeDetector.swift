@@ -81,7 +81,7 @@ open class BarcodeDetector: NSObject, Zoomable, @unchecked Sendable {
     public let sessionQueue: DispatchQueue
     public var torchOn = false
 
-    public weak var batterySaverTimer: Timer?
+    public var batterySaverTask: Task<Void, Never>?
     public var scanDebounce: TimeInterval = 3
     
     public var screenTap: UITapGestureRecognizer?
@@ -106,16 +106,16 @@ open class BarcodeDetector: NSObject, Zoomable, @unchecked Sendable {
             return
         }
 
-        batterySaverTimer?.invalidate()
-        batterySaverTimer = Timer.scheduledTimer(withTimeInterval: Self.batterySaverTimeout, repeats: false) {  _ in
-            Task { @MainActor [weak self] in
-                self?.batterySaverTimerFired()
-            }
+        batterySaverTask?.cancel()
+        batterySaverTask = Task { @MainActor [weak self] in
+            do { try await Task.sleep(for: .seconds(Self.batterySaverTimeout)) } catch { return }
+            self?.batterySaverTimerFired()
         }
     }
 
     @objc public func stopBatterySaverTimer() {
-        self.batterySaverTimer?.invalidate()
+        self.batterySaverTask?.cancel()
+        self.batterySaverTask = nil
     }
 
     @MainActor

@@ -265,13 +265,11 @@ public final class SepaEditViewController: UIViewController {
         }
 
         if showError {
-            Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { _ in
-                Task { @MainActor [weak self] in
-                    guard let self else { return }
-                    
-                    self.fadeText(self.ibanLabel, Asset.localizedString(forKey: "Snabble.Payment.SEPA.iban"))
-                    self.fadeText(self.nameLabel, Asset.localizedString(forKey: "Snabble.Payment.SEPA.name"))
-                }
+            Task { @MainActor [weak self] in
+                try? await Task.sleep(for: .seconds(3))
+                guard let self else { return }
+                self.fadeText(self.ibanLabel, Asset.localizedString(forKey: "Snabble.Payment.SEPA.iban"))
+                self.fadeText(self.nameLabel, Asset.localizedString(forKey: "Snabble.Payment.SEPA.name"))
             }
         }
 

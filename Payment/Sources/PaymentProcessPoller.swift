@@ -14,7 +14,7 @@ public enum PaymentEvent: Sendable {
 }
 
 public final class PaymentProcessPoller: @unchecked Sendable {
-    private weak var timer: Timer?
+    private var pollingTask: Task<Void, Never>?
 
     private let process: CheckoutProcess
     private let project: Project
@@ -40,7 +40,8 @@ public final class PaymentProcessPoller: @unchecked Sendable {
     }
 
     func stop() {
-        self.timer?.invalidate()
+        pollingTask?.cancel()
+        pollingTask = nil
 
         self.task?.cancel()
         self.task = nil
@@ -52,9 +53,12 @@ public final class PaymentProcessPoller: @unchecked Sendable {
     public func waitFor(_ events: [PaymentEvent], completion: @escaping @Sendable ([PaymentEvent: Bool]) -> Void ) {
         self.waitingFor = events
         self.alreadySeen = []
-        self.timer?.invalidate()
-        self.timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { _ in
-            self.checkEvents(events, completion)
+        pollingTask?.cancel()
+        pollingTask = Task { @MainActor [self] in
+            while !Task.isCancelled {
+                do { try await Task.sleep(for: .seconds(1)) } catch { return }
+                self.checkEvents(events, completion)
+            }
         }
     }
 
@@ -63,7 +67,7 @@ public final class PaymentProcessPoller: @unchecked Sendable {
             switch result.result {
             case .failure(let error):
                 if case .httpError = error {
-                    self.timer?.invalidate()
+                    self.pollingTask?.cancel()
                 }
             case .success(let process):
                 self.updatedProcess = process
@@ -102,7 +106,7 @@ public final class PaymentProcessPoller: @unchecked Sendable {
         }
 
         if abort || self.alreadySeen.count == self.waitingFor.count {
-            self.timer?.invalidate()
+            self.pollingTask?.cancel()
         }
     }
 

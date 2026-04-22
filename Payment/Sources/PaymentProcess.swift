@@ -15,7 +15,7 @@ public final class PaymentProcess {
     let signedCheckoutInfo: SignedCheckoutInfo
     let cart: ShoppingCart
     let shop: Shop
-    private weak var hudTimer: Timer?
+    private var hudTimerTask: Task<Void, Never>?
     public weak var paymentDelegate: PaymentDelegate?
 
     /// create a payment process
@@ -204,11 +204,10 @@ public final class PaymentProcess {
     }
 
     private func startBlurOverlayTimer() {
-        self.hudTimer?.invalidate()
-        self.hudTimer = Timer.scheduledTimer(withTimeInterval: 0.25, repeats: false) { [weak self] _ in
-            Task { @MainActor in
-                self?.showBlurOverlay()
-            }
+        self.hudTimerTask?.cancel()
+        self.hudTimerTask = Task { [weak self] in
+            do { try await Task.sleep(for: .milliseconds(250)) } catch { return }
+            self?.showBlurOverlay()
         }
     }
 
@@ -308,7 +307,8 @@ extension PaymentProcess {
     }
 
     private func handleCheckoutResult(_ result: RawResult<CheckoutProcess, SnabbleError>, method: PaymentMethod, completion: @escaping @Sendable (Result<UIViewController, SnabbleError>) -> Void) {
-        self.hudTimer?.invalidate()
+        self.hudTimerTask?.cancel()
+        self.hudTimerTask = nil
         UIApplication.shared.sceneKeyWindow?.isUserInteractionEnabled = true
         self.hideBlurOverlay()
 

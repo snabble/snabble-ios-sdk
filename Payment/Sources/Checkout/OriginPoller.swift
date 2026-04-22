@@ -22,7 +22,7 @@ final class OriginPoller: @unchecked Sendable {
         self.project = project
     }
 
-    private weak var timer: Timer?
+    private var timerTask: Task<Void, Never>?
 
     private func urlString(for checkoutProcess: CheckoutProcess) -> String? {
         checkoutProcess.paymentResult?["originCandidateLink"] as? String
@@ -50,7 +50,8 @@ final class OriginPoller: @unchecked Sendable {
     }
 
     func stop() {
-        timer?.invalidate()
+        timerTask?.cancel()
+        timerTask = nil
         candidatesURLStrings.removeAll()
     }
 
@@ -82,8 +83,9 @@ final class OriginPoller: @unchecked Sendable {
                 }
 
                 if continuePolling {
-                    timer?.invalidate()
-                    timer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { [weak self] _ in
+                    timerTask?.cancel()
+                    timerTask = Task { @MainActor [weak self] in
+                        do { try await Task.sleep(for: .seconds(1)) } catch { return }
                         self?.checkCandidate(url)
                     }
                 } else {

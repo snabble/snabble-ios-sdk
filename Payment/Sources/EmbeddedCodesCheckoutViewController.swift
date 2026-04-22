@@ -284,14 +284,13 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { [weak self] _ in
-            Task { @MainActor in
-                guard let self else { return }
-                UIView.animate(withDuration: 0.2) {
-                    self.paidButton?.alpha = 1
-                }
-                self.paidButton?.isUserInteractionEnabled = true
+        Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .seconds(2))
+            guard let self else { return }
+            UIView.animate(withDuration: 0.2) {
+                self.paidButton?.alpha = 1
             }
+            self.paidButton?.isUserInteractionEnabled = true
         }
     }
 
@@ -416,10 +415,8 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
     private func updatePageControl(with page: Int) {
         guard let scrollView = codeScrollView else { return }
         if page < codes.count {
-            DispatchQueue.main.async {
-                UIView.animate(withDuration: 0.3) {
-                    scrollView.contentOffset = CGPoint(x: CGFloat(page) * scrollView.frame.width, y: 0)
-                }
+            UIView.animate(withDuration: 0.3) {
+                scrollView.contentOffset = CGPoint(x: CGFloat(page) * scrollView.frame.width, y: 0)
             }
         }
     }

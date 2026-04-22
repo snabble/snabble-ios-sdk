@@ -5,7 +5,7 @@
 //
 
 import UIKit
-@preconcurrency import WebKit
+import WebKit
 import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleUser
@@ -73,7 +73,7 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     private var expDate: String?
     private var projectId: Identifier<Project>?
 
-    private weak var pollTimer: Timer?
+    private var pollTimerTask: Task<Void, Never>?
 
     private var payoneTokenization: PayoneTokenization?
     private var payonePreAuthResult: PayonePreAuthResult?
@@ -152,7 +152,8 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         self.payoneTokenization = nil
         self.payonePreAuthResult = nil
         self.payoneResponse = nil
-        self.pollTimer?.invalidate()
+        self.pollTimerTask?.cancel()
+        self.pollTimerTask = nil
 
         self.activityIndicator?.startAnimating()
 
@@ -169,7 +170,8 @@ public final class PayoneCreditCardEditViewController: UIViewController {
 
         if self.isMovingFromParent {
             // we're being popped - stop timer and break the retain cycle
-            self.pollTimer?.invalidate()
+            self.pollTimerTask?.cancel()
+            self.pollTimerTask = nil
             self.webView?.configuration.userContentController.removeScriptMessageHandler(forName: Self.callbackHandler)
         }
     }
@@ -407,25 +409,25 @@ public final class PayoneCreditCardEditViewController: UIViewController {
         self.startPreAuthPollTimer(for: project, preAuthResult)
     }
 
-    // schedule a timer to get the preAuth status in 1 sec.
+    // schedule a task to get the preAuth status in 1 sec.
     // continue polling if the status is unknown or pending,
     // stop the process on failure or success
     private func startPreAuthPollTimer(for project: Project, _ preAuthResult: PayonePreAuthResult) {
-        pollTimer = Timer.scheduledTimer(withTimeInterval: 1, repeats: false) { [weak self] _ in
-            Task { @MainActor [weak self] in
-                self?.getPreAuthStatus(for: project, preAuthResult.links.preAuthStatus) { [weak self] result in
-                    Task { @MainActor [weak self] in
-                        switch result {
-                        case .failure(let error):
-                            print(error)
+        pollTimerTask = Task { @MainActor [weak self] in
+            do { try await Task.sleep(for: .seconds(1)) } catch { return }
+            guard let self else { return }
+            self.getPreAuthStatus(for: project, preAuthResult.links.preAuthStatus) { [weak self] result in
+                Task { @MainActor [weak self] in
+                    switch result {
+                    case .failure(let error):
+                        print(error)
+                        self?.startPreAuthPollTimer(for: project, preAuthResult)
+                    case .success(let status):
+                        switch status.status {
+                        case .unknown, .pending:
                             self?.startPreAuthPollTimer(for: project, preAuthResult)
-                        case .success(let status):
-                            switch status.status {
-                            case .unknown, .pending:
-                                self?.startPreAuthPollTimer(for: project, preAuthResult)
-                            case .successful, .failed:
-                                self?.finishPreAuth(with: status.status)
-                            }
+                        case .successful, .failed:
+                            self?.finishPreAuth(with: status.status)
                         }
                     }
                 }
@@ -435,7 +437,8 @@ public final class PayoneCreditCardEditViewController: UIViewController {
 
     // preAuth is finished, either with a failure or successfully.
     private func finishPreAuth(with status: PayonePreAuthStatus) {
-        self.pollTimer?.invalidate()
+        self.pollTimerTask?.cancel()
+        self.pollTimerTask = nil
 
         if status == .failed {
             self.showErrorAlert(message: Asset.localizedString(forKey: "Snabble.Payment.CreditCard.error"), goBack: true)

@@ -103,7 +103,7 @@ open class InternalBarcodeDetector: NSObject, Zoomable, @unchecked Sendable {
 
     nonisolated public let sessionQueue: DispatchQueue
 
-    public weak var batterySaverTimer: Timer?
+    public var batterySaverTask: Task<Void, Never>?
     public var scanDebounce: TimeInterval = 3
     public var detectorArea: BarcodeDetectorArea
 
@@ -207,14 +207,16 @@ open class InternalBarcodeDetector: NSObject, Zoomable, @unchecked Sendable {
             return
         }
         
-        batterySaverTimer?.invalidate()
-        batterySaverTimer = Timer.scheduledTimer(withTimeInterval: Self.batterySaverTimeout, repeats: false) { [weak self] _ in
+        batterySaverTask?.cancel()
+        batterySaverTask = Task { @MainActor [weak self] in
+            do { try await Task.sleep(for: .seconds(Self.batterySaverTimeout)) } catch { return }
             self?.batterySaverTimerFired()
         }
     }
     
     @objc public func stopBatterySaverTimer() {
-        self.batterySaverTimer?.invalidate()
+        self.batterySaverTask?.cancel()
+        self.batterySaverTask = nil
     }
     
     private func batterySaverTimerFired() {
@@ -260,7 +262,7 @@ open class InternalBarcodeDetector: NSObject, Zoomable, @unchecked Sendable {
         nonisolated(unsafe) let metadataOutput = self.metadataOutput
         let sessionQueue = self.sessionQueue
 
-        DispatchQueue.main.async {
+        Task { @MainActor in
             let rect = previewLayer?.metadataOutputRectConverted(fromLayerRect: roi)
             sessionQueue.async {
                 // for some reason, running this on the main thread may block for ~10 seconds. WHY?!?

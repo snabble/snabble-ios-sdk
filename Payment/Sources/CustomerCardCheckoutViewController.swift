@@ -216,13 +216,12 @@ final class CustomerCardCheckoutViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
 
-        Timer.scheduledTimer(withTimeInterval: 2, repeats: false) { _ in
-            Task { @MainActor [weak self] in
-                UIView.animate(withDuration: 0.2) {
-                    self?.paidButton?.alpha = 1
-                }
-                self?.paidButton?.isUserInteractionEnabled = true
+        Task { @MainActor [weak self] in
+            try? await Task.sleep(for: .seconds(2))
+            UIView.animate(withDuration: 0.2) {
+                self?.paidButton?.alpha = 1
             }
+            self?.paidButton?.isUserInteractionEnabled = true
         }
     }
 
