@@ -16,10 +16,6 @@ name: swift-asn1, nameSpecified: swift-asn1, owner: apple, version: 1.7.0, sourc
 
 name: swift-crypto, nameSpecified: swift-crypto, owner: apple, version: 3.15.1, source: https://github.com/apple/swift-crypto
 
-name: swift-log, nameSpecified: swift-log, owner: apple, version: 1.12.0, source: https://github.com/apple/swift-log
-
-name: swift-tagged, nameSpecified: swift-tagged, owner: pointfreeco, version: 0.10.0, source: https://github.com/pointfreeco/swift-tagged
-
 name: SwiftOTP, nameSpecified: SwiftOTP, owner: lachlanbell, version: 3.0.2, source: https://github.com/lachlanbell/SwiftOTP
 
 name: WCAG-Colors, nameSpecified: WCAG-Colors, owner: chrs1885, version: 1.0.0, source: https://github.com/chrs1885/WCAG-Colors

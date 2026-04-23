@@ -1,4 +1,4 @@
-// swift-tools-version: 6.2
+// swift-tools-version: 6.3
 // The swift-tools-version declares the minimum version of Swift required to build this package.
 
 import PackageDescription
@@ -105,10 +105,6 @@ let package = Package(
             name: "SnabbleDatatrans",
             targets: ["SnabblePayment", "SnabbleDatatrans"]
         ),
-        .library(
-            name: "SnabblePay",
-            targets: ["SnabblePay"]
-        ),
     ],
     dependencies: [
         .package(url: "https://github.com/lachlanbell/SwiftOTP", from: "3.0.2"),
@@ -119,7 +115,6 @@ let package = Package(
         .package(url: "https://github.com/devicekit/DeviceKit.git", from: "5.5.0"),
         // Pulley removed - legacy scanner deleted
         .package(url: "https://github.com/chrs1885/WCAG-Colors.git", from: "1.0.0"),
-        .package(url: "https://github.com/pointfreeco/swift-tagged", from: "0.10.0"),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.6.1"),
         .package(url: "https://github.com/divadretlaw/WindowKit", from: "2.5.2"),
         .package(url: "https://github.com/utilem/CameraZoomWheel.git", from: "2.0.0")
@@ -129,9 +124,6 @@ let package = Package(
             name: "SnabbleNetwork",
             dependencies: ["SwiftOTP", "KeychainAccess"],
             path: "Network/Sources",
-            swiftSettings: [
-                .swiftLanguageMode(.v6)
-            ]
         ),
         .testTarget(
             name: "SnabbleNetworkTests",
@@ -150,9 +142,6 @@ let package = Package(
             resources: [
                 .process("Resources")
             ],
-            swiftSettings: [
-                .swiftLanguageMode(.v6)
-            ]
         ),
         .target(
             name: "SnabbleCore",
@@ -166,9 +155,6 @@ let package = Package(
             resources: [
                 .process("Resources")
             ],
-            swiftSettings: [
-                .swiftLanguageMode(.v6)
-            ]
         ),
         .testTarget(
             name: "SnabbleCoreTests",
@@ -187,9 +173,6 @@ let package = Package(
                 "WindowKit"
             ],
             path: "Components/Sources",
-            swiftSettings: [
-                .swiftLanguageMode(.v6)
-            ]
         ),
         .target(
             name: "SnabbleTheme",
@@ -203,9 +186,6 @@ let package = Package(
             resources: [
                 .process("Resources")
             ],
-            swiftSettings: [
-                .swiftLanguageMode(.v6)
-            ]
         ),
         // Feature Modules (minimal for SDK 1.0 - only pure SwiftUI without SnabbleCI)
         .target(
@@ -224,7 +204,6 @@ let package = Package(
             resources: [
                 .process("Resources")
             ],
-            swiftSettings: [.swiftLanguageMode(.v6)]
         ),
         .target(
             name: "SnabbleShops",
@@ -233,7 +212,6 @@ let package = Package(
                 "SnabbleTheme"
             ],
             path: "Shops/Sources",
-            swiftSettings: [.swiftLanguageMode(.v6)]
         ),
         .target(
             name: "SnabbleCart",
@@ -243,7 +221,6 @@ let package = Package(
                 "SnabbleTheme"
            ],
             path: "Cart/Sources",
-            swiftSettings: [.swiftLanguageMode(.v6)]
         ),
         .target(
             name: "SnabbleReceipts",
@@ -253,7 +230,6 @@ let package = Package(
                 "SnabbleTheme"
             ],
             path: "Receipts/Sources",
-            swiftSettings: [.swiftLanguageMode(.v6)]
         ),
         .target(
             name: "SnabbleCoupons",
@@ -262,7 +238,6 @@ let package = Package(
                 "SnabbleComponents"
             ],
             path: "Coupons/Sources",
-            swiftSettings: [.swiftLanguageMode(.v6)]
         ),
         .target(
             name: "SnabbleTeaser",
@@ -272,7 +247,6 @@ let package = Package(
                 "SnabbleTheme",
            ],
             path: "Teaser/Sources",
-            swiftSettings: [.swiftLanguageMode(.v6)]
         ),
         .target(
             name: "SnabbleOnboarding",
@@ -281,7 +255,6 @@ let package = Package(
                 "SnabbleTheme",
             ],
             path: "Onboarding/Sources",
-            swiftSettings: [.swiftLanguageMode(.v6)]
         ),
         
         .target(
@@ -293,68 +266,6 @@ let package = Package(
                 .product(name: "Datatrans", package: "ios-sdk"),
             ],
             path: "Datatrans/Sources",
-            swiftSettings: [
-                .swiftLanguageMode(.v6)
-            ]
-        ),
-        .target(
-            name: "SnabbleLogger",
-            dependencies: [
-                .product(name: "Logging", package: "swift-log"),
-            ],
-            path: "Pay/Sources/Logger",
-            swiftSettings: [
-                .swiftLanguageMode(.v6)
-            ]
-        ),
-        .target(
-            name: "SnabblePayNetwork",
-            dependencies: [
-                "SnabbleLogger",
-            ],
-            path: "Pay/Sources/Network",
-            swiftSettings: [
-                .swiftLanguageMode(.v6)
-            ]
-        ),
-        .target(
-            name: "SnabblePay",
-            dependencies: [
-                .product(name: "Tagged", package: "swift-tagged"),
-                "SnabblePayNetwork",
-                "SnabbleLogger",
-            ],
-            path: "Pay/Sources/Core",
-            swiftSettings: [
-                .swiftLanguageMode(.v6)
-            ]
-        ),
-        .target(
-            name: "TestHelper",
-            dependencies: [],
-            path: "Pay/Tests/Helper",
-        ),
-        .testTarget(
-            name: "SnabblePayCoreTests",
-            dependencies: [
-                "SnabblePay",
-                "TestHelper",
-            ],
-            path: "Pay/Tests/Core",
-            resources: [
-                .process("Resources"),
-            ]
-        ),
-        .testTarget(
-            name: "SnabblePayNetworkTests",
-            dependencies: [
-                "SnabblePayNetwork",
-                "TestHelper",
-            ],
-            path: "Pay/Tests/Network",
-            resources: [
-                .process("Resources"),
-            ]
         ),
         .target(
             name: "SnabblePhoneAuth",
@@ -363,9 +274,6 @@ let package = Package(
                 "SnabbleUser"
             ],
             path: "PhoneAuth/Sources",
-            swiftSettings: [
-                .swiftLanguageMode(.v6)
-            ]
         ),
         .testTarget(
             name: "SnabblePhoneAuthTests",
@@ -381,9 +289,6 @@ let package = Package(
                 "SnabbleCore"
             ],
             path: "User/Sources",
-            swiftSettings: [
-                .swiftLanguageMode(.v6)
-            ]
         ),
         .target(
             name: "SnabbleScanAndGo",
@@ -397,9 +302,6 @@ let package = Package(
                 "CameraZoomWheel",
             ],
             path: "ScanAndGo",
-            swiftSettings: [
-                .swiftLanguageMode(.v6)
-            ]
         ),
     ]
 )
