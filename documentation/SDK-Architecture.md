@@ -242,7 +242,6 @@ Asset.provider = YourApp()
 - **SnabbleReceipts**: Receipt history and PDF viewer
 - **SnabbleCoupons**: Coupon management and UI
 - **SnabbleTeaser**: Marketing teasers
-- **SnabbleDynamicView**: Dynamic UI configuration
 - **SnabbleOnboarding**: Onboarding flows
 
 ### Complete Flows (Layer 5)
@@ -309,11 +308,11 @@ The following directories contain legacy code that has been mostly replaced:
                           ▼
 ┌─────────────────────────────────────────────────────────────┐
 │                    Infrastructure Layer                      │
-│  ┌─────────────────┐  ┌──────────────┐  ┌───────────────┐ │
-│  │ SnabbleNetwork  │  │ SnabblePay   │  │ GRDB Database │ │
-│  │ - API Requests  │  │ - Payments   │  │ - Products    │ │
-│  │ - Auth Tokens   │  │ - Providers  │  │ - Carts       │ │
-│  └─────────────────┘  └──────────────┘  └───────────────┘ │
+│  ┌─────────────────┐  ┌──────────────────┐  ┌───────────────┐ │
+│  │ SnabbleNetwork  │  │ SnabblePayment   │  │ GRDB Database │ │
+│  │ - API Requests  │  │ - Payments       │  │ - Products    │ │
+│  │ - Auth Tokens   │  │ - Providers      │  │ - Carts       │ │
+│  └─────────────────┘  └──────────────────┘  └───────────────┘ │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -372,20 +371,16 @@ NotificationCenter.default.addObserver(
 )
 ```
 
-### 4. Payment Processing
+### 4. Payment Methods
 
 ```swift
-import SnabblePay
+import SnabblePayment
 
-let process = PaymentProcess(checkoutInfo, cart, shop: shop)
-process.paymentDelegate = self
-process.start(paymentMethod, detail) { result in
-    switch result {
-    case .success(let viewController):
-        present(viewController, animated: true)
-    case .failure(let error):
-        // Handle error
-    }
+NavigationStack {
+    PaymentMethodListView(
+        projectId: project.id,
+        analyticsDelegate: analyticsDelegate
+    )
 }
 ```
 
@@ -436,7 +431,7 @@ db.productByScannableCode("1234567890123") { lookup in
 @State var viewModel: ShoppingCartViewModel
 ```
 
-See `documentation/SDK-Consumer-Migration-Guide.md` for complete migration guide.
+See `documentation/Swift-6-Migration.md` for the complete migration reference.
 
 ---
 
@@ -481,11 +476,6 @@ snabble-ios-sdk/
 │
 ├── Network/                         # SnabbleNetwork module
 │   └── Sources/                    # API client, endpoints
-│
-├── Pay/                             # SnabblePay module
-│   └── Sources/
-│       ├── PaymentMethods/         # Payment method models
-│       └── Providers/              # Payment provider integrations
 │
 ├── Datatrans/                       # SnabbleDatatrans (optional)
 │   └── Sources/                    # Twint, PostFinance
