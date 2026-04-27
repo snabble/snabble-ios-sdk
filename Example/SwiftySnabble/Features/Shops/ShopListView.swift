@@ -9,10 +9,38 @@ import SwiftUI
 
 import SnabbleCore
 import SnabbleComponents
+import SnabbleShops
 
 struct ShopListView: View {
+    @Environment(AppState.self) private var appState
+    
+    @State private var useSDKFeature: Bool = true
+    
+    var body: some View {
+        Group {
+            if useSDKFeature {
+                // Showing the SDK's build-in List of shops
+                ShopsView(shops: appState.shops)
+            } else {
+                // Showing a custom searchable list
+                CustomShopListView()
+            }
+        }
+        .toolbar {
+            ToolbarItem {
+                Toggle(isOn: $useSDKFeature) {
+                    Text("Use SDK")
+                }
+            }
+        }
+    }
+}
+
+
+struct CustomShopListView: View {
     @Environment(AppRouter.self) private var router
     @Environment(AppState.self) private var appState
+
     @State private var searchText = ""
 
     var filteredShops: [Shop] {
@@ -24,7 +52,7 @@ struct ShopListView: View {
             shop.street.localizedCaseInsensitiveContains(searchText)
         }
     }
-
+    
     var body: some View {
         List {
             if let checkedInShop = appState.checkedInShop {
@@ -32,7 +60,7 @@ struct ShopListView: View {
                     ShopRow(shop: checkedInShop, isCheckedIn: true)
                 }
             }
-
+            
             Section("All Shops") {
                 ForEach(filteredShops) { shop in
                     ShopRow(
@@ -47,7 +75,6 @@ struct ShopListView: View {
             }
         }
         .searchable(text: $searchText, prompt: "Search shops")
-        .navigationTitle("Shops")
     }
 }
 
