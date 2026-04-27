@@ -71,7 +71,6 @@ struct ShoppingView: View {
     var body: some View {
         NavigationStack {
             ShopperView(model: shopper)
-                .actionState()
                 .navigationBarHidden(false)
         }
     }
