@@ -67,7 +67,7 @@ struct ShopDetailView: View {
                         .padding(.horizontal)
                     } else {
                         PrimaryButtonView(title: String(localized: "Check In at This Shop")) {
-                            appState.checkedInShop = shop
+                            Snabble.shared.checkInManager.shop = shop
                         }
                         .padding(.horizontal)
                     }
