@@ -17,7 +17,8 @@ struct ShopSelectionView: View {
         NavigationStack {
             List(appState.shops) { shop in
                 Button {
-                    appState.checkedInShop = shop
+                    Snabble.shared.checkInManager.shop = shop
+
                     dismiss()
                 } label: {
                     VStack(alignment: .leading, spacing: 4) {
