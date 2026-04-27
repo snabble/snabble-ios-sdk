@@ -9,7 +9,6 @@ import UIKit
 import Combine
 
 import SnabbleCore
-import SnabbleAssetProviding
 import SnabbleTheme
 
 @MainActor
@@ -50,8 +49,10 @@ public final class CheckModel: CheckoutProcessing, CheckModelDelegate, @unchecke
     
     public weak var paymentDelegate: PaymentDelegate?
     public weak var delegate: CheckModelDelegate?
-    
+
     public var continuation: ((_ process: CheckoutProcess) -> CheckModel.CheckResult)?
+
+    public var onCancelError: (@MainActor () -> Void)?
     
     public init(shop: Shop, shoppingCart: ShoppingCart, checkoutProcess: CheckoutProcess, paymentDelegate: PaymentDelegate?) {
         self.shop = shop
@@ -135,7 +136,11 @@ public final class CheckModel: CheckoutProcessing, CheckModelDelegate, @unchecke
         self.shoppingCart.generateNewUUID()
         delegate?.checkoutAborted(process: process)
     }
-    
+
+    public func dismissCancelError() {
+        startTimer()
+    }
+
     public func cancelPayment() {
         guard processTimerTask != nil else { return }
 
@@ -151,14 +156,11 @@ public final class CheckModel: CheckoutProcessing, CheckModelDelegate, @unchecke
                 case .success(let process):
                     self.checkoutAborted(process: process)
                 case .failure:
-                    let alertView = AlertView(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
-                                              message: Asset.localizedString(forKey: "Snabble.Payment.CancelError.message"))
-                    alertView.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { _ in
-                        Task { @MainActor in
-                            self.startTimer()
-                        }
-                    })
-                    alertView.show()
+                    if let onCancelError {
+                        onCancelError()
+                    } else {
+                        self.startTimer()
+                    }
                 }
             }
         }

@@ -59,7 +59,19 @@ open class BaseCheckViewController<Content: View>: UIHostingController<Content>,
         super.init(rootView: rootView)
         self.viewModel = model
         self.checkModel.delegate = self
-        
+        self.checkModel.onCancelError = { [weak self] in
+            guard let self else { return }
+            let alert = UIAlertController(
+                title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
+                message: Asset.localizedString(forKey: "Snabble.Payment.CancelError.message"),
+                preferredStyle: .alert
+            )
+            alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.ok"), style: .default) { [weak self] _ in
+                self?.checkModel.dismissCancelError()
+            })
+            self.present(alert, animated: true)
+        }
+
         self.hidesBottomBarWhenPushed = true
         title = Asset.localizedString(forKey: "Snabble.Payment.confirm")
     }

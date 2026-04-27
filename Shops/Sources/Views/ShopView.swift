@@ -51,32 +51,19 @@ extension CheckInManager {
 
 public extension DeveloperMode {
 
-    @MainActor
-    static func toggleCheckIn(for shop: any ShopProviding) {
+    // returns true if an alert should be shown to set:
+    //   Snabble.shared.checkInManager.developerCheckin(at: shop, persist: false|true)
+    // return false and checkout if was previolsly checkedin
+    static func toggleCheckIn(for shop: any ShopProviding) -> Bool {
         guard showCheckIn else {
-            return
+            return false
         }
 
         if Snabble.shared.checkInManager.isCheckedIn(for: shop) {
             Snabble.shared.checkInManager.developerCheckout()
+            return false
         } else {
-            let alert = AlertView(title: "Check in", message: nil)
-
-            alert.alertController?.addAction(UIAlertAction(title: "This session", style: .default) { _ in
-                Snabble.shared.checkInManager.developerCheckin(at: shop, persist: false)
-                alert.dismiss(animated: false)
-            })
-
-            alert.alertController?.addAction(UIAlertAction(title: "Until next check out", style: .default) { _ in
-                Snabble.shared.checkInManager.developerCheckin(at: shop, persist: true)
-                alert.dismiss(animated: false)
-            })
-
-            alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "cancel"), style: .cancel, handler: { _ in
-                alert.dismiss(animated: false)
-            }))
-        
-            alert.show()
+            return true
         }
     }
 }
@@ -88,6 +75,7 @@ public struct ShopView: View {
 
     @State var viewModel: ShopsViewModel
     @State private var showingAlert = false
+    @State private var showingCheckin = false
 
     @ViewBuilder
     var distance: some View {        
@@ -122,9 +110,27 @@ public struct ShopView: View {
     var checkInButton: some View {
         if DeveloperMode.showCheckIn {
             Button(action: {
-                DeveloperMode.toggleCheckIn(for: shop)
+                showingCheckin = DeveloperMode.toggleCheckIn(for: shop)
             }) {
                 Text(isCheckedIn() ? "[Check Out]" : "[Check In]")
+            }
+            .alert(
+                "Check in",
+                isPresented: $showingCheckin,
+                presenting: "Text"
+            ) { details in
+                Button(role: .destructive) {
+                    Snabble.shared.checkInManager.developerCheckin(at: shop, persist: false)
+                } label: {
+                    Text("This Session")
+                }
+                Button(role: .destructive) {
+                    Snabble.shared.checkInManager.developerCheckin(at: shop, persist: true)
+                } label: {
+                    Text("Until next check out")
+                }
+            } message: { details in
+                Text(details)
             }
         }
     }

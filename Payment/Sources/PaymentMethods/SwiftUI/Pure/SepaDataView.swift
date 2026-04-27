@@ -290,6 +290,7 @@ public struct SepaDataEditorView: View {
 
 public struct SepaDataDisplayView: View {
     var model: SepaDataModel
+    @State private var showingDeleteAlert = false
 
     public init(model: SepaDataModel) {
         self.model = model
@@ -322,31 +323,26 @@ public struct SepaDataDisplayView: View {
                 }
             )
         }
-        .navigationBarItems(trailing: Button(action: {
-            askToRemove()
-        }) {
+        .navigationBarItems(trailing: Button {
+            showingDeleteAlert = true
+        } label: {
             Image(systemName: "trash")
+        })
+        .alert(
+            Asset.localizedString(forKey: "Snabble.Payment.SEPA.title"),
+            isPresented: $showingDeleteAlert
+        ) {
+            Button(Asset.localizedString(forKey: "Snabble.delete"), role: .destructive) {
+                model.actionPublisher.send(["action": "remove"])
+            }
+            Button(Asset.localizedString(forKey: "cancel"), role: .cancel) {}
+        } message: {
+            Text(Asset.localizedString(forKey: "Snabble.Payment.Delete.message"))
         }
-        )
     }
 
     public var body: some View {
         displayData
-    }
-
-    private func askToRemove() {
-        let alert = AlertView(title: Asset.localizedString(forKey: "Snabble.Payment.SEPA.title"), message: Asset.localizedString(forKey: "Snabble.Payment.Delete.message"))
-
-        alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "Snabble.delete"), style: .destructive) { _ in
-            self.model.actionPublisher.send(["action": "remove"])
-            alert.dismiss(animated: false)
-        })
-
-        alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "cancel"), style: .cancel, handler: { _ in
-            alert.dismiss(animated: false)
-        }))
-    
-        alert.show()
     }
 }
 

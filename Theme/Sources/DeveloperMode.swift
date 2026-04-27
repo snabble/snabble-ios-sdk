@@ -88,35 +88,34 @@ public extension DeveloperMode {
 
     @MainActor
     static private func ask() {
-        guard Self.isEnabled == false else {
+        guard Self.isEnabled == false else { return }
+
+        guard let windowScene = UIApplication.shared.connectedScenes
+            .filter({ $0.activationState == .foregroundActive })
+            .first(where: { $0 is UIWindowScene }) as? UIWindowScene,
+              let rootVC = windowScene.windows.first(where: { $0.isKeyWindow })?.rootViewController else {
             return
         }
-        let alert = AlertView(title: nil, message: "Password")
 
-        alert.alertController?.addTextField { textfield in
+        let alert = UIAlertController(title: nil, message: "Password", preferredStyle: .alert)
+        alert.addTextField { textfield in
             textfield.isSecureTextEntry = true
         }
-        alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .default) { _ in
-            let text = alert.alertController?.textFields?.first?.text ?? ""
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .default) { _ in
+            let text = alert.textFields?.first?.text ?? ""
 
             var password = Asset.localizedString(forKey: "SnabbelDeveloperPassword")
             if password == "SnabbelDeveloperPassword" {
                 password = "Snabble"
             }
             if let magicData = password.data(using: .utf8),
-               let inputData = text.data(using: .utf8) {
-
-                if magicData.base64EncodedData() == inputData.base64EncodedData() {
-                    UserDefaults.standard.developerMode = true
-                    print("DeveloperMode is on")
-                }
+               let inputData = text.data(using: .utf8),
+               magicData.base64EncodedData() == inputData.base64EncodedData() {
+                UserDefaults.standard.developerMode = true
+                print("DeveloperMode is on")
             }
-            alert.dismiss(animated: false)
         })
-        alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "cancel"), style: .cancel, handler: { _ in
-            alert.dismiss(animated: false)
-        }))
-
-        alert.show()
+        alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "cancel"), style: .cancel))
+        rootVC.present(alert, animated: true)
     }
 }

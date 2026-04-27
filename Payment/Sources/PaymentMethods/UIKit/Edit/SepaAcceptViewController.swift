@@ -56,12 +56,11 @@ extension SepaAcceptViewController: SepaAcceptViewControllerDelegate {
         
     nonisolated func showErrorMessage(title: String?, message: String?) {
         Task { @MainActor in
-            let alert = AlertView(title: title, message: message)
-            
-            alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .default) { _ in
-                self.dismiss()
+            let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .default) { [weak self] _ in
+                self?.dismiss()
             })
-            alert.show()
+            self.present(alert, animated: true)
         }
     }
 

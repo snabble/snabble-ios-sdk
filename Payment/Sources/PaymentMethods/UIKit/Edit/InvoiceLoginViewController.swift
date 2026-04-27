@@ -65,12 +65,11 @@ extension InvoiceViewController: InvoiceViewControllerDelegate {
                 try await model.save()
                 self.navigationController?.popViewController(animated: true)
             } catch {
-                let alert = AlertView(title: nil, message: Asset.localizedString(forKey: "Snabble.SEPA.encryptionError"))
-
-                alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .default) { _ in
-                    self.navigationController?.popViewController(animated: true)
+                let alert = UIAlertController(title: nil, message: Asset.localizedString(forKey: "Snabble.SEPA.encryptionError"), preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .default) { [weak self] _ in
+                    self?.navigationController?.popViewController(animated: true)
                 })
-                alert.show()
+                self.present(alert, animated: true)
             }
         }
     }

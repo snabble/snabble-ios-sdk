@@ -64,10 +64,9 @@ extension SepaDataEditViewController: SepaDataEditViewControllerDelegate {
             do {
                 try await model.save()
             } catch {
-                let alert = AlertView(title: nil, message: Asset.localizedString(forKey: "Snabble.SEPA.encryptionError"))
-
-                alert.alertController?.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .default))
-                alert.show()
+                let alert = UIAlertController(title: nil, message: Asset.localizedString(forKey: "Snabble.SEPA.encryptionError"), preferredStyle: .alert)
+                alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .default))
+                self.present(alert, animated: true)
             }
         }
     }
