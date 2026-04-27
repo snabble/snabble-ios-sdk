@@ -13,9 +13,11 @@ import SnabbleComponents
 import SnabbleTheme
 import SnabbleOnboarding
 import SnabbleShops
+import SnabbleScanAndGo
 
 @main
 struct SwiftySnabbleApp: App {
+    
     @State private var router = AppRouter()
     @State private var appState = AppState()
     @State private var isInitialized = false
@@ -33,6 +35,7 @@ struct SwiftySnabbleApp: App {
                     RootView()
                         .environment(router)
                         .environment(appState)
+                        .shopperActions()
                 } else {
                     LoadingView()
                 }
