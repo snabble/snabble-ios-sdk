@@ -80,7 +80,7 @@ public struct ReceiptsItemView: View {
     }
 }
 
-public struct ReceiptsListScreen: View {
+public struct ReceiptsListScreen<SomeEmptyView: View>: View {
     @State var viewModel: PurchasesViewModel
     @ViewProvider(.receiptsEmpty) var emptyView
 
@@ -88,9 +88,18 @@ public struct ReceiptsListScreen: View {
     /// If false, uses the onAction callback for custom navigation handling.
     public let useBuiltInNavigation: Bool
 
+    @ViewBuilder let placeholderView: SomeEmptyView
+    
     public init(model: PurchasesViewModel = .init(), useBuiltInNavigation: Bool = true) {
         self._viewModel = State(initialValue: model)
         self.useBuiltInNavigation = useBuiltInNavigation
+        self.placeholderView = EmptyView() as! SomeEmptyView
+    }
+
+    public init(model: PurchasesViewModel = .init(), useBuiltInNavigation: Bool = true, emptyView placeholder: SomeEmptyView) {
+        self._viewModel = State(initialValue: model)
+        self.useBuiltInNavigation = useBuiltInNavigation
+        self.placeholderView = placeholder
     }
 
     public var body: some View {
@@ -130,7 +139,10 @@ public struct ReceiptsListScreen: View {
                 }
             }
         }, empty: {
-            emptyView
+            Group {
+                emptyView
+                placeholderView
+            }
         })
         .navigationDestination(for: ReceiptNavigationItem.self) { item in
             ReceiptDetailScreen(orderId: item.orderId, projectId: item.projectId)
