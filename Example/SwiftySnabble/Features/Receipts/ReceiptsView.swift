@@ -8,16 +8,25 @@
 import SwiftUI
 
 import SnabbleReceipts
+import SnabbleAssetProviding
 
 struct ReceiptsView: View {
     @State private var model = PurchasesViewModel()
     
     var body: some View {
-        ReceiptsListScreen(model: model)
-            .navigationTitle("Receipts")
-            .refreshable {
-                model.load()
+        ReceiptsListScreen(
+            model: model,
+            useBuiltInNavigation: true,
+            emptyView: ContentUnavailableView {
+                Label(Asset.localizedString(forKey: "Snabble.Receipts.noReceipts"), systemImage: "receipt.fill")
+            } description: {
+                Text("Happy Shopping!")
             }
+        )
+        .navigationTitle("Receipts")
+        .refreshable {
+            model.load()
+        }
     }
 }
 
