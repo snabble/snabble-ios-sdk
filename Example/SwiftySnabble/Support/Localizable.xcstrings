@@ -87,6 +87,9 @@
     "Environment: %@" : {
 
     },
+    "Happy Shopping!" : {
+
+    },
     "Imprint" : {
       "localizations" : {
         "de" : {
@@ -361,6 +364,7 @@
       }
     },
     "This feature is in development" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -369,6 +373,9 @@
           }
         }
       }
+    },
+    "Use SDK" : {
+
     },
     "Version %@" : {
 
