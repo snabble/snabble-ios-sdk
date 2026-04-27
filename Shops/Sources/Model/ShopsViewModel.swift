@@ -32,9 +32,6 @@ public final class ShopsViewModel: NSObject {
     /// All available shops
     public private(set) var shops: [ShopProviding]
 
-    /// Current check-in shop
-    public var shop: ShopProviding?
-
     /// distances in meter to a shop by id
     private(set) var distances: [Identifier<Shop>: Double]
 
@@ -48,11 +45,9 @@ public final class ShopsViewModel: NSObject {
         distances[shop.id]
     }
 
+    @MainActor
     public func isCurrent(_ shop: ShopProviding) -> Bool {
-        guard let currentShop = self.shop else {
-            return false
-        }
-        return currentShop.id == shop.id
+        Snabble.shared.checkInManager.isCheckedIn(for: shop)
     }
 
     public let locationManager: CLLocationManager
