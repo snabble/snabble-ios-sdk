@@ -33,7 +33,8 @@ struct RootView: View {
                     .navigationDestination(for: AppRouter.Destination.self) { destination in
                         router.view(for: destination)
                     }
-            }
+                    .navigationTitle("Shops")
+           }
             .tabItem {
                 Label("Shops", systemImage: "storefront.fill")
             }
