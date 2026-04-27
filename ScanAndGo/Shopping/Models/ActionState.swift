@@ -123,8 +123,16 @@ public final class ActionManager {
     }
 }
 
-/// A view modifier that observes the `ActionManager` and modifies the view based on the current action state.
-public struct ActionModifier: ViewModifier {
+/// Observes `ActionManager.shared` and renders the current action as the appropriate UI overlay.
+///
+/// Apply this modifier once at the root of your view hierarchy when integrating `ShopperView`.
+/// Without it, toasts, dialogs, sheets, and alerts triggered by the `Shopper` model will not appear.
+///
+/// ```swift
+/// RootView()
+///     .shopperActions()
+/// ```
+public struct ShopperActionModifier: ViewModifier {
     @State var actionState: ActionType = .idle {
         didSet {
             if case .toast(let toast) = actionState {
@@ -219,8 +227,12 @@ public struct ActionModifier: ViewModifier {
 }
 
 extension View {
-    /// A view modifier that applies the `ActionModifier` to the view.
-    public func actionState() -> some View {
-        self.modifier(ActionModifier())
+    /// Applies `ShopperActionModifier` to the view.
+    ///
+    /// Required at the root of any view hierarchy that contains a `ShopperView`.
+    /// Enables the `ActionManager` to present toasts, dialogs, sheets, and alerts
+    /// triggered during a Scan & Go session.
+    public func shopperActions() -> some View {
+        self.modifier(ShopperActionModifier())
     }
 }
