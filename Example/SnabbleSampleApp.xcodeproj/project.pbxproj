@@ -9,11 +9,13 @@
 /* Begin PBXBuildFile section */
 		761C0E092F7145730000BFF1 /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = 761C0E082F7145730000BFF1 /* Snabble */; };
 		766BCCCA2F62C23A00D8FFAF /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = 766BCCC92F62C23A00D8FFAF /* Snabble */; };
+		768D2E7C2F9F410A00566A40 /* SnabbleSampleApp-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 768D2E7B2F9F410A00566A40 /* SnabbleSampleApp-Info.plist */; };
 		76CFCD1E2F76B7F500166D12 /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = 76CFCD1D2F76B7F500166D12 /* Snabble */; };
 		76DF385B2F5075A80050F4EC /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = 76DF385A2F5075A80050F4EC /* Snabble */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		768D2E7B2F9F410A00566A40 /* SnabbleSampleApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SnabbleSampleApp-Info.plist"; sourceTree = "<group>"; };
 		76DF38052F50740F0050F4EC /* SnabbleSampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SnabbleSampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -45,6 +47,7 @@
 			children = (
 				76DF38072F50740F0050F4EC /* SwiftySnabble */,
 				76DF38062F50740F0050F4EC /* Products */,
+				768D2E7B2F9F410A00566A40 /* SnabbleSampleApp-Info.plist */,
 			);
 			sourceTree = "<group>";
 		};
@@ -130,6 +133,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				768D2E7C2F9F410A00566A40 /* SnabbleSampleApp-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -325,6 +329,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "SnabbleSampleApp-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = SnabbleSampleApp;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Scan your products";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Face ID access is required to protect online payments.";
@@ -377,6 +382,7 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "SnabbleSampleApp-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = SnabbleSampleApp;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Scan your products";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Face ID access is required to protect online payments.";
