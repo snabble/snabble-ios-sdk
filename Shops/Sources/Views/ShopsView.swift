@@ -10,6 +10,17 @@ import SnabbleAssetProviding
 
 public struct ShopsView: View {
     @State public var viewModel: ShopsViewModel
+    @State private var searchText = ""
+    
+    var filteredShops: [ShopProviding] {
+        if searchText.isEmpty {
+            return viewModel.shops
+        }
+        return viewModel.shops.filter { shop in
+            shop.name.localizedCaseInsensitiveContains(searchText) ||
+            shop.street.localizedCaseInsensitiveContains(searchText)
+        }
+    }
 
     public init(shops: [ShopProviding]) {
         self.viewModel = ShopsViewModel(shops: shops)
@@ -17,31 +28,28 @@ public struct ShopsView: View {
 
     public var body: some View {
         NavigationView {
-            VStack {
-                List(viewModel.shops, id: \.id) { shop in
-                    NavigationLink {
-                        ShopView(
-                            shop: shop,
-                            viewModel: viewModel
-                        )
-                    } label: {
-                        ShopCellView(
-                            shop: shop,
-                            viewModel: viewModel
-                        )
-                    }
+            List(filteredShops, id: \.id) { shop in
+                NavigationLink {
+                    ShopView(
+                        shop: shop,
+                        viewModel: viewModel
+                    )
+                } label: {
+                    ShopCellView(
+                        shop: shop,
+                        viewModel: viewModel
+                    )
                 }
-                .listStyle(PlainListStyle())
-                .navigationBarTitle(Asset.localizedString(forKey: "Snabble.Shop.Finder.title"), displayMode: .inline)
+            }
+            .searchable(text: $searchText, prompt: "Search shops")
+            .listStyle(.plain)
+            .onAppear {
+                viewModel.startUpdating()
+            }
+            .onDisappear {
+                viewModel.stopUpdating()
             }
         }
-        .onAppear {
-            viewModel.startUpdating()
-        }
-        .onDisappear {
-            viewModel.stopUpdating()
-        }
-        .navigationViewStyle(.stack)
     }
 }
 
