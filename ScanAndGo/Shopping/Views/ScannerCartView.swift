@@ -22,7 +22,7 @@ struct ScannerCartView: View {
     @State private var compactMode: Bool = true
 
     @ScaledMetric private var barHeight = CGFloat(74)
-    @ScaledMetric private var visibleRowHeight = CGFloat(58)
+    @ScaledMetric private var visibleRowHeight = CGFloat(72)
     let offset: CGFloat
 
     init(model: Shopper, minHeight: Binding<CGFloat>, offset: CGFloat = 0) {
