@@ -8,12 +8,16 @@
 import Foundation
 import CoreLocation
 import SwiftUI
+
+import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleComponents
 
 public struct ShopCellView: View {
     let shop: ShopProviding
+    
     @State var viewModel: ShopsViewModel
+    @State private var isCurrentShop = false
     
     public var body: some View {
         HStack {
@@ -27,12 +31,17 @@ public struct ShopCellView: View {
                 }
             }
             Spacer()
-            if viewModel.isCurrent(shop) {
+            if isCurrentShop {
                 Text(keyed: "Snabble.Shop.Finder.youarehere")
                     .youAreHereStyle()
             } else {
                 DistanceView(distance: viewModel.distance(from: shop))
                     .secondaryStyle()
+            }
+        }
+        .task {
+            for await shop in Snabble.shared.checkInManager.shopStream {
+                self.isCurrentShop = shop?.id == self.shop.id
             }
         }
     }
