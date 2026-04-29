@@ -47,7 +47,7 @@ public struct ReceiptsItemView: View {
     @ViewBuilder
     var stateView: some View {
         Circle()
-            .fill((showReadState && !provider.isRead) ? Color.badge() : .clear)
+            .fill(showReadState ? Color.badge() : .clear)
             .frame(width: 10, height: 10)
     }
 
@@ -176,10 +176,10 @@ public struct ReceiptsListScreen<SomeEmptyView: View>: View {
     private func receiptRow(for provider: any PurchaseProviding) -> some View {
         if useBuiltInNavigation {
             NavigationLink(value: ReceiptNavigationItem(provider: provider)) {
-                ReceiptsItemView(provider: provider, image: viewModel.imageFor(projectId: provider.projectId), showChevron: false)
+                ReceiptsItemView(provider: provider, image: viewModel.imageFor(projectId: provider.projectId), showReadState: !viewModel.isRead(receiptId: provider.id), showChevron: false)
             }
         } else {
-            ReceiptsItemView(provider: provider, image: viewModel.imageFor(projectId: provider.projectId))
+            ReceiptsItemView(provider: provider, image: viewModel.imageFor(projectId: provider.projectId), showReadState: !viewModel.isRead(receiptId: provider.id))
                 .contentShape(Rectangle())
                 .onTapGesture {
                     viewModel.markAsRead(receiptId: provider.id)

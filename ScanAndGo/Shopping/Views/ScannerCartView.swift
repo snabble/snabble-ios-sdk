@@ -45,7 +45,9 @@ struct ScannerCartView: View {
             update()
         }
         .task {
-            update()
+            Task { @MainActor in
+                update()
+            }
         }
     }
     

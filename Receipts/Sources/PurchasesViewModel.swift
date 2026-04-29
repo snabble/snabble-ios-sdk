@@ -78,6 +78,10 @@ public class PurchasesViewModel: SnabbleComponents.LoadableObject, @unchecked Se
         load(reset: false, isRefreshing: true)
     }
     
+    public func isRead(receiptId: String) -> Bool {
+        readStatusManager.isRead(receiptId: receiptId)
+    }
+    
     /// Mark a receipt as read
     public func markAsRead(receiptId: String) {
         readStatusManager.markAsRead(receiptId: receiptId)

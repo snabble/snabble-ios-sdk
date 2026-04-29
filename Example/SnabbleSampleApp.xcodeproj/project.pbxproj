@@ -9,7 +9,6 @@
 /* Begin PBXBuildFile section */
 		761C0E092F7145730000BFF1 /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = 761C0E082F7145730000BFF1 /* Snabble */; };
 		766BCCCA2F62C23A00D8FFAF /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = 766BCCC92F62C23A00D8FFAF /* Snabble */; };
-		768D2E7C2F9F410A00566A40 /* SnabbleSampleApp-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 768D2E7B2F9F410A00566A40 /* SnabbleSampleApp-Info.plist */; };
 		76CFCD1E2F76B7F500166D12 /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = 76CFCD1D2F76B7F500166D12 /* Snabble */; };
 		76DF385B2F5075A80050F4EC /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = 76DF385A2F5075A80050F4EC /* Snabble */; };
 /* End PBXBuildFile section */
@@ -133,7 +132,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				768D2E7C2F9F410A00566A40 /* SnabbleSampleApp-Info.plist in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

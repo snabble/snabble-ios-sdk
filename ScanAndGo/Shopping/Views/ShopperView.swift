@@ -68,8 +68,8 @@ public struct ShopperView: View {
                 }
             }
             .onAppear {
-                model.scanningActivated = true
                 model.scanningPaused = expanded
+                model.scanningActivated = true
             }
             .onDisappear {
                 model.scanningActivated = false
