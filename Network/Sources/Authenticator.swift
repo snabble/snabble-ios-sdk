@@ -61,7 +61,9 @@ class Authenticator {
         endpoint.domain = configuration.domain
         let publisher = urlSession.dataTaskPublisher(for: endpoint)
             .handleEvents(receiveOutput: { [weak self] response in
-                self?.delegate?.authenticator(self!, appUserUpdated: response.appUser)
+                // Guard against self being deallocated before the response arrives
+                guard let self else { return }
+                self.delegate?.authenticator(self, appUserUpdated: response.appUser)
             })
             .map {
                 $0.appUser
@@ -113,15 +115,21 @@ class Authenticator {
                 }
                 .mapError { HTTPError.unexpected($0) }
                 .flatMap { urlSession, endpoint in
-                    return urlSession.dataTaskPublisher(for: endpoint).share()
+                    return urlSession.dataTaskPublisher(for: endpoint)
                 }
                 .handleEvents(receiveOutput: { token in
                     self.token = token
                 }, receiveCompletion: { _ in
-                    self.queue.sync {
+                    // Use async to avoid a potential deadlock if completion is
+                    // delivered on the queue's own thread.
+                    self.queue.async {
                         self.refreshPublisher = nil
                     }
                 })
+                // Share the publisher so all concurrent callers subscribe to the
+                // same upstream chain. Without this, each subscriber independently
+                // drives validateAppUser and fires a redundant AppUser POST request.
+                .share()
                 .eraseToAnyPublisher()
 
             self.refreshPublisher = publisher
