@@ -21,7 +21,7 @@ public struct PaymentMethodListView: View {
     @State private var selectedMethod: RawPaymentMethod?
 
     public init(projectId: Identifier<SnabbleCore.Project>?, analyticsDelegate: AnalyticsDelegate? = nil) {
-        _manager = State(wrappedValue: PaymentMethodListManager(projectId: projectId))
+        self.manager = PaymentMethodListManager(projectId: projectId)
         self.analyticsDelegate = analyticsDelegate
     }
 
@@ -77,7 +77,7 @@ public struct PaymentMethodListView: View {
             manager.loadPayments()
             analyticsDelegate?.track(.viewPaymentMethodList)
 
-            if manager.isEmpty, manager.projectId != nil {
+            if manager.isEmpty, manager.projectId != nil, !showingAddSheet {
                 // Auto-show add sheet if no payments exist
                 showingAddSheet = true
             }
