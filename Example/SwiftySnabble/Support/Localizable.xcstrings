@@ -72,6 +72,7 @@
       }
     },
     "Developer" : {
+      "extractionState" : "stale",
       "localizations" : {
         "de" : {
           "stringUnit" : {
@@ -82,9 +83,6 @@
       }
     },
     "Environment" : {
-
-    },
-    "Environment: %@" : {
 
     },
     "Happy Shopping!" : {
@@ -99,6 +97,9 @@
           }
         }
       }
+    },
+    "Licenses" : {
+
     },
     "Loading %@..." : {
       "localizations" : {
@@ -237,12 +238,6 @@
           }
         }
       }
-    },
-    "Reset App ID" : {
-
-    },
-    "Reset Client ID" : {
-
     },
     "Scan & Go Shopping" : {
       "localizations" : {
