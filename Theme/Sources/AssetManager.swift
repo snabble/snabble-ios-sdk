@@ -6,10 +6,11 @@
 
 import Foundation
 import UIKit
-
 import SnabbleCore
 
-public enum ImageAsset: String {
+// MARK: - ImageAsset
+
+public enum ImageAsset: String, Sendable {
     // store icon, 24x24
     case storeIcon = "icon"
     // store logo (home view + store detail)
@@ -19,38 +20,59 @@ public enum ImageAsset: String {
     // customer/loyalty card
     case customerCard = "loyaltycard"
 
-    // hint customer/loyalty card
     case startTeaserLoyalty = "start-teaser-loyalty"
-    // hint payment card
     case startTeaserPayment = "start-teaser-payment"
 
-    // checkout
     case checkoutOnline = "checkout-online"
     case checkoutOffline = "checkout-offline"
 
-    // app start screen bg
     case appBackgroundImage = "background-app"
 }
 
+// MARK: - SnabbleCI public bridge
+
 extension SnabbleCI {
-    // download manifests for all projects, calls `completion` when all downloads are done
-    public static func initializeAssets(for projects: [Project], completion: @escaping () -> Void) {
-        AssetManager.shared.initialize(projects, completion)
+    /// Downloads manifests for all projects and calls `completion` on the main thread when done.
+    public static func initializeAssets(for projects: [Project], completion: @escaping @Sendable () -> Void) {
+        // Capture `shared` here (on the calling/main thread) to force lazy init on the main thread.
+        // AssetManager.init uses MainActor.assumeIsolated to read UIScreen.main.scale.
+        let manager = AssetManager.shared
+        Task {
+            await manager.initialize(projects)
+            await MainActor.run { completion() }
+        }
     }
 
     public static func initializeAssets(for projectId: Identifier<Project>, _ manifestUrl: String, downloadFiles: Bool) {
-        AssetManager.shared.initialize(projectId, manifestUrl, downloadFiles: downloadFiles, completion: { })
+        let manager = AssetManager.shared
+        Task {
+            await manager.initialize(projectId, manifestUrl: manifestUrl, downloadFiles: downloadFiles)
+        }
     }
 
+    /// Retrieves a named asset asynchronously.
+    /// Must only be called after `initializeAssets` has been called on the main thread.
+    public static func getAsset(_ asset: ImageAsset, bundlePath: String? = nil, projectId: Identifier<Project>? = nil) async -> UIImage? {
+        await AssetManager.shared.getAsset(asset, bundlePath: bundlePath, projectId: projectId)
+    }
+
+    /// Retrieves a named asset. `completion` is called on the main thread.
     public static func getAsset(_ asset: ImageAsset, bundlePath: String? = nil, projectId: Identifier<Project>? = nil, completion: @escaping @Sendable (UIImage?) -> Void) {
-        AssetManager.shared.getAsset(asset, bundlePath, projectId, completion)
+        let manager = AssetManager.shared
+        Task {
+            let image = await manager.getAsset(asset, bundlePath: bundlePath, projectId: projectId)
+            await MainActor.run { completion(image) }
+        }
     }
 
     // use this only for debugging
     public static func clearAssets() {
-        AssetManager.shared.clearAssets()
+        let manager = AssetManager.shared
+        Task { await manager.clearAssets() }
     }
 }
+
+// MARK: - Manifest
 
 struct Manifest: Codable {
     let projectId: Identifier<Project>
@@ -77,11 +99,8 @@ struct Manifest: Codable {
 }
 
 extension Manifest.File {
-    // where can we download this thing from?
     func remoteURL(for scale: CGFloat) -> URL? {
-        guard let variant = self.variant(for: scale) else {
-            return nil
-        }
+        guard let variant = self.variant(for: scale) else { return nil }
         return Snabble.shared.urlFor(variant)
     }
 
@@ -93,97 +112,287 @@ extension Manifest.File {
         }
     }
 
-    // filename for our local filesystem copy (usually in .cachesDirectory)
     func localName(_ scale: CGFloat) -> String? {
-        guard let variant = self.variant(for: scale) else {
-            return nil
-        }
-
-        let name = "\(self.name)-\(variant.sha1)"
-        return name
+        guard let variant = self.variant(for: scale) else { return nil }
+        return "\(self.name)-\(variant.sha1)"
     }
 
-    // where we store information about this file in UserDefaults
     func defaultsKey(_ projectId: Identifier<Project>) -> String {
-        return "io.snabble.sdk.asset.\(projectId.rawValue).\(self.basename())"
+        "io.snabble.sdk.asset.\(projectId.rawValue).\(basename())"
     }
 
     private func basename() -> String {
         let parts = self.name.components(separatedBy: ".")
-        if parts.count > 1 {
-            return parts.dropLast().joined(separator: ".")
-        } else {
-            return self.name
-        }
+        return parts.count > 1 ? parts.dropLast().joined(separator: ".") : self.name
     }
 }
 
-private struct AssetRequest {
-    let asset: ImageAsset
-    let bundlePath: String?
-    let projectId: Identifier<Project>
-    let completion: (UIImage?) -> Void
-}
+// MARK: - AssetManager
 
-final class AssetManager: @unchecked Sendable {
-    /// Thread-safety: Singleton initialized once, internal state protected by ReadWriteLock
+/// Manages downloading and caching of project assets (logos, icons, etc.).
+///
+/// Actor isolation replaces the previous ReadWriteLock + @unchecked Sendable pattern.
+/// Async/await URLSession APIs replace URLSessionDownloadDelegate callbacks.
+actor AssetManager {
     static let shared = AssetManager()
 
     private var manifests = [Identifier<Project>: Manifest]()
-    private var lock = ReadWriteLock()
+    /// Keys of downloads currently in-flight; prevents duplicate concurrent requests for the same file.
+    private var inFlightDownloads = Set<String>()
+    private var redownloadTask: Task<Void, Never>?
 
-    private weak var redownloadTimer: Timer?
-    
-    /// Cached screen scale, initialized on main thread
-    private let screenScale: CGFloat
-    
-    private init() {
-        // Must be called from main thread during app initialization
+    // `let` constants are implicitly nonisolated in actors — callers read them without await.
+    let screenScale: CGFloat
+    private let urlSession: URLSession
+    private let buildRequest: @Sendable (URL, Bool) -> URLRequest
+
+    private init(
+        urlSession: URLSession = Snabble.urlSession,
+        buildRequest: @escaping @Sendable (URL, Bool) -> URLRequest = { Snabble.request(url: $0, json: $1) }
+    ) {
         self.screenScale = MainActor.assumeIsolated { UIScreen.main.scale }
+        self.urlSession = urlSession
+        self.buildRequest = buildRequest
     }
 
-    /// Get a named asset, or its local fallback
-    /// - Parameters:
-    ///   - asset: type of the asset, e.g. `.checkoutOffline`
-    ///   - bundlePath: bundle path of the fallback to use, e.g. "Checkout/$PROJECTID/checkout-offline"
-    ///   - projectId: the project id. If nil, use `SnabbleCI.project.id`
-    ///   - completion: called when the image has been retrieved
-    func getAsset(_ asset: ImageAsset, _ bundlePath: String?, _ projectId: Identifier<Project>?, _ completion: @escaping @Sendable (UIImage?) -> Void) {
+    // MARK: Public interface
+
+    func getAsset(_ asset: ImageAsset, bundlePath: String?, projectId: Identifier<Project>?) async -> UIImage? {
         let projectId = projectId ?? SnabbleCI.project.id
         let name = asset.rawValue
-        
-        Task { @MainActor in
-            if let image = self.getLocallyCachedImage(named: name, projectId) {
-                completion(image)
-            } else {
-                let interfaceStyle = UIScreen.main.traitCollection.userInterfaceStyle
-                self.processAssetRequest(name: name, projectId: projectId, interfaceStyle: interfaceStyle, bundlePath: bundlePath, completion: completion)
+
+        if let image = await locallyCachedImage(named: name, projectId: projectId) {
+            return image
+        }
+
+        let interfaceStyle = await MainActor.run { UIScreen.main.traitCollection.userInterfaceStyle }
+        return await processAssetRequest(name: name, projectId: projectId, interfaceStyle: interfaceStyle, bundlePath: bundlePath)
+    }
+
+    /// Downloads manifests for all projects concurrently, then saves them for the next launch.
+    func initialize(_ projects: [Project]) async {
+        let settingsKey = "Snabble.api.manifests"
+        let settings = UserDefaults.standard
+
+        if let data = settings.object(forKey: settingsKey) as? Data,
+           let cached = try? JSONDecoder().decode([Identifier<Project>: Manifest].self, from: data) {
+            manifests = cached
+        }
+
+        await withTaskGroup(of: Void.self) { group in
+            for project in projects {
+                guard let manifestUrl = project.links.assetsManifest?.href else { continue }
+                group.addTask { await self.initialize(project.id, manifestUrl: manifestUrl, downloadFiles: false) }
+            }
+        }
+
+        if let data = try? JSONEncoder().encode(manifests) {
+            settings.set(data, forKey: settingsKey)
+        }
+    }
+
+    func initialize(_ projectId: Identifier<Project>, manifestUrl: String, downloadFiles: Bool) async {
+        guard
+            let manifestUrl = Snabble.shared.urlFor(manifestUrl),
+            var components = URLComponents(url: manifestUrl, resolvingAgainstBaseURL: false)
+        else { return }
+
+        let fmt = NumberFormatter()
+        fmt.minimumFractionDigits = 0
+        fmt.numberStyle = .decimal
+        let variant = fmt.string(for: screenScale) ?? "1"
+
+        components.queryItems = [URLQueryItem(name: "variant", value: "\(variant)x")]
+        guard let url = components.url else { return }
+
+        var request = buildRequest(url, true)
+        request.timeoutInterval = 2
+
+        let start = Date.timeIntervalSinceReferenceDate
+        do {
+            let (data, response) = try await urlSession.data(for: request)
+            Log.info("GET \(url) took \(Date.timeIntervalSinceReferenceDate - start)s")
+
+            let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
+            guard statusCode == 200 else {
+                Log.error("Error downloading asset manifest for \(projectId): status \(statusCode)")
+                return
+            }
+
+            let manifest = try JSONDecoder().decode(Manifest.self, from: data)
+            manifests[projectId] = manifest
+            if downloadFiles { downloadAllMissingFiles(projectId) }
+        } catch {
+            Log.info("GET \(url) took \(Date.timeIntervalSinceReferenceDate - start)s")
+            Log.error("Error downloading asset manifest: \(error)")
+        }
+    }
+
+    func cacheDirectory(_ projectId: Identifier<Project>) -> URL? {
+        guard var url = try? FileManager.default.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true) else {
+            return nil
+        }
+        url.appendPathComponent("assets")
+        url.appendPathComponent(projectId.rawValue)
+        try? FileManager.default.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
+        return url
+    }
+
+    func clearAssets() {
+        for project in Snabble.shared.projects {
+            if let url = cacheDirectory(project.id) {
+                try? FileManager.default.removeItem(at: url)
             }
         }
     }
-    
-    private func processAssetRequest(name: String, projectId: Identifier<Project>, interfaceStyle: UIUserInterfaceStyle, bundlePath: String?, completion: @escaping @Sendable (UIImage?) -> Void) {
-            if let file = self.fileFor(name: name, projectId, interfaceStyle) {
-                self.downloadIfMissing(projectId, file) { [completion] fileUrl in
-                    if let fileUrl = fileUrl, let data = try? Data(contentsOf: fileUrl) {
-                        let img = UIImage(data: data, scale: self.screenScale)
-                        Task { @MainActor in
-                            completion(img)
-                        }
-                    } else {
-                        Task { @MainActor in
-                            let img = UIImage.fromBundle(bundlePath)
-                            completion(img)
-                        }
-                    }
-                }
-                
-                // check if there is an "opposite" (light vs dark) file that we also need to download
-                downloadOpposite(for: file, projectId, named: name)
-            } else {
-                let img = UIImage.fromBundle(bundlePath)
-                completion(img)
+
+    // MARK: Private
+
+    private func processAssetRequest(name: String, projectId: Identifier<Project>, interfaceStyle: UIUserInterfaceStyle, bundlePath: String?) async -> UIImage? {
+        guard let file = fileFor(name: name, projectId, interfaceStyle) else {
+            return UIImage.fromBundle(bundlePath)
+        }
+
+        // Prefetch the opposite color-scheme variant in the background.
+        Task { await downloadOpposite(for: file, projectId: projectId, named: name, currentStyle: interfaceStyle) }
+
+        guard let fileUrl = await downloadIfMissing(projectId, file),
+              let data = try? Data(contentsOf: fileUrl) else {
+            return UIImage.fromBundle(bundlePath)
+        }
+        return UIImage(data: data, scale: screenScale)
+    }
+
+    private func downloadOpposite(for file: Manifest.File, projectId: Identifier<Project>, named name: String, currentStyle: UIUserInterfaceStyle) async {
+        let opposite = oppositeStyle(for: currentStyle)
+        guard
+            opposite != currentStyle,
+            let oppositeFile = fileFor(name: name, projectId, opposite),
+            oppositeFile != file
+        else { return }
+
+        await downloadIfMissing(projectId, oppositeFile)
+    }
+
+    @discardableResult
+    private func downloadIfMissing(_ projectId: Identifier<Project>, _ file: Manifest.File) async -> URL? {
+        guard
+            let localName = file.localName(screenScale),
+            let cacheUrl = cacheDirectory(projectId)
+        else { return nil }
+
+        let fullUrl = cacheUrl.appendingPathComponent(localName)
+
+        if FileManager.default.fileExists(atPath: fullUrl.path) {
+            return fullUrl
+        }
+
+        let downloadKey = "\(projectId.rawValue)/\(localName)"
+        // The check and insert are both synchronous (before the first await), so actor isolation
+        // guarantees atomicity — no two tasks can pass the guard for the same key.
+        guard !inFlightDownloads.contains(downloadKey) else { return nil }
+        inFlightDownloads.insert(downloadKey)
+        defer { inFlightDownloads.remove(downloadKey) }
+
+        guard let remoteUrl = file.remoteURL(for: screenScale) else { return nil }
+
+        do {
+            Log.info("start download for \(projectId)/\(localName)")
+            let request = buildRequest(remoteUrl, false)
+            let (tempUrl, _) = try await urlSession.download(for: request)
+            try saveDownloadedFile(from: tempUrl, to: fullUrl, localName: localName, key: file.defaultsKey(projectId), cacheUrl: cacheUrl)
+            return fullUrl
+        } catch {
+            Log.error("downloading \(remoteUrl) failed: \(error)")
+            rescheduleDownloads()
+            return nil
+        }
+    }
+
+    private func saveDownloadedFile(from location: URL, to target: URL, localName: String, key: String, cacheUrl: URL) throws {
+        if localName.contains("/") {
+            let dir = cacheUrl.appendingPathComponent((localName as NSString).deletingLastPathComponent)
+            try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
+        }
+
+        let fileManager = FileManager.default
+        if fileManager.fileExists(atPath: target.path) {
+            try? fileManager.removeItem(at: target)
+        }
+        try fileManager.moveItem(at: location, to: target)
+
+        let settings = UserDefaults.standard
+        let oldLocalFile = settings.string(forKey: key)
+        settings.set(localName, forKey: key)
+
+        if let old = oldLocalFile, old != localName {
+            try? fileManager.removeItem(at: cacheUrl.appendingPathComponent(old))
+        }
+    }
+
+    private func rescheduleDownloads() {
+        redownloadTask?.cancel()
+        redownloadTask = Task {
+            do {
+                try await Task.sleep(for: .seconds(10))
+            } catch {
+                return
             }
+            for projectId in manifests.keys {
+                downloadAllMissingFiles(projectId)
+            }
+        }
+    }
+
+    private func downloadAllMissingFiles(_ projectId: Identifier<Project>) {
+        guard let manifest = manifests[projectId] else { return }
+
+        let files = manifest.files.filter { !$0.name.contains("/") && hasValidExtension($0.name) }
+        for file in files {
+            Task { await self.downloadIfMissing(projectId, file) }
+        }
+    }
+
+    private func locallyCachedImage(named name: String, projectId: Identifier<Project>) async -> UIImage? {
+        guard let lightData = locallyCachedData(named: name, projectId: projectId, style: .light) else {
+            return nil
+        }
+        let lightImage = UIImage(data: lightData, scale: screenScale)
+
+        if let darkData = locallyCachedData(named: name, projectId: projectId, style: .dark),
+           let darkImage = UIImage(data: darkData, scale: screenScale) {
+            let scale = screenScale
+            // UITraitCollection mutation and UIImageAsset registration are @MainActor-isolated.
+            await MainActor.run {
+                let traitCollection = UITraitCollection { mutableTraits in
+                    mutableTraits.displayScale = scale
+                    mutableTraits.userInterfaceStyle = .dark
+                }
+                lightImage?.imageAsset?.register(darkImage, with: traitCollection)
+            }
+        }
+        return lightImage
+    }
+
+    private func locallyCachedData(named name: String, projectId: Identifier<Project>, style: UIUserInterfaceStyle) -> Data? {
+        guard
+            let file = fileFor(name: name, projectId, style),
+            let cacheUrl = cacheDirectory(projectId),
+            let localFilename = UserDefaults.standard.string(forKey: file.defaultsKey(projectId))
+        else { return nil }
+
+        return try? Data(contentsOf: cacheUrl.appendingPathComponent(localFilename))
+    }
+
+    private func fileFor(name: String, _ projectId: Identifier<Project>, _ style: UIUserInterfaceStyle) -> Manifest.File? {
+        guard let manifest = manifests[projectId] else { return nil }
+
+        if let file = manifest.files.first(where: { $0.name == name }) { return file }
+
+        if style == .dark, let file = manifest.files.first(where: { filenameMatch("\(name)_dark", fullname: $0.name) }) {
+            return file
+        }
+        return manifest.files.first { filenameMatch(name, fullname: $0.name) }
     }
 
     private func oppositeStyle(for style: UIUserInterfaceStyle) -> UIUserInterfaceStyle {
@@ -194,359 +403,14 @@ final class AssetManager: @unchecked Sendable {
         }
     }
 
-    // download the "opposite" of `file`, if it exists
-    private func downloadOpposite(for file: Manifest.File, _ projectId: Identifier<Project>, named name: String) {
-        Task { @MainActor in
-            let interfaceStyle = UIScreen.main.traitCollection.userInterfaceStyle
-            self.performDownloadOpposite(for: file, projectId, named: name, interfaceStyle: interfaceStyle)
-        }
-    }
-    
-    private func performDownloadOpposite(for file: Manifest.File, _ projectId: Identifier<Project>, named name: String, interfaceStyle: UIUserInterfaceStyle) {
-        let oppositeStyle = oppositeStyle(for: interfaceStyle)
-        guard
-            oppositeStyle != interfaceStyle,
-            let oppositeFile = self.fileFor(name: name, projectId, oppositeStyle),
-            oppositeFile != file
-        else {
-            return
-        }
-
-        self.downloadIfMissing(projectId, oppositeFile) { _ in }
-    }
-
-    @MainActor
-    private func getLocallyCachedImage(named name: String, _ projectId: Identifier<Project>) -> UIImage? {
-        guard let lightData = getLocallyCachedData(named: name, projectId, .light) else {
-            return nil
-        }
-
-        let lightImage = UIImage(data: lightData, scale: screenScale)
-
-        if let darkData = getLocallyCachedData(named: name, projectId, .dark), let darkImage = UIImage(data: darkData, scale: screenScale) {
-            let traitCollection = UITraitCollection { mutableTraits in
-                mutableTraits.displayScale = screenScale
-                mutableTraits.userInterfaceStyle = .dark
-            }
-
-            lightImage?.imageAsset?.register(darkImage, with: traitCollection)
-        }
-        return lightImage
-    }
-
-    private func getLocallyCachedData(named name: String, _ projectId: Identifier<Project>, _ userInterfaceStyle: UIUserInterfaceStyle) -> Data? {
-        guard let file = self.fileFor(name: name, projectId, userInterfaceStyle) else {
-            return nil
-        }
-
-        let settings = UserDefaults.standard
-        if let localFilename = settings.string(forKey: file.defaultsKey(projectId)) {
-            if let cacheUrl = self.cacheDirectory(projectId) {
-                let fileUrl = cacheUrl.appendingPathComponent(localFilename)
-                return try? Data(contentsOf: fileUrl)
-            }
-        }
-
-        return nil
-    }
-
-    private func fileFor(name: String, _ projectId: Identifier<Project>, _ userInterfaceStyle: UIUserInterfaceStyle) -> Manifest.File? {
-        guard let manifest = lock.reading({ self.manifests[projectId] }) else {
-            return nil
-        }
-
-        // if we find an exact match for the name, use that
-        if let file = manifest.files.first(where: { $0.name == name }) {
-            return file
-        }
-
-        // else we assume it's a name without file extension
-
-        // in dark mode, check if we have a _dark version, and if so, use that
-        if userInterfaceStyle == .dark {
-            if let file = manifest.files.first(where: { filenameMatch("\(name)_dark", fullname: $0.name) }) {
-                return file
-            }
-        }
-
-        let file = manifest.files.first { filenameMatch(name, fullname: $0.name) }
-        return file
-    }
-
     private func filenameMatch(_ filename: String, fullname: String) -> Bool {
-        if let dot = fullname.lastIndex(of: ".") {
-            let basename = fullname[fullname.startIndex ..< dot]
-            return filename == basename && hasValidExtension(fullname)
-        }
-
-        return filename == fullname
+        guard let dot = fullname.lastIndex(of: ".") else { return filename == fullname }
+        return filename == fullname[fullname.startIndex ..< dot] && hasValidExtension(fullname)
     }
 
     private func hasValidExtension(_ filename: String) -> Bool {
-        let validExtensions = [ ".png", ".jpg", ".jpeg", ".gif" ]
-        if let dot = filename.lastIndex(of: ".") {
-            let ext = filename[dot ..< filename.endIndex]
-            return validExtensions.contains(ext.lowercased())
-        }
-
-        return true
-    }
-
-    func initialize(_ projects: [Project], _ completion: @escaping () -> Void) {
-        let settingsKey = "Snabble.api.manifests"
-        let settings = UserDefaults.standard
-
-        // pre-initialize with data from last download
-        if let manifestData = settings.object(forKey: settingsKey) as? Data {
-            do {
-                let manifests = try JSONDecoder().decode([Identifier<Project>: Manifest].self, from: manifestData)
-                self.manifests = manifests
-            } catch {
-                print(error)
-            }
-        }
-
-        let group = DispatchGroup()
-        for project in projects {
-            if let manifestUrl = project.links.assetsManifest?.href {
-                group.enter()
-                self.initialize(project.id, manifestUrl, downloadFiles: false) {
-                    group.leave()
-                }
-            }
-        }
-
-        group.notify(queue: .main) {
-            // save manifests for next start
-            do {
-                let manifestData = try JSONEncoder().encode(self.manifests)
-                settings.set(manifestData, forKey: settingsKey)
-            } catch {
-                print(error)
-            }
-
-            completion()
-        }
-    }
-
-    func initialize(_ projectId: Identifier<Project>, _ manifestUrl: String, downloadFiles: Bool, completion: @escaping @Sendable () -> Void) {
-        guard
-            let manifestUrl = Snabble.shared.urlFor(manifestUrl),
-            var components = URLComponents(url: manifestUrl, resolvingAgainstBaseURL: false)
-        else {
-            return
-        }
-
-        let fmt = NumberFormatter()
-        fmt.minimumFractionDigits = 0
-        fmt.numberStyle = .decimal
-        let variant = fmt.string(for: screenScale)!
-
-        components.queryItems = [
-            URLQueryItem(name: "variant", value: "\(variant)x")
-        ]
-
-        guard let url = components.url else {
-            return
-        }
-
-        let session = Snabble.urlSession
-        let start = Date.timeIntervalSinceReferenceDate
-        var request = Snabble.request(url: url, json: true)
-        request.timeoutInterval = 2
-        let task = session.dataTask(with: request) { data, response, error in
-            let elapsed = Date.timeIntervalSinceReferenceDate - start
-            Log.info("GET \(url) took \(elapsed)s")
-
-            defer { completion() }
-
-            if let error = error {
-                Log.error("Error downloading asset manifest: \(error)")
-                return
-            }
-
-            let statusCode = (response as? HTTPURLResponse)?.statusCode ?? 0
-            guard statusCode == 200, let data = data else {
-                Log.error("Error downloading asset manifest for \(projectId): \(statusCode)")
-                return
-            }
-
-            do {
-                let manifest = try JSONDecoder().decode(Manifest.self, from: data)
-                self.lock.writing {
-                    self.manifests[projectId] = manifest
-                }
-                if downloadFiles {
-                    self.downloadAllMissingFiles(projectId)
-                }
-            } catch {
-                Log.error("Error parsing manifest: \(error)")
-            }
-        }
-        task.resume()
-    }
-
-    func rescheduleDownloads() {
-        Task { @MainActor [self] in
-            self.redownloadTimer?.invalidate()
-            self.redownloadTimer = Timer.scheduledTimer(withTimeInterval: 10, repeats: false) { _ in
-                for projectId in self.manifests.keys {
-                    self.downloadAllMissingFiles(projectId)
-                }
-            }
-        }
-    }
-
-    private func downloadAllMissingFiles(_ projectId: Identifier<Project>) {
-        guard let manifest = lock.reading({ self.manifests[projectId] }) else {
-            return
-        }
-
-        // initially download all files in the toplevel directory (ie. no "/" in the `name`)
-        let initialFiles = manifest.files
-            .filter { !$0.name.contains("/") && hasValidExtension($0.name) }
-
-        for file in initialFiles {
-            self.downloadIfMissing(projectId, file, completion: { _ in })
-        }
-    }
-
-    private func downloadIfMissing(_ projectId: Identifier<Project>, _ file: Manifest.File, completion: @escaping (URL?) -> Void) {
-        guard
-            let localName = file.localName(screenScale),
-            let cacheUrl = AssetManager.shared.cacheDirectory(projectId)
-        else {
-            return
-        }
-
-        let fullUrl = cacheUrl.appendingPathComponent(localName)
-
-        let fileManager = FileManager.default
-        // uncomment to force download
-        // try? fileManager.removeItem(at: fullUrl)
-
-        if !fileManager.fileExists(atPath: fullUrl.path) {
-            let downloadDelegate = AssetDownloadDelegate(projectId, localName, file.defaultsKey(projectId), completion)
-            let session = URLSession(configuration: .default, delegate: downloadDelegate, delegateQueue: nil)
-
-            if let remoteUrl = file.remoteURL(for: screenScale) {
-                let request = Snabble.request(url: remoteUrl, json: false)
-                let task = session.downloadTask(with: request)
-                task.resume()
-            }
-        }
-    }
-
-    func cacheDirectory(_ projectId: Identifier<Project>) -> URL? {
-        let fileManager = FileManager.default
-        guard var url = try? fileManager.url(for: .cachesDirectory, in: .userDomainMask, appropriateFor: nil, create: true) else {
-            return nil
-        }
-
-        url.appendPathComponent("assets")
-        url.appendPathComponent(projectId.rawValue)
-        try? fileManager.createDirectory(at: url, withIntermediateDirectories: true, attributes: nil)
-        return url
-    }
-
-    // remove all asset directories. use this only for debugging/during development
-    func clearAssets() {
-        let fileManager = FileManager.default
-
-        for project in Snabble.shared.projects {
-            if let url = self.cacheDirectory(project.id) {
-                try? fileManager.removeItem(at: url)
-            }
-        }
-    }
-}
-
-private final class AssetDownloadDelegate: NSObject, URLSessionDownloadDelegate, @unchecked Sendable {
-    private let projectId: Identifier<Project>
-    private let localName: String
-    private let key: String
-    private let completion: (URL?) -> Void
-    private let startDate: TimeInterval
-
-    init(_ projectId: Identifier<Project>, _ localName: String, _ key: String, _ completion: @escaping (URL?) -> Void) {
-        self.projectId = projectId
-        self.localName = localName
-        self.key = key
-        self.completion = completion
-        self.startDate = Date.timeIntervalSinceReferenceDate
-        Log.info("start download for \(self.projectId)/\(self.localName)")
-    }
-
-    func urlSession(_ session: URLSession, downloadTask: URLSessionDownloadTask, didFinishDownloadingTo location: URL) {
-        guard let cacheDirUrl = AssetManager.shared.cacheDirectory(self.projectId) else {
-            return
-        }
-
-        do {
-            cacheResponse(session, downloadTask, location)
-
-            if self.localName.contains("/") {
-                // make sure any reqired subdirectories exist
-                let dirname = (self.localName as NSString).deletingLastPathComponent
-                let dir = cacheDirUrl.appendingPathComponent(dirname)
-                try? FileManager.default.createDirectory(at: dir, withIntermediateDirectories: true)
-            }
-            let targetLocation = cacheDirUrl.appendingPathComponent(self.localName)
-            // let elapsed = Date.timeIntervalSinceReferenceDate - self.startDate
-            // print("download for \(self.localName) finished \(elapsed)s")
-            // print("move file to \(targetLocation.path)")
-
-            let fileManager = FileManager.default
-            if fileManager.fileExists(atPath: targetLocation.path) {
-                try? fileManager.removeItem(at: targetLocation)
-            }
-
-            try fileManager.moveItem(at: location, to: targetLocation)
-
-            let settings = UserDefaults.standard
-            let oldLocalfile = settings.string(forKey: self.key)
-            settings.set(self.localName, forKey: self.key)
-
-            if let oldLocal = oldLocalfile, oldLocal != self.localName {
-                let oldUrl = cacheDirUrl.appendingPathComponent(oldLocal)
-                try? fileManager.removeItem(at: oldUrl)
-            }
-            Task { @MainActor [weak self] in
-                self?.completion(targetLocation)
-            }
-        } catch {
-            Log.error("Error saving asset for key \(self.key): \(error)")
-            self.completion(nil)
-            AssetManager.shared.rescheduleDownloads()
-        }
-        session.finishTasksAndInvalidate()
-    }
-
-    func urlSession(_ session: URLSession, task: URLSessionTask, didCompleteWithError error: Error?) {
-        guard let error = error as NSError? else {
-            return
-        }
-
-        if let url = task.currentRequest?.url?.absoluteString {
-            Log.error("downloading \(url) failed: \(error)")
-        }
-
-        self.completion(nil)
-        AssetManager.shared.rescheduleDownloads()
-        session.invalidateAndCancel()
-    }
-
-    private func cacheResponse(_ session: URLSession, _ task: URLSessionDownloadTask, _ location: URL) {
-        guard
-            let response = task.response,
-            let request = task.currentRequest,
-            let cache = session.configuration.urlCache,
-            cache.cachedResponse(for: request) == nil,
-            let data = try? Data(contentsOf: location)
-        else {
-            return
-        }
-
-        cache.storeCachedResponse(CachedURLResponse(response: response, data: data), for: request)
+        let validExtensions = [".png", ".jpg", ".jpeg", ".gif"]
+        guard let dot = filename.lastIndex(of: ".") else { return true }
+        return validExtensions.contains(String(filename[dot...]).lowercased())
     }
 }
