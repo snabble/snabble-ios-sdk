@@ -31,6 +31,7 @@ struct URLModifier: ViewModifier {
         }
     }
 }
+
 extension View {
     func handle(with url: Binding<URL?>) -> some View {
         modifier(URLModifier(url: url))
