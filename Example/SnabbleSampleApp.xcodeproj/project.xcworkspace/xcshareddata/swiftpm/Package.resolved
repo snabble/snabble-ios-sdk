@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/datatrans/ios-sdk.git",
       "state" : {
-        "revision" : "95ea954179322351541f674a6fe807391dcee18f",
-        "version" : "3.10.1"
+        "revision" : "2cc71be787214b2d9608c301bffb0bc2c6125ef7",
+        "version" : "3.11.0"
       }
     },
     {
