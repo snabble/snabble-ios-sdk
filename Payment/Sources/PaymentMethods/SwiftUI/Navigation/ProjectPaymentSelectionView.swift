@@ -87,13 +87,6 @@ public struct ProjectPaymentSelectionView: View {
         if let entryBrandId = entry.brandId, brandId == nil {
             // Multi-brand mode: drill down to projects in this brand
             ProjectPaymentSelectionView(brandId: entryBrandId, analyticsDelegate: analyticsDelegate)
-        } else if entry.isEmpty {
-            // No payment methods yet, show add sheet
-            EmptyView()
-                .onAppear {
-                    selectedEntry = entry
-                    showingAddSheet = true
-                }
         } else {
             // Show payment methods list for this specific project
             PaymentMethodListView(projectId: entry.projectId, analyticsDelegate: analyticsDelegate)
