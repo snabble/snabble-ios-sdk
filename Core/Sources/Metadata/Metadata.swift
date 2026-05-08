@@ -183,7 +183,7 @@ public extension Metadata {
 
     static func load(from url: String, completion: @escaping @Sendable (Metadata?) -> Void ) {
         let project = Project.none
-        project.request(.get, url, jwtRequired: false, timeout: 5) { request in
+        project.request(.get, url, jwtRequired: false, timeout: 15) { request in
             guard var request = request, let absoluteString = request.url?.absoluteString else {
                 return completion(nil)
             }
