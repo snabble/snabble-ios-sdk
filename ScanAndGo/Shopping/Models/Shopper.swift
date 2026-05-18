@@ -195,6 +195,10 @@ public final class Shopper: BarcodeProcessing, Equatable {
     }
     private var _isNavigating: Bool = false
 
+    /// Called when checkout navigation ends and the scanner resumes.
+    /// The hosting app can use this to perform custom navigation, e.g. switching to a dashboard tab.
+    @ObservationIgnored public var onCheckoutCompleted: (@MainActor () -> Void)?
+
     public var isNavigating: Bool {
         get { _isNavigating }
         set {
@@ -203,6 +207,10 @@ public final class Shopper: BarcodeProcessing, Equatable {
             if !newValue {
                 controller = nil
                 self.startScanner()
+                // Defer to avoid mutating @Observable state during an active SwiftUI update cycle.
+                Task { @MainActor in
+                    self.onCheckoutCompleted?()
+                }
             }
         }
     }
