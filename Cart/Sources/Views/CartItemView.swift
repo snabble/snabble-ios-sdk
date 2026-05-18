@@ -22,7 +22,7 @@ extension Text {
         self
             .font(.footnote)
             .strikethrough(true)
-            .foregroundColor(.secondary)
+            .foregroundColor(.primary)
     }
 }
 
@@ -55,23 +55,24 @@ struct BadgeTextView: View {
 
 struct CartItemView: View {
     var itemModel: ProductItemModel
+    var onDeleteDiscount: ((ShoppingCartItemDiscount) -> Void)?
     @ScaledMetric var scale: CGFloat = 1
-    
-    init(itemModel: ProductItemModel) {
+
+    init(itemModel: ProductItemModel, onDeleteDiscount: ((ShoppingCartItemDiscount) -> Void)? = nil) {
         self.itemModel = itemModel
+        self.onDeleteDiscount = onDeleteDiscount
     }
     
     @ViewBuilder
     var price: some View {
         if itemModel.hasDiscount {
             HStack {
-                Text(itemModel.regularPriceString ?? "")
+                Text(itemModel.reducedPriceString)
                     .cartPrice()
                     .opacity(itemModel.regularPriceString != nil ? 1 : 0)
-                Text(itemModel.reducedPriceString)
+                Text(itemModel.regularPriceString)
                     .strikethroughPrice()
             }
-
         } else {
             Text(itemModel.regularPriceString ?? "")
                 .cartPrice()
@@ -122,21 +123,33 @@ struct CartItemView: View {
         }
 
         ForEach(itemModel.discounts) { discount in
-            HStack(alignment: .top) {
-                if discount.discount != 0 {
-                    Text(itemModel.formatter.format(discount.discount * (discount.discount > 0 ? -1 : 1)))
+            HStack {
+                HStack {
+                    if discount.discount != 0 {
+                        Text(itemModel.formatter.format(discount.discount * (discount.discount > 0 ? -1 : 1)))
+                    }
+                    Spacer()
+                    Text(discount.name)
+                    Spacer()
                 }
-                Spacer()
-                Text(discount.name)
-                
-                if let image = discount.image {
-                    image
-                        .resizable()
-                        .aspectRatio(contentMode: .fit)
-                        .frame(width: 16 * scale, height: 16 * scale)
+                if discount.type == .discountedProduct || discount.type == .priceModifier {
+                    Button {
+                        onDeleteDiscount?(discount)
+                    } label: {
+                        Image(systemName: "trash")
+                    }
+                    .buttonStyle(.plain)
                 }
             }
-            .cartInfo()
+            .font(.subheadline)
+            .foregroundStyle(Color.onProjectPrimary())
+            .padding(.horizontal, 12)
+            .padding(.vertical, 12)
+            .background {
+                RoundedRectangle(cornerRadius: 9)
+                    .fill(Color.projectPrimary())
+            }
+            .padding(.trailing, 8)
         }
     }
     
