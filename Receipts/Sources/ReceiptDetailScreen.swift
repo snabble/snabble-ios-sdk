@@ -7,8 +7,10 @@
 
 import SwiftUI
 import QuickLook
-import SnabbleCore
 import MessageUI
+
+import SnabbleCore
+import SnabbleAssetProviding
 
 /// SwiftUI wrapper for displaying PDF receipts using QLPreviewController
 public struct ReceiptDetailScreen: View {
@@ -55,7 +57,7 @@ public struct ReceiptDetailScreen: View {
                         Button {
                             showShareSheet = true
                         } label: {
-                            Label("Share", systemImage: "square.and.arrow.up")
+                            Label(Asset.localizedString(forKey:"Snabble.Receipt.share"), systemImage: "square.and.arrow.up")
                         }
                         
                         Button {
@@ -65,7 +67,7 @@ public struct ReceiptDetailScreen: View {
                                 showMailUnavailableAlert = true
                             }
                         } label: {
-                            Label("Report Problem", systemImage: "envelope")
+                            Label(Asset.localizedString(forKey:"Snabble.Receipt.reportProblem"), systemImage: "envelope")
                         }
                     } label: {
                         Image(systemName: "ellipsis")
@@ -82,16 +84,16 @@ public struct ReceiptDetailScreen: View {
             if let url = receiptURL {
                 MailComposerViewController(
                     recipients: supportEmail != nil ? [supportEmail!] : [],
-                    subject: "Receipt Problem Report",
+                    subject: Asset.localizedString(forKey:"Snabble.Receipt.Mail.subject"), // "Receipt Problem Report"
                     messageBody: mailBody(),
                     url: url
                 )
             }
         }
-        .alert("Mail Not Available", isPresented: $showMailUnavailableAlert) {
+        .alert(Asset.localizedString(forKey:"Snabble.Receipt.Mail.notAvailable"), isPresented: $showMailUnavailableAlert) {
             Button("OK", role: .cancel) { }
         } message: {
-            Text("Please configure a mail account in Settings to send problem reports.")
+            Text(Asset.localizedString(forKey: "Snabble.Receipt.Mail.configure")) // "Please configure a mail account in Settings to send problem reports."
         }
         .task {
             await loadReceipt()
@@ -99,16 +101,22 @@ public struct ReceiptDetailScreen: View {
     }
     
     private func mailBody() -> String {
-        var body = "I would like to report a problem with this receipt.\n\n"
+        var body = Asset.localizedString(forKey: "Snabble.Receipt.Mail.header") // "I would like to report a problem with this receipt.\n\n"
         
         if let order = order {
             let formatter = DateFormatter()
             formatter.dateStyle = .medium
             formatter.timeStyle = .short
-            body += "Order ID: \(order.id)\n"
-            body += "Date: \(formatter.string(from: order.date))\n\n"
+            body += Asset.localizedString(
+                forKey: "Snabble.Receipt.Mail.orderId", // "Order ID: \(order.id)\n"
+                arguments: order.id
+            )
+            body += Asset.localizedString(
+                forKey: "Snabble.Receipt.Mail.orderDate",
+                arguments: formatter.string(from: order.date) // "Date: \(formatter.string(from: order.date))\n\n"
+            )
         }
-        body += "Please describe the problem:\n\n"
+        body += Asset.localizedString(forKey: "Snabble.Receipt.Mail.body") // "Please describe the problem:\n\n"
 
         return body
     }

@@ -273,8 +273,17 @@
 "Snabble.QRCode.showThisCode" = "Please show this code at the register";
 "Snabble.QRCode.title" = "Pay at cash desk";
 "Snabble.QRCode.total" = "Total: ";
+"Snabble.Receipt.Mail.body" = "Please describe the problem:\n\n";
+"Snabble.Receipt.Mail.configure" = "Please configure a mail account in Settings to send problem reports.";
+"Snabble.Receipt.Mail.header" = "I would like to report a problem with this receipt.\n\n";
+"Snabble.Receipt.Mail.notAvailable" = "Mail Not Available";
+"Snabble.Receipt.Mail.orderDate" = "Date: %@\n\n";
+"Snabble.Receipt.Mail.orderId" = "Order ID: %@\n";
+"Snabble.Receipt.Mail.subject" = "Receipt Problem Report";
 "Snabble.Receipt.errorDownload" = "Receipt could not be downloaded";
 "Snabble.Receipt.pdfReaderUnavailable" = "No suitable PDF reader application found";
+"Snabble.Receipt.reportProblem" = "Report Problem";
+"Snabble.Receipt.share" = "Share";
 "Snabble.Receipts.loading" = "(loading)";
 "Snabble.Receipts.markAllAsRead" = "Mark all as read";
 "Snabble.Receipts.markAsRead" = "Mark as read";
