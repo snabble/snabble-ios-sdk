@@ -306,6 +306,14 @@ extension ShoppingCartViewModel {
         let index = offset[offset.startIndex]
         confirmDeletion(at: index)
     }
+
+    func trash(discount: ShoppingCartItemDiscount) {
+        guard let couponID = discount.couponID,
+              let cartCoupon = shoppingCart.coupons.first(where: { $0.coupon.id == couponID }) else { return }
+        shoppingCart.removeCoupon(cartCoupon.coupon)
+        NotificationCenter.default.post(name: .snabbleCartUpdated, object: self)
+        updateView()
+    }
     
     func decrement(itemModel: ProductItemModel) {
         print("- \(itemModel.title)")
@@ -336,7 +344,7 @@ extension ShoppingCartViewModel {
             
             for modifier in modifiers {
                 let discount = item.discountedPrice(withModifier: modifier, for: lineItem)
-                let discountCartItem = ShoppingCartItemDiscount(discount: discount, name: modifier.name, type: .priceModifier)
+                let discountCartItem = ShoppingCartItemDiscount(discount: discount, name: modifier.name, type: .priceModifier, couponID: lineItem.couponID)
                 discountItems.append(discountCartItem)
             }
         }
@@ -346,10 +354,10 @@ extension ShoppingCartViewModel {
         
         for discount in discounts {
             if cartDiscountID == nil, let total = discount.totalPrice {
-                let discountCartItem = ShoppingCartItemDiscount(discount: total, name: discount.name, type: .discountedProduct)
+                let discountCartItem = ShoppingCartItemDiscount(discount: total, name: discount.name, type: .discountedProduct, couponID: discount.couponID)
                 discountItems.append(discountCartItem)
             } else if discount.discountID != cartDiscountID, let total = discount.totalPrice {
-                let discountCartItem = ShoppingCartItemDiscount(discount: total, name: discount.name, type: .discountedProduct)
+                let discountCartItem = ShoppingCartItemDiscount(discount: total, name: discount.name, type: .discountedProduct, couponID: discount.couponID)
                 discountItems.append(discountCartItem)
             }
         }

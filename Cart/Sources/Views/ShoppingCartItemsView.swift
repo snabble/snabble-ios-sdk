@@ -31,16 +31,18 @@ extension ShoppingCartViewModel {
         if case .cartItem(let item, let lineItems) = item {
             let discounts: [ShoppingCartItemDiscount] = discountItems(item: item, for: lineItems)
             let itemModel = ProductItemModel(item: item, for: lineItems, discounts: discounts, showImages: showImages)
-            CartItemView(itemModel: itemModel)
+            CartItemView(itemModel: itemModel) { @MainActor discount in
+                self.trash(discount: discount)
+            }
         } else if case .discount(let int) = item {
             DiscountItemView(amount: int, description: totalDiscountDescription, showImages: showImages)
                 .deleteDisabled(true)
-        } else if case .coupon(_, let lineItem) = item {
-            if let lineItem = lineItem, lineItem.redeemed == false {
-                // CouponCartItems are currenly not redeemed
-                // see: https://snabble.atlassian.net/browse/APPS-1688
-//                let itemModel = CouponCartItemModel(cartCoupon: cartCoupon, for: lineItem)
-//                CouponItemView(itemModel: itemModel, showImages: showImages)
+        } else if case .coupon(let cartCoupon, let lineItem) = item {
+            if lineItem == nil || lineItem?.redeemed == false {
+                let itemModel = CouponCartItemModel(cartCoupon: cartCoupon, for: lineItem, showImages: showImages)
+                CouponItemView(itemModel: itemModel, showImages: false) { @MainActor in
+                    self.trash(item: item)
+                }
             }
         } else if case .voucher(let cartVoucher, let lineItems) = item {
             VoucherItemView(voucher: cartVoucher.voucher, lineItems: lineItems) { @MainActor in

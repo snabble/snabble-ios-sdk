@@ -52,19 +52,22 @@ public struct ShoppingCartItemDiscount: ShoppingCartItemDiscounting {
         case totalDiscount = "total_discount"
     }
     public let id = UUID().uuidString
-    
+
     public var discount: Int
     public var name: String
     public var type: DiscountType
-    
-    init(discount: Int, name: String? = nil, type: DiscountType = .unknown) {
+    public var couponID: String?
+
+    init(discount: Int, name: String? = nil, type: DiscountType = .unknown, couponID: String? = nil) {
         self.discount = discount
         self.name = name ?? "Discount"
         self.type = type
+        self.couponID = couponID
     }
-    init(discount: Int, name: String? = nil, type: String? = nil) {
+    init(discount: Int, name: String? = nil, type: String? = nil, couponID: String? = nil) {
         self.discount = discount
         self.name = name ?? "Discount"
+        self.couponID = couponID
         self.type = .unknown
         if let typeString = type {
             if let discountType = DiscountType(rawValue: typeString) {
