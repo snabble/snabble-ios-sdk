@@ -2,6 +2,7 @@
 //  AppAssetProvider.swift
 //  Snabble Sample App
 //
+//  Created by Uwe Tilemann on 22.08.22.
 //  Copyright (c) 2026 snabble GmbH. All rights reserved.
 //
 
