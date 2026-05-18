@@ -57,18 +57,21 @@ struct PullOverView<Content>: View where Content: View {
     @Binding var expanded: Bool
     @Binding var paddingTop: CGFloat
     @Binding var position: CGFloat
+    @Binding var isDragging: Bool
     let content: () -> Content
     
     init(minHeight: Binding<CGFloat>, 
          expanded: Binding<Bool>,
          paddingTop: Binding<CGFloat>,
          position: Binding<CGFloat>,
+         isDragging: Binding<Bool>,
          content: @escaping () -> Content
     ) {
         self._minHeight = minHeight
         self._expanded = expanded
         self._paddingTop = paddingTop
         self._position = position
+        self._isDragging = isDragging
         self.content = content
     }
     
@@ -79,7 +82,8 @@ struct PullOverView<Content>: View where Content: View {
                 minHeight: $minHeight,
                 expanded: $expanded,
                 paddingTop: $paddingTop,
-                position: $position
+                position: $position,
+                isDragging: $isDragging
             )
         )
     }
@@ -91,8 +95,8 @@ struct PullView: ViewModifier {
     @Binding var expanded: Bool
     @Binding var paddingTop: CGFloat
     @Binding var position: CGFloat
-
-    @State private var dragging = false
+    @Binding var isDragging: Bool
+    
     @GestureState private var dragTracker = CGSize.zero
     @State private var minYPosition: CGFloat = 0
     
@@ -130,7 +134,7 @@ struct PullView: ViewModifier {
             .frame(maxHeight: CGFloat(max(maxHeight(geom) - (position + self.dragTracker.height), 0)))
             .offset(y: max(0, position + self.dragTracker.height))
             .animation(.easeInOut(duration: 0.2), value: position)
-            .animation(Animation.interpolatingSpring(stiffness: 250.0, damping: 40.0, initialVelocity: 5.0), value: dragging)
+            .animation(Animation.interpolatingSpring(stiffness: 250.0, damping: 40.0, initialVelocity: 5.0), value: isDragging)
             .opacity(position == 0 ? 0 : 1)
             .simultaneousGesture(DragGesture(minimumDistance: 50, coordinateSpace: .local)
                 .updating($dragTracker) { drag, state, _ in
@@ -140,7 +144,7 @@ struct PullView: ViewModifier {
                 }
                 .onChanged { drag in
                     if drag.isVertical {
-                        dragging = true
+                        isDragging = true
                     }
                 }
                 .onEnded(onDragEnded)
@@ -164,7 +168,7 @@ struct PullView: ViewModifier {
         }
     }
     private func onDragEnded(drag: DragGesture.Value) {
-        dragging = false
+        isDragging = false
         
         guard drag.isVertical else {
             return

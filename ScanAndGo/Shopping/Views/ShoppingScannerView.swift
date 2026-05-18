@@ -48,7 +48,8 @@ struct ShoppingScannerView: View {
     @State private var zoomSteps: [ZoomStep] = ZoomStep.defaultSteps
     @State private var position: CGFloat = 0
     @State private var scanMessage: ScanMessage?
-
+    @State private var isDragging: Bool = false
+    
     init(model: Shopper, minHeight: Binding<CGFloat>, configuration: ShopperConfiguration = .init()) {
         self.model = model
         self._minHeight = minHeight
@@ -74,8 +75,9 @@ struct ShoppingScannerView: View {
            ZoomControl(zoomLevel: $zoomLevel, steps: zoomSteps)
                 .offset(x: 0, y: position - 114)
                 .opacity(model.scanningPaused || position == 0 ? 0 : 1)
-            PullOverView(minHeight: $minHeight, expanded: $model.scanningPaused, paddingTop: $topMargin, position: $position) {
+            PullOverView(minHeight: $minHeight, expanded: $model.scanningPaused, paddingTop: $topMargin, position: $position, isDragging: $isDragging) {
                 ScannerCartView(model: model, minHeight: $minHeight, offset: configuration.drawerOffset)
+                    .disabled(isDragging)
             }
             if model.processing || position == 0 {
                 ScannerProcessingView()
