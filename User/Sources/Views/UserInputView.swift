@@ -281,9 +281,7 @@ public struct UserInputView: View {
                     })
                 if kind == .management {
                     UserDeleteButton {
-                        DispatchQueue.main.async {
-                            onDeletion()
-                        }
+                        onDeletion()
                     }
                     .environment(networkManager)
                 }
