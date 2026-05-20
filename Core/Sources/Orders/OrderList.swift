@@ -38,24 +38,6 @@ public struct Order: Codable, Sendable, Hashable {
     }
 }
 
-// MARK: - PurchaseProviding Conformance
-extension Order: PurchaseProviding {
-    public var name: String { shopName }
-    public var amount: String? {
-        let formatter = NumberFormatter()
-        formatter.numberStyle = .currency
-        formatter.currencyCode = "EUR"  // FIXME: Should use project currency
-        return formatter.string(from: NSNumber(value: Double(price) / 100.0))
-    }
-    public var time: String {
-        let formatter = DateFormatter()
-        formatter.timeStyle = .short
-        return formatter.string(from: date)
-    }
-    public var loaded: Bool { links.receipt != nil }
-    public var isRead: Bool { false }  // FIXME: Implement read status tracking
-}
-
 extension OrderList {
     public static func load(_ project: Project, completion: @escaping @Sendable (Result<OrderList, SnabbleError>) -> Void ) {
         var url: String?
