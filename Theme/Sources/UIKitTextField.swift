@@ -220,7 +220,7 @@ public struct UIKitTextField<Content: View>: UIViewRepresentable {
                 self.textFieldDidChange(textField)
             }
             if let updatedRange = result.updatedRange {
-                DispatchQueue.main.async {
+                Task { @MainActor in
                     textField.selectedTextRange = updatedRange
                 }
             }
