@@ -251,8 +251,7 @@ final class CustomerCardCheckoutViewController: UIViewController {
     @objc private func paidButtonTapped(_ sender: Any) {
         self.cart.removeAll(endSession: true, keepBackup: true)
 
-        // FIXME: CheckoutStepsViewController
-       let checkoutSteps = CheckoutStepsViewController(shop: shop, shoppingCart: cart, checkoutProcess: process)
+        let checkoutSteps = CheckoutStepsViewController(shop: shop, shoppingCart: cart, checkoutProcess: process)
         checkoutSteps.paymentDelegate = delegate
         navigationController?.pushViewController(checkoutSteps, animated: true)
     }
