@@ -56,8 +56,7 @@ extension ProductDatabase {
                                        completion: @escaping @Sendable (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
         let session = Snabble.urlSession
 
-        // TODO: is this the right value?
-        let timeoutInterval: TimeInterval = 5
+        let timeoutInterval: TimeInterval = 15
 
         let parameters = [
             "code": code,
@@ -118,8 +117,7 @@ extension ProductDatabase {
     func resolveProductLookup(url: String, sku: String, shopId: Identifier<Shop>, completion: @escaping @Sendable (_ result: Result<Product, ProductLookupError>) -> Void) {
         let session = Snabble.urlSession
 
-        // TODO: is this the right value?
-        let timeoutInterval: TimeInterval = 5
+        let timeoutInterval: TimeInterval = 15
 
         let parameters = [
             "shopID": shopId.rawValue
