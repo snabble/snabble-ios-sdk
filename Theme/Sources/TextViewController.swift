@@ -104,7 +104,7 @@ public struct AttributedText: UIViewRepresentable {
     private func generateAttributedText() {
         guard attributedText == nil else { return }
         // create attributedText on main thread since HTML formatter will crash SwiftUI
-        DispatchQueue.main.async {
+        Task { @MainActor in
             self.attributedText = self.htmlString.attributedStringFromHTML
         }
     }
