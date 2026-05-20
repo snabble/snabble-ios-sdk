@@ -254,7 +254,6 @@ final class QRCheckoutViewController: UIViewController {
                     self.cart.generateNewUUID()
                     self.delegate?.track(.paymentCancelled)
 
-                    // FIXME: ShoppingCartViewController
                     if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
                         _ = self.navigationController?.popToViewController(cartVC, animated: true)
                     } else {
@@ -283,7 +282,6 @@ final class QRCheckoutViewController: UIViewController {
             self.cart.generateNewUUID()
         }
 
-        // FIXME: CheckoutStepsViewController
         let checkoutSteps = CheckoutStepsViewController(shop: shop, shoppingCart: cart, checkoutProcess: process)
         checkoutSteps.paymentDelegate = delegate
         navigationController?.pushViewController(checkoutSteps, animated: true)
