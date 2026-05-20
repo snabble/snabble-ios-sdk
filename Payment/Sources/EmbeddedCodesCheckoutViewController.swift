@@ -386,7 +386,6 @@ final class EmbeddedCodesCheckoutViewController: UIViewController {
             cart.removeAll(endSession: true, keepBackup: true)
             Snabble.clearInFlightCheckout()
 
-            // FIXME: CheckoutStepsViewController
             let checkoutSteps = CheckoutStepsViewController(shop: shop, shoppingCart: cart, checkoutProcess: process)
             checkoutSteps.paymentDelegate = delegate
             navigationController?.pushViewController(checkoutSteps, animated: true)
