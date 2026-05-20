@@ -170,13 +170,11 @@ extension CheckViewModelProviding where Self: UIViewController {
                 navigationController?.popToViewController(viewController, animated: true)
             }
             // Hack ended
-            // FIXME: ShoppingCartViewController
             else if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController }) {
                 self.navigationController?.popToViewController(cartVC, animated: true)
             } else {
                 self.navigationController?.popToRootViewController(animated: true)
             }
-            self.navigationController?.popToRootViewController(animated: true)
         }
     }
 }

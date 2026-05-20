@@ -183,13 +183,11 @@ final class ApplePayCheckoutViewController: UIViewController {
                 case .success:
                     Snabble.clearInFlightCheckout()
                     self.shoppingCart.generateNewUUID()
-                    // FIXME: ShoppingCartViewController
                     if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
                         self.navigationController?.popToViewController(cartVC, animated: true)
                     } else {
                         self.navigationController?.popToRootViewController(animated: true)
                     }
-                    self.navigationController?.popToRootViewController(animated: true)
 
                 case .failure:
                     let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
@@ -295,7 +293,6 @@ extension ApplePayCheckoutViewController: PKPaymentAuthorizationViewControllerDe
     private func paymentFinished(_ checkoutProcess: CheckoutProcess) {
         self.poller = nil
         
-        // FIXME: CheckoutStepsViewController
         let paymentDisplay = CheckoutStepsViewController(shop: shop,
                                                          shoppingCart: shoppingCart,
                                                          checkoutProcess: checkoutProcess)
