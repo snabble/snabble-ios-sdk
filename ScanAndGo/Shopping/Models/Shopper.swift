@@ -99,7 +99,7 @@ public final class Shopper: BarcodeProcessing, Equatable {
 
     /// The successful checkout process to display in the success screen
     public var successfulCheckoutProcess: CheckoutProcess?
-    
+
     /// Initializes a new Shopper with the specified shop and barcode detector.
     ///
     /// - Parameters:
@@ -199,6 +199,9 @@ public final class Shopper: BarcodeProcessing, Equatable {
     /// The hosting app can use this to perform custom navigation, e.g. switching to a dashboard tab.
     @ObservationIgnored public var onCheckoutCompleted: (@MainActor () -> Void)?
 
+    /// Called for each analytics event emitted during the shopping session.
+    @ObservationIgnored public var onAnalyticsEvent: (@MainActor (SnabbleCore.AnalyticsEvent) -> Void)?
+
     public var isNavigating: Bool {
         get { _isNavigating }
         set {
@@ -264,8 +267,7 @@ extension Shopper: Hashable {
 
 extension Shopper: AnalyticsDelegate {
     public func track(_ event: SnabbleCore.AnalyticsEvent) {
-        self.logger.debug("**TODO** track event.")
-        print("event", event)
+        onAnalyticsEvent?(event)
     }
 }
 
