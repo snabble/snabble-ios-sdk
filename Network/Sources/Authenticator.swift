@@ -120,9 +120,10 @@ class Authenticator {
                 .handleEvents(receiveOutput: { token in
                     self.token = token
                 }, receiveCompletion: { _ in
-                    // Use async to avoid a potential deadlock if completion is
-                    // delivered on the queue's own thread.
-                    self.queue.async {
+                    // receiveCompletion is always delivered from URLSession's thread,
+                    // never from this queue — queue.sync is safe here and prevents
+                    // a race window where a new subscriber sees a completed publisher.
+                    self.queue.sync {
                         self.refreshPublisher = nil
                     }
                 })
