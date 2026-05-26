@@ -23,34 +23,17 @@ struct DiscountItemView: View {
         self.onDelete = onDelete
    }
 
-    @ViewBuilder
-    var leftView: some View {
-        if showImages {
-            SwiftUI.Image(systemName: "percent")
-                .cartImageModifier(padding: 10)
-        }
-    }
-    
     var body: some View {
         HStack {
-            leftView
-            VStack(alignment: .leading, spacing: 4) {
-                Text(Asset.localizedString(forKey: "Snabble.Shoppingcart.discounts"))
-                    .font(.subheadline)
-                HStack(alignment: .top) {
-                    Text(amount)
-                        .cartPrice()
-                        .font(.footnote)
-                    Spacer()
-                    Text(description ?? "")
-                        .font(.footnote)
-                    if onDelete == nil {
-                        Asset.image(named: "discount-badge")
-                            .font(.title3)
-                            .foregroundStyle(Color.onProjectPrimary())
-                    }
-                }
-            }
+            Text(amount)
+                .cartPrice()
+                .font(.footnote)
+
+            Spacer()
+            Text(description ?? "")
+                .font(.footnote)
+            Spacer()
+
             if let onDelete {
                 Button {
                     onDelete()
@@ -60,6 +43,10 @@ struct DiscountItemView: View {
                         .foregroundStyle(Color.onProjectPrimary())
                 }
                 .buttonStyle(.plain)
+            } else {
+                Asset.image(named: "discount-badge")
+                    .font(.title3)
+                    .foregroundStyle(Color.onProjectPrimary())
             }
         }
         .padding(.horizontal, 12)
