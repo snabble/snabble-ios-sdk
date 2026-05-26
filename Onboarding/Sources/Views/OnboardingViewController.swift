@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 import SwiftUI
-import Combine
 
 /// Methods for managing completion of onboarding
 public protocol OnboardingViewControllerDelegate: AnyObject {
@@ -24,8 +23,6 @@ public final class OnboardingViewController: UIHostingController<OnboardingView>
 
     /// The object that acts as the delegate of the onboarding view controller.
     public weak var delegate: OnboardingViewControllerDelegate?
-
-    private var cancellables = Set<AnyCancellable>()
 
     /// The used viewModel to show onboarding details
     public var viewModel: OnboardingViewModel {

@@ -9,15 +9,12 @@ import Foundation
 import OSLog
 import SwiftUI
 import AVFoundation
-import Combine
 
 import SnabbleAssetProviding
 
 class BarcodeScannerViewController: UIViewController {
     let detector: InternalBarcodeDetector
     let logger = Logger(subsystem: "io.snabble.sdk.ScanAndGo", category: "BarcodeScannerViewController")
-    
-    private var subscriptions = Set<AnyCancellable>()
     
     init(detector: InternalBarcodeDetector) {
         self.detector = detector
@@ -80,26 +77,27 @@ public struct BarcodeScannerView: UIViewControllerRepresentable {
     @MainActor
     public class Coordinator: NSObject {
         var parent: BarcodeScannerView
-        private var subscriptions = Set<AnyCancellable>()
-        
+        nonisolated(unsafe) private var stateTask: Task<Void, Never>?
+
         init(_ parent: BarcodeScannerView) {
             self.parent = parent
+            super.init()
             let detector = parent.detector
-            
+
             if !detector.hasCamera {
                 detector.setup()
             }
-            self.parent.detector.statePublisher
-                .sink { state in
-                    switch state {
-                    case .idle:
-                        /// setup camera, can be called more than once
+            stateTask = Task { [detector] in
+                for await state in detector.statePublisher.values {
+                    if case .idle = state {
                         detector.setup()
-                    case .ready, .scanning, .pausing, .batterySaving:
-                        break
                     }
                 }
-                .store(in: &subscriptions)
+            }
+        }
+
+        deinit {
+            stateTask?.cancel()
         }
     }
 }
@@ -136,26 +134,28 @@ public struct BarcodeScanner: UIViewRepresentable {
     @MainActor
     public class Coordinator: NSObject {
         var parent: BarcodeScanner
-        private var subscriptions = Set<AnyCancellable>()
-        
+        nonisolated(unsafe) private var stateTask: Task<Void, Never>?
+
         init(_ parent: BarcodeScanner) {
             self.parent = parent
+            super.init()
             let detector = parent.detector
-            
+
             if !detector.hasCamera {
                 detector.setup()
             }
-            
-            self.parent.detector.statePublisher
-                .sink { state in
-                    switch state {
-                    case .idle:
+
+            stateTask = Task { [detector] in
+                for await state in detector.statePublisher.values {
+                    if case .idle = state {
                         detector.setup()
-                    case .ready, .scanning, .pausing, .batterySaving:
-                        break
                     }
                 }
-                .store(in: &subscriptions)
+            }
+        }
+
+        deinit {
+            stateTask?.cancel()
         }
     }
 }

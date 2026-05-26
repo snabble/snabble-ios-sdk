@@ -4,7 +4,6 @@
 //  Copyright © 2021 snabble. All rights reserved.
 //
 import UIKit
-import Combine
 
 import SnabbleCore
 import SnabbleAssetProviding
@@ -18,7 +17,7 @@ public final class PaymentMethodStartCheck: @unchecked Sendable {
     public weak var messageDelegate: MessageDelegate?
     private var completionHandler: ((Bool) -> Void)?
 
-    nonisolated(unsafe) private var cancellables = Set<AnyCancellable>()
+    nonisolated(unsafe) private var actionTask: Task<Void, Never>?
 
     public init(for method: PaymentMethod,
                 detail: PaymentMethodDetail?,
@@ -40,18 +39,19 @@ public final class PaymentMethodStartCheck: @unchecked Sendable {
             if case .payoneSepa = detail?.methodData {
                 self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.SEPA.payNow"), completion)
             } else {
-                Task { @MainActor in
+                Task { @MainActor [weak self] in
+                    guard let self else { return }
                     let view = SepaOverlayView(frame: .zero)
                     let viewModel = SepaOverlayView.ViewModel(project: SnabbleCI.project)
                     view.configure(with: viewModel)
-                    
+
                     view.closeButton?.addTarget(self, action: #selector(dismissOverlay(_:)), for: .touchUpInside)
                     view.successButton?.addTarget(self, action: #selector(sepaSuccessButtonTapped(_:)), for: .touchUpInside)
-                    
+
                     let tapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(sepaShowDetailsTapped(_:)))
                     view.textLabel?.addGestureRecognizer(tapGestureRecognizer)
                     view.textLabel?.isUserInteractionEnabled = true
-                    
+
                     presenter.showOverlay(with: view)
                 }
             }
@@ -68,15 +68,16 @@ public final class PaymentMethodStartCheck: @unchecked Sendable {
             self.requestBiometricAuthentication(on: presenter, reason: Asset.localizedString(forKey: "Snabble.PostFinanceCard.payNow"), completion)
         case .externalBilling:
             if let detail = self.detail, detail.originType == .contactPersonCredentials, case .invoiceByLogin = detail.methodData {
-                Task { @MainActor in
+                Task { @MainActor [weak self] in
+                    guard let self else { return }
                     let viewController = PaymentSubjectViewController()
-                    viewController.viewModel.actionPublisher
-                        .receive(on: RunLoop.main)
-                        .sink { [weak self] userDict in
-                            self?.performAction(viewModel: viewController.viewModel, userDict: userDict)
+                    let publisher = viewController.viewModel.actionPublisher
+                    actionTask = Task { @MainActor [weak self] in
+                        for await userDict in publisher.values {
+                            guard let self else { return }
+                            performAction(viewModel: viewController.viewModel, userDict: userDict)
                         }
-                        .store(in: &cancellables)
-                    
+                    }
                     presenter.showOverlay(with: viewController)
                 }
             } else {

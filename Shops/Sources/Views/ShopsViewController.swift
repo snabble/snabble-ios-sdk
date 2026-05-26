@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 import SwiftUI
-import Combine
 
 public protocol ShopsViewControllerDelegate: AnyObject {
     func shopsViewController(_ viewController: ShopsViewController, didSelectActionOnShop shop: ShopProviding)
@@ -18,7 +17,7 @@ public protocol ShopsViewControllerDelegate: AnyObject {
 open class ShopsViewController: UIHostingController<ShopsView> {
     public weak var delegate: ShopsViewControllerDelegate?
 
-    private var cancellables = Set<AnyCancellable>()
+    nonisolated(unsafe) private var actionTask: Task<Void, Never>?
 
     public var viewModel: ShopsViewModel {
         rootView.viewModel
@@ -35,10 +34,16 @@ open class ShopsViewController: UIHostingController<ShopsView> {
 
     open override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.actionPublisher
-            .sink { [weak self] shop in
-                self?.delegate?.shopsViewController(self!, didSelectActionOnShop: shop)
+        let publisher = viewModel.actionPublisher
+        actionTask = Task { @MainActor [weak self] in
+            for await shop in publisher.values {
+                guard let self else { return }
+                delegate?.shopsViewController(self, didSelectActionOnShop: shop)
             }
-            .store(in: &cancellables)
+        }
+    }
+
+    deinit {
+        actionTask?.cancel()
     }
 }

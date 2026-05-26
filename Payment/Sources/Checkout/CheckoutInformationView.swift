@@ -5,7 +5,6 @@
 //  Created by Uwe Tilemann on 06.02.23.
 //
 import SwiftUI
-import Combine
 
 protocol CheckoutInformationViewModel {
     var text: String { get }
@@ -27,12 +26,12 @@ struct CheckoutInformationView: View {
             Text(model.text)
                 .onTapGesture {
                     if model.actionTitle == nil {
-                        checkoutModel.actionPublisher.send(model.userInfo)
+                        checkoutModel.sendAction(model.userInfo)
                     }
                 }
             if let title = model.actionTitle {
                 Button(action: {
-                    checkoutModel.actionPublisher.send(["action": title])
+                    checkoutModel.sendAction(["action": title])
                 }) {
                     Text(title)
                         .foregroundColor(.systemRed)

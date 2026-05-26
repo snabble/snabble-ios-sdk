@@ -4,7 +4,6 @@
 //  Copyright © 2022 snabble. All rights reserved.
 //
 import SwiftUI
-import Combine
 
 import SnabbleCore
 import SnabbleAssetProviding

@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 import SwiftUI
-import Combine
 
 import SnabbleCore
 import SnabbleAssetProviding
@@ -26,7 +25,7 @@ public protocol SepaDataEditViewControllerDelegate: AnyObject {
 open class SepaDataEditViewController: UIHostingController<SepaDataView> {
     public weak var delegate: SepaDataEditViewControllerDelegate?
 
-    private var cancellables = Set<AnyCancellable>()
+    nonisolated(unsafe) private var actionTask: Task<Void, Never>?
 
     public var viewModel: SepaDataModel {
         rootView.model
@@ -45,11 +44,17 @@ open class SepaDataEditViewController: UIHostingController<SepaDataView> {
 
     open override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.actionPublisher
-            .sink { [unowned self] info in
+        let publisher = viewModel.actionPublisher
+        actionTask = Task { @MainActor [weak self] in
+            for await info in publisher.values {
+                guard let self else { return }
                 delegate?.sepaDataEditViewControllerWillSave(self, userInfo: info)
             }
-            .store(in: &cancellables)
+        }
+    }
+
+    deinit {
+        actionTask?.cancel()
     }
 }
 

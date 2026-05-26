@@ -7,7 +7,6 @@
 
 import SwiftUI
 import UIKit
-import Combine
 import WindowKit
 
 public struct WindowDialog<DialogContent: View>: ViewModifier {

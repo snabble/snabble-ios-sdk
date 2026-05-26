@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Combine
 
 import SnabbleCore
 import SnabbleAssetProviding
@@ -38,8 +37,10 @@ struct ScannerCartView: View {
             // Without this Spacer(), we have a transparent background
             Spacer(minLength: 1)
         }
-        .onReceive(NotificationCenter.default.publisher(for: .snabbleCartUpdated)) { _ in
-            update()
+        .task {
+            for await _ in NotificationCenter.default.notifications(named: .snabbleCartUpdated) {
+                update()
+            }
         }
         .onChange(of: model.cartModel.items) {
             update()

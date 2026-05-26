@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import Combine
 
 import SnabbleCore
 import SnabbleTheme
@@ -192,26 +191,6 @@ extension CheckModel {
             bundlePath = "Checkout/\(SnabbleCI.project.id)/checkout-online"
         }
         return (asset, bundlePath)
-    }
-    
-    func assetPublisher() -> AnyPublisher<UIImage?, Never> {
-        Future<UIImage?, Never> { promise in
-            // Create a wrapper class to make promise Sendable-safe
-            final class PromiseBox: @unchecked Sendable {
-                let promise: (Result<UIImage?, Never>) -> Void
-                init(_ promise: @escaping (Result<UIImage?, Never>) -> Void) {
-                    self.promise = promise
-                }
-            }
-            
-            let asset = self.asset
-            let box = PromiseBox(promise)
-            
-            SnabbleCI.getAsset(asset.imageAsset, bundlePath: asset.bundlePath) { img in
-                box.promise(.success(img))
-            }
-        }
-        .eraseToAnyPublisher()
     }
     
     func loadAsset() async -> UIImage? {

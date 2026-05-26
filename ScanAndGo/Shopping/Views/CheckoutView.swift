@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Combine
 
 import SnabbleCore
 import SnabbleAssetProviding
@@ -21,17 +20,6 @@ struct CheckoutView: View {
     @State private var countString: String = ""
     @State private var totalString: String = ""
     @State private var showPaymentSelector: Bool = false
-
-    @State var cancellables = Set<AnyCancellable>()
-
-    init(model: Shopper) {
-        self.model = model
-        NotificationCenter.default.publisher(for: .snabbleCartUpdated)
-            .receive(on: RunLoop.main)
-            .sink(receiveValue: { _ in
-            })
-            .store(in: &cancellables)
-    }
 
     var body: some View {
         VStack {
@@ -98,8 +86,10 @@ struct CheckoutView: View {
             update()
             setupPayment()
         }
-        .onReceive(NotificationCenter.default.publisher(for: .snabbleCartUpdated)) { _ in
-            update()
+        .task {
+            for await _ in NotificationCenter.default.notifications(named: .snabbleCartUpdated) {
+                update()
+            }
         }
     }
     

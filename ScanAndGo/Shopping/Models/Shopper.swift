@@ -7,7 +7,6 @@
 
 import SwiftUI
 import OSLog
-import Combine
 
 import SnabbleCore
 import SnabbleAssetProviding
@@ -94,7 +93,7 @@ public final class Shopper: BarcodeProcessing, Equatable {
     }
 
     let logger = Logger(subsystem: "io.snabble.sdk.ScanAndGo", category: "Shopper")
-    private var subscriptions = Set<AnyCancellable>()
+    @ObservationIgnored nonisolated(unsafe) private var actionTask: Task<Void, Never>?
     private var paymentProcess: PaymentProcess?
 
     /// The successful checkout process to display in the success screen
@@ -118,18 +117,22 @@ public final class Shopper: BarcodeProcessing, Equatable {
         shoppingCart.delegate = self
         self.cartModel.shoppingCartDelegate = self
         self.barcodeManager.processingDelegate = self
-        
+
         self.paymentManager.delegate = self
-        
-        ActionManager.shared.actionPublisher
-            .receive(on: RunLoop.main)
-            .sink { [unowned self] action in
-                self.handleAction(action)
+
+        let actionPublisher = ActionManager.shared.actionPublisher
+        actionTask = Task { @MainActor [weak self] in
+            for await action in actionPublisher.values {
+                self?.handleAction(action)
             }
-            .store(in: &subscriptions)
-        
+        }
+
         // Initial payment verification
         self.verifyPayment(paymentManager.selectedPayment)
+    }
+
+    deinit {
+        actionTask?.cancel()
     }
     
     /// Handles actions based on the new state.

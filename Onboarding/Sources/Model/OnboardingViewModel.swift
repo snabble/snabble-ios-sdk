@@ -8,7 +8,6 @@
 //
 
 import Foundation
-import Combine
 
 public enum Onboarding {
     private static let checkKey = "io.snabble.onboarding.wasPerformed"

@@ -10,7 +10,6 @@ import OSLog
 
 import SnabbleCore
 import SnabbleAssetProviding
-import Combine
 
 /// Protocol for processing scanned barcodes.
 @MainActor
@@ -67,11 +66,11 @@ public final class BarcodeManager {
     
     let tapticFeedback = UINotificationFeedbackGenerator()
     public let barcodeDetector: InternalBarcodeDetector
-    
+
     public weak var scannerDelegate: ScannerDelegate?
     public weak var processingDelegate: BarcodeProcessing?
-    
-    private var subscriptions = Set<AnyCancellable>()
+
+    @ObservationIgnored nonisolated(unsafe) private var barcodeTask: Task<Void, Never>?
     
     /// Initializes a new BarcodeManager with the specified shop, shopping cart, and barcode detector.
     ///
@@ -92,13 +91,18 @@ public final class BarcodeManager {
         
         self.barcodeDetector = detector
         self.barcodeDetector.scanFormats = project.scanFormats
-        
-        self.barcodeDetector.barcodePublisher
-            .receive(on: RunLoop.main)
-            .sink { [unowned self] barcode in
-                self.logger.debug("received barcode: \(barcode.description)")
-                self.handleScannedCode(barcode.code, withFormat: barcode.format)
+
+        let detector = self.barcodeDetector
+        barcodeTask = Task { @MainActor [weak self] in
+            for await barcode in detector.barcodePublisher.values {
+                guard let self else { return }
+                logger.debug("received barcode: \(barcode.description)")
+                handleScannedCode(barcode.code, withFormat: barcode.format)
             }
-            .store(in: &subscriptions)
+        }
+    }
+
+    deinit {
+        barcodeTask?.cancel()
     }
 }

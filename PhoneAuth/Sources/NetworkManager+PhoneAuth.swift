@@ -1,13 +1,12 @@
 //
 //  PhoneAuth.swift
-//  
+//
 //
 //  Created by Andreas Osberghaus on 2024-02-01.
 //
 
 import Foundation
 import SnabbleNetwork
-import Combine
 import SnabbleUser
 
 public protocol PhoneAuthProviding {
@@ -19,66 +18,27 @@ public protocol PhoneAuthProviding {
 
 extension NetworkManager: PhoneAuthProviding {
 
-    private func useContinuation<Value: Sendable, Response: Sendable>(endpoint: Endpoint<Response>, receiveValue: @escaping @Sendable (Response, CheckedContinuation<Value, any Error>) -> Void) async throws -> Value {
-        return try await withCheckedThrowingContinuation { continuation in
-            var cancellable: AnyCancellable?
-            cancellable = publisher(for: endpoint)
-                .receive(on: RunLoop.main)
-                .sink { completion in
-                    switch completion {
-                    case .finished:
-                        break
-                    case let .failure(error):
-                        continuation.resume(throwing: error)
-                    }
-                    cancellable?.cancel()
-
-                } receiveValue: { response in
-                    receiveValue(response, continuation)
-                }
-        }
-    }
-    
     @discardableResult
     public func startAuthorization(phoneNumber: String) async throws -> String {
-        let endpoint = Endpoints.Phone.auth(
-            phoneNumber: phoneNumber
-        )
-
-        return try await useContinuation(endpoint: endpoint) { _, continuation in
-            continuation.resume(with: .success(phoneNumber))
-        }
+        let endpoint = Endpoints.Phone.auth(phoneNumber: phoneNumber)
+        _ = try await publisher(for: endpoint)
+        return phoneNumber
     }
 
     @discardableResult
     public func signIn(phoneNumber: String, OTP: String) async throws -> AppUser? {
-        let endpoint = Endpoints.Phone.signIn(
-            phoneNumber: phoneNumber,
-            OTP: OTP
-        )
-
-        return try await useContinuation(endpoint: endpoint) { response, continuation in
-            continuation.resume(with: .success(response))
-        }
+        let endpoint = Endpoints.Phone.signIn(phoneNumber: phoneNumber, OTP: OTP)
+        return try await publisher(for: endpoint)
     }
 
     @discardableResult
     public func changePhoneNumber(phoneNumber: String, OTP: String) async throws -> AppUser? {
-        let endpoint = Endpoints.Phone.changePhoneNumber(
-            phoneNumber: phoneNumber,
-            OTP: OTP
-        )
-
-        return try await useContinuation(endpoint: endpoint) { response, continuation in
-            continuation.resume(with: .success(response))
-        }
+        let endpoint = Endpoints.Phone.changePhoneNumber(phoneNumber: phoneNumber, OTP: OTP)
+        return try await publisher(for: endpoint)
     }
 
     public func delete(phoneNumber: String) async throws {
         let endpoint = Endpoints.Phone.delete()
-
-        return try await useContinuation(endpoint: endpoint) { response, continuation in
-            continuation.resume(with: .success(response))
-        }
+        _ = try await publisher(for: endpoint)
     }
 }

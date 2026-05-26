@@ -8,7 +8,6 @@
 import Foundation
 import UIKit
 import SwiftUI
-import Combine
 
 import SnabbleCore
 import SnabbleAssetProviding
@@ -26,7 +25,7 @@ public protocol InvoiceViewControllerDelegate: AnyObject {
 open class InvoiceViewController: UIHostingController<InvoiceView> {
     public weak var delegate: InvoiceViewControllerDelegate?
 
-    private var cancellables = Set<AnyCancellable>()
+    nonisolated(unsafe) private var actionTask: Task<Void, Never>?
 
     public var viewModel: InvoiceLoginProcessor {
         rootView.loginProcessor
@@ -45,11 +44,17 @@ open class InvoiceViewController: UIHostingController<InvoiceView> {
 
     open override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.invoiceLoginModel.actionPublisher
-            .sink { [unowned self] info in
+        let publisher = viewModel.invoiceLoginModel.actionPublisher
+        actionTask = Task { @MainActor [weak self] in
+            for await info in publisher.values {
+                guard let self else { return }
                 delegate?.invoiceViewControllerDidEnd(self, userInfo: info)
             }
-            .store(in: &cancellables)
+        }
+    }
+
+    deinit {
+        actionTask?.cancel()
     }
 }
 

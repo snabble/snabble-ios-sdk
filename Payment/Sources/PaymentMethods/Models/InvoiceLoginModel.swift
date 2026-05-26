@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Combine
 
 import SnabbleCore
 import SnabbleAssetProviding
@@ -155,62 +154,47 @@ public final class InvoiceLoginProcessor: LoginProcessing {
     public var invoiceLoginModel: InvoiceLoginModel
     public var isWaiting = false
 
-    var cancellables = Set<AnyCancellable>()
-
     init(invoiceLoginModel: InvoiceLoginModel) {
         self.invoiceLoginModel = invoiceLoginModel
     }
-    
-    private var loginPublisher: Future<InvoiceLoginInfo, LoginError> {
-        Future { [weak self] promise in
-            final class PromiseBox: @unchecked Sendable {
-                let promise: (Result<InvoiceLoginInfo, LoginError>) -> Void
-                init(_ promise: @escaping (Result<InvoiceLoginInfo, LoginError>) -> Void) {
-                    self.promise = promise
-                }
-            }
-            
-            guard let strongSelf = self, strongSelf.invoiceLoginModel.isValid else {
-                return promise(.failure(.loginFailed))
-            }
-            
-            guard let username = strongSelf.invoiceLoginModel.username,
-                  let password = strongSelf.invoiceLoginModel.password else {
-                
-                return promise(.failure(.loginFailed))
-            }
-            let credentials = InvoiceLoginCredentials(username: username, password: password)
-            let box = PromiseBox(promise)
-                                          
-            strongSelf.invoiceLoginModel.project?.getUserLoginInfo(with: credentials) { result in
-                switch result {
-                case .success(let info):
-                    box.promise(.success(info))
-                case .failure:
-                    box.promise(.failure(.loginFailed))
-                }
-            }
-        }
-    }
-    
+
     public func login() {
         isWaiting = true
-        self.invoiceLoginModel.errorMessage = nil
-        
-        loginPublisher
-            .receive(on: RunLoop.main)
-            .sink(receiveCompletion: { [weak self] completion in
+        invoiceLoginModel.errorMessage = nil
+
+        Task { @MainActor [weak self] in
+            guard let self,
+                  invoiceLoginModel.isValid,
+                  let username = invoiceLoginModel.username,
+                  let password = invoiceLoginModel.password else {
                 self?.isWaiting = false
-                switch completion {
-                case .finished:
-                    break
-                case .failure:
-                    self?.invoiceLoginModel.errorMessage = Asset.localizedString(forKey: "Snabble.Payment.ExternalBilling.Error.wrongCredentials")
+                return
+            }
+
+            let credentials = InvoiceLoginCredentials(username: username, password: password)
+            guard let project = invoiceLoginModel.project else {
+                invoiceLoginModel.errorMessage = Asset.localizedString(forKey: "Snabble.Payment.ExternalBilling.Error.wrongCredentials")
+                isWaiting = false
+                return
+            }
+
+            do {
+                let loginInfo: InvoiceLoginInfo = try await withCheckedThrowingContinuation { continuation in
+                    project.getUserLoginInfo(with: credentials) { result in
+                        switch result {
+                        case .success(let info):
+                            continuation.resume(returning: info)
+                        case .failure:
+                            continuation.resume(throwing: LoginError.loginFailed)
+                        }
+                    }
                 }
-            }, receiveValue: { [weak self] loginInfo in
-                self?.invoiceLoginModel.loginInfo = loginInfo
-            })
-            .store(in: &cancellables)
+                invoiceLoginModel.loginInfo = loginInfo
+            } catch {
+                invoiceLoginModel.errorMessage = Asset.localizedString(forKey: "Snabble.Payment.ExternalBilling.Error.wrongCredentials")
+            }
+            isWaiting = false
+        }
     }
     
     public func remove() {

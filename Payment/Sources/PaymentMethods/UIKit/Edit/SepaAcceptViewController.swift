@@ -5,7 +5,6 @@
 //  Created by Uwe Tilemann on 23.11.22.
 //
 
-import Combine
 import UIKit
 import SwiftUI
 
@@ -24,7 +23,7 @@ public protocol SepaAcceptViewControllerDelegate: AnyObject {
 open class SepaAcceptViewController: UIHostingController<SepaAcceptView> {
     public weak var delegate: SepaAcceptViewControllerDelegate?
 
-    private var cancellables = Set<AnyCancellable>()
+    nonisolated(unsafe) private var actionTask: Task<Void, Never>?
 
     public var viewModel: SepaAcceptModel {
         rootView.model
@@ -44,11 +43,17 @@ open class SepaAcceptViewController: UIHostingController<SepaAcceptView> {
 
     open override func viewDidLoad() {
         super.viewDidLoad()
-        viewModel.actionPublisher
-            .sink { [unowned self] info in
+        let publisher = viewModel.actionPublisher
+        actionTask = Task { @MainActor [weak self] in
+            for await info in publisher.values {
+                guard let self else { return }
                 delegate?.sepaAcceptViewController(self, userInfo: info)
             }
-            .store(in: &cancellables)
+        }
+    }
+
+    deinit {
+        actionTask?.cancel()
     }
 }
 

@@ -32,7 +32,7 @@ struct CheckoutStepView: View {
                 Text(model.text)
                     .onTapGesture {
                         if model.actionTitle == nil {
-                            checkoutModel.actionPublisher.send(model.userInfo)
+                            checkoutModel.sendAction(model.userInfo)
                         }
                     }
 
@@ -44,7 +44,7 @@ struct CheckoutStepView: View {
                 }
                 if let action = model.actionTitle {
                     Button(action: {
-                        checkoutModel.actionPublisher.send(["action": model.text])
+                        checkoutModel.sendAction(["action": model.text])
                     }) {
                         Text(action)
                     }

@@ -13,7 +13,7 @@ import SnabbleAssetProviding
 import SnabbleComponents
 
 /// Represents different types of actions that can be triggered in the application.
-public enum ActionType: Equatable {
+public enum ActionType: Equatable, @unchecked Sendable {
     /// Nothing to display
     case idle
     /// Shows a full screen `String` message, which will be automatically dismissed after a period of time (like 3 seconds) or if the user tap on the screen
@@ -100,25 +100,14 @@ public final class ActionManager {
     /// Indicates whether an action is currently presented.
     /// This property helps in managing the presentation state of different actions.
     var isPresented: Bool = false
-    
-    private var subscriptions = Set<AnyCancellable>()
-    
-    public init() {
-        actionPublisher
-            .receive(on: RunLoop.main)
-            .sink { [unowned self] action in
-                self.actionState = action
-            }
-            .store(in: &subscriptions)
-    }
-    private func handleAction(_ newState: ActionType) {
-        self.actionState = newState
-    }
-    
+
+    public init() {}
+
     /// Sends a new action state to be handled.
     /// - Parameter actionState: The new action state to be handled.
     public func send(_ actionState: ActionType) {
         currentAction = ActionItem(type: actionState)
+        self.actionState = actionState
         actionPublisher.send(actionState)
     }
 }
@@ -187,8 +176,10 @@ public struct ShopperActionModifier: ViewModifier {
     @ViewBuilder
     public func body(content: Content) -> some View {
         content
-            .onReceive(ActionManager.shared.actionPublisher) { actionType in
-                handleAction(actionType)
+            .task {
+                for await actionType in ActionManager.shared.actionPublisher.values {
+                    handleAction(actionType)
+                }
             }
             .toast(item: $toast)
             .onChange(of: toast, { oldValue, newValue in

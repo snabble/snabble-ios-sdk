@@ -5,7 +5,6 @@
 //  Created by Uwe Tilemann on 02.02.23.
 //
 import SwiftUI
-import Combine
 
 import SnabbleCore
 import SnabbleAssetProviding

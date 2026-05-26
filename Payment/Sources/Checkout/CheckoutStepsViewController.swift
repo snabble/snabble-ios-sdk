@@ -5,12 +5,15 @@
 //  Created by Uwe Tilemann on 06.02.23.
 //
 import SwiftUI
-import Combine
 
 import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleComponents
 import SnabbleReceipts
+
+struct CheckoutActionPayload: @unchecked Sendable {
+    let info: [String: Any]?
+}
 
 @Observable
 @MainActor
@@ -21,7 +24,8 @@ final class CheckoutModel {
             self.ratingModel.analyticsDelegate = paymentDelegate
         }
     }
-    var actionPublisher = PassthroughSubject<[String: Any]?, Never>()
+    let actionStream: AsyncStream<CheckoutActionPayload>
+    @ObservationIgnored private var actionContinuation: AsyncStream<CheckoutActionPayload>.Continuation?
 
     var stepsModel: CheckoutStepsViewModel
     var isComplete: Bool = false
@@ -37,8 +41,15 @@ final class CheckoutModel {
     let ratingModel: RatingModel
 
     init(stepsModel: CheckoutStepsViewModel) {
+        var continuation: AsyncStream<CheckoutActionPayload>.Continuation?
+        self.actionStream = AsyncStream { continuation = $0 }
+        self.actionContinuation = continuation
         self.stepsModel = stepsModel
         self.ratingModel = RatingModel(shop: stepsModel.shop)
+    }
+
+    func sendAction(_ info: [String: Any]?) {
+        actionContinuation?.yield(CheckoutActionPayload(info: info))
     }
 
     func update(checkoutSteps: [CheckoutStep]) {
@@ -58,7 +69,7 @@ final class CheckoutModel {
         paymentDelegate?.checkoutFinished(self.stepsModel.shoppingCart, self.stepsModel.checkoutProcess)
         paymentDelegate?.track(.checkoutStepsClosed)
 
-        actionPublisher.send(["action": "done"])
+        sendAction(["action": "done"])
     }
 
     private func updateShoppingCart(for checkoutProcess: CheckoutProcess?) {
@@ -178,7 +189,7 @@ final class CheckoutStepsViewController: UIHostingController<CheckoutView> {
         }
     }
 
-    private var cancellables = Set<AnyCancellable>()
+    nonisolated(unsafe) private var actionTask: Task<Void, Never>?
 
     let model: CheckoutModel
 
@@ -208,11 +219,12 @@ final class CheckoutStepsViewController: UIHostingController<CheckoutView> {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.model.actionPublisher
-            .sink { [weak self] info in
-                self?.stepAction(userInfo: info)
+        let stream = model.actionStream
+        actionTask = Task { @MainActor [weak self] in
+            for await payload in stream {
+                self?.stepAction(userInfo: payload.info)
             }
-            .store(in: &cancellables)
+        }
 #if MOCK_CHECKOUT
         self.model.update(checkoutSteps: CheckoutStep.mockModel)
 #else
@@ -236,6 +248,10 @@ final class CheckoutStepsViewController: UIHostingController<CheckoutView> {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         navigationController?.setNavigationBarHidden(false, animated: false)
+    }
+
+    deinit {
+        actionTask?.cancel()
     }
 
     @objc func stepAction(userInfo: [String: Any]?) {
