@@ -8,15 +8,6 @@
 import Foundation
 import SwiftUI
 
-public extension ShopProviding {
-    var openingHoursViewModel: [OpeningHourViewModel] {
-        ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
-            .map {
-                OpeningHourViewModel(forWeekday: $0, withSpecification: openingHoursSpecification)
-            }
-    }
-}
-
 public struct OpeningHoursView: View {
     var shop: ShopProviding
     @Environment(\.locale) private var locale: Locale
