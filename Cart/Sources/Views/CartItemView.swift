@@ -9,6 +9,7 @@ import SwiftUI
 import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleComponents
+import SnabbleTheme
 
 extension Text {
     func cartPrice() -> some View {
@@ -46,6 +47,44 @@ struct BadgeTextView: View {
             .padding([.leading, .trailing], 2)
             .background(RoundedRectangle(cornerRadius: 4).foregroundColor(badgeColor))
             .foregroundColor(.white)
+    }
+}
+
+struct ShoppingCartItemDiscountItemView: View {
+    let discount: ShoppingCartItemDiscount
+    var onDeleteDiscount: ((ShoppingCartItemDiscount) -> Void)?
+
+    var body: some View {
+        HStack {
+            if discount.discount != 0 {
+                Text(PriceFormatter(SnabbleCI.project).format(discount.discount * (discount.discount > 0 ? -1 : 1)))
+                    .font(.footnote)
+            }
+
+            Spacer()
+            Text(discount.name)
+                .font(.footnote)
+            Spacer()
+
+            if discount.type == .discountedProduct || discount.type == .priceModifier {
+                Button {
+                    onDeleteDiscount?(discount)
+                } label: {
+                    Image(systemName: "trash")
+                        .font(.title3)
+                        .foregroundStyle(Color.onProjectPrimary())
+                }
+                .buttonStyle(.plain)
+            }
+        }
+        .foregroundStyle(Color.onProjectPrimary())
+        .padding(.horizontal, 12)
+        .padding(.trailing, 8)
+        .padding(.vertical, 12)
+        .background {
+            RoundedRectangle(cornerRadius: 9)
+                .fill(Color.projectPrimary())
+        }
     }
 }
 
@@ -112,7 +151,7 @@ struct CartItemView: View {
             EmptyView()
         }
     }
-    
+
     @ViewBuilder
     var additionalInfo: some View {
         if let depositInfo = itemModel.depositDetailString {
@@ -121,34 +160,7 @@ struct CartItemView: View {
         }
 
         ForEach(itemModel.discounts) { discount in
-            HStack {
-                HStack {
-                    if discount.discount != 0 {
-                        Text(itemModel.formatter.format(discount.discount * (discount.discount > 0 ? -1 : 1)))
-                    }
-                    Spacer()
-                    Text(discount.name)
-                    Spacer()
-                }
-                .font(.subheadline)
-                if discount.type == .discountedProduct || discount.type == .priceModifier {
-                    Button {
-                        onDeleteDiscount?(discount)
-                    } label: {
-                        Image(systemName: "trash")
-                            .font(.title3)
-                            .foregroundStyle(Color.onProjectPrimary())
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-            .foregroundStyle(Color.onProjectPrimary())
-            .padding(.horizontal, 12)
-            .padding(.vertical, 12)
-            .background {
-                RoundedRectangle(cornerRadius: 9)
-                    .fill(Color.projectPrimary())
-            }
+            ShoppingCartItemDiscountItemView(discount: discount, onDeleteDiscount: onDeleteDiscount)
         }
     }
     
@@ -163,11 +175,11 @@ struct CartItemView: View {
                     }
                     Spacer(minLength: 4)
                     rightView
-                        .padding(.trailing, 8)
                 }
                 .padding([.top, .bottom], 6)
                 additionalInfo
             }
+            .padding(.trailing, 8)
         }
         .listRowBackground(Color.clear)
     }
