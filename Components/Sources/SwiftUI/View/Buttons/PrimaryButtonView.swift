@@ -24,11 +24,9 @@ public struct PrimaryButtonView: View {
             onAction()
         }) {
             Text(title)
-                .foregroundStyle(disabled ? .secondary : .primary)
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(ProjectPrimaryButtonStyle(disabled: disabled))
-        .disabled(disabled)
     }
 }
 
