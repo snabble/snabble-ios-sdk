@@ -53,9 +53,8 @@ struct CouponItemView: View {
             }
             .buttonStyle(.plain)
         }
-        .font(.footnote)
-        .padding(.horizontal, 8)
-        .padding(.vertical, 6)
+        .padding(.horizontal, 12)
+        .padding(.vertical, 12)
         .background {
             RoundedRectangle(cornerRadius: 9)
                 .fill(Color.projectPrimary().opacity(0.25))

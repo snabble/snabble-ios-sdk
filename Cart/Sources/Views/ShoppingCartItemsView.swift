@@ -35,19 +35,24 @@ extension ShoppingCartViewModel {
                 self.trash(discount: discount)
             }
         } else if case .discount(let int) = item {
-            DiscountItemView(amount: int, description: totalDiscountDescription, showImages: showImages)
-                .deleteDisabled(true)
+            DiscountItemView(amount: int, description: totalDiscountDescription, showImages: showImages) { @MainActor in
+                self.trash(item: item)
+            }
+            .padding(.trailing, 8)
+            .deleteDisabled(true)
         } else if case .coupon(let cartCoupon, let lineItem) = item {
             if lineItem == nil || lineItem?.redeemed == false {
                 let itemModel = CouponCartItemModel(cartCoupon: cartCoupon, for: lineItem, showImages: showImages)
                 CouponItemView(itemModel: itemModel, showImages: false) { @MainActor in
                     self.trash(item: item)
                 }
+                .padding(.trailing, 8)
             }
         } else if case .voucher(let cartVoucher, let lineItems) = item {
             VoucherItemView(voucher: cartVoucher.voucher, lineItems: lineItems) { @MainActor in
                 self.trash(item: item)
             }
+            .padding(.trailing, 8)
         }
     }
 }

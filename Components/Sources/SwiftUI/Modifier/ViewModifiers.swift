@@ -71,8 +71,6 @@ extension Image {
             .padding(padding)
             .clipShape(RoundedRectangle(cornerRadius: 4))
             .frame(width: 48, height: 48)
-            .padding(0)
-            .padding(.trailing, 4)
    }
 }
 
