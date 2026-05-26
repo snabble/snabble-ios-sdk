@@ -14,12 +14,14 @@ struct DiscountItemView: View {
     let amount: String
     var description: String?
     let showImages: Bool
-    
-    init(amount: Int, description: String? = nil, showImages: Bool = true) {
+    var onDelete: (() -> Void)?
+
+    init(amount: Int, description: String? = nil, showImages: Bool = true, onDelete: (() -> Void)? = nil) {
         self.amount = PriceFormatter(SnabbleCI.project).format(amount)
         self.description = description
         self.showImages = showImages
-    }
+        self.onDelete = onDelete
+   }
 
     @ViewBuilder
     var leftView: some View {
@@ -32,18 +34,41 @@ struct DiscountItemView: View {
     var body: some View {
         HStack {
             leftView
-            VStack(alignment: .leading, spacing: 12) {
+            VStack(alignment: .leading, spacing: 4) {
                 Text(Asset.localizedString(forKey: "Snabble.Shoppingcart.discounts"))
+                    .font(.subheadline)
                 HStack(alignment: .top) {
                     Text(amount)
                         .cartPrice()
+                        .font(.footnote)
                     Spacer()
                     Text(description ?? "")
-                    Asset.image(named: "discount-badge")
+                        .font(.footnote)
+                    if onDelete == nil {
+                        Asset.image(named: "discount-badge")
+                            .font(.title3)
+                            .foregroundStyle(Color.onProjectPrimary())
+                    }
                 }
-                .cartInfo()
-           }
+            }
+            if let onDelete {
+                Button {
+                    onDelete()
+                } label: {
+                    Image(systemName: "trash")
+                        .font(.title3)
+                        .foregroundStyle(Color.onProjectPrimary())
+                }
+                .buttonStyle(.plain)
+            }
         }
+        .padding(.horizontal, 12)
+        .padding(.vertical, 12)
         .listRowBackground(Color.clear)
+        .foregroundStyle(Color.onProjectPrimary())
+        .background {
+            RoundedRectangle(cornerRadius: 9)
+                .fill(Color.projectPrimary())
+        }
     }
 }
