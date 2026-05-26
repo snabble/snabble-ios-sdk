@@ -32,12 +32,14 @@ public struct KeyboardInfo {
     }
 }
 
+@MainActor
 public protocol KeyboardHandling: AnyObject {
     func keyboardWillShow(_ info: KeyboardInfo)
 
     func keyboardWillHide(_ info: KeyboardInfo)
 }
 
+@MainActor
 public final class KeyboardObserver: NSObject {
     private weak var handler: KeyboardHandling?
 
