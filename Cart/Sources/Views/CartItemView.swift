@@ -13,16 +13,12 @@ import SnabbleComponents
 extension Text {
     func cartPrice() -> some View {
         self
-            .font(.footnote)
             .fontWeight(.bold)
-            .foregroundColor(.primary)
     }
 
     func strikethroughPrice() -> some View {
         self
-            .font(.footnote)
             .strikethrough(true)
-            .foregroundColor(.primary)
     }
 }
 
@@ -73,9 +69,11 @@ struct CartItemView: View {
                 Text(itemModel.regularPriceString)
                     .strikethroughPrice()
             }
+            .font(.footnote)
         } else {
             Text(itemModel.regularPriceString ?? "")
                 .cartPrice()
+                .font(.footnote)
                 .opacity(itemModel.regularPriceString != nil ? 1 : 0)
         }
     }
@@ -132,16 +130,18 @@ struct CartItemView: View {
                     Text(discount.name)
                     Spacer()
                 }
+                .font(.subheadline)
                 if discount.type == .discountedProduct || discount.type == .priceModifier {
                     Button {
                         onDeleteDiscount?(discount)
                     } label: {
                         Image(systemName: "trash")
+                            .font(.title3)
+                            .foregroundStyle(Color.onProjectPrimary())
                     }
                     .buttonStyle(.plain)
                 }
             }
-            .font(.subheadline)
             .foregroundStyle(Color.onProjectPrimary())
             .padding(.horizontal, 12)
             .padding(.vertical, 12)
@@ -149,7 +149,6 @@ struct CartItemView: View {
                 RoundedRectangle(cornerRadius: 9)
                     .fill(Color.projectPrimary())
             }
-            .padding(.trailing, 8)
         }
     }
     
