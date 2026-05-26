@@ -345,10 +345,11 @@
 "Snabble.Scanner.start" = "Start scanner";
 "Snabble.Scanner.title" = "Scanner";
 "Snabble.Scanner.torchButton" = "Torch";
-"Snabble.Scanner.unknownBarcode" = "No price information available for this product.";
+"Snabble.Scanner.unknownBarcode" = "Barcode not found.";
 "Snabble.Scanner.updateCart" = "Update cart";
 "Snabble.Shop.Address.accessibility" = "%1$@ in %2$@ %3$@";
 "Snabble.Shop.Detail.Phonenumber.accessibility" = "Phonenumber %@";
+"Snabble.Shop.Detail.allDay" = "all day";
 "Snabble.Shop.Detail.openingHours" = "Opening hours";
 "Snabble.Shop.Detail.shopNow" = "Start shopping";
 "Snabble.Shop.Detail.startNavigation" = "Do you like to start navigation?";

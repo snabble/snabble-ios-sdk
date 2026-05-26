@@ -345,10 +345,11 @@
 "Snabble.Scanner.start" = "Szkenner indítása";
 "Snabble.Scanner.title" = "Szkenner";
 "Snabble.Scanner.torchButton" = "Fény";
-"Snabble.Scanner.unknownBarcode" = "Ehhez a termékhez sajnos nem érhető el árinformáció.";
+"Snabble.Scanner.unknownBarcode" = "A vonalkódot nem sikerült megtalálni.";
 "Snabble.Scanner.updateCart" = "Kosár frissítése";
 "Snabble.Shop.Address.accessibility" = "%1$@ %2$@ %3$@-ban";
 "Snabble.Shop.Detail.Phonenumber.accessibility" = "Telefonszám %@";
+"Snabble.Shop.Detail.allDay" = "egész nap";
 "Snabble.Shop.Detail.openingHours" = "Nyitvatartási idők";
 "Snabble.Shop.Detail.shopNow" = "Vásárolj be most itt";
 "Snabble.Shop.Detail.startNavigation" = "Szeretnéd elindítani a navigációt?";
