@@ -278,11 +278,16 @@ public class Snabble: @unchecked Sendable {
                 }
             }
 
-            if let project = self.metadata.projects.first {
-                self.tokenRegistry.getToken(for: project) { _ in
-                    metadataLoaded()
-                }
-            } else {
+            let projects = self.metadata.projects
+            guard !projects.isEmpty else {
+                return metadataLoaded()
+            }
+            let group = DispatchGroup()
+            for project in projects {
+                group.enter()
+                self.tokenRegistry.getToken(for: project) { _ in group.leave() }
+            }
+            group.notify(queue: .main) {
                 metadataLoaded()
             }
         }
