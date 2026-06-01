@@ -37,6 +37,10 @@ struct ScannerCartView: View {
             // Without this Spacer(), we have a transparent background
             Spacer(minLength: 1)
         }
+        .animation(.default, value: minHeight)
+        .onAppear {
+            update()
+        }
         .task {
             for await _ in NotificationCenter.default.notifications(named: .snabbleCartUpdated) {
                 update()
@@ -44,11 +48,6 @@ struct ScannerCartView: View {
         }
         .onChange(of: model.cartModel.items) {
             update()
-        }
-        .task {
-            Task { @MainActor in
-                update()
-            }
         }
     }
     
