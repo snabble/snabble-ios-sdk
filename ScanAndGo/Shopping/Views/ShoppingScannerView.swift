@@ -37,10 +37,10 @@ public struct ScannerOverlay: View {
 
 struct ShoppingScannerView: View {
     let model: Shopper
-
+    
     @Binding var minHeight: CGFloat
     let configuration: ShopperConfiguration
-
+    
     @State private var topMargin: CGFloat = ScannerCartView.TopMargin
     @State private var showHud: Bool = false
     @State private var zoomLevel: CGFloat = 1
@@ -71,7 +71,7 @@ struct ShoppingScannerView: View {
                         .frame(maxWidth: .infinity, maxHeight: .infinity)
                     }
                 }
-           ZoomControl(zoomLevel: $zoomLevel, steps: zoomSteps)
+            ZoomControl(zoomLevel: $zoomLevel, steps: zoomSteps)
                 .offset(x: 0, y: position - 114)
                 .opacity(model.scanningPaused || position == 0 ? 0 : 1)
             PullOverView(minHeight: $minHeight, expanded: $model.scanningPaused, paddingTop: $topMargin, position: $position, isDragging: $isDragging) {
@@ -94,8 +94,17 @@ struct ShoppingScannerView: View {
                 zoomSteps = steps
             }
         }
-        .onChange(of: zoomLevel) {
-            model.barcodeManager.barcodeDetector.zoomFactor = CGFloat(zoomLevel)
+        // Syncs detector → view: fires when camera becomes available and setRecommendedZoomFactor() runs
+        .onChange(of: model.barcodeManager.barcodeDetector.zoomFactor) { _, newValue in
+            guard let newValue, newValue != zoomLevel else { return }
+            zoomLevel = newValue
+            if let steps = model.barcodeManager.barcodeDetector.zoomSteps {
+                zoomSteps = steps
+            }
+        }
+        .onChange(of: zoomLevel) { _, newValue in
+            guard model.barcodeManager.barcodeDetector.zoomFactor != newValue else { return }
+            model.barcodeManager.barcodeDetector.zoomFactor = newValue
         }
         .onChange(of: showHud) {
             if !showHud {
