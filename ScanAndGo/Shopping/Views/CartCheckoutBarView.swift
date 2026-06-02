@@ -1,5 +1,5 @@
 //
-//  CheckoutView.swift
+//  CartCheckoutBarView.swift
 //  SnabbleScanAndGo
 //
 //  Created by Uwe Tilemann on 18.06.24.
@@ -11,7 +11,7 @@ import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleComponents
 
-struct CheckoutView: View {
+struct CartCheckoutBarView: View {
     @AppStorage("io.snabble.sdk.scanAndGo.paymentMethod") private var paymentMethod: String?
 
     let model: Shopper

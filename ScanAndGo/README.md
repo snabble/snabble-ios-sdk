@@ -85,7 +85,7 @@ struct ContentView: View {
 - Real-time updates
 
 ### 5. Checkout Views
-- `CheckoutView` - Payment selection
+- `CartCheckoutBarView` - Payment selection and checkout action bar
 - `PaymentSelectionView` - Payment methods
 - `PaymentButtonView` - Quick checkout
 

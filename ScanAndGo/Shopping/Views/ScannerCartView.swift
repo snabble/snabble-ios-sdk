@@ -32,7 +32,7 @@ struct ScannerCartView: View {
     
     var body: some View {
         VStack(spacing: 0) {
-            CheckoutView(model: model)
+            CartCheckoutBarView(model: model)
             ShoppingCartView(cartModel: model.cartModel, compactMode: compactMode)
             // Without this Spacer(), we have a transparent background
             Spacer(minLength: 1)
