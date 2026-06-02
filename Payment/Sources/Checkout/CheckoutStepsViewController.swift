@@ -146,7 +146,7 @@ struct CheckoutView: View {
     }
 
     var body: some View {
-        NavigationView {
+        NavigationStack {
             ZStack(alignment: .top) {
                 if model.isSuccessful {
                     customView
@@ -154,14 +154,13 @@ struct CheckoutView: View {
                 }
                 ScrollView(.vertical, showsIndicators: false) {
                     topContent
-
+                    
                     if model.isSuccessful {
                         CheckoutRatingView(model: model.ratingModel)
                             .padding(20)
                             .shadow(radius: 8, x: 0, y: 4)
                     }
                 }
-
                 VStack {
                     Spacer()
                     Button(action: {
@@ -175,8 +174,8 @@ struct CheckoutView: View {
                     .buttonStyle(ProjectPrimaryButtonStyle())
                     .padding([.bottom, .horizontal], 16)
                 }
-
             }
+            .toolbar(.hidden, for: .navigationBar)
         }
     }
 }
