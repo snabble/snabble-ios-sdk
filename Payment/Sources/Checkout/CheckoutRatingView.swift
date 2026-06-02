@@ -239,5 +239,6 @@ struct CheckoutRatingView: View {
         .frame(maxWidth: .infinity, minHeight: model.minHeight + height, idealHeight: model.minHeight + height, maxHeight: model.minHeight + height)
         .background(Color.secondarySystemGroupedBackground)
         .clipShape(RoundedRectangle(cornerRadius: 8))
+        .padding(.bottom, (model.showTextEditor && _customView.isAvailable) ? 60 : 0)
     }
 }
