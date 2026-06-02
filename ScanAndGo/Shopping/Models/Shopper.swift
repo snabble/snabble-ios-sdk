@@ -92,6 +92,13 @@ public final class Shopper: BarcodeProcessing, Equatable {
         return paymentManager.selectedPayment?.method.icon
     }
 
+    /// Delay in seconds before a cart change triggers a backend recalculation request.
+    /// Increase this to debounce rapid stepper taps. Default is 0.5.
+    public var cartUpdateDelay: TimeInterval {
+        get { barcodeManager.shoppingCart.saveDelay }
+        set { barcodeManager.shoppingCart.saveDelay = newValue }
+    }
+
     let logger = Logger(subsystem: "io.snabble.sdk.ScanAndGo", category: "Shopper")
     @ObservationIgnored nonisolated(unsafe) private var actionTask: Task<Void, Never>?
     private var paymentProcess: PaymentProcess?
@@ -158,7 +165,7 @@ public final class Shopper: BarcodeProcessing, Equatable {
         }
     }
     
-    /// Indicates whether scanning is paused. Stored in UserDefaults.
+    /// Indicates whether scanning is paused. Persistence is managed by ShopperView via @AppStorage.
     public var scanningPaused: Bool = UserDefaults.standard.scanningDisabled {
         didSet {
             logger.debug("scanningPaused \(self.scanningPaused)")
@@ -167,7 +174,6 @@ public final class Shopper: BarcodeProcessing, Equatable {
             } else {
                 startScanner()
             }
-            UserDefaults.standard.setScanningDisabled(scanningPaused)
         }
     }
     /// Indicates whether the Shopper is currently processing.
