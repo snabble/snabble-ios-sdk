@@ -38,24 +38,18 @@ public final class TeaserModel {
         if let cachedImage = imageCache[urlString] {
             return cachedImage
         }
-        
+
         guard let projectId = shop?.projectId,
               let project = Snabble.shared.project(for: projectId) else {
             return nil
         }
-        
+
         let fullUrlString = "\(Snabble.shared.environment.apiURLString)\(urlString)"
-        
-        return await withCheckedContinuation { continuation in
-            project.fetchImage(urlString: fullUrlString) { image in
-                if let image = image {
-                    Task { @MainActor [weak self] in
-                        self?.imageCache[urlString] = image
-                    }
-                }
-                continuation.resume(returning: image)
-            }
+        let image = await project.fetchImage(urlString: fullUrlString)
+        if let image {
+            imageCache[urlString] = image
         }
+        return image
     }
 
 }
