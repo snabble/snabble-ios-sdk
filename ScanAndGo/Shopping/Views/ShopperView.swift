@@ -10,27 +10,43 @@ import SwiftUI
 import SnabbleAssetProviding
 import SnabbleComponents
 
+public struct ShopperConfiguration {
+    let drawerOffset: CGFloat
+    let showDismiss: Bool
+    
+    public init(
+        drawerOffset: CGFloat = 0,
+        showDismiss: Bool = true,
+    ) {
+        self.drawerOffset = drawerOffset
+        self.showDismiss = showDismiss
+    }
+}
+
 /// A view that manages the shopping session for a user, integrating with the Shopper model to handle barcode scanning, displaying scan messages, and error handling.
 public struct ShopperView: View {
-    @ObservedObject public var model: Shopper
     @AppStorage(UserDefaults.scanningDisabledKey) var expanded: Bool = false
-    
+    @SwiftUI.Environment(\.dismiss) var dismiss
+
     @State private var showSearch: Bool = false
     @State private var showError: Bool = false
     @State private var showBundleSelection: Bool = false
-    
+
     @State private var minHeight: CGFloat = 0
     @State private var bundles: [BarcodeManager.ScannedItem] = []
+
+    let model: Shopper
+    let configuration: ShopperConfiguration
     
-    @SwiftUI.Environment(\.dismiss) var dismiss
-    
-    public init(model: Shopper) {
+    public init(model: Shopper, configuration: ShopperConfiguration = .init()) {
         self.model = model
+        self.configuration = configuration
     }
     
     public var body: some View {
-        ShoppingScannerView(model: model, minHeight: $minHeight)
-            .edgesIgnoringSafeArea(.bottom)
+        @Bindable var model = model
+        
+        ShoppingScannerView(model: model, minHeight: $minHeight, configuration: configuration)
             .animation(.easeInOut, value: model.scannedItem)
             .navigationDestination(isPresented: $model.isNavigating) {
                 model.navigationDestination(isPresented: $model.isNavigating)
@@ -45,24 +61,28 @@ public struct ShopperView: View {
             .sheet(isPresented: $showSearch) {
                 BarcodeSearchView(model: model.barcodeManager) { code, format, template in
                     self.showSearch.toggle()
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+                    Task { @MainActor in
+                        try? await Task.sleep(for: .seconds(0.25))
                         model.barcodeManager.handleScannedCode(code, withFormat: format, withTemplate: template)
                     }
                 }
             }
             .onAppear {
-                model.scanningActivated = true
                 model.scanningPaused = expanded
+                model.scanningActivated = true
             }
             .onDisappear {
                 model.scanningActivated = false
+            }
+            .onChange(of: model.scanningPaused) { _, newValue in
+                expanded = newValue
             }
             .onReceive(model.barcodeManager.barcodeDetector.statePublisher) { state in
                 if state == .ready, model.scanningActivated && !model.scanningPaused {
                     model.startScanner()
                 }
             }
-            .onReceive(model.$errorMessage) { message in
+            .onChange(of: model.errorMessage) { _, message in
                 if message != nil {
                     model.startScanner()
                     withAnimation {
@@ -70,10 +90,10 @@ public struct ShopperView: View {
                     }
                 }
             }
-            .onReceive(model.$bundles) { bundles in
+            .onChange(of: model.bundles) { _, bundles in
                 self.bundles = bundles
             }
-            .onReceive(model.$scannedItem) { item in
+            .onChange(of: model.scannedItem) { _, item in
                 if let item {
                     if self.bundles.isEmpty {
                         selectItem(item)
@@ -111,38 +131,59 @@ public struct ShopperView: View {
                 }
             }
             .toolbar {
-                ToolbarItem(placement: .topBarLeading) {
-                    Button(action: {
-                        dismiss()
-                    }, label: {
-                        Text(keyed: "Snabble.done")
-                    })
-                }
-                ToolbarItemGroup(placement: .topBarTrailing) {
-                    Button(action: {
-                        model.flashlight.toggle()
-                    }, label: {
-                        Image(systemName: model.flashlight == true ? "flashlight.on.fill" : "flashlight.off.fill")
-                    })
-                    Button(action: {
-                        model.stopScanner()
-                        showSearch.toggle()
-                    }, label: {
-                        Image(systemName: "magnifyingglass")
-                    })
+                if configuration.showDismiss {
+                    ToolbarItem(placement: .topBarLeading) {
+                        Button(action: {
+                            dismiss()
+                        }, label: {
+                            Text(keyed: "Snabble.done")
+                        })
+                    }
+                    ToolbarItemGroup(placement: .topBarTrailing) {
+                        Button(action: {
+                            model.flashlight.toggle()
+                        }, label: {
+                            Image(systemName: model.flashlight == true ? "flashlight.on.fill" : "flashlight.off.fill")
+                        })
+                        Button(action: {
+                            model.stopScanner()
+                            showSearch.toggle()
+                        }, label: {
+                            Image(systemName: "magnifyingglass")
+                        })
+                    }
+                } else {
+                    ToolbarItemGroup(placement: .topBarLeading) {
+                        Button(action: {
+                            model.flashlight.toggle()
+                        }, label: {
+                            Image(systemName: model.flashlight == true ? "flashlight.on.fill" : "flashlight.off.fill")
+                        })
+                    }
+                    ToolbarItemGroup(placement: .topBarTrailing) {
+                        Button(action: {
+                            model.stopScanner()
+                            showSearch.toggle()
+                        }, label: {
+                            Image(systemName: "magnifyingglass")
+                        })
+                    }
+                    
                 }
             }
     }
     
     private func selectItem(_ item: BarcodeManager.ScannedItem?) {
         guard let item else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+            Task { @MainActor in
+                try? await Task.sleep(for: .seconds(0.25))
                 model.scannedItem = nil
                 model.startScanner()
             }
             return
         }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.25) {
+        Task { @MainActor in
+            try? await Task.sleep(for: .seconds(0.25))
             model.addScannedItem(item)
             model.scannedItem = nil
             model.startScanner()

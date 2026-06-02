@@ -6,7 +6,7 @@
 
 import Foundation
 
-public struct InvoiceByLoginData: Codable, EncryptedPaymentData, Equatable {
+public struct InvoiceByLoginData: Codable, EncryptedPaymentData, Equatable, Sendable {
     // encrypted JSON string
     public let encryptedPaymentData: String
     // serial # of the certificate used to encrypt

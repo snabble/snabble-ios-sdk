@@ -63,7 +63,7 @@ public enum SnabbleError: Error, Equatable {
     }
 }
 
-public enum ProductLookupError: Error, Equatable {
+public enum ProductLookupError: Error, Equatable, Sendable {
     case notFound
     case networkError(URLError.Code)
     case serverError(Int)
@@ -95,7 +95,7 @@ public enum ProductLookupError: Error, Equatable {
     }
 }
 
-public enum ErrorResponseType: String, UnknownCaseRepresentable {
+public enum ErrorResponseType: String, UnknownCaseRepresentable, Sendable {
     case unknown
 
     // checkout errors
@@ -116,7 +116,7 @@ public enum ErrorResponseType: String, UnknownCaseRepresentable {
     public static let unknownCase = ErrorResponseType.unknown
 }
 
-public struct ErrorResponse: Decodable, Equatable {
+public struct ErrorResponse: Decodable, Equatable, Sendable {
     public let rawType: String
     public let message: String?
     public let sku: String?
@@ -154,7 +154,7 @@ public enum HTTPRequestMethod: String {
 }
 
 /// for those API calls where we need both the decoded result as well as the raw json data as a dictionary
-public struct RawResult<T, E: Swift.Error> {
+public struct RawResult<T, E: Swift.Error>: @unchecked Sendable {
     public let result: Result<T, E>
     public let rawJson: [String: Any]?
 
@@ -311,7 +311,7 @@ extension Project {
     ///   - completion: called on the main thread when the result is available.
     ///   - result: the parsed result object or error
     @discardableResult
-    public func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ result: Result<T, SnabbleError>) -> Void ) -> URLSessionDataTask {
+    public func perform<T: Decodable & Sendable>(_ request: URLRequest, _ completion: @escaping @Sendable (_ result: Result<T, SnabbleError>) -> Void ) -> URLSessionDataTask {
         return self.perform(request, returnRaw: false) { result, _, _ in
             completion(result)
         }
@@ -324,7 +324,7 @@ extension Project {
     ///   - completion: called on the main thread when the result is available.
     ///   - result: the parsed result object plus its raw JSON data, or error
     @discardableResult
-    func performRaw<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ result: RawResult<T, SnabbleError>) -> Void ) -> URLSessionDataTask {
+    func performRaw<T: Decodable & Sendable>(_ request: URLRequest, _ completion: @escaping @Sendable (_ result: RawResult<T, SnabbleError>) -> Void ) -> URLSessionDataTask {
         return self.perform(request, returnRaw: true) { (_ result: Result<T, SnabbleError>, _ raw: [String: Any]?, _) in
             let rawResult = RawResult(result, rawJson: raw)
             completion(rawResult)
@@ -339,7 +339,7 @@ extension Project {
     ///   - result: the parsed result object or error
     ///   - response: the HTTPURLResponse object
     @discardableResult
-    public func perform<T: Decodable>(_ request: URLRequest, _ completion: @escaping (_ result: Result<T, SnabbleError>, _ response: HTTPURLResponse?) -> Void ) -> URLSessionDataTask {
+    public func perform<T: Decodable & Sendable>(_ request: URLRequest, _ completion: @escaping @Sendable (_ result: Result<T, SnabbleError>, _ response: HTTPURLResponse?) -> Void ) -> URLSessionDataTask {
         return self.perform(request, returnRaw: false) { result, _, response in
             completion(result, response)
         }
@@ -355,7 +355,7 @@ extension Project {
     ///   - raw: the JSON structure returned by the server, or nil if an error occurred
     ///   - response: the HTTPURLResponse object if available
     @discardableResult
-    private func perform<T: Decodable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping (_ result: Result<T, SnabbleError>, _ raw: [String: Any]?, _ response: HTTPURLResponse?) -> Void ) -> URLSessionDataTask {
+    private func perform<T: Decodable & Sendable>(_ request: URLRequest, returnRaw: Bool, _ completion: @escaping @Sendable (_ result: Result<T, SnabbleError>, _ raw: [String: Any]?, _ response: HTTPURLResponse?) -> Void ) -> URLSessionDataTask {
         let start = Date.timeIntervalSinceReferenceDate
         let session = Snabble.urlSession
         let task = session.dataTask(with: request) { data, response, error in
@@ -367,7 +367,7 @@ extension Project {
             // handle URL errors
             if let error = error {
                 let urlError = self.snabbleError(for: error, method, url)
-                DispatchQueue.main.async {
+                Task { @MainActor in
                     completion(.failure(urlError), nil, nil)
                 }
                 return
@@ -381,15 +381,16 @@ extension Project {
             else {
                 // handle HTTP error responses
                 let httpError = self.snabbleError(for: response, method, url, data)
-                DispatchQueue.main.async {
-                    completion(.failure(httpError), nil, response as? HTTPURLResponse)
+                let httpUrlResponse = response as? HTTPURLResponse
+                Task { @MainActor in
+                    completion(.failure(httpError), nil, httpUrlResponse)
                 }
                 return
             }
 
             // handle empty response
             if data.isEmpty {
-                DispatchQueue.main.async {
+                Task { @MainActor in
                     completion(.failure(SnabbleError.empty), nil, httpResponse)
                 }
                 return
@@ -404,14 +405,14 @@ extension Project {
                 if returnRaw {
                     json = try JSONSerialization.jsonObject(with: data, options: .allowFragments) as? [String: Any]
                 }
-                DispatchQueue.main.async {
+                Task { @MainActor in
                     completion(.success(result), json, httpResponse)
                 }
             } catch {
                 Log.error("error parsing response from \(url): \(error)")
                 let body = String(bytes: data, encoding: .utf8) ?? ""
                 Log.error("raw response body: \(body)")
-                DispatchQueue.main.async {
+                Task { @MainActor in
                     completion(.failure(SnabbleError.invalid), nil, httpResponse)
                 }
             }

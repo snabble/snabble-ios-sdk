@@ -1,13 +1,13 @@
 {
-  "originHash" : "75b4b568f54ca1ebf94f6d3bb7aee0276daecf3998b2afccc8e9830d593a7887",
+  "originHash" : "b91ad84f228b3db8bc21ce372b618f8fe12362551c4802236db9e991a8482bec",
   "pins" : [
     {
       "identity" : "camerazoomwheel",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/utilem/CameraZoomWheel.git",
       "state" : {
-        "revision" : "35b49953e2a16d50756d73898b600e33fc959df0",
-        "version" : "1.1.0"
+        "revision" : "46a0462131849870cd0b73775de4c76474620420",
+        "version" : "2.0.0"
       }
     },
     {
@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/datatrans/ios-sdk.git",
       "state" : {
-        "revision" : "95ea954179322351541f674a6fe807391dcee18f",
-        "version" : "3.10.1"
+        "revision" : "2cc71be787214b2d9608c301bffb0bc2c6125ef7",
+        "version" : "3.11.0"
       }
     },
     {
@@ -47,30 +47,12 @@
       }
     },
     {
-      "identity" : "pulley",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/snabble/Pulley.git",
-      "state" : {
-        "revision" : "1728c7ce69857134db82ad82300772a4364d2af5",
-        "version" : "2.9.2"
-      }
-    },
-    {
-      "identity" : "sdcalertview",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/sberrevoets/SDCAlertView.git",
-      "state" : {
-        "revision" : "eda84764885b55b30c334384afee5f8f06ac48de",
-        "version" : "12.0.5"
-      }
-    },
-    {
       "identity" : "swift-asn1",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-asn1.git",
       "state" : {
-        "revision" : "810496cf121e525d660cd0ea89a758740476b85f",
-        "version" : "1.5.1"
+        "revision" : "eb50cbd14606a9161cbc5d452f18797c90ef0bab",
+        "version" : "1.7.0"
       }
     },
     {
@@ -80,24 +62,6 @@
       "state" : {
         "revision" : "95ba0316a9b733e92bb6b071255ff46263bbe7dc",
         "version" : "3.15.1"
-      }
-    },
-    {
-      "identity" : "swift-log",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-log.git",
-      "state" : {
-        "revision" : "bbd81b6725ae874c69e9b8c8804d462356b55523",
-        "version" : "1.10.1"
-      }
-    },
-    {
-      "identity" : "swift-tagged",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/pointfreeco/swift-tagged",
-      "state" : {
-        "revision" : "3907a9438f5b57d317001dc99f3f11b46882272b",
-        "version" : "0.10.0"
       }
     },
     {

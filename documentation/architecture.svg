@@ -1,0 +1,176 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 1000">
+  <defs>
+    <style>
+      .layer-box { fill: #ffffff; stroke: #333333; stroke-width: 2; }
+      .layer-title { font: bold 18px sans-serif; fill: #000000; text-anchor: middle; }
+      .module-box { fill: #e3f2fd; stroke: #1976d2; stroke-width: 2; rx: 8; }
+      .module-box-highlight { fill: #bbdefb; stroke: #0d47a1; stroke-width: 3; rx: 8; }
+      .module-text { font: 14px sans-serif; fill: #000000; text-anchor: middle; }
+      .dependency-arrow { stroke: #1976d2; stroke-width: 1.5; fill: none; marker-end: url(#arrowhead); opacity: 0.6; }
+      .dependency-arrow-special { stroke: #4caf50; stroke-width: 2; fill: none; marker-end: url(#arrowhead-green); stroke-dasharray: 5,5; }
+      .layer-label { font: bold 16px sans-serif; fill: #1976d2; }
+      .note-text { font: italic 11px sans-serif; fill: #666666; }
+      .success-text { font: bold 12px sans-serif; fill: #4caf50; }
+    </style>
+    <marker id="arrowhead" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#1976d2" />
+    </marker>
+    <marker id="arrowhead-green" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto">
+      <polygon points="0 0, 10 3, 0 6" fill="#4caf50" />
+    </marker>
+  </defs>
+
+  <!-- Title -->
+  <text x="800" y="30" style="font: bold 24px sans-serif; text-anchor: middle; fill: #000000;">
+    Snabble iOS SDK - Clean Layered Architecture
+  </text>
+  <text x="800" y="55" style="font: italic 14px sans-serif; text-anchor: middle; fill: #4caf50;">
+    ✅ No Circular Dependencies - All Dependencies Explicit (2026-03-28)
+  </text>
+
+  <!-- Layer 5: Complete Flows -->
+  <rect x="50" y="100" width="1500" height="140" class="layer-box" fill="#fff3e0"/>
+  <text x="800" y="125" class="layer-title">Layer 5: Complete Flows</text>
+
+  <rect x="450" y="145" width="280" height="70" class="module-box"/>
+  <text x="590" y="172" class="module-text" font-weight="bold">SnabbleScanAndGo</text>
+  <text x="590" y="192" class="module-text" font-size="11">→ Core, Theme, Cart, Payment</text>
+  <text x="590" y="207" class="module-text" font-size="11">Components, AssetProviding</text>
+
+  <rect x="800" y="145" width="280" height="70" class="module-box"/>
+  <text x="940" y="172" class="module-text" font-weight="bold">SnabblePhoneAuth</text>
+  <text x="940" y="192" class="module-text" font-size="11">→ Network, User</text>
+  <text x="940" y="207" class="module-text" font-size="11">Phone authentication</text>
+
+  <!-- Layer 4: Payment -->
+  <rect x="50" y="270" width="1500" height="140" class="layer-box" fill="#f3e5f5"/>
+  <text x="800" y="295" class="layer-title">Layer 4: Payment</text>
+
+  <rect x="400" y="315" width="320" height="70" class="module-box"/>
+  <text x="560" y="342" class="module-text" font-weight="bold">SnabblePayment</text>
+  <text x="560" y="362" class="module-text" font-size="11">→ Core, Components, Theme, Cart</text>
+  <text x="560" y="377" class="module-text" font-size="11">Receipts, AssetProviding, User</text>
+
+  <rect x="770" y="315" width="300" height="70" class="module-box"/>
+  <text x="920" y="342" class="module-text" font-weight="bold">SnabbleDatatrans</text>
+  <text x="920" y="362" class="module-text" font-size="11">→ Core, Theme, Payment</text>
+  <text x="920" y="377" class="module-text" font-size="11">Twint/PostFinance (optional)</text>
+
+  <!-- Layer 3: Domain Features -->
+  <rect x="50" y="440" width="1500" height="140" class="layer-box" fill="#e8f5e9"/>
+  <text x="800" y="465" class="layer-title">Layer 3: Domain Features</text>
+
+  <rect x="100" y="485" width="200" height="70" class="module-box"/>
+  <text x="200" y="512" class="module-text" font-weight="bold">SnabbleUser</text>
+  <text x="200" y="532" class="module-text" font-size="10">→ Network, Components</text>
+  <text x="200" y="547" class="module-text" font-size="10">AssetProviding, Core</text>
+
+  <rect x="340" y="485" width="200" height="70" class="module-box"/>
+  <text x="440" y="512" class="module-text" font-weight="bold">SnabbleShops</text>
+  <text x="440" y="532" class="module-text" font-size="10">→ Core, Theme</text>
+
+  <rect x="580" y="485" width="200" height="70" class="module-box"/>
+  <text x="680" y="512" class="module-text" font-weight="bold">SnabbleCart</text>
+  <text x="680" y="532" class="module-text" font-size="10">→ Core, Shops, Theme</text>
+
+  <rect x="820" y="485" width="200" height="70" class="module-box"/>
+  <text x="920" y="512" class="module-text" font-weight="bold">SnabbleReceipts</text>
+  <text x="920" y="532" class="module-text" font-size="10">→ Core, Components</text>
+  <text x="920" y="547" class="module-text" font-size="10">Theme</text>
+
+  <rect x="1060" y="485" width="200" height="70" class="module-box"/>
+  <text x="1160" y="512" class="module-text" font-weight="bold">SnabbleCoupons</text>
+  <text x="1160" y="532" class="module-text" font-size="10">→ Core, Components</text>
+
+  <rect x="1300" y="485" width="200" height="70" class="module-box"/>
+  <text x="1400" y="512" class="module-text" font-weight="bold">+5 more</text>
+  <text x="1400" y="527" class="module-text" font-size="10">DynamicView, Onboarding</text>
+  <text x="1400" y="542" class="module-text" font-size="10">Teaser, etc.</text>
+
+  <!-- Layer 2: UI Primitives -->
+  <rect x="50" y="610" width="1500" height="140" class="layer-box" fill="#e1f5fe"/>
+  <text x="800" y="635" class="layer-title">Layer 2: UI Primitives</text>
+
+  <rect x="250" y="655" width="280" height="70" class="module-box"/>
+  <text x="390" y="682" class="module-text" font-weight="bold">SnabbleComponents</text>
+  <text x="390" y="702" class="module-text" font-size="11">→ AssetProviding, WindowKit</text>
+  <text x="390" y="717" class="module-text" font-size="11">✅ No Core dependency!</text>
+
+  <rect x="580" y="655" width="280" height="70" class="module-box"/>
+  <text x="720" y="682" class="module-text" font-weight="bold">SnabbleTheme</text>
+  <text x="720" y="702" class="module-text" font-size="11">→ Core, Components, AssetProviding</text>
+  <text x="720" y="717" class="module-text" font-size="11">KeychainAccess (Project trait here)</text>
+
+  <rect x="910" y="655" width="280" height="70" class="module-box"/>
+  <text x="1050" y="682" class="module-text" font-weight="bold">SnabbleAssetProviding</text>
+  <text x="1050" y="702" class="module-text" font-size="11">→ WCAG-Colors</text>
+  <text x="1050" y="717" class="module-text" font-size="11">Asset protocol</text>
+
+  <!-- Layer 1: Foundation -->
+  <rect x="50" y="780" width="1500" height="160" class="layer-box" fill="#fff9c4"/>
+  <text x="800" y="805" class="layer-title">Layer 1: Foundation</text>
+
+  <rect x="200" y="825" width="320" height="90" class="module-box-highlight"/>
+  <text x="360" y="858" class="module-text" font-weight="bold" font-size="16">SnabbleCore</text>
+  <text x="360" y="878" class="module-text" font-size="11">→ Network, GRDB, ZIPFoundation, SwiftOTP</text>
+  <text x="360" y="893" class="module-text" font-size="11">Business logic, cart, products, database</text>
+  <text x="360" y="908" class="module-text" font-size="11">Check-in, checkout, coupons</text>
+
+  <rect x="570" y="825" width="320" height="90" class="module-box"/>
+  <text x="730" y="858" class="module-text" font-weight="bold">SnabbleNetwork</text>
+  <text x="730" y="878" class="module-text" font-size="11">→ SwiftOTP, KeychainAccess</text>
+  <text x="730" y="893" class="module-text" font-size="11">API communication, authentication</text>
+  <text x="730" y="908" class="module-text" font-size="11">AppUser keychain storage</text>
+
+  <rect x="940" y="825" width="320" height="90" class="module-box"/>
+  <text x="1100" y="858" class="module-text" font-weight="bold">External Dependencies</text>
+  <text x="1100" y="878" class="module-text" font-size="11">GRDB, KeychainAccess, SwiftOTP</text>
+  <text x="1100" y="893" class="module-text" font-size="11">ZIPFoundation, Datatrans, DeviceKit</text>
+  <text x="1100" y="908" class="module-text" font-size="11">WCAG-Colors, WindowKit, CameraZoomWheel</text>
+
+  <!-- Key Dependency Arrows -->
+  <!-- ScanAndGo to lower layers -->
+  <path d="M 590 215 L 560 315" class="dependency-arrow"/>
+  <path d="M 640 215 L 680 485" class="dependency-arrow"/>
+
+  <!-- Payment to User and lower -->
+  <path d="M 520 385 L 300 485" class="dependency-arrow"/>
+  <path d="M 580 385 L 680 485" class="dependency-arrow"/>
+
+  <!-- Layer 3 to Layer 2 -->
+  <path d="M 200 555 L 350 655" class="dependency-arrow"/>
+  <path d="M 440 555 L 650 655" class="dependency-arrow"/>
+  <path d="M 680 555 L 700 655" class="dependency-arrow"/>
+  <path d="M 920 555 L 750 655" class="dependency-arrow"/>
+
+  <!-- Layer 2 to Layer 1 -->
+  <path d="M 720 725 L 450 825" class="dependency-arrow"/>
+
+  <!-- Theme to Core (Project trait extension - moved from Components) -->
+  <path d="M 680 725 L 400 825" class="dependency-arrow-special"/>
+  <text x="520" y="770" class="success-text">✅ Project trait (moved from Components 2026-03-28)</text>
+
+  <!-- Legend -->
+  <rect x="1230" y="100" width="320" height="180" fill="#f5f5f5" stroke="#333333" stroke-width="1" rx="5"/>
+  <text x="1390" y="125" style="font: bold 14px sans-serif; text-anchor: middle;">Dependency Rules</text>
+
+  <line x1="1250" y1="145" x2="1300" y2="145" class="dependency-arrow"/>
+  <text x="1315" y="150" style="font: 11px sans-serif;">Normal dependency</text>
+
+  <line x1="1250" y1="170" x2="1300" y2="170" class="dependency-arrow-special"/>
+  <text x="1315" y="175" style="font: 11px sans-serif;">Extension in Theme</text>
+
+  <text x="1250" y="200" style="font: 11px sans-serif;">✅ All arrows point DOWN</text>
+  <text x="1250" y="220" style="font: 11px sans-serif;">✅ No circular dependencies</text>
+  <text x="1250" y="240" style="font: 11px sans-serif;">✅ Components independent of Core</text>
+  <text x="1250" y="260" style="font: 11px sans-serif;">✅ Based on Package.swift</text>
+
+  <!-- Footer Notes -->
+  <text x="50" y="970" class="note-text">
+    Architecture v1.0.0 (2026-03-28) - Dependencies verified from Package.swift lines 188-414 and import analysis
+  </text>
+  <text x="50" y="990" class="note-text">
+    Updates: (1) 7 missing dependencies added, (2) Project+Trait moved Components→Theme, (3) Components now independent of Core
+  </text>
+</svg>

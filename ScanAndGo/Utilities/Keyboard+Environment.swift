@@ -33,7 +33,7 @@ struct KeyboardHeightEnvironmentValue: ViewModifier {
                     GeometryReader { proxy in
                         Color.clear
                             .onChange(of: keyboardProxy.safeAreaInsets.bottom - proxy.safeAreaInsets.bottom) { _, newValue in
-                                DispatchQueue.main.async {
+                                Task { @MainActor in
                                     if keyboardHeight != newValue {
                                         keyboardHeight = newValue
                                     }

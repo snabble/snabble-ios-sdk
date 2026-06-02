@@ -7,12 +7,12 @@
 
 import Foundation
 
-public struct ClientError: Decodable {
+public struct ClientError: Decodable, Sendable {
     public let type: String
     public let message: String
     public let validations: [Validation]?
     
-    public struct Validation: Decodable {
+    public struct Validation: Decodable, Sendable {
         public let field: String
         public let category: String
         public let restrictions: [Restriction]
@@ -23,7 +23,7 @@ public struct ClientError: Decodable {
             case restrictions
         }
         
-        public struct Restriction: Decodable {
+        public struct Restriction: Decodable, Sendable {
             public let possibleValues: [String]?
             public let min: Int?
             public let max: Int?

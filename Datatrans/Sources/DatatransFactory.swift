@@ -8,9 +8,9 @@ import SnabbleCore
 import UIKit
 
 public enum DatatransFactory {
-    private(set) static var appCallbackScheme: String?
+    nonisolated(unsafe) private(set) static var appCallbackScheme: String?
 
-    public static func initialize(appCallbackScheme: String) {
+    @MainActor public static func initialize(appCallbackScheme: String) {
         Self.appCallbackScheme = appCallbackScheme
 
         let methods = Methods(viewMethod: viewFactory, entryMethod: entryFactory)
@@ -23,11 +23,11 @@ public enum DatatransFactory {
         Snabble.methodRegistry.register(methods: methods, for: .creditCardAmericanExpress)
     }
 
-    private static func viewFactory(_ detail: PaymentMethodDetail, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController {
+    @MainActor private static func viewFactory(_ detail: PaymentMethodDetail, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController {
         return DatatransAliasViewController(detail, analyticsDelegate)
     }
 
-    private static func entryFactory(_ method: RawPaymentMethod, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController {
+    @MainActor private static func entryFactory(_ method: RawPaymentMethod, _ projectId: Identifier<Project>, _ analyticsDelegate: AnalyticsDelegate?) -> UIViewController {
         return DatatransAliasViewController(method, projectId, analyticsDelegate)
     }
 }

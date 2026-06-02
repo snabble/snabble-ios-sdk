@@ -9,9 +9,8 @@ import SwiftUI
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleUI
 
-public enum ScannerLookup {
+public enum ScannerLookup: Sendable {
     case product(ScannedProduct)
     case coupon(Coupon, String)
     case voucher(Voucher)
@@ -37,12 +36,13 @@ extension BarcodeManager.ScannedItem: CustomStringConvertible {
 }
 
 extension BarcodeManager: BarcodeScanning {
-    public func scannedCodeResult(_ result: SnabbleUI.BarcodeResult) {
+    public func scannedCodeResult(_ result: BarcodeResult) {
         self.handleScannedCode(result.code, withFormat: result.format)
     }
 }
 
 extension BarcodeManager {
+    @MainActor
     private func scannedUnknown(messageText: String, code: String) {
         self.logger.debug("scanned unknown code \(code)")
         self.tapticFeedback.notificationOccurred(.error)
@@ -123,6 +123,7 @@ extension BarcodeManager {
         }
     }
     
+    @MainActor
     private func showScanLookupError(_ error: ProductLookupError, forCode scannedCode: String) {
         let errorMsg: String
         switch error {
@@ -134,7 +135,8 @@ extension BarcodeManager {
         self.scannedUnknown(messageText: errorMsg, code: scannedCode)
     }
     
-    private func isSaleProhibited(of product: Product, scannedCode: String) -> Bool {
+    @MainActor
+   private func isSaleProhibited(of product: Product, scannedCode: String) -> Bool {
         // check for sale stop
         if product.saleStop {
             self.showSaleStop()
@@ -150,11 +152,13 @@ extension BarcodeManager {
         return false
     }
     
+    @MainActor
     private func showSaleStop() {
         self.tapticFeedback.notificationOccurred(.error)
         self.processingDelegate?.errorMessage = Asset.localizedString(forKey: "Snabble.SaleStop.ErrorMsg.scan")
     }
     
+    @MainActor
     private func showNotForSale(for product: Product, withCode scannedCode: String) {
         self.tapticFeedback.notificationOccurred(.error)
         if let message = self.scannerDelegate?.scanMessage(for: self.project, self.shop, product) {
@@ -164,7 +168,8 @@ extension BarcodeManager {
         }
     }
     
-    private func collectBundles(for item: ScannedItem) {
+    @MainActor
+   private func collectBundles(for item: ScannedItem) {
         let product = item.scannedProduct.product
         
         var bundles: [ScannedItem] = []
@@ -187,7 +192,7 @@ extension BarcodeManager {
     private func lookupCode(_ code: String,
                             withFormat format: ScanFormat?,
                             withTemplate template: String?,
-                            completion: @escaping (ScannerLookup) -> Void ) {
+                            completion: @escaping @Sendable @MainActor (ScannerLookup) -> Void ) {
         // if we were given a template from the barcode entry, use that to lookup the product directly
         if let template = template {
             return self.lookupProduct(for: code, withTemplate: template, priceOverride: nil, completion: completion)
@@ -210,77 +215,80 @@ extension BarcodeManager {
         let codes = Array(zip(lookupCodes, templates))
         
         self.productProvider.productBy(codes: codes, shopId: self.shop.id) { result in
-            switch result {
-            case .success(let lookupResult):
-                guard let parseResult = matches.first(where: { $0.template.id == lookupResult.templateId }) else {
-                    completion(.failure(.notFound))
-                    return
-                }
-                
-                let scannedCode = lookupResult.transmissionCode ?? code
-                var newResult = ScannedProduct(lookupResult.product,
-                                               parseResult.lookupCode,
-                                               scannedCode,
-                                               templateId: lookupResult.templateId,
-                                               transmissionTemplateId: lookupResult.transmissionTemplateId,
-                                               embeddedData: parseResult.embeddedData,
-                                               encodingUnit: lookupResult.encodingUnit,
-                                               referencePriceOverride: parseResult.referencePrice,
-                                               specifiedQuantity: lookupResult.specifiedQuantity)
-                
-                if let decimalData = parseResult.embeddedDecimal {
-                    var encodingUnit = lookupResult.product.encodingUnit
-                    var embeddedData: Int?
-                    let div = Int(pow(10.0, Double(decimalData.fractionDigits)))
-                    if let enc = encodingUnit {
-                        switch enc {
-                        case .piece:
-                            encodingUnit = .piece
-                            embeddedData = decimalData.value / div
-                        case .kilogram, .meter, .liter, .squareMeter:
-                            encodingUnit = enc.fractionalUnit(div)
-                            embeddedData = decimalData.value
-                        case .gram, .millimeter, .milliliter:
-                            embeddedData = decimalData.value
-                        default:
-                            Log.warn("unspecified conversion for embedded data: \(decimalData.value) \(enc)")
+            Task { @MainActor in
+                switch result {
+                case .success(let lookupResult):
+                    guard let parseResult = matches.first(where: { $0.template.id == lookupResult.templateId }) else {
+                        completion(.failure(.notFound))
+                        return
+                    }
+                    
+                    let scannedCode = lookupResult.transmissionCode ?? code
+                    var newResult = ScannedProduct(lookupResult.product,
+                                                   parseResult.lookupCode,
+                                                   scannedCode,
+                                                   templateId: lookupResult.templateId,
+                                                   transmissionTemplateId: lookupResult.transmissionTemplateId,
+                                                   embeddedData: parseResult.embeddedData,
+                                                   encodingUnit: lookupResult.encodingUnit,
+                                                   referencePriceOverride: parseResult.referencePrice,
+                                                   specifiedQuantity: lookupResult.specifiedQuantity)
+                    
+                    if let decimalData = parseResult.embeddedDecimal {
+                        var encodingUnit = lookupResult.product.encodingUnit
+                        var embeddedData: Int?
+                        let div = Int(pow(10.0, Double(decimalData.fractionDigits)))
+                        if let enc = encodingUnit {
+                            switch enc {
+                            case .piece:
+                                encodingUnit = .piece
+                                embeddedData = decimalData.value / div
+                            case .kilogram, .meter, .liter, .squareMeter:
+                                encodingUnit = enc.fractionalUnit(div)
+                                embeddedData = decimalData.value
+                            case .gram, .millimeter, .milliliter:
+                                embeddedData = decimalData.value
+                            default:
+                                Log.warn("unspecified conversion for embedded data: \(decimalData.value) \(enc)")
+                            }
                         }
+                        
+                        newResult = ScannedProduct(lookupResult.product, parseResult.lookupCode, scannedCode,
+                                                   templateId: lookupResult.templateId,
+                                                   transmissionTemplateId: lookupResult.transmissionTemplateId,
+                                                   embeddedData: embeddedData,
+                                                   encodingUnit: encodingUnit,
+                                                   referencePriceOverride: newResult.referencePriceOverride,
+                                                   specifiedQuantity: lookupResult.specifiedQuantity)
                     }
                     
-                    newResult = ScannedProduct(lookupResult.product, parseResult.lookupCode, scannedCode,
-                                               templateId: lookupResult.templateId,
-                                               transmissionTemplateId: lookupResult.transmissionTemplateId,
-                                               embeddedData: embeddedData,
-                                               encodingUnit: encodingUnit,
-                                               referencePriceOverride: newResult.referencePriceOverride,
-                                               specifiedQuantity: lookupResult.specifiedQuantity)
-                }
-                
-                completion(.product(newResult))
-            case .failure(let error):
-                if error == .notFound {
-                    if let gs1 = self.checkValidGS1(for: code) {
-                        return self.productForGS1(gs1: gs1, originalCode: code, completion: completion)
+                    completion(.product(newResult))
+                case .failure(let error):
+                    if error == .notFound {
+                        if let gs1 = self.checkValidGS1(for: code) {
+                            return self.productForGS1(gs1: gs1, originalCode: code, completion: completion)
+                        }
+
+                        // is this a valid coupon?
+                        if let coupon = self.checkValidCoupon(for: code) {
+                            return completion(.coupon(coupon, code))
+                        }
+
+                        if let voucher = self.checkValidVoucher(for: code) {
+                            return completion(.voucher(voucher))
+                        }
+                        return completion(.failure(.notFound))
+                    } else {
+                        let event = AppEvent(scannedCode: code, codes: codes, project: project)
+                        event.post()
+                        completion(.failure(error))
                     }
-                    
-                    // is this a valid coupon?
-                    if let coupon = self.checkValidCoupon(for: code) {
-                        return completion(.coupon(coupon, code))
-                    }
-                    
-                    if let voucher = self.checkValidVoucher(for: code) {
-                        return completion(.voucher(voucher))
-                    }
-                    return completion(.failure(.notFound))
-                } else {
-                    let event = AppEvent(scannedCode: code, codes: codes, project: project)
-                    event.post()
-                    completion(.failure(error))
                 }
             }
         }
     }
     
+    @MainActor
     private func checkValidVoucher(for scannedCode: String) -> Voucher? {
         let project = self.project
         let vouchers = project.depositReturnVouchers
@@ -303,8 +311,9 @@ extension BarcodeManager {
         
         for coupon in validCoupons {
             for code in coupon.codes ?? [] {
-                let result = CodeMatcher.match(scannedCode, project.id)
-                if result.first(where: { $0.template.id == code.template && $0.lookupCode == code.code }) != nil {
+                let results = CodeMatcher.match(scannedCode, project.id)
+                
+                if results.first(where: { $0.template.id == code.template && $0.lookupCode == code.code }) != nil {
                     return coupon
                 }
             }
@@ -323,37 +332,39 @@ extension BarcodeManager {
     
     private func productForGS1(gs1: GS1Code,
                                originalCode: String,
-                               completion: @escaping (ScannerLookup) -> Void ) {
+                               completion: @escaping @Sendable @MainActor (ScannerLookup) -> Void ) {
         guard let gtin = gs1.gtin else {
             return completion(.failure(.notFound))
         }
         
         let codes = [(gtin, CodeTemplate.defaultName)]
         self.productProvider.productBy(codes: codes, shopId: self.shop.id) { result in
-            switch result {
-            case .success(let lookupResult):
-                let priceDigits = self.project.decimalDigits
-                let roundingMode = self.project.roundingMode
-                let (embeddedData, encodingUnit) = gs1.getEmbeddedData(for: lookupResult.encodingUnit, priceDigits, roundingMode)
-                let result = ScannedProduct(lookupResult.product,
-                                            gtin,
-                                            originalCode,
-                                            templateId: CodeTemplate.defaultName,
-                                            transmissionTemplateId: nil,
-                                            embeddedData: embeddedData,
-                                            encodingUnit: encodingUnit,
-                                            referencePriceOverride: nil,
-                                            specifiedQuantity: lookupResult.specifiedQuantity)
-                completion(.product(result))
-            case .failure(let error):
-                let event = AppEvent(scannedCode: originalCode, codes: codes, project: self.project)
-                event.post()
-                completion(.failure(error))
+            Task { @MainActor in
+                switch result {
+                case .success(let lookupResult):
+                    let priceDigits = self.project.decimalDigits
+                    let roundingMode = self.project.roundingMode
+                    let (embeddedData, encodingUnit) = gs1.getEmbeddedData(for: lookupResult.encodingUnit, priceDigits, roundingMode)
+                    let result = ScannedProduct(lookupResult.product,
+                                                gtin,
+                                                originalCode,
+                                                templateId: CodeTemplate.defaultName,
+                                                transmissionTemplateId: nil,
+                                                embeddedData: embeddedData,
+                                                encodingUnit: encodingUnit,
+                                                referencePriceOverride: nil,
+                                                specifiedQuantity: lookupResult.specifiedQuantity)
+                    completion(.product(result))
+                case .failure(let error):
+                    let event = AppEvent(scannedCode: originalCode, codes: codes, project: self.project)
+                    event.post()
+                    completion(.failure(error))
+                }
             }
         }
     }
     
-    private func productForOverrideCode(for match: OverrideLookup, completion: @escaping (ScannerLookup) -> Void ) {
+    private func productForOverrideCode(for match: OverrideLookup, completion: @escaping @Sendable @MainActor (ScannerLookup) -> Void ) {
         let code = match.lookupCode
         
         if let template = match.lookupTemplate {
@@ -370,48 +381,53 @@ extension BarcodeManager {
         let templates = matches.map { $0.template.id }
         let codes = Array(zip(lookupCodes, templates))
         self.productProvider.productBy(codes: codes, shopId: self.shop.id) { result in
-            switch result {
-            case .success(let lookupResult):
-                let newResult = ScannedProduct(lookupResult.product, code, match.transmissionCode,
-                                               templateId: lookupResult.templateId,
-                                               transmissionTemplateId: lookupResult.transmissionTemplateId,
-                                               embeddedData: nil,
-                                               encodingUnit: .price,
-                                               specifiedQuantity: lookupResult.specifiedQuantity,
-                                               priceOverride: match.embeddedData)
-                completion(.product(newResult))
-            case .failure(let error):
-                completion(.failure(error))
+            Task { @MainActor in
+                switch result {
+                case .success(let lookupResult):
+                    let newResult = ScannedProduct(lookupResult.product, code, match.transmissionCode,
+                                                   templateId: lookupResult.templateId,
+                                                   transmissionTemplateId: lookupResult.transmissionTemplateId,
+                                                   embeddedData: nil,
+                                                   encodingUnit: .price,
+                                                   specifiedQuantity: lookupResult.specifiedQuantity,
+                                                   priceOverride: match.embeddedData)
+                    completion(.product(newResult))
+                case .failure(let error):
+                    completion(.failure(error))
+                }
             }
         }
     }
     
-    private func lookupProduct(for code: String, withTemplate template: String, priceOverride: Int?, completion: @escaping (ScannerLookup) -> Void ) {
+    private func lookupProduct(for code: String, withTemplate template: String, priceOverride: Int?, completion: @escaping @Sendable @MainActor (ScannerLookup) -> Void ) {
         let codes = [(code, template)]
         self.productProvider.productBy(codes: codes, shopId: self.shop.id) { result in
-            switch result {
-            case .success(let lookupResult):
-                let transmissionCode = lookupResult.product.codes[0].transmissionCode
-                let scannedProduct: ScannedProduct
-                if let priceOverride = priceOverride {
-                    scannedProduct = ScannedProduct(lookupResult.product, code, transmissionCode,
-                                                    templateId: template,
-                                                    transmissionTemplateId: lookupResult.transmissionTemplateId,
-                                                    embeddedData: nil,
-                                                    encodingUnit: .price,
-                                                    referencePriceOverride: nil,
-                                                    specifiedQuantity: lookupResult.specifiedQuantity,
-                                                    priceOverride: priceOverride)
-                } else {
-                    scannedProduct = ScannedProduct(lookupResult.product, code, transmissionCode,
-                                                    templateId: template,
-                                                    transmissionTemplateId: lookupResult.transmissionTemplateId,
-                                                    specifiedQuantity: lookupResult.specifiedQuantity)
+            Task { @MainActor in
+                switch result {
+                case .success(let lookupResult):
+                    let transmissionCode = lookupResult.product.codes[0].transmissionCode
+                    let scannedProduct: ScannedProduct
+                    if let priceOverride = priceOverride {
+                        scannedProduct = ScannedProduct(lookupResult.product, code, transmissionCode,
+                                                        templateId: template,
+                                                        transmissionTemplateId: lookupResult.transmissionTemplateId,
+                                                        embeddedData: nil,
+                                                        encodingUnit: .price,
+                                                        referencePriceOverride: nil,
+                                                        specifiedQuantity: lookupResult.specifiedQuantity,
+                                                        priceOverride: priceOverride)
+                    } else {
+                        scannedProduct = ScannedProduct(lookupResult.product, code, transmissionCode,
+                                                        templateId: template,
+                                                        transmissionTemplateId: lookupResult.transmissionTemplateId,
+                                                        specifiedQuantity: lookupResult.specifiedQuantity)
+                    }
+                    completion(.product(scannedProduct))
+                case .failure(let error):
+                    completion(.failure(error))
                 }
-                completion(.product(scannedProduct))
-            case .failure(let error):
-                completion(.failure(error))
             }
         }
     }
 }
+

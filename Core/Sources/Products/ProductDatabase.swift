@@ -28,7 +28,7 @@ public enum ProductDbUpdate {
     case ifOlderThan(Int) // age in seconds
 }
 
-final class ProductDatabase: ProductStoring {
+final class ProductDatabase: ProductStoring, @unchecked Sendable {
     
     internal let supportedSchemaVersion = "1"
 
@@ -59,10 +59,13 @@ final class ProductDatabase: ProductStoring {
     internal var resumeData: Data?
 
 #if os(iOS)
-    private var backgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid {
+    /// Thread-safety: UIBackgroundTaskIdentifier is just a number, UIApplication.shared handles synchronization
+    nonisolated(unsafe) private var backgroundTaskIdentifier: UIBackgroundTaskIdentifier = .invalid {
         didSet {
             if oldValue != .invalid {
-                UIApplication.shared.endBackgroundTask(oldValue)
+                Task { @MainActor in
+                    UIApplication.shared.endBackgroundTask(oldValue)
+                }
             }
         }
     }
@@ -72,9 +75,13 @@ final class ProductDatabase: ProductStoring {
         willSet {
 #if os(iOS)
             if newValue != nil {
-                backgroundTaskIdentifier = UIApplication.shared.beginBackgroundTask(expirationHandler: { [self] in
-                    backgroundTaskIdentifier = .invalid
-                })
+                Task { @MainActor in
+                    let app = UIApplication.shared
+                    let taskId = app.beginBackgroundTask(expirationHandler: {
+                        // Task will be ended by didSet when backgroundTaskIdentifier is set to .invalid
+                    })
+                    backgroundTaskIdentifier = taskId
+                }
             } else {
                 backgroundTaskIdentifier = .invalid
             }
@@ -132,7 +139,7 @@ final class ProductDatabase: ProductStoring {
     ///   - forceFullDownload: if true, force a full download of the product database
     ///   - completion: This is called asynchronously on the main thread after the automatic database update check has finished
     ///   - dataAvailable: indicates if the database was updated
-    public func setup(update: ProductDbUpdate = .always, forceFullDownload: Bool = false, completion: @escaping (_ dataAvailable: ProductStoreAvailability) -> Void ) {
+    public func setup(update: ProductDbUpdate = .always, forceFullDownload: Bool = false, completion: @escaping @Sendable (_ dataAvailable: ProductStoreAvailability) -> Void ) {
         // remove comments to simulate first app installation
 //        let dbFile = self.dbPathname()
 //        let fileManager = FileManager.default
@@ -176,7 +183,7 @@ final class ProductDatabase: ProductStoring {
     ///   - forceFullDownload: if true, force a full download of the product database
     ///   - completion: This is called asynchronously on the main thread, after the update check has finished.
     ///   - dataAvailable: indicates if new data is available
-    private func updateDatabase(forceFullDownload: Bool, completion: @escaping (_ dataAvailable: ProductStoreAvailability) -> Void ) {
+    private func updateDatabase(forceFullDownload: Bool, completion: @escaping @Sendable (_ dataAvailable: ProductStoreAvailability) -> Void ) {
         let schemaVersion = "\(self.schemaVersionMajor).\(self.schemaVersionMinor)"
         let revision = (forceFullDownload || !self.databaseExists) ? 0 : self.revision
 
@@ -190,7 +197,7 @@ final class ProductDatabase: ProductStoring {
         }
     }
 
-    public func resumeIncompleteUpdate(completion: @escaping (_ dataAvailable: ProductStoreAvailability) -> Void ) {
+    public func resumeIncompleteUpdate(completion: @escaping @Sendable (_ dataAvailable: ProductStoreAvailability) -> Void ) {
         guard self.availability == .incomplete else {
             return
         }
@@ -212,7 +219,7 @@ final class ProductDatabase: ProductStoring {
         }
     }
 
-    private func processAppDbResponse(_ dbResponse: AppDbResponse, _ completion: @escaping (_ dataAvailable: ProductStoreAvailability) -> Void ) {
+    private func processAppDbResponse(_ dbResponse: AppDbResponse, _ completion: @escaping @Sendable (_ dataAvailable: ProductStoreAvailability) -> Void ) {
         DispatchQueue.global(qos: .userInitiated).async {
             let tempDbPath = self.dbPathname(temporary: true)
             let performSwitch: Bool
@@ -272,7 +279,8 @@ final class ProductDatabase: ProductStoring {
                 }
             }
 
-            DispatchQueue.main.async {
+            Task { @MainActor [weak self] in
+                guard let self else { return }
                 self.updateInProgress = false
                 self.availability = dataAvailable
                 completion(dataAvailable)

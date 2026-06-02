@@ -7,15 +7,15 @@
 
 import Foundation
 
-public enum VoucherType: String, Codable, UnknownCaseRepresentable {
+public enum VoucherType: String, Codable, UnknownCaseRepresentable, Sendable {
     case unknown
 
     case depositReturn = "depositReturnVoucher"
 
-    public static var unknownCase = VoucherType.unknown
+    public static let unknownCase = VoucherType.unknown
 }
 
-public struct Voucher: Codable {
+public struct Voucher: Codable, Sendable {
     public let id: String
 
     public let itemID: String

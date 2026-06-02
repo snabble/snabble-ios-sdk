@@ -6,11 +6,11 @@
 //
 
 import Foundation
+import UIKit
 
 import SnabbleAssetProviding
 import SnabbleUser
-import SnabbleUI
-
+import SnabbleTheme
 struct DatatransUser: Codable {
     let name: String?
     let email: String?
@@ -30,10 +30,10 @@ struct DatatransUser: Codable {
     }
 }
 
-extension User {
+extension SnabbleUser.User {
     var countryNumber: String? {
         let number: String?
-        if let countryCode = country,
+        if let countryCode = address?.country,
             let country = Country.all.country(forCode: countryCode),
             let numeric = country.numeric {
             number = String(numeric)
@@ -45,11 +45,11 @@ extension User {
 }
 
 extension DatatransAliasViewController: UserFieldProviding {
-    public static var defaultUserFields: [SnabbleUser.UserField] {
+    nonisolated public static var defaultUserFields: [SnabbleUser.UserField] {
         UserField.fieldsWithout([.state, .dateOfBirth])
     }
     
-    public static var requiredUserFields: [SnabbleUser.UserField] {
+    nonisolated public static var requiredUserFields: [SnabbleUser.UserField] {
         UserField.fieldsWithout([.state, .dateOfBirth])
     }
 }
@@ -68,11 +68,11 @@ extension DatatransAliasViewController: UserValidation {
 
 extension DatatransUser {
     static func user(from user: SnabbleUser.User) -> DatatransUser {
-        let address = DatatransUser.Address(street: user.street,
-                                            zip: user.zip,
-                                            city: user.city,
+        let address = DatatransUser.Address(street: user.address?.street,
+                                            zip: user.address?.zip,
+                                            city: user.address?.city,
                                             country: user.countryNumber,
-                                            state: user.state)
+                                            state: user.address?.state)
         
         let phone: DatatransUser.Phone?
         

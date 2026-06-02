@@ -14,15 +14,17 @@ public enum Project: Equatable {
 }
 
 public struct ProjectTrait: UITraitDefinition {
-    public static var defaultValue: Project = .none
-    public static var affectsColorAppearance: Bool = true
-    public static var identifier: String = "io.snabble.components.project"
-    public static var name: String = "Project"
+    /// Thread-safety: UITraitDefinition protocol requirement. Set once at type initialization, then only read.
+    nonisolated(unsafe) public static var defaultValue: Project = .none
+    nonisolated(unsafe) public static var affectsColorAppearance: Bool = true
+    nonisolated(unsafe) public static var identifier: String = "io.snabble.components.project"
+    nonisolated(unsafe) public static var name: String = "Project"
 }
 
 
 public struct ProjectEnvironmentKey: EnvironmentKey {
-    public static var defaultValue = ProjectTrait.defaultValue
+    /// Thread-safety: EnvironmentKey protocol requirement. Immutable constant.
+    nonisolated(unsafe) public static var defaultValue = ProjectTrait.defaultValue
 }
 
 public extension EnvironmentValues {

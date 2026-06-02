@@ -6,7 +6,7 @@
 
 import Foundation
 
-public struct DatatransPaymentMethodToken: Codable, Equatable {
+public struct DatatransPaymentMethodToken: Codable, Equatable, Sendable {
     let token: String
     let displayTitle: String
     let cardHolder: String?
@@ -57,7 +57,7 @@ public struct DatatransPaymentMethodToken: Codable, Equatable {
     }
 }
 
-public enum DatatransMethod: String, Codable {
+public enum DatatransMethod: String, Codable, Sendable {
     case twint
     case postFinanceCard
 
@@ -81,7 +81,7 @@ extension RawPaymentMethod {
 
 // Usable for TWINT / PostFinance Card
 // - stores info from a plain Datatrans.PaymentMethodToken, with optional expiry date
-public struct DatatransData: Codable, EncryptedPaymentData, Equatable {
+public struct DatatransData: Codable, EncryptedPaymentData, Equatable, Sendable {
     public static func == (lhs: DatatransData, rhs: DatatransData) -> Bool {
         return true
     }
@@ -134,7 +134,7 @@ public struct DatatransData: Codable, EncryptedPaymentData, Equatable {
 
 // Usable for Credit Cards
 // - stores info from a Datatrans.CardToken
-public struct DatatransCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCreditCard {
+public struct DatatransCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCreditCard, Sendable {
     // encrypted JSON string
     public let encryptedPaymentData: String
     // serial # of the certificate used to encrypt

@@ -10,7 +10,8 @@ import Foundation
 //  https://www.gs1.org/docs/barcodes/GS1_General_Specifications.pdf
 
 /// GS1 Application Identifier
-public struct ApplicationIdentifier {
+/// Thread-safety: Contains NSRegularExpression which is not Sendable, but instances are immutable after initialization
+public struct ApplicationIdentifier: @unchecked Sendable {
     public let prefix: String
     public let description: String
     public let format: String
@@ -32,6 +33,7 @@ public struct ApplicationIdentifier {
     // all AIs beginning with the prefixes listed here have the given constant length
     // all codes not beginning with one of these prefixes have unspecified/variable length
     // and must be terminated by a FNC1
+    /// Thread-safety: Immutable constant dictionary defined at compile time
     static let predefinedLengths = [
         "00": 20, "01": 16, "02": 16, "03": 16, "04": 18, "11": 8, "12": 8, "13": 8, "14": 8,
         "15": 8, "16": 8, "17": 8, "18": 8, "19": 8, "20": 4, "31": 10, "32": 10, "33": 10,
@@ -50,6 +52,7 @@ public struct ApplicationIdentifier {
     private static let charset39 = #"#-/0-9A-Z"#
 
     // all AIs defined by the GS1 Standard Release 20.0 from January 2020
+    /// Thread-safety: Immutable constant array defined at compile time
     static let allIdentifiers: [ApplicationIdentifier] = [
         ApplicationIdentifier("00", "Serial Shipping Container Code (SSCC)", "N2+N18", "SSCC", false, "00(\\d{18})"),
         ApplicationIdentifier("01", "Global Trade Item Number (GTIN)", "N2+N14", "GTIN", false, "01(\\d{14})"),

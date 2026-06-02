@@ -54,7 +54,7 @@ private struct LockedButtonStyle: ButtonStyle {
     var background: some View {
         if !isEnabled {
             CountDownButtonBackground(interval: interval) {
-                DispatchQueue.main.async {
+                Task { @MainActor in
                     self.isEnabled = true
                 }
             }
@@ -89,7 +89,7 @@ private struct CountDownButtonBackground: View {
                 let width = size.width / interval * to.timeIntervalSinceNow
                 
                 if timeContext.date > self.to {
-                    DispatchQueue.main.async {
+                    Task { @MainActor in
                         self.completion()
                     }
                 }

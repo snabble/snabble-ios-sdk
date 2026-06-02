@@ -31,6 +31,16 @@ extension Payment: Swift.Identifiable {
     }
 }
 
+extension Payment: Hashable {
+    public func hash(into hasher: inout Hasher) {
+        hasher.combine(id)
+    }
+
+    public static func == (lhs: Payment, rhs: Payment) -> Bool {
+        lhs.id == rhs.id
+    }
+}
+
 public extension PaymentMethodDetails {
     static func userDetails(for projectId: Identifier<Project>?) -> [PaymentMethodDetail] {
         return PaymentMethodDetails.read()

@@ -22,7 +22,7 @@ public enum Provider: String, Decodable {
 }
 
 // known payment methods
-public enum RawPaymentMethod: String, Decodable, CaseIterable, Swift.Identifiable {
+public enum RawPaymentMethod: String, Decodable, CaseIterable, Swift.Identifiable, Sendable {
     case qrCodePOS              // QR Code with a reference to snabble's backend
     case qrCodeOffline          // QR Code, offline capable, format is specified via `QRCodeConfig.format`
     case deDirectDebit          // SEPA direct debit via Telecash/First Data
@@ -41,6 +41,7 @@ public enum RawPaymentMethod: String, Decodable, CaseIterable, Swift.Identifiabl
         rawValue
     }
 
+    /// Thread-safety: Immutable constant array defined at compile time
     public static let orderedMethods: [RawPaymentMethod] = [
         // customer-specific methods
         .customerCardPOS, .externalBilling,
@@ -58,6 +59,7 @@ public enum RawPaymentMethod: String, Decodable, CaseIterable, Swift.Identifiabl
 
     // roughly sorted by popularity
     // Apple Pay is not included here, needs separate treatment
+    /// Thread-safety: Immutable constant array defined at compile time
     public static let preferredOnlineMethods: [RawPaymentMethod] = [
         .deDirectDebit, .creditCardVisa, .creditCardMastercard, .creditCardAmericanExpress, .giropayOneKlick
     ]
@@ -144,7 +146,7 @@ public enum RawPaymentMethod: String, Decodable, CaseIterable, Swift.Identifiabl
     }
 }
 
-public struct PaymentMethodDescription: Decodable {
+public struct PaymentMethodDescription: Decodable, Sendable {
     enum CodingKeys: String, CodingKey {
         case method = "id"
         case acceptedOriginTypes
@@ -155,7 +157,7 @@ public struct PaymentMethodDescription: Decodable {
 }
 
 // associated data for a payment method
-public struct PaymentMethodData {
+public struct PaymentMethodData: Sendable {
     public let displayName: String
     public let encryptedData: String
     public let originType: AcceptedOriginType
@@ -170,7 +172,7 @@ public struct PaymentMethodData {
 }
 
 // payment method with associated data
-public enum PaymentMethod {
+public enum PaymentMethod: Sendable {
     case qrCodePOS
     case qrCodeOffline
     case deDirectDebit(PaymentMethodData?)

@@ -27,7 +27,6 @@ public struct PrimaryButtonView: View {
                 .frame(maxWidth: .infinity)
         }
         .buttonStyle(ProjectPrimaryButtonStyle(disabled: disabled))
-        .disabled(disabled)
     }
 }
 

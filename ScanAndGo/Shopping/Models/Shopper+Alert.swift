@@ -8,7 +8,6 @@
 import SwiftUI
 
 import SnabbleCore
-import SnabbleUI
 
 extension Shopper {
     func alert(_ controller: UIAlertController) -> Alert {

@@ -1,13 +1,13 @@
 {
-  "originHash" : "75b4b568f54ca1ebf94f6d3bb7aee0276daecf3998b2afccc8e9830d593a7887",
+  "originHash" : "ebe20470384c4bbe21acc6a8639272ebcea182fff7682d95c566bbb089063a0e",
   "pins" : [
     {
       "identity" : "camerazoomwheel",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/utilem/CameraZoomWheel.git",
       "state" : {
-        "revision" : "35b49953e2a16d50756d73898b600e33fc959df0",
-        "version" : "1.1.0"
+        "revision" : "46a0462131849870cd0b73775de4c76474620420",
+        "version" : "2.0.0"
       }
     },
     {
@@ -44,24 +44,6 @@
       "state" : {
         "revision" : "84e546727d66f1adc5439debad16270d0fdd04e7",
         "version" : "4.2.2"
-      }
-    },
-    {
-      "identity" : "pulley",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/snabble/Pulley.git",
-      "state" : {
-        "revision" : "1728c7ce69857134db82ad82300772a4364d2af5",
-        "version" : "2.9.2"
-      }
-    },
-    {
-      "identity" : "sdcalertview",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/sberrevoets/SDCAlertView.git",
-      "state" : {
-        "revision" : "eda84764885b55b30c334384afee5f8f06ac48de",
-        "version" : "12.0.5"
       }
     },
     {

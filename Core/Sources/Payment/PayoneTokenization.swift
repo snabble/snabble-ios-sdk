@@ -8,7 +8,7 @@
 import Foundation
 
 // data we get to perform initial tokenization
-public struct PayoneTokenization: Decodable {
+public struct PayoneTokenization: Decodable, Sendable {
     public let merchantID: String
     public let portalID: String
     public let accountID: String
@@ -18,23 +18,23 @@ public struct PayoneTokenization: Decodable {
     public let preAuthInfo: PreAuthInfo
     public let links: PayoneLinks
 
-    public struct PreAuthInfo: Decodable {
+    public struct PreAuthInfo: Decodable, Sendable {
         public let amount: Int
         public let currency: String
     }
 
-    public struct PayoneLinks: Decodable {
+    public struct PayoneLinks: Decodable, Sendable {
         public let preAuth: Link
     }
 }
 
 // response from POSTing the auth data
-public struct PayonePreAuthResult: Decodable {
+public struct PayonePreAuthResult: Decodable, Sendable {
     public let status: PayonePreAuthStatus
     let userID: String
     public let links: PayonePreAuthLinks
 
-    public struct PayonePreAuthLinks: Decodable {
+    public struct PayonePreAuthLinks: Decodable, Sendable {
         public let scaChallenge: Link
         public let preAuthStatus: Link
         public let redirectSuccess: Link
@@ -44,11 +44,11 @@ public struct PayonePreAuthResult: Decodable {
 }
 
 // response from querying the `preAuthStatus` endpoint
-public struct PayonePreAuthStatusResult: Decodable {
+public struct PayonePreAuthStatusResult: Decodable, Sendable {
     public let status: PayonePreAuthStatus
 }
 
-public enum PayonePreAuthStatus: String, Decodable, UnknownCaseRepresentable {
+public enum PayonePreAuthStatus: String, Decodable, UnknownCaseRepresentable, Sendable {
     case unknown
 
     case pending

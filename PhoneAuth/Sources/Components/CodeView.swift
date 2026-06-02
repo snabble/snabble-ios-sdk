@@ -6,7 +6,6 @@
 //
 
 import SwiftUI
-import Combine
 
 import SnabbleAssetProviding
 import SnabbleUser
@@ -127,9 +126,7 @@ public struct CodeView: View {
                 case .management:
                     appUser = try await networkManager.changePhoneNumber(phoneNumber: phoneNumber, OTP: OTP)
                 }
-                DispatchQueue.main.async {
-                    onCompletion(appUser)
-                }
+                onCompletion(appUser)
             } catch {
                 errorMessage = messageFor(error: error)
             }

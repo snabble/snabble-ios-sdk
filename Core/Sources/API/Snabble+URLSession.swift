@@ -13,7 +13,8 @@ extension Snabble {
     /// and verifies the CAs
     ///
     /// - Returns: a URLSession object
-    public static var urlSession: URLSession = {
+    /// Thread-safety: Lazily initialized once, then only read. URLSession is thread-safe.
+    nonisolated(unsafe) public static var urlSession: URLSession = {
         let sessionConfiguration = URLSessionConfiguration.default
         sessionConfiguration.httpCookieStorage = nil
         return URLSession(configuration: sessionConfiguration)

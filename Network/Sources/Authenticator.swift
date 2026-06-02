@@ -1,24 +1,22 @@
 //
 //  Authenticator.swift
-//  
+//
 //
 //  Created by Andreas Osberghaus on 2022-12-19.
 //
 
 import Foundation
-import Dispatch
-import Combine
 
+@MainActor
 protocol AuthenticatorDelegate: AnyObject {
     func authenticator(_ authenticator: Authenticator, appUserForConfiguration configuration: Configuration) -> AppUser?
     func authenticator(_ authenticator: Authenticator, appUserUpdated appUser: AppUser)
-
     func authenticator(_ authenticator: Authenticator, projectIdForConfiguration configuration: Configuration) -> String?
 }
 
-class Authenticator {
-    public let urlSession: URLSession
-
+@MainActor
+final class Authenticator {
+    let urlSession: URLSession
     weak var delegate: AuthenticatorDelegate?
 
     enum Error: Swift.Error {
@@ -27,10 +25,7 @@ class Authenticator {
     }
 
     private(set) var token: Token?
-
-    private let queue: DispatchQueue = .init(label: "io.snabble.network.authenticator.\(UUID().uuidString)")
-
-    private var refreshPublisher: AnyPublisher<Token, Swift.Error>?
+    private var refreshTask: Task<Token, Swift.Error>?
 
     init(urlSession: URLSession) {
         self.urlSession = urlSession
@@ -43,98 +38,60 @@ class Authenticator {
 
     func invalidateToken() {
         token = nil
+        refreshTask?.cancel()
+        refreshTask = nil
     }
 
-    private func validateAppUser(withConfiguration configuration: Configuration) -> AnyPublisher<AppUser, Swift.Error> {
-        // scenario 1: app instance is registered
-        if let appUser = delegate?.authenticator(self, appUserForConfiguration: configuration) {
-            return Just(appUser)
-                .setFailureType(to: Swift.Error.self)
-                .eraseToAnyPublisher()
+    func validToken(withConfiguration configuration: Configuration, forceRefresh: Bool = false) async throws -> Token {
+        if !forceRefresh, let task = refreshTask {
+            return try await task.value
         }
+        if !forceRefresh, let token, token.isValid() {
+            return token
+        }
+        if forceRefresh {
+            refreshTask?.cancel()
+            refreshTask = nil
+        }
+        let task = Task { [weak self] in
+            guard let self else { throw Error.missingAuthenticator }
+            return try await self.fetchToken(configuration: configuration)
+        }
+        refreshTask = task
+        do {
+            let fetchedToken = try await task.value
+            token = fetchedToken
+            refreshTask = nil
+            return fetchedToken
+        } catch {
+            refreshTask = nil
+            throw error
+        }
+    }
 
-        // scenario 2: we have to register the app instance
-        var endpoint = Endpoints.AppUser.post(
+    private func fetchToken(configuration: Configuration) async throws -> Token {
+        let appUser = try await validateAppUser(withConfiguration: configuration)
+        guard let projectId = delegate?.authenticator(self, projectIdForConfiguration: configuration) ?? configuration.projectId else {
+            throw Error.missingProject
+        }
+        var endpoint = Endpoints.Token.get(
             appId: configuration.appId,
-            appSecret: configuration.appSecret
+            appSecret: configuration.appSecret,
+            appUser: appUser,
+            projectId: projectId
         )
         endpoint.domain = configuration.domain
-        let publisher = urlSession.dataTaskPublisher(for: endpoint)
-            .handleEvents(receiveOutput: { [weak self] response in
-                // Guard against self being deallocated before the response arrives
-                guard let self else { return }
-                self.delegate?.authenticator(self, appUserUpdated: response.appUser)
-            })
-            .map {
-                $0.appUser
-            }
-            .eraseToAnyPublisher()
-        return publisher
+        return try await urlSession.data(for: endpoint)
     }
 
-    func validToken(
-        withConfiguration configuration: Configuration,
-        forceRefresh: Bool = false
-    ) -> AnyPublisher<Token, Swift.Error> {
-        return queue.sync { [weak self] in
-            guard let self = self else {
-                return Fail(error: Error.missingAuthenticator)
-                    .eraseToAnyPublisher()
-            }
-            // scenario 1: we're already loading a new token
-            if let publisher = self.refreshPublisher {
-                return publisher
-            }
-
-            // scenario 2: we already have a valid token and don't want to force a refresh
-            if let token = self.token, token.isValid(), !forceRefresh {
-                return Just(token)
-                    .setFailureType(to: Swift.Error.self)
-                    .eraseToAnyPublisher()
-            }
-
-            // scenario 3: we need a new token
-            guard let projectId = self.delegate?.authenticator(self, projectIdForConfiguration: configuration) ?? configuration.projectId else {
-                return Fail(error: Error.missingProject)
-                    .eraseToAnyPublisher()
-            }
-
-            let publisher = self.validateAppUser(withConfiguration: configuration)
-                .map { appUser -> Endpoint<Token> in
-                    var endpoint = Endpoints.Token.get(
-                        appId: configuration.appId,
-                        appSecret: configuration.appSecret,
-                        appUser: appUser,
-                        projectId: projectId
-                    )
-                    endpoint.domain = configuration.domain
-                    return endpoint
-                }
-                .tryMap { tokenEndpoint -> (URLSession, Endpoint<Token>) in
-                    return (self.urlSession, tokenEndpoint)
-                }
-                .mapError { HTTPError.unexpected($0) }
-                .flatMap { urlSession, endpoint in
-                    return urlSession.dataTaskPublisher(for: endpoint)
-                }
-                .handleEvents(receiveOutput: { token in
-                    self.token = token
-                }, receiveCompletion: { _ in
-                    // receiveCompletion is always delivered from URLSession's thread,
-                    // never from this queue — queue.sync is safe here and prevents
-                    // a race window where a new subscriber sees a completed publisher.
-                    self.queue.sync {
-                        self.refreshPublisher = nil
-                    }
-                })
-                // Share the publisher so all concurrent callers subscribe to the
-                // same upstream chain. Without this, each subscriber independently
-                // drives validateAppUser and fires a redundant AppUser POST request.
-                .share()
-                .eraseToAnyPublisher()
-
-            self.refreshPublisher = publisher
-            return publisher
+    private func validateAppUser(withConfiguration configuration: Configuration) async throws -> AppUser {
+        if let appUser = delegate?.authenticator(self, appUserForConfiguration: configuration) {
+            return appUser
         }
+        var endpoint = Endpoints.AppUser.post(appId: configuration.appId, appSecret: configuration.appSecret)
+        endpoint.domain = configuration.domain
+        let response: UsersResponse = try await urlSession.data(for: endpoint)
+        delegate?.authenticator(self, appUserUpdated: response.appUser)
+        return response.appUser
     }
 }

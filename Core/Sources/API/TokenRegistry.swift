@@ -53,14 +53,16 @@ private struct TokenData {
     }
 }
 
-public final class TokenRegistry {
+/// Thread-safety: Uses ReadWriteLock for synchronization of internal state
+public final class TokenRegistry: @unchecked Sendable {
     private let appId: String
     private let secret: String
 
     private var verboseToken = false
 
     private var projectTokens = [Identifier<Project>: TokenData]()
-    private weak var refreshTimer: Timer?
+    /// Thread-safety: Timer is always scheduled and invalidated on main thread
+    nonisolated(unsafe) private weak var refreshTimer: Timer?
 
     private typealias Handlers = [(String?) -> Void]
     private var pendingHandlers = [Identifier<Project>: Handlers ]()
@@ -177,10 +179,11 @@ public final class TokenRegistry {
         let refreshIn = earliest.refresh.timeIntervalSinceReferenceDate - now
 
         if self.verboseToken { Log.debug("start refresh timer: run refresh in \(refreshIn)s") }
-        DispatchQueue.main.async {
+        Task { @MainActor [weak self] in
+            guard let self else { return }
             self.refreshTimer?.invalidate()
-            self.refreshTimer = Timer.scheduledTimer(withTimeInterval: max(1, refreshIn), repeats: false) { _ in
-                self.refreshTokens()
+            self.refreshTimer = Timer.scheduledTimer(withTimeInterval: max(1, refreshIn), repeats: false) { [weak self] _ in
+                self?.refreshTokens()
             }
         }
     }
@@ -211,24 +214,24 @@ public final class TokenRegistry {
         }
     }
 
-    private func retrieveToken(for projectId: Identifier<Project>, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void) {
+    private func retrieveToken(for projectId: Identifier<Project>, _ date: Date? = nil, completion: @escaping @Sendable (TokenData?) -> Void) {
         if let appUser = Snabble.shared.appUser {
-            if verboseToken { Log.debug("retrieveToken p=\(projectId.rawValue) app=\(self.appId) client=\(Snabble.clientId) au=\(appUser), date=\(String(describing: date))") }
+            if verboseToken { Log.debug("retrieveToken p=\(projectId.rawValue) app=\(self.appId) client=\(Client.id) au=\(appUser), date=\(String(describing: date))") }
             self.retrieveTokenForUser(for: projectId, appUser, date, completion: completion)
         } else {
-            if verboseToken { Log.debug("retrieveToken+User p=\(projectId.rawValue) app=\(self.appId) client=\(Snabble.clientId) date=\(String(describing: date))") }
+            if verboseToken { Log.debug("retrieveToken+User p=\(projectId.rawValue) app=\(self.appId) client=\(Client.id) date=\(String(describing: date))") }
             self.retrieveAppUserAndToken(for: projectId, date, completion: completion)
         }
     }
 
-    private func retrieveAppUserAndToken(for projectId: Identifier<Project>, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void) {
+    private func retrieveAppUserAndToken(for projectId: Identifier<Project>, _ date: Date? = nil, completion: @escaping @Sendable (TokenData?) -> Void) {
         guard let project = Snabble.shared.project(for: projectId) else {
             return completion(nil)
         }
 
         let url = Snabble.shared.metadata.links.createAppUser.href
         let parameters = [ "project": projectId.rawValue ]
-        project.request(.post, url, jwtRequired: false, parameters: parameters, timeout: 5) { request in
+        project.request(.post, url, jwtRequired: false, parameters: parameters, timeout: 15) { request in
             guard
                 var request = request,
                 let password = self.generatePassword(date)
@@ -261,7 +264,7 @@ public final class TokenRegistry {
         }
     }
 
-    private func retrieveTokenForUser(for projectId: Identifier<Project>, _ appUser: AppUser, _ date: Date? = nil, completion: @escaping (TokenData?) -> Void ) {
+    private func retrieveTokenForUser(for projectId: Identifier<Project>, _ appUser: AppUser, _ date: Date? = nil, completion: @escaping @Sendable (TokenData?) -> Void ) {
         guard let project = Snabble.shared.project(for: projectId) else {
             return completion(nil)
         }
@@ -269,7 +272,7 @@ public final class TokenRegistry {
         let parameters = [ "role": "retailerApp" ]
 
         let url = project.links.tokens.href
-        project.request(.get, url, jwtRequired: false, parameters: parameters, timeout: 5) { request in
+        project.request(.get, url, jwtRequired: false, parameters: parameters, timeout: 15) { request in
             guard
                 var request = request,
                 let password = self.generatePassword(date)
@@ -300,7 +303,7 @@ public final class TokenRegistry {
         }
     }
 
-    private func retryWithServerDate(_ projectId: Identifier<Project>, _ response: HTTPURLResponse, completion: @escaping (TokenData?) -> Void ) {
+    private func retryWithServerDate(_ projectId: Identifier<Project>, _ response: HTTPURLResponse, completion: @escaping @Sendable (TokenData?) -> Void ) {
         // not authorized. try again with the content of the the server's "Date" header
         if let serverDate = response.allHeaderFields["Date"] as? String {
             let formatter = DateFormatter()

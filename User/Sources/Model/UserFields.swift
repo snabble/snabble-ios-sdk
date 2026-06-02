@@ -108,3 +108,9 @@ extension Array where Element == UserField {
         self.filter { !unwanted.contains($0) }
     }
 }
+
+public protocol UserValidation: UIViewController {
+    func acceptUser(user: SnabbleUser.User) -> Bool
+}
+
+public typealias UserInputConformance = UserValidation & UserFieldProviding

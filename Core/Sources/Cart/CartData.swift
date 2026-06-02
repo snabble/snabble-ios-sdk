@@ -21,7 +21,7 @@ public struct CartConfig {
 
 /// information about the scanned code that was used to add an item to the
 /// shopping cart.
-public struct ScannedCode: Codable {
+public struct ScannedCode: Codable, Sendable {
     /// the raw code as seen by the scanner
     public let scannedCode: String
     /// the transmissionCode from the `scannableCodes` table
@@ -68,7 +68,7 @@ public struct ScannedCode: Codable {
 }
 
 /// a coupon entry in a shopping cart
-public struct CartCoupon: Codable {
+public struct CartCoupon: Codable, Sendable {
     public let uuid: String
     public let coupon: Coupon
     public let scannedCode: String?
@@ -80,7 +80,7 @@ public struct CartCoupon: Codable {
 }
 
 /// a voucher entry in a shopping cart
-public struct CartVoucher: Codable {
+public struct CartVoucher: Codable, Sendable {
     public let uuid: String
     public let voucher: Voucher
 
@@ -96,7 +96,7 @@ public struct CartVoucher: Codable {
 }
 
 /// a product entry in a shopping cart.
-public struct CartItem: Codable {
+public struct CartItem: Codable, Sendable {
     /// quantity or weight
     public internal(set) var quantity: Int
     

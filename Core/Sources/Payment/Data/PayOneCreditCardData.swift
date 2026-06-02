@@ -8,7 +8,7 @@
 import Foundation
 
 // stores info from a PAYONE authorization
-public struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCreditCard {
+public struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCreditCard, Sendable {
     // encrypted JSON string
     public let encryptedPaymentData: String
     // serial # of the certificate used to encrypt
@@ -101,7 +101,7 @@ public struct PayoneCreditCardData: Codable, EncryptedPaymentData, Equatable, Br
     }
 }
 
-public struct PayoneResponse {
+public struct PayoneResponse: Sendable {
     public let info: PayonePreAuthData
     let maskedCardPAN: String
     let brand: CreditCardBrand

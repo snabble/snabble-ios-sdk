@@ -3,14 +3,13 @@
 //
 //  Copyright © 2020 snabble. All rights reserved.
 //
-
 import Foundation
 import CoreLocation
-import SnabbleUser
-import SnabbleNetwork
-import Combine
 
-public var globalButterOverflow: String?
+import SnabbleNetwork
+
+/// Thread-safety: Global debug variable, set once during testing/debugging
+nonisolated(unsafe) public var globalButterOverflow: String?
 
 public enum CustomProperty: Hashable {
     case externalBillingSubjectLimit(projectId: String)
@@ -58,6 +57,11 @@ public struct Config {
     /// Custom Properties
     public var customProperties: [CustomProperty: Any] = [:]
 
+    /// The snabble domain name
+    public var domainName: String {
+        environment.name
+    }
+
     /// Initialize the configuration for Snabble
     /// - Parameters:
     ///   - appId: Provide your personal `appId`
@@ -70,22 +74,19 @@ public struct Config {
     }
 }
 
-extension Config: SnabbleUser.Configurable, SnabbleNetwork.Configurable {
-    public var domainName: String {
-        environment.name
-    }
-}
-
 public extension Notification.Name {
-    static var metadataLoaded = Notification.Name(rawValue: "io.snabble.metadataLoaded")
+    /// Thread-safety: Notification name constant, immutable after initialization
+    nonisolated(unsafe) static var metadataLoaded = Notification.Name(rawValue: "io.snabble.metadataLoaded")
 }
 
 /**
  * The main entry point for the SnabbleSDK.
  *
  * Use `Snabble.setup(config:, completion:)` to initialize Snabble.
+ *
+ * Thread-safety: Singleton with internal synchronization via ReadWriteLock and dispatch queues
  */
-public class Snabble {
+public class Snabble: @unchecked Sendable {
 
     private init(config: Config, tokenRegistry: TokenRegistry) {
         self.config = config
@@ -153,7 +154,8 @@ public class Snabble {
     }
 
     /// Snabble instance is accessible after calling `Snabble.setup(config:, completion:)`
-    public private(set) static var shared: Snabble!
+    /// Thread-safety: Set once during app initialization via setup(), then only read
+    nonisolated(unsafe) public private(set) static var shared: Snabble!
 
     /// Geo-fencing based check in manager. Use for automatically detecting if you are in a shop.
     public lazy var checkInManager = CheckInManager()
@@ -195,7 +197,8 @@ public class Snabble {
         return metadata.links.giropayCustomerAuthorization?.href
     }
     
-    public static let methodRegistry = MethodRegistry()
+    /// Thread-safety: Singleton registry initialized at static initialization, internal synchronization
+    nonisolated(unsafe) public static let methodRegistry = MethodRegistry()
 
     private var databases: [Identifier<Project>: ProductDatabase]
 
@@ -245,7 +248,7 @@ public class Snabble {
     /// - Parameters:
     ///   - config: `SnabbleAPIConfig` with at least an `appId` and a `secret`
     ///   - completion: CompletionHandler is called as soon as everything is finished
-    public static func setup(config: Config, completion: @escaping (Snabble) -> Void) {
+    public static func setup(config: Config, completion: @escaping @Sendable (Snabble) -> Void) {
         shared = Snabble(
             config: config,
             tokenRegistry: TokenRegistry(appId: config.appId, secret: config.secret)
@@ -255,7 +258,7 @@ public class Snabble {
     
     /// update Snabble
     /// - Parameter completion: completionHandler informs about the status
-    public func update(completion: @escaping (Snabble) -> Void) {
+    public func update(completion: @escaping @Sendable (Snabble) -> Void) {
         let bundleVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String ?? "0.0"
         let appVersion = config.appVersion ?? bundleVersion
         let version = appVersion.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? appVersion
@@ -275,11 +278,16 @@ public class Snabble {
                 }
             }
 
-            if let project = self.metadata.projects.first {
-                self.tokenRegistry.getToken(for: project) { _ in
-                    metadataLoaded()
-                }
-            } else {
+            let projects = self.metadata.projects
+            guard !projects.isEmpty else {
+                return metadataLoaded()
+            }
+            let group = DispatchGroup()
+            for project in projects {
+                group.enter()
+                self.tokenRegistry.getToken(for: project) { _ in group.leave() }
+            }
+            group.notify(queue: .main) {
                 metadataLoaded()
             }
         }
@@ -309,7 +317,7 @@ public class Snabble {
         }
     }
 
-    private func loadCoupons(_ completion: @escaping () -> Void) {
+    private func loadCoupons(_ completion: @escaping @Sendable () -> Void) {
         // reload coupons from `coupons` endpoint where present
         let group = DispatchGroup()
 
@@ -344,7 +352,7 @@ public class Snabble {
     
     /// Set up database for project
     /// - Parameter project: `Project` associated to setup the product database
-    public func setupProductDatabase(for project: Project, completion: @escaping (ProductStoreAvailability) -> Void) {
+    public func setupProductDatabase(for project: Project, completion: @escaping @Sendable (ProductStoreAvailability) -> Void) {
         productDatabase(for: project).setup(completion: completion)
     }
     
@@ -389,39 +397,6 @@ public class Snabble {
 }
 
 extension Snabble {
-    /**
-     SnabbleSDK client identification
-
-     Stored in the keychain. Survives an uninstallation
-
-     - Important: [Apple Developer Forum Thread 36442](https://developer.apple.com/forums/thread/36442?answerId=281900022#281900022)
-    */
-    public static var clientId: String {
-        SnabbleUser.Client.id
-    }
-
-    // MARK: - app user id
-
-    /**
-     SnabbleSDK application user identification
-
-     Stored in the keychain. Survives an uninstallation
-
-     - Important: [Apple Developer Forum Thread 36442](https://developer.apple.com/forums/thread/36442?answerId=281900022#281900022)
-    */
-    public var appUser: AppUser? {
-        get {
-            AppUser.get(forConfig: config)
-        }
-        set {
-            AppUser.set(newValue, forConfig: config)
-            tokenRegistry.invalidate()
-            OrderList.clearCache()
-        }
-    }
-}
-
-extension Snabble {
     public func urlFor(_ url: String) -> URL? {
         URL(string: absoluteUrl(url))
     }
@@ -445,7 +420,7 @@ extension Snabble {
 extension Snabble {
     public static func request(url: URL, timeout: TimeInterval? = nil, json: Bool = true) -> URLRequest {
         var request = URLRequest(url: url)
-        request.addValue(Snabble.clientId, forHTTPHeaderField: "Client-Id")
+        request.addValue(Client.id, forHTTPHeaderField: "Client-Id")
 
         if let userAgent = Snabble.userAgent {
             request.addValue(userAgent, forHTTPHeaderField: "User-Agent")
@@ -498,7 +473,9 @@ extension Snabble {
         var machine = [CChar](repeating: 0, count: size)
         sysctlbyname("hw.machine", &machine, &size, nil, 0)
         
-        return String(cString: machine)
+        // Remove null terminator and decode as UTF-8
+        let bytes = machine.prefix(while: { $0 != 0 }).map { UInt8(bitPattern: $0) }
+        return String(bytes: bytes, encoding: .utf8) ?? ""
     }()
 
     /// HTTP headerFields using user agent keys defined in https://wicg.github.io/ua-client-hints/
@@ -589,8 +566,10 @@ extension Snabble {
         }
     }
 
-    private(set) static var appUserData: AppUserData?
-    private static weak var appUserDataTask: URLSessionDataTask?
+    /// Thread-safety: Set during fetchAppUserData() network call, accessed from multiple threads
+    nonisolated(unsafe) private(set) static var appUserData: AppUserData?
+    /// Thread-safety: Weak reference to ongoing network task, accessed from multiple threads
+    nonisolated(unsafe) private static weak var appUserDataTask: URLSessionDataTask?
 
     public static var userAge: Int {
         return appUserData?.age ?? 0
@@ -628,7 +607,7 @@ extension Snabble {
 
     private struct TermsResponse: Decodable {}
 
-    public func saveTermsConsent(_ version: String, completion: @escaping (Bool) -> Void) {
+    public func saveTermsConsent(_ version: String, completion: @escaping @Sendable (Bool) -> Void) {
         guard
             let appUserId = appUser?.id,
             let consents = links.consents?.href,

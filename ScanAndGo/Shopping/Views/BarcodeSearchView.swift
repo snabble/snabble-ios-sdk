@@ -10,7 +10,6 @@ import SwiftUI
 import SnabbleCore
 import SnabbleAssetProviding
 import SnabbleComponents
-import SnabbleUI
 
 struct BarcodeSearchRowView: View {
     let product: Product
@@ -27,7 +26,8 @@ struct BarcodeSearchRowView: View {
         VStack(alignment: .leading) {
             Text(codeString)
             Text(product.name)
-                .font(.caption)
+                .font(.subheadline)
+                .foregroundStyle(.secondary)
         }
         .padding(.horizontal)
         .containerRelativeFrame(.horizontal, alignment: .leading)

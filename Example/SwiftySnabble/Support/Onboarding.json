@@ -1,0 +1,20 @@
+{
+    "configuration" : {
+        "imageSource" : "Onboarding/onboarding-logo"
+    },
+    "items" : [
+        {
+            "imageSource": "Onboarding/onboarding-image-1",
+            "text": "Onboarding.message1"
+        },
+        {
+            "imageSource": "Onboarding/onboarding-image-2",
+            "text": "Onboarding.message2"
+        },
+        {
+            "imageSource": "Onboarding/onboarding-image-3",
+            "text": "Please accept the [terms](snabble://terms.html) of use and take note of the [privacy](snabble://privacy.html) policy.",
+            "customButtonTitle": "Onboarding.accept"
+        }
+    ]
+}

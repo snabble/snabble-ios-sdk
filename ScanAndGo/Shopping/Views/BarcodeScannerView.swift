@@ -9,16 +9,12 @@ import Foundation
 import OSLog
 import SwiftUI
 import AVFoundation
-import Combine
 
 import SnabbleAssetProviding
-import SnabbleUI
 
 class BarcodeScannerViewController: UIViewController {
     let detector: InternalBarcodeDetector
     let logger = Logger(subsystem: "io.snabble.sdk.ScanAndGo", category: "BarcodeScannerViewController")
-    
-    private var subscriptions = Set<AnyCancellable>()
     
     init(detector: InternalBarcodeDetector) {
         self.detector = detector
@@ -38,16 +34,10 @@ class BarcodeScannerViewController: UIViewController {
         
         if let previewLayer = detector.previewLayer {
             addLayer(previewLayer, to: self)
-        } else {
-            logger.warning("camera preview is not available")
-#if targetEnvironment(simulator)
-            let layer = CAGradientLayer()
-            layer.colors = [UIColor.projectPrimary().cgColor, UIColor.white.cgColor]
-            addLayer(layer, to: self)
-#endif
         }
     }
-    private func addLayer(_ layer: CALayer, to viewController: UIViewController) {
+
+    func addLayer(_ layer: CALayer, to viewController: UIViewController) {
         let frame = viewController.view.bounds
         let insets = UIApplication.shared.sceneKeyWindow?.safeAreaInsets ?? UIEdgeInsets()
         
@@ -57,7 +47,7 @@ class BarcodeScannerViewController: UIViewController {
         logger.debug("preview layer size: \(rect.width) x \(rect.height)")
         
         if layer.superlayer == nil {
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 viewController.view.layer.addSublayer(layer)
             }
         }
@@ -65,7 +55,7 @@ class BarcodeScannerViewController: UIViewController {
 }
 
 public struct BarcodeScannerView: UIViewControllerRepresentable {
-    @SwiftUI.Environment(\.safeAreaInsets) var insets
+//    @SwiftUI.Environment(\.safeAreaInsets) var insets
     
     public let detector: InternalBarcodeDetector
     
@@ -77,35 +67,43 @@ public struct BarcodeScannerView: UIViewControllerRepresentable {
         return BarcodeScannerViewController(detector: detector)
     }
 
-    // swiftlint:disable:next no_empty_block
-    public func updateUIViewController(_ uiViewController: UIViewController, context: UIViewControllerRepresentableContext<BarcodeScannerView>) { }
+    public func updateUIViewController(_ uiViewController: UIViewController, context: UIViewControllerRepresentableContext<BarcodeScannerView>) {
+        guard let vc = uiViewController as? BarcodeScannerViewController,
+              let previewLayer = detector.previewLayer,
+              previewLayer.superlayer == nil else { return }
+        vc.addLayer(previewLayer, to: vc)
+    }
     
     public func makeCoordinator() -> Coordinator {
         Coordinator(self)
     }
 
+    @MainActor
     public class Coordinator: NSObject {
         var parent: BarcodeScannerView
-        private var subscriptions = Set<AnyCancellable>()
-        
+        nonisolated(unsafe) private var stateTask: Task<Void, Never>?
+
         init(_ parent: BarcodeScannerView) {
             self.parent = parent
+            super.init()
             let detector = parent.detector
-            
-            if !detector.hasCamera {
-                detector.setup()
-            }
-            self.parent.detector.statePublisher
-                .sink { state in
-                    switch state {
-                    case .idle:
-                        /// setup camera, can be called more than once
+
+            // Defer setup() via Task to avoid mutating @Observable state during the SwiftUI
+            // render pass, which would cause an AttributeGraph cycle and corrupt position state.
+            stateTask = Task { @MainActor [detector] in
+                if !detector.hasCamera {
+                    detector.setup()
+                }
+                for await state in detector.statePublisher.values {
+                    if case .idle = state {
                         detector.setup()
-                    case .ready, .scanning, .pausing, .batterySaving:
-                        break
                     }
                 }
-                .store(in: &subscriptions)
+            }
+        }
+
+        deinit {
+            stateTask?.cancel()
         }
     }
 }
@@ -123,20 +121,15 @@ public struct BarcodeScanner: UIViewRepresentable {
         
         if let preview = detector.previewLayer {
             containerView.setupPreviewLayer(preview)
-        } else {
-            let layer = CAGradientLayer()
-            layer.colors = [UIColor.projectPrimary().cgColor, UIColor.white.cgColor]
-            containerView.setupPreviewLayer(layer)
         }
-        
         return containerView
     }
     
     public func updateUIView(_ uiView: ScannerContainerView, context: Context) {
-        guard uiView.bounds.width > 0 && uiView.bounds.height > 0 else {
-            return
+        if let previewLayer = detector.previewLayer, previewLayer.superlayer == nil {
+            uiView.setupPreviewLayer(previewLayer)
         }
-        
+        guard uiView.bounds.width > 0 && uiView.bounds.height > 0 else { return }
         uiView.updatePreviewLayerFrame()
     }
     
@@ -144,28 +137,30 @@ public struct BarcodeScanner: UIViewRepresentable {
         Coordinator(self)
     }
 
+    @MainActor
     public class Coordinator: NSObject {
         var parent: BarcodeScanner
-        private var subscriptions = Set<AnyCancellable>()
-        
+        nonisolated(unsafe) private var stateTask: Task<Void, Never>?
+
         init(_ parent: BarcodeScanner) {
             self.parent = parent
+            super.init()
             let detector = parent.detector
-            
-            if !detector.hasCamera {
-                detector.setup()
-            }
-            
-            self.parent.detector.statePublisher
-                .sink { state in
-                    switch state {
-                    case .idle:
+
+            stateTask = Task { @MainActor [detector] in
+                if !detector.hasCamera {
+                    detector.setup()
+                }
+                for await state in detector.statePublisher.values {
+                    if case .idle = state {
                         detector.setup()
-                    case .ready, .scanning, .pausing, .batterySaving:
-                        break
                     }
                 }
-                .store(in: &subscriptions)
+            }
+        }
+
+        deinit {
+            stateTask?.cancel()
         }
     }
 }
@@ -186,6 +181,7 @@ public class ScannerContainerView: UIView {
     func updatePreviewLayerFrame() {
         guard let previewLayer = previewLayer else { return }
         
+
         // Frame nur aktualisieren wenn sich die Größe geändert hat
         let newFrame = self.bounds
         if !previewLayer.frame.equalTo(newFrame) {

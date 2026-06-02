@@ -13,7 +13,6 @@ import AVFoundation
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleUI
 import CameraZoomWheel
 
 public protocol BarcodeCameraDelegate: AnyObject {
@@ -39,7 +38,7 @@ extension InternalBarcodeDetector.State: CustomStringConvertible {
 }
 
 @Observable
-open class InternalBarcodeDetector: NSObject, Zoomable {
+open class InternalBarcodeDetector: NSObject, Zoomable, @unchecked Sendable {
     public static var batterySaverTimeout: TimeInterval { 90 }
     public static var batterySaverKey: String { "io.snabble.sdk.batterySaver" }
     public static var zoomValueKey: String { "io.snabble.sdk.zoomValue" }
@@ -101,19 +100,19 @@ open class InternalBarcodeDetector: NSObject, Zoomable {
 
     public var previewLayer: AVCaptureVideoPreviewLayer?
     public var permissionGranted = false // Flag for permission
-    
-    public let sessionQueue: DispatchQueue
-    
-    public weak var batterySaverTimer: Timer?
+
+    nonisolated public let sessionQueue: DispatchQueue
+
+    public var batterySaverTask: Task<Void, Never>?
     public var scanDebounce: TimeInterval = 3
     public var detectorArea: BarcodeDetectorArea
-    
+
     private var camera: AVCaptureDevice?
     private var input: AVCaptureDeviceInput?
-    
+
     public var captureSession: AVCaptureSession
-    
-    private let metadataOutput: AVCaptureMetadataOutput
+
+    nonisolated(unsafe) private let metadataOutput: AVCaptureMetadataOutput
     
     private let outputQueue: DispatchQueue
     private let videoDataOutput: AVCaptureVideoDataOutput
@@ -208,14 +207,16 @@ open class InternalBarcodeDetector: NSObject, Zoomable {
             return
         }
         
-        batterySaverTimer?.invalidate()
-        batterySaverTimer = Timer.scheduledTimer(withTimeInterval: Self.batterySaverTimeout, repeats: false) { [weak self] _ in
+        batterySaverTask?.cancel()
+        batterySaverTask = Task { @MainActor [weak self] in
+            do { try await Task.sleep(for: .seconds(Self.batterySaverTimeout)) } catch { return }
             self?.batterySaverTimerFired()
         }
     }
     
     @objc public func stopBatterySaverTimer() {
-        self.batterySaverTimer?.invalidate()
+        self.batterySaverTask?.cancel()
+        self.batterySaverTask = nil
     }
     
     private func batterySaverTimerFired() {
@@ -255,10 +256,15 @@ open class InternalBarcodeDetector: NSObject, Zoomable {
     }
 
     /// Sets the region of interrest
-    open func setROI(rect roi: CGRect) {
-        DispatchQueue.main.async { [self] in
+    nonisolated open func setROI(rect roi: CGRect) {
+        // These properties are accessed across dispatch queues with manual synchronization
+        nonisolated(unsafe) let previewLayer = self.previewLayer
+        nonisolated(unsafe) let metadataOutput = self.metadataOutput
+        let sessionQueue = self.sessionQueue
+
+        Task { @MainActor in
             let rect = previewLayer?.metadataOutputRectConverted(fromLayerRect: roi)
-            sessionQueue.async { [self] in
+            sessionQueue.async {
                 // for some reason, running this on the main thread may block for ~10 seconds. WHY?!?
                 metadataOutput.rectOfInterest = rect ?? CGRect(origin: .zero, size: .init(width: 1, height: 1))
             }
@@ -282,7 +288,8 @@ open class InternalBarcodeDetector: NSObject, Zoomable {
     }
     private func requestCameraPermission() {
         sessionQueue.suspend()
-        AVCaptureDevice.requestAccess(for: .video) { [unowned self] granted in
+        AVCaptureDevice.requestAccess(for: .video) { [weak self] granted in
+            guard let self else { return }
             self.permissionGranted = granted
             self.sessionQueue.resume()
         }

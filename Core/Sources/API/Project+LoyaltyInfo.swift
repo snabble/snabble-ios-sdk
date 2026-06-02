@@ -6,11 +6,11 @@
 
 import Foundation
 
-public struct CustomerLoyaltyInfo: Decodable {
+public struct CustomerLoyaltyInfo: Decodable, Sendable {
     public let loyaltyCardNumber: String
 }
 
-public struct CustomerLoyaltyCredentials: Encodable {
+public struct CustomerLoyaltyCredentials: Encodable, Sendable {
     public let username: String
     public let password: String
 
@@ -22,7 +22,7 @@ public struct CustomerLoyaltyCredentials: Encodable {
 
 extension Project {
     public func getCustomerLoyaltyInfo(with credentials: CustomerLoyaltyCredentials,
-                                       completion: @escaping (Result<CustomerLoyaltyInfo, SnabbleError>) -> Void) {
+                                       completion: @escaping @Sendable (Result<CustomerLoyaltyInfo, SnabbleError>) -> Void) {
         guard let url = self.links.customerLoyaltyInfo?.href else {
             return completion(.failure(.noRequest))
         }

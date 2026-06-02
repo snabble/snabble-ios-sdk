@@ -248,7 +248,7 @@ public struct EmbeddedDecimal {
 }
 
 /// a `CodeTemplate` represents a fully parsed template expression, like "01{code:ean14}"
-public struct CodeTemplate {
+public struct CodeTemplate: Sendable {
     /// the template's identifier
     public let id: String
     /// the original template string
@@ -387,7 +387,7 @@ extension CodeTemplate {
 }
 
 /// the matcher's result
-public struct ParseResult {
+public struct ParseResult: Sendable {
     /// the template we matched against
     public let template: CodeTemplate
 
@@ -524,15 +524,16 @@ public struct ParseResult {
     }
 }
 
-public struct OverrideLookup {
+public struct OverrideLookup: Sendable {
     public let lookupCode: String
     public let lookupTemplate: String?
     public let transmissionCode: String?
     public let embeddedData: Int?
 }
 
-public enum CodeMatcher {
-    private static var templates = [Identifier<Project>: [String: CodeTemplate]]()
+public enum CodeMatcher: Sendable {
+    /// Thread-safety: Written during app initialization via addTemplate(), then only read
+    nonisolated(unsafe) private static var templates = [Identifier<Project>: [String: CodeTemplate]]()
 
     static func addTemplate(_ projectId: Identifier<Project>, _ id: String, _ template: String) {
         // print("add template \(projectId) \(id) \(template)")

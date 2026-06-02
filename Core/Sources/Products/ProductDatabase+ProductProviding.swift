@@ -100,9 +100,9 @@ extension ProductDatabase: ProductProviding {
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
-    public func productBy(sku: String, shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping (_ result: Result<Product, ProductLookupError>) -> Void) {
+    public func productBy(sku: String, shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping @Sendable (_ result: Result<Product, ProductLookupError>) -> Void) {
         if self.lookupLocally(forceDownload: forceDownload), let product = self.productBy(sku: sku, shopId: shopId) {
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 if product.availability == .notAvailable {
                     completion(.failure(.notFound))
                 } else {
@@ -129,9 +129,9 @@ extension ProductDatabase: ProductProviding {
     ///   - forceDownload: if true, skip the lookup in the local DB
     ///   - product: the product found, or nil.
     ///   - error: whether an error occurred during the lookup.
-    public func scannedProductBy(codes: [(String, String)], shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
+    public func scannedProductBy(codes: [(String, String)], shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping @Sendable (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
         if self.lookupLocally(forceDownload: forceDownload), let result = self.scannedProductBy(codes: codes, shopId: shopId) {
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 if result.product.availability == .notAvailable {
                     completion(.failure(.notFound))
                 } else {

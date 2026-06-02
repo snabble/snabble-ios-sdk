@@ -8,12 +8,12 @@
 import SwiftUI
 import OSLog
 import Combine
-import SnabbleUI
+
 import SnabbleAssetProviding
 import SnabbleComponents
 
 /// Represents different types of actions that can be triggered in the application.
-public enum ActionType: Equatable {
+public enum ActionType: Equatable, @unchecked Sendable {
     /// Nothing to display
     case idle
     /// Shows a full screen `String` message, which will be automatically dismissed after a period of time (like 3 seconds) or if the user tap on the screen
@@ -79,51 +79,49 @@ struct ActionItem: Swift.Identifiable, Equatable {
 /// The `ActionManager` is a singleton class responsible for managing the different types of actions that can be triggered
 /// throughout the application. It publishes action states and provides a mechanism for views to observe and respond to these
 /// states.
-public final class ActionManager: ObservableObject {
-    public static let shared = ActionManager()
-    
+@Observable
+public final class ActionManager {
+    nonisolated(unsafe) public static let shared = ActionManager()
+
     let logger = Logger(subsystem: "io.snabble.sdk.ScanAndGo", category: "ActionManager")
     public let actionPublisher = PassthroughSubject<ActionType, Never>()
-    
+
     /// The current state of the action being handled.
     /// Updates to this property will trigger corresponding UI changes in subscribed views.
-   @Published var actionState: ActionType = .idle {
+    var actionState: ActionType = .idle {
         didSet {
             logger.debug("handleAction: \(oldValue) -> \(self.actionState)")
         }
     }
     /// The currently active action item.
     /// This property holds the details of the current action, including its type and domain.
-    @Published var currentAction: ActionItem?
+    var currentAction: ActionItem?
 
     /// Indicates whether an action is currently presented.
     /// This property helps in managing the presentation state of different actions.
-    @Published var isPresented: Bool = false
-    
-    private var subscriptions = Set<AnyCancellable>()
-    
-    public init() {
-        actionPublisher
-            .receive(on: RunLoop.main)
-            .sink { [unowned self] action in
-                self.actionState = action
-            }
-            .store(in: &subscriptions)
-    }
-    private func handleAction(_ newState: ActionType) {
-        self.actionState = newState
-    }
-    
+    var isPresented: Bool = false
+
+    public init() {}
+
     /// Sends a new action state to be handled.
     /// - Parameter actionState: The new action state to be handled.
     public func send(_ actionState: ActionType) {
         currentAction = ActionItem(type: actionState)
+        self.actionState = actionState
         actionPublisher.send(actionState)
     }
 }
 
-/// A view modifier that observes the `ActionManager` and modifies the view based on the current action state.
-public struct ActionModifier: ViewModifier {
+/// Observes `ActionManager.shared` and renders the current action as the appropriate UI overlay.
+///
+/// Apply this modifier once at the root of your view hierarchy when integrating `ShopperView`.
+/// Without it, toasts, dialogs, sheets, and alerts triggered by the `Shopper` model will not appear.
+///
+/// ```swift
+/// RootView()
+///     .shopperActions()
+/// ```
+public struct ShopperActionModifier: ViewModifier {
     @State var actionState: ActionType = .idle {
         didSet {
             if case .toast(let toast) = actionState {
@@ -178,8 +176,10 @@ public struct ActionModifier: ViewModifier {
     @ViewBuilder
     public func body(content: Content) -> some View {
         content
-            .onReceive(ActionManager.shared.actionPublisher) { actionType in
-                handleAction(actionType)
+            .task {
+                for await actionType in ActionManager.shared.actionPublisher.values {
+                    handleAction(actionType)
+                }
             }
             .toast(item: $toast)
             .onChange(of: toast, { oldValue, newValue in
@@ -218,8 +218,12 @@ public struct ActionModifier: ViewModifier {
 }
 
 extension View {
-    /// A view modifier that applies the `ActionModifier` to the view.
-    public func actionState() -> some View {
-        self.modifier(ActionModifier())
+    /// Applies `ShopperActionModifier` to the view.
+    ///
+    /// Required at the root of any view hierarchy that contains a `ShopperView`.
+    /// Enables the `ActionManager` to present toasts, dialogs, sheets, and alerts
+    /// triggered during a Scan & Go session.
+    public func shopperActions() -> some View {
+        self.modifier(ShopperActionModifier())
     }
 }

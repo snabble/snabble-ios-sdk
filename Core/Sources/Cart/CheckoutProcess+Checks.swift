@@ -7,12 +7,12 @@
 import Foundation
 
 extension CheckoutProcess {
-    public struct Check: Decodable {
+    public struct Check: Decodable, Sendable {
         public let id: String
 
         public let state: State
 
-        public enum State: String, Codable, UnknownCaseRepresentable {
+        public enum State: String, Codable, UnknownCaseRepresentable, Sendable {
             case pending
             case postponed
             case successful

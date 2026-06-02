@@ -12,7 +12,7 @@ import KeychainAccess
 ///
 /// A plain text username and password combination.
 /// - Important: It contains a sensitve data. Be careful when you store it.
-public struct AppUser: Codable {
+public struct AppUser: Codable, Sendable {
     /// the `identifier` of the `AppUser`
     public let id: String
 

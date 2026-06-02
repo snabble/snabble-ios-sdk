@@ -6,7 +6,7 @@
 
 import Foundation
 
-public struct TeleCashCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCreditCard {
+public struct TeleCashCreditCardData: Codable, EncryptedPaymentData, Equatable, BrandedCreditCard, Sendable {
     public let encryptedPaymentData: String
     public let serial: String
     public let displayName: String

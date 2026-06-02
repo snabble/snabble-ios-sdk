@@ -8,7 +8,7 @@
 import Foundation
 
 /// status of the last appdb update call
-public enum ProductStoreAvailability {
+public enum ProductStoreAvailability: Sendable {
     /// update is in progress or hasn't started yet
     case unknown
     /// update returned new data
@@ -38,14 +38,14 @@ public protocol ProductStoring: AnyObject {
     /// - parameter forceFullDownload: if true, force a full download of the product database
     /// - parameter completion: This is called asynchronously on the main thread after the automatic database update check has finished
     /// - parameter dataAvailable: indicates if new data is available
-    func setup(update: ProductDbUpdate, forceFullDownload: Bool, completion: @escaping ((_ dataAvailable: ProductStoreAvailability) -> Void))
+    func setup(update: ProductDbUpdate, forceFullDownload: Bool, completion: @escaping @Sendable (_ dataAvailable: ProductStoreAvailability) -> Void)
 
     /// attempt to resume a previously interrupted update of the product database
     /// calling this method when there is no previous resumable download has no effect.
     ///
     /// - parameter completion: This is called asynchronously on the main thread after the database update check has finished
     /// - parameter dataAvailable: indicates if new data is available
-    func resumeIncompleteUpdate(completion: @escaping (_ dataAvailable: ProductStoreAvailability) -> Void)
+    func resumeIncompleteUpdate(completion: @escaping @Sendable (_ dataAvailable: ProductStoreAvailability) -> Void)
 
     /// stop the currently running product database update, if one is in progress.
     ///
@@ -69,7 +69,7 @@ public protocol ProductStoring: AnyObject {
 }
 
 public extension ProductStoring {
-    func setup(completion: @escaping (ProductStoreAvailability) -> Void ) {
+    func setup(completion: @escaping @Sendable (ProductStoreAvailability) -> Void ) {
         self.setup(update: .always, forceFullDownload: false, completion: completion)
     }
     

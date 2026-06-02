@@ -8,23 +8,23 @@
 import Foundation
 import SnabbleNetwork
 
-public struct User: Codable, Equatable {
+public struct User: Codable, Equatable, Sendable {
     public let id: String
-    
+
     public let metadata: Metadata?
-    
+
     public var firstName: String?
     public var lastName: String?
     public var email: String?
     public var phone: Phone?
     public var dateOfBirth: Date?
     public var address: Address?
-    
-    public struct Phone: Codable, Equatable {
+
+    public struct Phone: Codable, Equatable, Sendable {
         public var code: UInt?
         public var number: String?
     }
-    public struct Address: Codable, Equatable {
+    public struct Address: Codable, Equatable, Sendable {
         public var street: String?
         public var zip: String?
         public var city: String?
@@ -40,7 +40,7 @@ public struct User: Codable, Equatable {
         }
     }
     
-    public struct Metadata: Codable, Equatable {
+    public struct Metadata: Codable, Equatable, Sendable {
         public let phoneNumber: String?
         public let fields: [Field]?
         public let consent: Consent?
@@ -52,7 +52,7 @@ public struct User: Codable, Equatable {
         }
     }
     
-    public struct Field: Codable, Identifiable, Equatable {
+    public struct Field: Codable, Identifiable, Equatable, Sendable {
         public let id: String
         public let isRequired: Bool
         
@@ -62,7 +62,7 @@ public struct User: Codable, Equatable {
         }
     }
     
-    public struct Consent: Codable, Equatable {
+    public struct Consent: Codable, Equatable, Sendable {
         public let major: Int
         public let minor: Int
         
@@ -237,7 +237,7 @@ extension User {
 }
 
 extension User {
-    public struct Details: Codable, Equatable {
+    public struct Details: Codable, Equatable, Sendable {
         public let firstName: String?
         public let lastName: String?
         public let email: String?

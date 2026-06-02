@@ -79,7 +79,7 @@ public struct AppEvent: Encodable {
     private init(type: EventType, payload: Payload, project: Project,
                  shopId: Identifier<Shop>? = nil, id: String? = nil, agent: String? = nil) {
         self.type = type
-        self.appId = Snabble.clientId
+        self.appId = Client.id
         self.payload = payload
         self.shopId = shopId
         self.project = project

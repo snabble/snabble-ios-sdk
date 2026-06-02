@@ -8,8 +8,8 @@
 import SwiftUI
 
 import SnabbleCore
-import SnabbleUI
 import SnabbleAssetProviding
+import SnabblePayment
 
 public struct PaymentMethodItemView: View {
     

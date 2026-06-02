@@ -6,7 +6,7 @@
 
 import Foundation
 
-public struct GiropayData: Codable, EncryptedPaymentData, Equatable {
+public struct GiropayData: Codable, EncryptedPaymentData, Equatable, Sendable {
     // encrypted JSON string
     public let encryptedPaymentData: String
     // serial # of the certificate used to encrypt
@@ -37,7 +37,7 @@ public struct GiropayData: Codable, EncryptedPaymentData, Equatable {
     }
 
     public init?(_ gatewayCert: Data?, _ authorizationURI: String, _ auth: GiropayAuthorization) {
-        let requestOrigin = GiropayOrigin(clientID: Snabble.clientId, customerAuthorizationURI: authorizationURI)
+        let requestOrigin = GiropayOrigin(clientID: Client.id, customerAuthorizationURI: authorizationURI)
 
         guard
             let encrypter = PaymentDataEncrypter(gatewayCert),

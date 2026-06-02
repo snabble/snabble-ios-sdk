@@ -8,15 +8,11 @@
 import UIKit
 
 import SwiftUI
+
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleUI
-
-extension Payment: Equatable {
-    public static func == (lhs: Payment, rhs: Payment) -> Bool {
-        return lhs.id == rhs.id
-    }
-}
+import SnabbleTheme
+import SnabblePayment
 
 extension Shopper {
     var project: Project {
@@ -25,11 +21,12 @@ extension Shopper {
 }
 
 extension Shopper: PaymentMethodManagerDelegate {
-    
+
     private func setAlertProvider(_ provider: AlertProviding) {
         let alertController = provider.alertController { _ in }
-        DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-            self.sendAction(.alert(self.alert(alertController)))
+        Task {
+            try? await Task.sleep(for: .seconds(0.3))
+            sendAction(.alert(alert(alertController)))
         }
     }
     
@@ -40,12 +37,13 @@ extension Shopper: PaymentMethodManagerDelegate {
     func verifyPayment(_ payment: Payment?) {
         guard let payment = paymentManager.selectedPayment, !restrictedPayments.contains(payment.method) else {
             hasValidPayment = false
+            logger.debug("didSelectPayment failed: \(payment.debugDescription)")
             return
         }
         hasValidPayment = acceptPayment(method: payment.method, detail: payment.detail)
     }
     
-    public func paymentMethodManager(didSelectItem item: SnabbleUI.PaymentMethodItem) {
+    public func paymentMethodManager(didSelectItem item: PaymentMethodItem) {
         logger.debug("didSelectItem: \(item.title)")
         guard item.selectable else {
             return
@@ -54,12 +52,13 @@ extension Shopper: PaymentMethodManagerDelegate {
         let detail = item.methodDetail
         
         guard !restrictedPayments.contains(method) else {
-            DispatchQueue.main.asyncAfter(deadline: .now() + 0.3) {
-                self.sendAction(.alert(
+            Task {
+                try? await Task.sleep(for: .seconds(0.3))
+                sendAction(.alert(
                     Alert(title: Text(Asset.localizedString(forKey: "Snabble.Payment.Unavailable.title")),
                           message: Text(Asset.localizedString(forKey: "Snabble.Payment.Unavailable.message")))
                 ))
-                self.paymentManager.selectedPayment = nil
+                paymentManager.selectedPayment = nil
             }
             return
         }
@@ -79,13 +78,16 @@ extension Shopper: PaymentMethodManagerDelegate {
     }
     
     public func paymentMethodManager(didSelectPayment payment: SnabbleCore.Payment?) {
-        logger.debug("didSelectPayment: \(payment.debugDescription)")
+        verifyPayment(payment)
     }
 }
 
 extension Shopper: PaymentDelegate {
     public func checkoutFinished(_ cart: SnabbleCore.ShoppingCart, _ process: SnabbleCore.CheckoutProcess?) {
-        logger.debug("checkout finished")
+        logger.debug("checkout finished with state: \(process?.paymentState.rawValue ?? "unknown")")
+
+        // CheckoutStepsViewController handles cart clearing, we just dismiss navigation
+        self.isNavigating = false
     }
     
     public var view: UIView! {

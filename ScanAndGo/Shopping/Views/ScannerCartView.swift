@@ -6,41 +6,47 @@
 //
 
 import SwiftUI
-import Combine
 
 import SnabbleCore
 import SnabbleAssetProviding
-import SnabbleUI
+import SnabbleCart
 
 struct ScannerCartView: View {
+    let model: Shopper
+
     static let TopMargin = CGFloat(20)
 
-    @ObservedObject var model: Shopper
     @Binding var minHeight: CGFloat
-    
-    @State private var compactMode: Bool = true
-    
-    @ScaledMetric private var barHeight = CGFloat(74)
-    @ScaledMetric private var visibleRowHeight = CGFloat(58)
 
-    init(model: Shopper,
-         minHeight: Binding<CGFloat>
-    ) {
+    @State private var compactMode: Bool = true
+
+    @ScaledMetric private var barHeight = CGFloat(74)
+    @ScaledMetric private var visibleRowHeight = CGFloat(72)
+    let offset: CGFloat
+
+    init(model: Shopper, minHeight: Binding<CGFloat>, offset: CGFloat = 0) {
         self.model = model
         self._minHeight = minHeight
+        self.offset = offset
     }
     
     var body: some View {
         VStack(spacing: 0) {
-            CheckoutView(model: model)
-            SnabbleUI.ShoppingCartView(cartModel: model.cartModel, compactMode: compactMode)
+            CartCheckoutBarView(model: model)
+            ShoppingCartView(cartModel: model.cartModel, compactMode: compactMode)
             // Without this Spacer(), we have a transparent background
             Spacer(minLength: 1)
         }
-        .onReceive(NotificationCenter.default.publisher(for: .snabbleCartUpdated)) { _ in
+        .animation(.default, value: minHeight)
+        .onAppear {
             update()
         }
         .task {
+            for await _ in NotificationCenter.default.notifications(named: .snabbleCartUpdated) {
+                update()
+            }
+        }
+        .onChange(of: model.cartModel.items) {
             update()
         }
     }
@@ -50,6 +56,6 @@ struct ScannerCartView: View {
         let avg = visibleRowHeight
         
         // swiftlint:disable:next empty_count
-        minHeight = barHeight + (count == 0 ? 0 : (count > 1 ? avg + avg : avg))
+        minHeight = barHeight + offset + (count == 0 ? 0 : (count > 1 ? avg + avg : avg))
     }
 }

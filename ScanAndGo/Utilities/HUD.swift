@@ -30,7 +30,8 @@ extension View {
                 HUD(content: content)
                     .transition(.move(edge: .top).combined(with: .opacity))
                     .onAppear {
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                        Task { @MainActor in
+                            try? await Task.sleep(for: .seconds(3))
                             withAnimation {
                                 isPresented.wrappedValue = false
                             }

@@ -28,7 +28,7 @@ public enum PaymentMethodError: Error {
 ///  * and the `public var projectId: Identifier<Project>?`
 ///  * check `public var imageName: String` of the extension to `PaymentMethodDetail` if you need a separate imageName for the new payment menthod
 
-public enum PaymentMethodUserData: Codable, Equatable {
+public enum PaymentMethodUserData: Codable, Equatable, Sendable {
     case sepa(SepaData)
     case teleCashCreditCard(TeleCashCreditCardData)
     case tegutEmployeeCard(TegutEmployeeData)
@@ -171,7 +171,7 @@ public extension PaymentMethod {
     }
 }
 
-public struct PaymentMethodDetail: Equatable {
+public struct PaymentMethodDetail: Equatable, Sendable {
     public let id: UUID
     public let methodData: PaymentMethodUserData
 
@@ -460,7 +460,8 @@ struct PaymentMethodDetailStorage {
 }
 
 public enum PaymentMethodDetails {
-    private static let storage = PaymentMethodDetailStorage()
+    /// Thread-safety: Singleton storage accessed from multiple threads, but protected by internal synchronization
+    nonisolated(unsafe) private static let storage = PaymentMethodDetailStorage()
 
     public static func read() -> [PaymentMethodDetail] {
         return storage.read()

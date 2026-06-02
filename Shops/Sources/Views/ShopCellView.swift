@@ -1,0 +1,80 @@
+//
+//  ShopCellView.swift
+//  Snabble
+//
+//  Created by Uwe Tilemann on 17.08.22.
+//
+
+import Foundation
+import CoreLocation
+import SwiftUI
+
+import SnabbleCore
+import SnabbleAssetProviding
+import SnabbleComponents
+
+public struct ShopCellView: View {
+    let shop: ShopProviding
+    
+    @State var viewModel: ShopsViewModel
+    @State private var isCurrentShop = false
+    
+    public var body: some View {
+        HStack {
+            VStack(alignment: .leading, spacing: 8) {
+                Text(shop.name)
+                    .fontWeight(.bold)
+
+                VStack(alignment: .leading, spacing: 0) {
+                    AddressView(provider: shop)
+                        .secondaryStyle()
+                }
+            }
+            Spacer()
+            if isCurrentShop {
+                Text(keyed: "Snabble.Shop.Finder.youarehere")
+                    .youAreHereStyle()
+            } else {
+                DistanceView(distance: viewModel.distance(from: shop))
+                    .secondaryStyle()
+            }
+        }
+        .task {
+            for await shop in Snabble.shared.checkInManager.shopStream {
+                self.isCurrentShop = shop?.id == self.shop.id
+            }
+        }
+    }
+}
+
+private struct Secondary: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .font(.subheadline)
+            .foregroundColor(Color.named("Snabble.Shop.Finder.Secondary.foreground") ?? .systemGray)
+    }
+}
+
+private struct YouAreHere: ViewModifier {
+    @SwiftUI.Environment(\.projectTrait) private var project
+    
+    func body(content: Content) -> some View {
+        content
+           .font(.footnote)
+           .foregroundColor(Color.named("Snabble.Shop.Finder.YouAreHere.foreground") ?? .onProjectPrimary())
+           .padding(.horizontal, 8)
+           .padding(.vertical, 4)
+           .background(Color.named("Snabble.Shop.Finder.YouAreHere.background") ?? .projectPrimary())
+           .clipShape(Capsule())
+    }
+}
+
+private extension View {
+    func youAreHereStyle() -> some View {
+        modifier(YouAreHere())
+    }
+
+    func secondaryStyle() -> some View {
+        modifier(Secondary())
+    }
+}

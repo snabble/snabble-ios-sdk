@@ -33,7 +33,8 @@ public struct ViewProvider {
 }
 
 public enum ViewProviderStore {
-    public static var providers: [String: () -> any View] = [:]
+    /// Thread-safety: Written during app initialization via register(), then only read. Concurrent reads are safe.
+    nonisolated(unsafe) public static var providers: [String: () -> any View] = [:]
 
     public static func register(view: @escaping () -> any View, for key: ViewProvider.Name) {
         providers[key.rawValue] = view

@@ -11,10 +11,12 @@ import SwiftUI
 
 public enum Asset {
     /// Reference to the implementation of the `AssetProviding` implementation
-    public static weak var provider: AssetProviding?
+    /// Thread-safety: Set once during app initialization, then only read. Must not be modified after initialization.
+    nonisolated(unsafe) public static weak var provider: AssetProviding?
 
     /// Reference to the current domain
-    public static var domain: Any?
+    /// Thread-safety: Set once during app initialization, then only read. Must not be modified after initialization.
+    nonisolated(unsafe) public static var domain: Any?
 
     // MARK: - Color
     public static func color(named name: String, domain: Any? = domain) -> UIColor? {

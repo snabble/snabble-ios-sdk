@@ -6,10 +6,8 @@
 //
 
 import SwiftUI
-import Combine
 
 import SnabbleCore
-import SnabbleUI
 
 import SnabbleAssetProviding
 import CameraZoomWheel
@@ -26,17 +24,22 @@ public struct ScannerOverlay: View {
     public var body: some View {
         VStack {
             Spacer()
-            overlay
-                .padding(.bottom, offset)
+            HStack {
+                Spacer()
+                overlay
+                Spacer()
+            }
+            .padding(.bottom, offset)
             Spacer()
         }
     }
 }
 
 struct ShoppingScannerView: View {
-    @SwiftUI.Environment(\.safeAreaInsets) var insets
-    @ObservedObject var model: Shopper
+    let model: Shopper
+    
     @Binding var minHeight: CGFloat
+    let configuration: ShopperConfiguration
     
     @State private var topMargin: CGFloat = ScannerCartView.TopMargin
     @State private var showHud: Bool = false
@@ -44,21 +47,44 @@ struct ShoppingScannerView: View {
     @State private var zoomSteps: [ZoomStep] = ZoomStep.defaultSteps
     @State private var position: CGFloat = 0
     @State private var scanMessage: ScanMessage?
+    @State private var isDragging: Bool = false
+    
+    init(model: Shopper, minHeight: Binding<CGFloat>, configuration: ShopperConfiguration = .init()) {
+        self.model = model
+        self._minHeight = minHeight
+        self.configuration = configuration
+    }
     
     var body: some View {
+        @Bindable var model = self.model
+        
         ZStack(alignment: .top) {
             BarcodeScannerView(detector: model.barcodeManager.barcodeDetector)
             ScannerOverlay(offset: $minHeight)
+                .background {
+                    if model.barcodeManager.barcodeDetector.previewLayer == nil {
+                        LinearGradient(
+                            colors: [Color.projectPrimary(), .white],
+                            startPoint: .top,
+                            endPoint: .bottom
+                        )
+                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+                    }
+                }
             ZoomControl(zoomLevel: $zoomLevel, steps: zoomSteps)
                 .offset(x: 0, y: position - 114)
                 .opacity(model.scanningPaused || position == 0 ? 0 : 1)
-            PullOverView(minHeight: $minHeight, expanded: $model.scanningPaused, paddingTop: $topMargin, position: $position) {
-                ScannerCartView(model: model, minHeight: $minHeight)
+            if model.barcodeManager.barcodeDetector.previewLayer != nil {
+                PullOverView(minHeight: $minHeight, expanded: $model.scanningPaused, paddingTop: $topMargin, position: $position, isDragging: $isDragging) {
+                    ScannerCartView(model: model, minHeight: $minHeight, offset: configuration.drawerOffset)
+                        .disabled(isDragging)
+                }
             }
             if model.processing || position == 0 {
                 ScannerProcessingView()
             }
         }
+        .edgesIgnoringSafeArea(.bottom)
         .hud(isPresented: $showHud) {
             ScanMessageView(message: scanMessage, isPresented: $showHud)
         }
@@ -70,8 +96,17 @@ struct ShoppingScannerView: View {
                 zoomSteps = steps
             }
         }
-        .onChange(of: zoomLevel) {
-            model.barcodeManager.barcodeDetector.zoomFactor = CGFloat(zoomLevel)
+        // Syncs detector → view: fires when camera becomes available and setRecommendedZoomFactor() runs
+        .onChange(of: model.barcodeManager.barcodeDetector.zoomFactor) { _, newValue in
+            guard let newValue, newValue != zoomLevel else { return }
+            zoomLevel = newValue
+            if let steps = model.barcodeManager.barcodeDetector.zoomSteps {
+                zoomSteps = steps
+            }
+        }
+        .onChange(of: zoomLevel) { _, newValue in
+            guard model.barcodeManager.barcodeDetector.zoomFactor != newValue else { return }
+            model.barcodeManager.barcodeDetector.zoomFactor = newValue
         }
         .onChange(of: showHud) {
             if !showHud {
@@ -85,9 +120,9 @@ struct ShoppingScannerView: View {
                 }
             }
         }
-        .onReceive(model.$scanMessage) { scanMessage in
-            if scanMessage != nil {
-                self.scanMessage = scanMessage
+        .onChange(of: model.scanMessage) { _, newValue in
+            if newValue != nil {
+                self.scanMessage = newValue
                 model.startScanner()
                 withAnimation {
                     showHud = true
