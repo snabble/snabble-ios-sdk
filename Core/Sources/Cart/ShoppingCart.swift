@@ -69,8 +69,9 @@ public final class ShoppingCart: Codable, PaymentConsumer, @unchecked Sendable {
 
     internal weak var eventTimer: Timer?
 
-    // number of seconds to wait after a local modification is sent to the backend
-    private let saveDelay: TimeInterval = 0.5
+    /// Number of seconds to wait after a local modification before sending to the backend.
+    /// Increase this value to debounce rapid successive changes (e.g. stepper taps). Default is 0.5.
+    public var saveDelay: TimeInterval = 0.5
 
     private let maxAge: TimeInterval
 
@@ -278,7 +279,7 @@ public final class ShoppingCart: Codable, PaymentConsumer, @unchecked Sendable {
 
     /// number of separate items in the cart
     public var numberOfItems: Int {
-        return self.items.count + self.vouchers.count
+        return self.items.count + max(self.coupons.count, self.vouchers.count)
     }
 
     /// number of products in the cart (sum of all quantities)
