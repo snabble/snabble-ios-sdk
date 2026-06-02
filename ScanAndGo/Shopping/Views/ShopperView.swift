@@ -74,6 +74,9 @@ public struct ShopperView: View {
             .onDisappear {
                 model.scanningActivated = false
             }
+            .onChange(of: model.scanningPaused) { _, newValue in
+                expanded = newValue
+            }
             .onReceive(model.barcodeManager.barcodeDetector.statePublisher) { state in
                 if state == .ready, model.scanningActivated && !model.scanningPaused {
                     model.startScanner()
