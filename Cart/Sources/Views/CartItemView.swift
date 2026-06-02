@@ -66,7 +66,7 @@ struct ShoppingCartItemDiscountItemView: View {
                 .font(.footnote)
             Spacer()
 
-            if discount.type == .discountedProduct || discount.type == .priceModifier {
+            if discount.type == .discountedProduct || discount.type == .priceModifier, discount.couponID != nil {
                 Button {
                     onDeleteDiscount?(discount)
                 } label: {
