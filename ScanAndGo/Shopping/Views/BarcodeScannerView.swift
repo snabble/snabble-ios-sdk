@@ -37,7 +37,7 @@ class BarcodeScannerViewController: UIViewController {
         }
     }
 
-    private func addLayer(_ layer: CALayer, to viewController: UIViewController) {
+    func addLayer(_ layer: CALayer, to viewController: UIViewController) {
         let frame = viewController.view.bounds
         let insets = UIApplication.shared.sceneKeyWindow?.safeAreaInsets ?? UIEdgeInsets()
         
@@ -67,8 +67,12 @@ public struct BarcodeScannerView: UIViewControllerRepresentable {
         return BarcodeScannerViewController(detector: detector)
     }
 
-    // swiftlint:disable:next no_empty_block
-    public func updateUIViewController(_ uiViewController: UIViewController, context: UIViewControllerRepresentableContext<BarcodeScannerView>) { }
+    public func updateUIViewController(_ uiViewController: UIViewController, context: UIViewControllerRepresentableContext<BarcodeScannerView>) {
+        guard let vc = uiViewController as? BarcodeScannerViewController,
+              let previewLayer = detector.previewLayer,
+              previewLayer.superlayer == nil else { return }
+        vc.addLayer(previewLayer, to: vc)
+    }
     
     public func makeCoordinator() -> Coordinator {
         Coordinator(self)
@@ -84,10 +88,12 @@ public struct BarcodeScannerView: UIViewControllerRepresentable {
             super.init()
             let detector = parent.detector
 
-            if !detector.hasCamera {
-                detector.setup()
-            }
-            stateTask = Task { [detector] in
+            // Defer setup() via Task to avoid mutating @Observable state during the SwiftUI
+            // render pass, which would cause an AttributeGraph cycle and corrupt position state.
+            stateTask = Task { @MainActor [detector] in
+                if !detector.hasCamera {
+                    detector.setup()
+                }
                 for await state in detector.statePublisher.values {
                     if case .idle = state {
                         detector.setup()
@@ -120,10 +126,10 @@ public struct BarcodeScanner: UIViewRepresentable {
     }
     
     public func updateUIView(_ uiView: ScannerContainerView, context: Context) {
-        guard uiView.bounds.width > 0 && uiView.bounds.height > 0 else {
-            return
+        if let previewLayer = detector.previewLayer, previewLayer.superlayer == nil {
+            uiView.setupPreviewLayer(previewLayer)
         }
-        
+        guard uiView.bounds.width > 0 && uiView.bounds.height > 0 else { return }
         uiView.updatePreviewLayerFrame()
     }
     
@@ -141,11 +147,10 @@ public struct BarcodeScanner: UIViewRepresentable {
             super.init()
             let detector = parent.detector
 
-            if !detector.hasCamera {
-                detector.setup()
-            }
-
-            stateTask = Task { [detector] in
+            stateTask = Task { @MainActor [detector] in
+                if !detector.hasCamera {
+                    detector.setup()
+                }
                 for await state in detector.statePublisher.values {
                     if case .idle = state {
                         detector.setup()
