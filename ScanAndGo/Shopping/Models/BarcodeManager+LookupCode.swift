@@ -313,7 +313,7 @@ extension BarcodeManager {
             for code in coupon.codes ?? [] {
                 let results = CodeMatcher.match(scannedCode, project.id)
                 
-                if results.first(where: { $0.template.id == code.template }) != nil {
+                if results.first(where: { $0.template.id == code.template && $0.lookupCode == code.code }) != nil {
                     return coupon
                 }
             }
