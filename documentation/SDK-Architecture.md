@@ -4,9 +4,7 @@ This guide explains the structure and architecture of the Snabble iOS SDK for de
 
 ## Overview
 
-The Snabble iOS SDK is a modular Swift Package Manager-based retail SDK that provides self-scanning and checkout functionality for iOS applications. It uses a **clean layered architecture** with distinct module responsibilities and **no circular dependencies** (resolved 2026-03-27).
-
-See `documentation/Circular-Dependencies-Analysis.md` for details about the resolved circular dependencies.
+The Snabble iOS SDK is a modular Swift Package Manager-based retail SDK that provides self-scanning and checkout functionality for iOS applications. It uses a layered architecture with distinct module responsibilities and no circular dependencies.
 
 ## Module Architecture
 
@@ -286,12 +284,12 @@ The following directories contain legacy code that has been mostly replaced:
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │                    Presentation Layer                        │
-│  ┌──────────────────────┐      ┌─────────────────────────┐ │
-│  │ SnabbleScanAndGo     │      │ SnabbleUI (Legacy)      │ │
-│  │ - ShopperView        │      │ - ScannerViewController │ │
-│  │ - @Observable VMs    │      │ - UIKit Components      │ │
-│  └──────────┬───────────┘      └────────────┬────────────┘ │
-└─────────────┼──────────────────────────────┼───────────────┘
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │ SnabbleScanAndGo                                      │  │
+│  │ - ShopperView (main entry point)                      │  │
+│  │ - @Observable ViewModels (Swift 6.2)                  │  │
+│  └──────────────────────┬───────────────────────────────┘  │
+└─────────────────────────┼─────────────────────────────────┘
               │                              │
               ▼                              ▼
 ┌─────────────────────────────────────────────────────────────┐
@@ -441,8 +439,8 @@ See `documentation/Swift-6-Migration.md` for the complete migration reference.
 snabble-ios-sdk/
 ├── Package.swift                    # SPM package definition
 ├── README.md                        # Installation guide
+├── CHANGELOG.md                     # Release notes
 ├── CLAUDE.md                        # AI coding assistant guide
-├── SKILL.md                         # This file
 │
 ├── Core/                            # SnabbleCore module
 │   ├── Sources/
@@ -453,16 +451,6 @@ snabble-ios-sdk/
 │   │   ├── Checkin/                # Location-based check-in
 │   │   ├── Coupons/                # Coupon management
 │   │   └── Orders/                 # Receipt history
-│   └── Tests/
-│
-├── UI/                              # SnabbleUI module (legacy UIKit)
-│   ├── Sources/
-│   │   ├── Scanner/                # Camera scanner (Pulley drawer)
-│   │   ├── ShoppingCart/           # Cart UI (legacy)
-│   │   ├── Payment/                # Payment UI
-│   │   ├── Receipts/               # Receipt viewer
-│   │   ├── Coupons/                # Coupon UI (new SwiftUI version ✅)
-│   │   └── Utilities/              # Helpers, extensions
 │   └── Tests/
 │
 ├── ScanAndGo/                       # SnabbleScanAndGo module (modern SwiftUI)
@@ -601,6 +589,6 @@ OrderList.load(project) { result in
 
 ---
 
-**Last Updated:** 2026-02-26
+**Last Updated:** 2026-06-02
 **SDK Version:** 1.0.0 (Swift 6.2)
-**Minimum Requirements:** iOS 17.0+, Xcode 17.0+, Swift 6.2
+**Minimum Requirements:** iOS 17.0+, Xcode 16.4+, Swift 6.2
