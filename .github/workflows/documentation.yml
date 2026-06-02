@@ -28,14 +28,11 @@ jobs:
       - name: Static Website Core
         run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabbleCore.doccarchive --output-path ./static-website/core --hosting-base-path /snabble-ios-sdk/core
 
-      - name: Static Website UI
-        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabbleUI.doccarchive --output-path ./static-website/ui --hosting-base-path /snabble-ios-sdk/ui
+      - name: Static Website ScanAndGo
+        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabbleScanAndGo.doccarchive --output-path ./static-website/scanandgo --hosting-base-path /snabble-ios-sdk/scanandgo
 
-      - name: Build Documentation
-        run: xcodebuild docbuild -scheme SnabblePay -destination 'generic/platform=iOS' -derivedDataPath ${{ runner.temp }}/derivedDataPath
-
-      - name: Static Website Pay
-        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabblePay.doccarchive --output-path ./static-website/pay --hosting-base-path /snabble-ios-sdk/pay
+      - name: Static Website Payment
+        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabblePayment.doccarchive --output-path ./static-website/payment --hosting-base-path /snabble-ios-sdk/payment
 
       - name: Zip
         run: zip -r static-website.zip static-website
