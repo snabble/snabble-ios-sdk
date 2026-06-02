@@ -24,13 +24,14 @@ extension ShoppingCartViewModel {
             .padding(.trailing, 8)
             .deleteDisabled(true)
         } else if case .coupon(let cartCoupon, let lineItem) = item {
-            if lineItem == nil || lineItem?.redeemed == false {
+            // As long as the BE deliviers no couponId we add an Item here
+//            if lineItem == nil || lineItem?.redeemed == false {
                 let itemModel = CouponCartItemModel(cartCoupon: cartCoupon, for: lineItem, showImages: showImages)
                 CouponItemView(itemModel: itemModel, showImages: false) { @MainActor in
                     self.trash(item: item)
                 }
                 .padding(.trailing, 8)
-            }
+//            }
         } else if case .voucher(let cartVoucher, let lineItems) = item {
             VoucherItemView(voucher: cartVoucher.voucher, lineItems: lineItems) { @MainActor in
                 self.trash(item: item)
