@@ -8,23 +8,6 @@
 import SwiftUI
 import SnabbleAssetProviding
 
-struct HiddenScrollView: ViewModifier {
-    func body(content: Content) -> some View {
-        if #available(iOS 16.0, *) {
-            content
-                .scrollContentBackground(.hidden)
-        } else {
-            content
-        }
-    }
-}
-
-extension View {
-    func hiddenScrollView() -> some View {
-        return modifier(HiddenScrollView())
-    }
-}
-
 extension ShoppingCartViewModel {
     @ViewBuilder
     func view(for item: CartEntry) -> some View {
@@ -60,8 +43,10 @@ extension ShoppingCartViewModel {
 public struct ShoppingCartItemsView<Footer: View>: View {
     @Bindable var cartModel: ShoppingCartViewModel
     var footer: Footer
-    var asList: Bool = true
-    
+
+    @State private var itemToDelete: CartEntry? = nil
+    @State private var showingDeleteAlert = false
+
     @ViewBuilder
     var content: some View {
         if cartModel.items.isEmpty {
@@ -74,23 +59,30 @@ public struct ShoppingCartItemsView<Footer: View>: View {
                     ForEach(cartModel.items, id: \.id) { item in
                         cartModel.view(for: item)
                             .environment(cartModel)
+                            .swipeActions(allowsFullSwipe: false) {
+                                 Button {
+                                     cartModel.trash(item: item)
+                                 } label: {
+                                     Label(Asset.localizedString(forKey: "Snabble.ShoppingList.EditList.delete"), systemImage: "trash")
+                                 }
+                             }
+                             .tint(.red)
                     }
-                    .onDelete(perform: delete)
                     .listRowInsets(EdgeInsets(top: 4, leading: 10, bottom: 4, trailing: 4))
                     .listRowBackground(Color.clear)
                 }
             }
             .listStyle(.plain)
             .scrollBounceBehavior(.basedOnSize)
+            .scrollContentBackground(.hidden)
             .background(.clear)
-            .hiddenScrollView()
         }
     }
 
     public var body: some View {
         content
             .alert(
-                "Snabble.SaleStop.ErrorMsg.title",
+                Asset.localizedString(forKey: "Snabble.SaleStop.ErrorMsg.title"),
                 isPresented: $cartModel.productError
             ) {
                 Button("Snabble.ok") {
@@ -100,7 +92,7 @@ public struct ShoppingCartItemsView<Footer: View>: View {
                 Text(cartModel.productErrorMessage)
             }
             .alert(
-                "",
+                Asset.localizedString(forKey: "Snabble.ShoppingList.EditList.delete"),
                 isPresented: $cartModel.confirmDeletion
             ) {
                 Button(role: .destructive) {

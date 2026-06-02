@@ -11,22 +11,17 @@ import SnabbleCore
 public struct ShoppingCartView: View {
     @Bindable var cartModel: ShoppingCartViewModel
     let compactMode: Bool
-    let listMode: Bool
     
     public init(cartModel: ShoppingCartViewModel, 
-                compactMode: Bool = false,
-                listMode: Bool = true) {
+                compactMode: Bool = false) {
         self.cartModel = cartModel
         self.compactMode = compactMode
-        self.listMode = listMode
     }
 
     public init(shoppingCart: ShoppingCart, 
-                compactMode: Bool = false,
-                listMode: Bool = true) {
+                compactMode: Bool = false) {
         self.cartModel = ShoppingCartViewModel(shoppingCart: shoppingCart)
         self.compactMode = compactMode
-        self.listMode = listMode
     }
 
     @ViewBuilder
@@ -42,7 +37,7 @@ public struct ShoppingCartView: View {
                 Text(keyed: "Snabble.Shoppingcart.EmptyState.description")
             }
         } else {
-            ShoppingCartItemsView(cartModel: cartModel, footer: footer, asList: listMode)
+            ShoppingCartItemsView(cartModel: cartModel, footer: footer)
                 .onChange(of: cartModel.items) {
                     print("ShoppingCartView: cartModel.items did change")
                 }
