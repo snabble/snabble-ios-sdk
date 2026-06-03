@@ -12,13 +12,16 @@ import SnabbleComponents
 
 public struct ShopperConfiguration {
     let drawerOffset: CGFloat
+    let zoomControlOffset: CGFloat
     let showDismiss: Bool
     
     public init(
         drawerOffset: CGFloat = 0,
+        zoomControlOffset: CGFloat = 100,
         showDismiss: Bool = true,
     ) {
         self.drawerOffset = drawerOffset
+        self.zoomControlOffset = zoomControlOffset
         self.showDismiss = showDismiss
     }
 }
