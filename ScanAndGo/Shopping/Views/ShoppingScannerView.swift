@@ -72,7 +72,7 @@ struct ShoppingScannerView: View {
                     }
                 }
             ZoomControl(zoomLevel: $zoomLevel, steps: zoomSteps)
-                .offset(x: 0, y: position - 114)
+                .offset(x: 0, y: position - configuration.zoomControlOffset)
                 .opacity(model.scanningPaused || position == 0 ? 0 : 1)
             if model.barcodeManager.barcodeDetector.previewLayer != nil {
                 PullOverView(minHeight: $minHeight, expanded: $model.scanningPaused, paddingTop: $topMargin, position: $position, isDragging: $isDragging) {
