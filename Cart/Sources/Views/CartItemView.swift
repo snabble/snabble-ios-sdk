@@ -77,13 +77,13 @@ struct ShoppingCartItemDiscountItemView: View {
                 .buttonStyle(.plain)
             }
         }
-        .foregroundStyle(Color.onProjectPrimary())
+        .foregroundStyle(Color.projectPrimary())
         .padding(.horizontal, 12)
         .padding(.trailing, 8)
         .padding(.vertical, 12)
         .background {
             RoundedRectangle(cornerRadius: 9)
-                .fill(Color.projectPrimary())
+               .fill(Color.projectPrimary().opacity(0.25))
         }
     }
 }

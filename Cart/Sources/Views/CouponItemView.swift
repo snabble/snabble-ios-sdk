@@ -33,6 +33,7 @@ struct CouponItemView: View {
     @ViewBuilder
     var couponView: some View {
         HStack {
+            Spacer()
             VStack(alignment: .center, spacing: 4) {
                 Text(itemModel.cartCoupon.coupon.name)
 
@@ -49,15 +50,15 @@ struct CouponItemView: View {
             } label: {
                 Image(systemName: "trash")
                     .font(.title3)
-                    .foregroundStyle(Color.onProjectPrimary())
             }
             .buttonStyle(.plain)
         }
+        .foregroundStyle(Color.onProjectPrimary())
         .padding(.horizontal, 12)
         .padding(.vertical, 12)
         .background {
             RoundedRectangle(cornerRadius: 9)
-                .fill(Color.projectPrimary().opacity(0.25))
+                .fill(Color.projectPrimary().opacity(itemModel.isRedeemed ? 1.0 : 0.25))
         }
     }
     
