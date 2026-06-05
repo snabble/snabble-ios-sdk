@@ -19,6 +19,7 @@ public protocol CouponViewModelDelegate: AnyObject {
 @MainActor
 public class CouponViewModel {
     public let coupon: Coupon
+    public let shouldActivateCoupon: ((Coupon) -> Bool)?
 
     public var title: String { coupon.name }
     public var subtitle: String? { coupon.description }
@@ -27,18 +28,17 @@ public class CouponViewModel {
 
     public var image: UIImage?
 
-    public weak var delegate: CouponViewModelDelegate?
     private weak var imageTask: URLSessionDataTask?
 
     public var code: String? { coupon.code }
 
-    public init(coupon: Coupon) {
+    public init(coupon: Coupon, shouldActivateCoupon: ((Coupon) -> Bool)? = nil) {
         self.coupon = coupon
+        self.shouldActivateCoupon = shouldActivateCoupon
+        self.isActivated = coupon.isActivated
     }
 
-    public var isActivated: Bool {
-        coupon.isActivated
-    }
+    public var isActivated: Bool
 
     public var validUntil: String {
         guard coupon.isValid else {
@@ -98,25 +98,48 @@ public class CouponViewModel {
 }
 
 extension CouponViewModel {
+    @ViewBuilder
+    var newView: some View {
+        if isNew {
+            Text(Asset.localizedString(forKey:"Snabble.Coupons.new"))
+                .font(.caption2.weight(.bold))
+                .foregroundStyle(.white)
+                .padding(.horizontal, 8)
+                .padding(.vertical, 4)
+                .background(Color.projectPrimary())
+                .clipShape(Capsule())
+                .padding(10)
+        }
+    }
+}
+
+extension CouponViewModel {
     public var buttonTitle: String {
-        Asset.localizedString(forKey: coupon.isActivated ? "Snabble.Coupon.deactivate" : "Snabble.Coupon.activate")
+        Asset.localizedString(forKey: isActivated ? "Snabble.Coupon.deactivate" : "Snabble.Coupon.activate")
     }
 
     @objc
     public func activateCoupon() {
-        if delegate?.couponViewModel(self, shouldActivateCoupon: coupon) ?? true {
+        guard let shouldActivateCoupon else {
             Snabble.shared.couponManager.activate(coupon: coupon)
+            isActivated = true
+            return
+        }
+        if shouldActivateCoupon(coupon) {
+            Snabble.shared.couponManager.activate(coupon: coupon)
+            isActivated = true
         }
     }
 
     @objc
     public func deactivateCoupon() {
         Snabble.shared.couponManager.deactivate(coupon: coupon)
+        isActivated = false
     }
 
     @objc
     public func toggleActivation() {
-        if coupon.isActivated {
+        if isActivated {
             deactivateCoupon()
         } else {
             activateCoupon()

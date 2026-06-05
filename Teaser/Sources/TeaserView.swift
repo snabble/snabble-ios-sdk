@@ -58,7 +58,6 @@ public struct TeaserView: View {
                                         .fill(Color.systemBackground)
                                 )
                             }
-                            .padding(.horizontal, 25)
                             .containerRelativeFrame(.horizontal, count: 1, spacing: 0)
                         }
                         .scrollTargetLayout()
