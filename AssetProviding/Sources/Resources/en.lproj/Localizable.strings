@@ -86,6 +86,7 @@
 "Snabble.Coupon.validIndefinitely" = "valid indefinitely";
 "Snabble.Coupons.expired" = "Already expired";
 "Snabble.Coupons.expiresAtDate" = "valid until %@";
+"Snabble.Coupons.new" = "New";
 "Snabble.Coupons.none" = "No Coupons available";
 "Snabble.Coupons.title" = "Coupons";
 "Snabble.CreditCard.payNow" = "Pay now using Credit card";

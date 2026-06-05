@@ -86,6 +86,7 @@
 "Snabble.Coupon.validIndefinitely" = "validité indéterminée";
 "Snabble.Coupons.expired" = "Expiré";
 "Snabble.Coupons.expiresAtDate" = "valable jusqu'au %@";
+"Snabble.Coupons.new" = "Nouveau";
 "Snabble.Coupons.none" = "Aucun coupon disponible";
 "Snabble.Coupons.title" = "Coupons";
 "Snabble.CreditCard.payNow" = "Payer maintenant avec une carte de crédit";
