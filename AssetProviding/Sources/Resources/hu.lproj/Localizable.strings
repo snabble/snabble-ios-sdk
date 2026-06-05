@@ -86,6 +86,7 @@
 "Snabble.Coupon.validIndefinitely" = "korlátlanul érvényes";
 "Snabble.Coupons.expired" = "Már lejárt";
 "Snabble.Coupons.expiresAtDate" = "érvényes %@-ig";
+"Snabble.Coupons.new" = "Új";
 "Snabble.Coupons.none" = "Nincs elérhető kupon";
 "Snabble.Coupons.title" = "Kuponok";
 "Snabble.CreditCard.payNow" = "Fizetés hitelkártyával";
