@@ -90,6 +90,8 @@ public struct ReceiptsListScreen<SomeEmptyView: View>: View {
 
     @ViewBuilder let placeholderView: SomeEmptyView
     
+    @State private var showArchive = false
+    
     public init(model: PurchasesViewModel = .init(), useBuiltInNavigation: Bool = true) {
         self._viewModel = State(initialValue: model)
         self.useBuiltInNavigation = useBuiltInNavigation
@@ -102,6 +104,34 @@ public struct ReceiptsListScreen<SomeEmptyView: View>: View {
         self.placeholderView = placeholder
     }
 
+    @ViewBuilder
+    private func menuButtons(_ provider: any PurchaseProviding) -> some View {
+        Group {
+            Button(action: {
+                viewModel.markAllAsRead()
+            }) {
+                Label(Asset.localizedString(forKey: "Snabble.Receipts.markAllAsRead"), systemImage: "envelope.open")
+            }
+            .disabled(viewModel.numberOfUnread == 0)
+            
+            Divider()
+            
+            if provider.isRead {
+                Button(action: {
+                    viewModel.markAsUnread(receiptId: provider.id)
+                }) {
+                    Label(Asset.localizedString(forKey: "Snabble.Receipts.markAsUnread"), systemImage: "envelope.badge")
+                }
+            } else {
+                Button(action: {
+                    viewModel.markAsRead(receiptId: provider.id)
+                }) {
+                    Label(Asset.localizedString(forKey: "Snabble.Receipts.markAsRead"), systemImage: "envelope.badge.fill")
+                }
+            }
+        }
+    }
+    
     public var body: some View {
         AsyncContentView(source: viewModel, content: { output in
             VStack {
@@ -109,25 +139,7 @@ public struct ReceiptsListScreen<SomeEmptyView: View>: View {
                     ForEach(output, id: \.combinedID) { provider in
                         receiptRow(for: provider)
                             .contextMenu {
-                                Button(action: {
-                                    viewModel.markAllAsRead()
-                                }) {
-                                    Label(Asset.localizedString(forKey: "Snabble.Receipts.markAllAsRead"), systemImage: "envelope.open")
-                                }
-                                .disabled(viewModel.numberOfUnread == 0)
-                                
-                                Divider()
-
-                                Button(action: {
-                                    if provider.isRead {
-                                        viewModel.markAsUnread(receiptId: provider.id)
-                                    } else {
-                                        viewModel.markAsRead(receiptId: provider.id)
-                                    }
-                                }) {
-                                    Label(Asset.localizedString(forKey: provider.isRead ? "Snabble.Receipts.markAsUnread" : "Snabble.Receipts.markAsRead"),
-                                          systemImage: provider.isRead ? "envelope.badge" : "envelope.badge.fill")
-                                }
+                                menuButtons(provider)
                             }
                     }
                     .listRowInsets(EdgeInsets(top: 10, leading: 4, bottom: 10, trailing: 16))
@@ -150,6 +162,10 @@ public struct ReceiptsListScreen<SomeEmptyView: View>: View {
                     viewModel.markAsRead(receiptId: item.orderId)
                 }
         }
+        .sheet(isPresented: $showArchive) {
+            archiveView
+                .presentationDetents([.medium, .large])
+        }
         .task {
             viewModel.reset()
         }
@@ -162,6 +178,13 @@ public struct ReceiptsListScreen<SomeEmptyView: View>: View {
                         Label(Asset.localizedString(forKey: "Snabble.Receipts.markAllAsRead"), systemImage: "envelope.open")
                     }
                     .disabled(viewModel.numberOfUnread == 0)
+                    
+                    Button(action: {
+                        showArchive = true
+                    }) {
+                        Label(Asset.localizedString(forKey: "Snabble.Receipts.Archive.title"), systemImage: "square.and.arrow.down")
+                    }
+                    .disabled(viewModel.orders.isEmpty)
                 } label: {
                     Image(systemName: "ellipsis")
                 }
@@ -170,6 +193,15 @@ public struct ReceiptsListScreen<SomeEmptyView: View>: View {
         .badge(viewModel.numberOfUnread)
         .navigationTitle(Asset.localizedString(forKey: "Snabble.Receipts.title"))
 
+    }
+
+    @ViewBuilder
+    private var archiveView: some View {
+        if !viewModel.orders.isEmpty {
+            ArchiveReceiptsView(orders: viewModel.orders)
+        } else {
+            ContentUnavailableView(Asset.localizedString(forKey: "Snabble.Receipts.noReceipts"), image: "square.and.arrow.down")
+        }
     }
 
     @ViewBuilder

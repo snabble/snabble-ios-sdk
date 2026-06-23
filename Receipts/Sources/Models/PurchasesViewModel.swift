@@ -192,3 +192,13 @@ extension PurchasesViewModel {
         return imageCache[projectId]
     }
 }
+
+extension PurchasesViewModel {
+    public var orders: [Order] {
+        if case let .loaded(orders) = state {
+            return orders as? [Order] ?? []
+        } else {
+            return []
+        }
+    }
+}

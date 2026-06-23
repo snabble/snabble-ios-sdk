@@ -285,6 +285,14 @@
 "Snabble.Receipt.pdfReaderUnavailable" = "Nem található megfelelő PDF-olvasó";
 "Snabble.Receipt.reportProblem" = "Report Problem";
 "Snabble.Receipt.share" = "Share";
+"Snabble.Receipts.Archive.create" = "Create Archive";
+"Snabble.Receipts.Archive.created" = "Archive created";
+"Snabble.Receipts.Archive.failed" = "Archive Failed";
+"Snabble.Receipts.Archive.ordersArchived" = "%ld  order(s) archive";
+"Snabble.Receipts.Archive.retry" = "Try Again";
+"Snabble.Receipts.Archive.share" = "Share Archive";
+"Snabble.Receipts.Archive.start" = "Archive your Receipts";
+"Snabble.Receipts.Archive.title" = "Archive Receipts";
 "Snabble.Receipts.loading" = "(Betöltés alatt)";
 "Snabble.Receipts.markAllAsRead" = "Minden elolvasottként jelölés";
 "Snabble.Receipts.markAsRead" = "Olvasottként jelölés";
