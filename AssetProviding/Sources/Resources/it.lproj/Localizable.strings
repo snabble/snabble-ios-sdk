@@ -285,6 +285,14 @@
 "Snabble.Receipt.pdfReaderUnavailable" = "Non è stata trovata un’applicazione per leggere i PDF";
 "Snabble.Receipt.reportProblem" = "Report Problem";
 "Snabble.Receipt.share" = "Share";
+"Snabble.Receipts.Archive.create" = "Create Archive";
+"Snabble.Receipts.Archive.created" = "Archive created";
+"Snabble.Receipts.Archive.failed" = "Archive Failed";
+"Snabble.Receipts.Archive.ordersArchived" = "%ld  order(s) archive";
+"Snabble.Receipts.Archive.retry" = "Try Again";
+"Snabble.Receipts.Archive.share" = "Share Archive";
+"Snabble.Receipts.Archive.start" = "Archive your Receipts";
+"Snabble.Receipts.Archive.title" = "Archive Receipts";
 "Snabble.Receipts.loading" = "(in caricamento)";
 "Snabble.Receipts.markAllAsRead" = "Contrassegna tutto come letto";
 "Snabble.Receipts.markAsRead" = "Contrassegna come letto";
