@@ -61,7 +61,11 @@ open class InternalBarcodeDetector: NSObject, Zoomable, @unchecked Sendable {
 
             do {
                 try camera.lockForConfiguration()
-                camera.ramp(toVideoZoomFactor: newValue, withRate: 4)
+                if captureSession.isRunning {
+                    camera.ramp(toVideoZoomFactor: newValue, withRate: 4)
+                } else {
+                    camera.videoZoomFactor = newValue
+                }
                 camera.unlockForConfiguration()
                 
                 UserDefaults.standard.set(Float(newValue), forKey: Self.zoomValueKey)
@@ -153,6 +157,7 @@ open class InternalBarcodeDetector: NSObject, Zoomable, @unchecked Sendable {
             let videoInput = try? AVCaptureDeviceInput(device: camera),
             self.captureSession.canAddInput(videoInput)
         else {
+            self.state = .ready
             return
         }
         
