@@ -62,6 +62,8 @@ extension View {
 }
 
 public struct UserConsentScreen: View {
+    @Environment(\.dismiss) private var dismiss
+    
     let networkManager: NetworkManager
     
     let userConsent: User.Consent
@@ -106,6 +108,7 @@ public struct UserConsentScreen: View {
                         WebView(url: url)
                     }
                 PrimaryButtonView(title: Asset.localizedString(forKey: "Consent.accept")) {
+                    dismiss()
                     update()
                 }
             }
