@@ -133,9 +133,6 @@ public struct ArchiveReceiptsView: View {
                     ArchiveShareSheet(url: url)
                 }
             }
-
-            Button(Asset.localizedString(forKey: "Snabble.done")) { dismiss() }
-                .buttonStyle(ProjectSecondaryButtonStyle())
         }
         .task {
             if silent {
