@@ -39,9 +39,10 @@ public enum OrderArchiveError: LocalizedError {
 public struct OrderArchiveManager {
 
     /// Downloads all receipts from `orders` into a new folder
-    /// named "Order Archive-yyyy-MM-dd" in the Documents directory.
+    /// named \"Order Archive\" in the Documents directory.
     /// Within that folder each shop gets its own subdirectory and
     /// each file is named by the unique order id.
+    /// A hidden `.index.json` containing all archived orders is written to the archive root.
     ///
     /// - Parameters:
     ///   - orders: The orders to archive. Orders without a receipt link are skipped.
@@ -93,10 +94,21 @@ public struct OrderArchiveManager {
         guard succeeded > 0 else {
             throw OrderArchiveError.noReceiptsDownloaded
         }
+
+        try writeIndex(receipts, to: archiveURL)
+
         return archiveURL
     }
 
     // MARK: - Private helpers
+
+    private static func writeIndex(_ orders: [Order], to archiveURL: URL) throws {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let data = try encoder.encode(orders)
+        let indexURL = archiveURL.appendingPathComponent(".index.json")
+        try data.write(to: indexURL, options: .atomic)
+    }
 
     private static func makeArchiveDirectory() throws -> URL {
         let docsURL = try FileManager.default.url(
