@@ -91,6 +91,10 @@ public struct ReceiptsListScreen<SomeEmptyView: View>: View {
     @ViewBuilder let placeholderView: SomeEmptyView
     
     @State private var showArchive = false
+    @State private var archiveExists = false
+
+    // Temporary disabled feature
+    private let archiveAvailable: Bool = false
     
     public init(model: PurchasesViewModel = .init(), useBuiltInNavigation: Bool = true) {
         self._viewModel = State(initialValue: model)
@@ -132,10 +136,33 @@ public struct ReceiptsListScreen<SomeEmptyView: View>: View {
         }
     }
     
+    @ViewBuilder
+    private var archiveListItemView: some View {
+        if archiveAvailable, archiveExists {
+            Section {
+                NavigationLink {
+                    ArchiveListScreen()
+                } label: {
+                    Label {
+                        Text(Asset.localizedString(forKey: "Snabble.Receipts.Archive.listTitle"))
+                            .font(.headline)
+                    } icon: {
+                        Image(systemName: "archivebox.fill")
+                            .resizable()
+                            .scaledToFit()
+                            .foregroundColor(.projectPrimary())
+                            .frame(width: 60)
+                    }
+                }
+            }
+        }
+    }
+    
     public var body: some View {
         AsyncContentView(source: viewModel, content: { output in
             VStack {
                 List {
+                    archiveListItemView
                     ForEach(output, id: \.combinedID) { provider in
                         receiptRow(for: provider)
                             .contextMenu {
@@ -164,9 +191,13 @@ public struct ReceiptsListScreen<SomeEmptyView: View>: View {
         }
         .sheet(isPresented: $showArchive) {
             archiveView
+                .onDisappear {
+                    archiveExists = OrderArchiveManager.hasArchive
+                }
                 .presentationDetents([.medium, .large])
         }
         .task {
+            archiveExists = OrderArchiveManager.hasArchive
             viewModel.reset()
         }
         .toolbar {
