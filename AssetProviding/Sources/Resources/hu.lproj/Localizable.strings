@@ -286,9 +286,8 @@
 "Snabble.Receipt.reportProblem" = "Report Problem";
 "Snabble.Receipt.share" = "Share";
 "Snabble.Receipts.Archive.create" = "Create Archive";
-"Snabble.Receipts.Archive.created" = "Archive created";
 "Snabble.Receipts.Archive.failed" = "Archive Failed";
-"Snabble.Receipts.Archive.ordersArchived" = "%ld  order(s) archive";
+"Snabble.Receipts.Archive.listTitle" = "Archive";
 "Snabble.Receipts.Archive.retry" = "Try Again";
 "Snabble.Receipts.Archive.share" = "Share Archive";
 "Snabble.Receipts.Archive.start" = "Archive your Receipts";

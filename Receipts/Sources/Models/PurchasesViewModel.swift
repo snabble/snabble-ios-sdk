@@ -202,3 +202,17 @@ extension PurchasesViewModel {
         }
     }
 }
+
+extension PurchasesViewModel {
+    /// Loads receipts from the local archive index instead of the network.
+    @MainActor
+    public func loadFromArchive() {
+        do {
+            let orders = try OrderArchiveManager.loadIndex()
+            state = orders.isEmpty ? .empty : .loaded(orders)
+            updateUnreadCount()
+        } catch {
+            state = .failed(error)
+        }
+    }
+}

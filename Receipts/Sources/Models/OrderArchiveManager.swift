@@ -38,10 +38,42 @@ public enum OrderArchiveError: LocalizedError {
 @MainActor
 public struct OrderArchiveManager {
 
+    // MARK: - Public helpers
+
+    /// Root folder of the receipt archive in the app's Documents directory.
+    public static var archiveDirectoryURL: URL {
+        FileManager.default.urls(for: .documentDirectory, in: .userDomainMask)[0]
+            .appendingPathComponent("Order Archive", isDirectory: true)
+    }
+
+    /// `true` when a valid archive index exists on disk.
+    public static var hasArchive: Bool {
+        FileManager.default.fileExists(atPath: archiveIndexURL.path)
+    }
+
+    /// Loads all orders stored in the archive index.
+    public static func loadIndex() throws -> [Order] {
+        let data = try Data(contentsOf: archiveIndexURL)
+        let decoder = JSONDecoder()
+        decoder.dateDecodingStrategy = .iso8601
+        return try decoder.decode([Order].self, from: data)
+    }
+
+    /// Returns the expected local PDF URL for an archived order.
+    /// The file may not exist if the PDF failed to download during archiving.
+    public static func archivedReceiptURL(for order: Order) -> URL {
+        archiveDirectoryURL
+            .appendingPathComponent(sanitized(order.shopName), isDirectory: true)
+            .appendingPathComponent("\(order.id).pdf")
+    }
+
+    // MARK: - Archive creation
+
     /// Downloads all receipts from `orders` into a new folder
-    /// named "Order Archive-yyyy-MM-dd" in the Documents directory.
+    /// named \"Order Archive\" in the Documents directory.
     /// Within that folder each shop gets its own subdirectory and
     /// each file is named by the unique order id.
+    /// A hidden `.index.json` containing all archived orders is written to the archive root.
     ///
     /// - Parameters:
     ///   - orders: The orders to archive. Orders without a receipt link are skipped.
@@ -93,21 +125,28 @@ public struct OrderArchiveManager {
         guard succeeded > 0 else {
             throw OrderArchiveError.noReceiptsDownloaded
         }
+
+        try writeIndex(receipts, to: archiveURL)
+
         return archiveURL
     }
 
     // MARK: - Private helpers
 
+    private static var archiveIndexURL: URL {
+        archiveDirectoryURL.appendingPathComponent(".index.json")
+    }
+
+    private static func writeIndex(_ orders: [Order], to archiveURL: URL) throws {
+        let encoder = JSONEncoder()
+        encoder.dateEncodingStrategy = .iso8601
+        let data = try encoder.encode(orders)
+        try data.write(to: archiveIndexURL, options: .atomic)
+    }
+
     private static func makeArchiveDirectory() throws -> URL {
-        let docsURL = try FileManager.default.url(
-            for: .documentDirectory,
-            in: .userDomainMask,
-            appropriateFor: nil,
-            create: true
-        )
-        let archiveURL = docsURL.appendingPathComponent("Order Archive", isDirectory: true)
-        try FileManager.default.createDirectory(at: archiveURL, withIntermediateDirectories: true)
-        return archiveURL
+        try FileManager.default.createDirectory(at: archiveDirectoryURL, withIntermediateDirectories: true)
+        return archiveDirectoryURL
     }
 
     /// Returns (creating if needed) a per-shop subdirectory inside `archiveURL`.

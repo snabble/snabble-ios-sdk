@@ -1,7 +1,7 @@
 //
 //  ArchiveReceiptsViewModel.swift
 //
-//  Copyright © 2026 snabble. All rights reserved.
+//  Created by Uwe Tilemann on 25.06.26.
 //
 
 import Foundation
