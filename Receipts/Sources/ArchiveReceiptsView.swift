@@ -1,7 +1,7 @@
 //
 //  ArchiveReceiptsView.swift
 //
-//  Copyright © 2026 snabble. All rights reserved.
+//  Created by Uwe Tilemann on 25.06.26.
 //
 
 import SwiftUI
@@ -36,12 +36,14 @@ public struct ArchiveReceiptsView: View {
     public var body: some View {
         NavigationStack {
             content
-                .navigationTitle(Asset.localizedString(forKey: "Snabble.Receipts.Archive.title")) // Archive Receipts
+                .navigationTitle(Asset.localizedString(forKey: "Snabble.Receipts.Archive.listTitle")) // Archive Receipts
                 .navigationBarTitleDisplayMode(.inline)
                 .toolbar { toolbarContent }
-                .task { if silent {
-                    viewModel.startArchive(orders: orders)
-                }}
+                .task {
+                    if silent {
+                        viewModel.startArchive(orders: orders)
+                    }
+                }
         }
     }
 
@@ -113,31 +115,18 @@ public struct ArchiveReceiptsView: View {
     }
 
     private func doneView(url: URL) -> some View {
-        VStack(spacing: 24) {
-            Image(systemName: "checkmark.circle.fill")
-                .font(.system(size: 56))
-                .foregroundStyle(.green)
-
-            Text(Asset.localizedString(forKey: "Snabble.Receipts.Archive.created")) // "Archive Created"
-                .font(.title2.bold())
-            Text(Asset.localizedString(forKey: "Snabble.Receipts.Archive.ordersArchived", arguments: orders.count)) // \(orders.count) order(s) archived.
-            
-            if !silent {
-                Button {
-                    showShareSheet = true
-                } label: {
-                    Label(Asset.localizedString(forKey: "Snabble.Receipts.Archive.share"), systemImage: "square.and.arrow.up") // "Share Archive"
-                }
-                .buttonStyle(ProjectPrimaryButtonStyle())
-                .sheet(isPresented: $showShareSheet) {
-                    ArchiveShareSheet(url: url)
-                }
+        VStack {
+            ArchiveListScreen()
+            Button {
+                showShareSheet = true
+            } label: {
+                Label(Asset.localizedString(forKey: "Snabble.Receipts.Archive.share"), systemImage: "square.and.arrow.up") // "Share Archive"
+                    .frame(maxWidth: .infinity)
             }
-        }
-        .task {
-            if silent {
-                try? await Task.sleep(for: .seconds(1))
-                dismiss()
+            .padding(.horizontal)
+            .buttonStyle(ProjectPrimaryButtonStyle())
+            .sheet(isPresented: $showShareSheet) {
+                ArchiveShareSheet(url: url)
             }
         }
 #if DEBUG
@@ -145,7 +134,6 @@ public struct ArchiveReceiptsView: View {
             print("archived url: \(url)")
         }
 #endif
-        .padding()
         .frame(maxWidth: .infinity, maxHeight: .infinity)
     }
 
