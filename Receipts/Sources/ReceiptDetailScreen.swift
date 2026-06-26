@@ -2,7 +2,7 @@
 //  ReceiptDetailScreen.swift
 //  Snabble
 //
-//  Copyright © 2026 snabble. All rights reserved.
+//  Created by Uwe Tilemann on 11.03.26.
 //
 
 import SwiftUI
@@ -16,6 +16,7 @@ import SnabbleAssetProviding
 public struct ReceiptDetailScreen: View {
     let orderId: String
     let projectId: Identifier<Project>
+    private let localURL: URL?
 
     @State private var receiptURL: URL?
     @State private var supportEmail: String?
@@ -29,11 +30,23 @@ public struct ReceiptDetailScreen: View {
     public init(orderId: String, projectId: Identifier<Project>) {
         self.orderId = orderId
         self.projectId = projectId
+        self.localURL = nil
     }
 
     public init(provider: any PurchaseProviding) {
         self.orderId = provider.id
         self.projectId = provider.projectId
+        self.localURL = nil
+    }
+
+    /// Init for archived receipts — skips server download and shows the local PDF directly.
+    public init(localURL: URL, provider: any PurchaseProviding) {
+        self.localURL = localURL
+        self.orderId = provider.id
+        self.projectId = provider.projectId
+        self._receiptURL = State(initialValue: localURL)
+        self._isLoading = State(initialValue: false)
+        self._order = State(initialValue: order)
     }
 
     public var body: some View {
@@ -50,6 +63,7 @@ public struct ReceiptDetailScreen: View {
                 ReceiptPreviewView(url: receiptURL)
             }
         }
+        .navigationTitle(order?.dateString ?? "")
         .toolbar {
             if receiptURL != nil {
                 ToolbarItem(placement: .navigationBarTrailing) {
@@ -84,7 +98,7 @@ public struct ReceiptDetailScreen: View {
             if let url = receiptURL {
                 MailComposerViewController(
                     recipients: supportEmail != nil ? [supportEmail!] : [],
-                    subject: Asset.localizedString(forKey:"Snabble.Receipt.Mail.subject"), // "Receipt Problem Report"
+                    subject: Asset.localizedString(forKey:"Snabble.Receipt.Mail.subject"),
                     messageBody: mailBody(),
                     url: url
                 )
@@ -93,7 +107,7 @@ public struct ReceiptDetailScreen: View {
         .alert(Asset.localizedString(forKey:"Snabble.Receipt.Mail.notAvailable"), isPresented: $showMailUnavailableAlert) {
             Button("OK", role: .cancel) { }
         } message: {
-            Text(Asset.localizedString(forKey: "Snabble.Receipt.Mail.configure")) // "Please configure a mail account in Settings to send problem reports."
+            Text(Asset.localizedString(forKey: "Snabble.Receipt.Mail.configure"))
         }
         .task {
             await loadReceipt()
@@ -101,27 +115,24 @@ public struct ReceiptDetailScreen: View {
     }
     
     private func mailBody() -> String {
-        var body = Asset.localizedString(forKey: "Snabble.Receipt.Mail.header") // "I would like to report a problem with this receipt.\n\n"
+        var body = Asset.localizedString(forKey: "Snabble.Receipt.Mail.header")
         
         if let order = order {
             let formatter = DateFormatter()
             formatter.dateStyle = .medium
             formatter.timeStyle = .short
-            body += Asset.localizedString(
-                forKey: "Snabble.Receipt.Mail.orderId", // "Order ID: \(order.id)\n"
-                arguments: order.id
-            )
-            body += Asset.localizedString(
-                forKey: "Snabble.Receipt.Mail.orderDate",
-                arguments: formatter.string(from: order.date) // "Date: \(formatter.string(from: order.date))\n\n"
-            )
+            body += Asset.localizedString(forKey: "Snabble.Receipt.Mail.orderId", arguments: order.id)
+            body += Asset.localizedString(forKey: "Snabble.Receipt.Mail.orderDate", arguments: formatter.string(from: order.date))
         }
-        body += Asset.localizedString(forKey: "Snabble.Receipt.Mail.body") // "Please describe the problem:\n\n"
+        body += Asset.localizedString(forKey: "Snabble.Receipt.Mail.body")
 
         return body
     }
     
     private func loadReceipt() async {
+        // Local archive receipts are already set via init — skip server download.
+        guard localURL == nil else { return }
+
         guard let project = Snabble.shared.project(for: projectId) ?? Snabble.shared.projects.first else {
             self.error = ReceiptError.missingProject
             self.isLoading = false
@@ -273,4 +284,3 @@ struct MailComposerViewController: UIViewControllerRepresentable {
         }
     }
 }
-
