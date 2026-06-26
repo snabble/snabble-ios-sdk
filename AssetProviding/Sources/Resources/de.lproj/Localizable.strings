@@ -286,9 +286,8 @@
 "Snabble.Receipt.reportProblem" = "Problem Melden";
 "Snabble.Receipt.share" = "Teilen";
 "Snabble.Receipts.Archive.create" = "Erstelle Archiv";
-"Snabble.Receipts.Archive.created" = "Archiv erstellt";
 "Snabble.Receipts.Archive.failed" = "Archivierung fehlgeschlagen";
-"Snabble.Receipts.Archive.ordersArchived" = "%ld Beleg(e) archiviert";
+"Snabble.Receipts.Archive.listTitle" = "Archiv";
 "Snabble.Receipts.Archive.retry" = "Erneut versuchen";
 "Snabble.Receipts.Archive.share" = "Archiv Teilen";
 "Snabble.Receipts.Archive.start" = "Archiviere Deine Belege";
