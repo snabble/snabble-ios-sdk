@@ -30,8 +30,6 @@ extension Payment {
                 InvoiceLoginEditView(detail: detail, projectId: manager.projectId)
             case .datatransAlias, .datatransCardAlias:
                 DatatransEditView(detail: detail, analyticsDelegate: analyticsDelegate)
-            case .tegutEmployeeCard:
-                PaymentEditUnavailableView(message: "No edit available for this payment method")
             }
         } else {
             PaymentEditUnavailableView(message: "No detail available")

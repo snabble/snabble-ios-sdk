@@ -38,9 +38,8 @@ extension PaymentMethodItem {
             if isPaymentMethodDetailAvailable {
                 let items = paymentMethodDetails.map { paymentMethodDetail -> PaymentMethodItem in
                     var detailText: String?
-                    if case let PaymentMethodUserData.tegutEmployeeCard(data) = paymentMethodDetail.methodData {
-                        detailText = data.cardNumber
-                    } else if case let PaymentMethodUserData.invoiceByLogin(data) = paymentMethodDetail.methodData {
+
+                    if case let PaymentMethodUserData.invoiceByLogin(data) = paymentMethodDetail.methodData {
                         detailText = LoginStrings.username.localizedString("Snabble.Payment.ExternalBilling") + ": " + data.username
                     }
                     

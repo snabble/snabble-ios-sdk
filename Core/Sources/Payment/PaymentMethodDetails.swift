@@ -31,7 +31,6 @@ public enum PaymentMethodError: Error {
 public enum PaymentMethodUserData: Codable, Equatable, Sendable {
     case sepa(SepaData)
     case teleCashCreditCard(TeleCashCreditCardData)
-    case tegutEmployeeCard(TegutEmployeeData)
     case giropayAuthorization(GiropayData)
     case datatransAlias(DatatransData)
     case datatransCardAlias(DatatransCreditCardData)
@@ -42,7 +41,6 @@ public enum PaymentMethodUserData: Codable, Equatable, Sendable {
     public enum CodingKeys: String, CodingKey {
         case sepa
         case teleCashCreditCard
-        case tegutEmployeeCard
         case giropayAuthorization = "paydirektAuthorization"
         case datatransAlias, datatransCardAlias
         case payoneCreditCard
@@ -58,7 +56,6 @@ public enum PaymentMethodUserData: Codable, Equatable, Sendable {
         switch self {
         case .sepa(let data): return data
         case .teleCashCreditCard(let data): return data
-        case .tegutEmployeeCard(let data): return data
         case .giropayAuthorization(let data): return data
         case .datatransAlias(let data): return data
         case .datatransCardAlias(let data): return data
@@ -84,8 +81,6 @@ public enum PaymentMethodUserData: Codable, Equatable, Sendable {
             self = .teleCashCreditCard(creditcard)
         } else if let creditcard = try container.decodeIfPresent(TeleCashCreditCardData.self, forKey: .teleCashCreditCard) {
             self = .teleCashCreditCard(creditcard)
-        } else if let tegutData = try container.decodeIfPresent(TegutEmployeeData.self, forKey: .tegutEmployeeCard) {
-            self = .tegutEmployeeCard(tegutData)
         } else if let giropayData = try container.decodeIfPresent(GiropayData.self, forKey: .giropayAuthorization) {
             self = .giropayAuthorization(giropayData)
         } else if let datatransData = try container.decodeIfPresent(DatatransData.self, forKey: .datatransAlias) {
@@ -108,7 +103,6 @@ public enum PaymentMethodUserData: Codable, Equatable, Sendable {
         switch self {
         case .sepa(let data): try container.encode(data, forKey: .sepa)
         case .teleCashCreditCard(let data): try container.encode(data, forKey: .teleCashCreditCard)
-        case .tegutEmployeeCard(let data): try container.encode(data, forKey: .tegutEmployeeCard)
         case .giropayAuthorization(let data): try container.encode(data, forKey: .giropayAuthorization)
         case .datatransAlias(let data): try container.encode(data, forKey: .datatransAlias)
         case .datatransCardAlias(let data): try container.encode(data, forKey: .datatransCardAlias)
@@ -185,11 +179,6 @@ public struct PaymentMethodDetail: Equatable, Sendable {
         self.methodData = PaymentMethodUserData.teleCashCreditCard(creditcardData)
     }
 
-    public init(_ tegutData: TegutEmployeeData) {
-        self.id = UUID()
-        self.methodData = PaymentMethodUserData.tegutEmployeeCard(tegutData)
-    }
-
     public init(_ paydirektData: GiropayData) {
         self.id = UUID()
         self.methodData = PaymentMethodUserData.giropayAuthorization(paydirektData)
@@ -246,7 +235,7 @@ public struct PaymentMethodDetail: Equatable, Sendable {
     public var rawMethod: RawPaymentMethod {
         switch self.methodData {
         case .sepa, .payoneSepa: return .deDirectDebit
-        case .tegutEmployeeCard, .invoiceByLogin:
+        case .invoiceByLogin:
             return .externalBilling
         case .giropayAuthorization:
             return .giropayOneKlick
@@ -284,7 +273,7 @@ public struct PaymentMethodDetail: Equatable, Sendable {
             return payoneSepaData.projectId
         case .invoiceByLogin(let invoiceData):
             return invoiceData.projectId
-        case .sepa, .tegutEmployeeCard, .giropayAuthorization:
+        case .sepa, .giropayAuthorization:
             return nil
         }
     }
@@ -293,8 +282,6 @@ public struct PaymentMethodDetail: Equatable, Sendable {
 extension PaymentMethodDetail {
     public var imageName: String {
         switch self.methodData {
-        case .tegutEmployeeCard:
-            return "payment-tegut"
         case .invoiceByLogin:
             return "payment-invoice"
             
@@ -509,26 +496,5 @@ public enum PaymentMethodDetails {
 
         self.save(details)
         return initialCount != details.count
-    }
-}
-
-// extensions for tegut employee cards that can be used as payment methods
-extension PaymentMethodDetails {
-    public static func addTegutEmployeeCard(_ number: String, _ name: String, _ projectId: Identifier<Project>) {
-        guard
-            let cert = Snabble.shared.certificates.first,
-            let employeeData = TegutEmployeeData(cert.data, number, name, projectId)
-        else {
-            return
-        }
-
-        var details = self.read().filter { $0.originType != .tegutEmployeeID }
-        details.append(PaymentMethodDetail(employeeData))
-        self.save(details)
-    }
-
-    public static func removeTegutEmployeeCard() {
-        let details = self.read().filter { $0.originType != .tegutEmployeeID }
-        self.save(details)
     }
 }
