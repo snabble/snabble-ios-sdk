@@ -84,7 +84,7 @@ public final class PaymentMethodListManager {
                 return payoneData.projectId == projectId
             case .payoneSepa(let payoneSepaData):
                 return payoneSepaData.projectId == projectId
-            case .sepa, .tegutEmployeeCard, .giropayAuthorization, .invoiceByLogin:
+            case .sepa, .giropayAuthorization, .invoiceByLogin:
                 return Snabble.shared.project(for: projectId)?.paymentMethods.contains(detail.rawMethod) ?? false
             }
         }.count

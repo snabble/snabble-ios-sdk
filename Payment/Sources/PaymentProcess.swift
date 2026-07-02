@@ -124,13 +124,6 @@ public final class PaymentProcess {
                     let debitData = PaymentMethod.deDirectDebit(detail.data)
                     results.append(debitData)
                 }
-            case .tegutEmployeeCard:
-                let tegut = methods.first {
-                    $0.method == .externalBilling && $0.acceptedOriginTypes?.contains(.tegutEmployeeID) == true
-                }
-                if tegut != nil {
-                    results.append(PaymentMethod.externalBilling(detail.data))
-                }
             case .giropayAuthorization:
                 let useGiropay = methods.first { $0.method == .giropayOneKlick } != nil
                 if useGiropay {

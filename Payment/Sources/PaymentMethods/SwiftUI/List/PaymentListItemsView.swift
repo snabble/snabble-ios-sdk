@@ -51,16 +51,9 @@ public struct PaymentListItemsView: View {
     }
 
     private func canNavigateToEdit(_ payment: Payment) -> Bool {
-        guard let detail = payment.detail else { return false }
+        guard payment.detail != nil else { return false }
 
-        // All payment methods with details can be edited
-        switch detail.methodData {
-        case .sepa, .payoneSepa, .teleCashCreditCard, .giropayAuthorization,
-             .payoneCreditCard, .datatransAlias, .datatransCardAlias, .invoiceByLogin:
-            return true
-        case .tegutEmployeeCard:
-            return false // No edit view available
-        }
+        return true
     }
 
     private func delete(payment: Payment) {
