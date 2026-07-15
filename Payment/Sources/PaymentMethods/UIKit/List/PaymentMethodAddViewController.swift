@@ -125,7 +125,7 @@ extension PaymentMethodAddViewController {
             .filter { $0.visible }
             .sorted { $0.displayName < $1.displayName }
 
-        let sheet = SelectionSheetController(title: Asset.localizedString(forKey: "Snabble.PaymentMethods.choose"), message: nil)
+        let sheet = SelectionSheetController(title: Asset.localizedString(forKey: "Snabble.PaymentMethods.add"), message: nil)
 
         methods.forEach { method in
             let action = SelectionSheetAction(title: method.displayName, image: method.icon) { [self] _ in

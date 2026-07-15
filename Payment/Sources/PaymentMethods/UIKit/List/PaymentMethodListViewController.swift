@@ -121,7 +121,7 @@ extension UIViewController {
        if methods.count == 1 {
            showEditController(for: methods[0], in: projectId, analyticsDelegate: analyticsDelegate)
        } else {
-           let sheet = SelectionSheetController(title: Asset.localizedString(forKey: "Snabble.PaymentMethods.choose"))
+           let sheet = SelectionSheetController(title: Asset.localizedString(forKey: "Snabble.PaymentMethods.add"))
 
            methods.forEach { method in
                let action = SelectionSheetAction(title: method.displayName, image: method.icon) { [self] _ in

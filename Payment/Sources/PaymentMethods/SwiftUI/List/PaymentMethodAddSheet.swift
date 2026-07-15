@@ -68,7 +68,7 @@ public struct PaymentMethodAddSheet: View {
                     }
                 }
             }
-            .navigationTitle(Asset.localizedString(forKey: "Snabble.PaymentMethods.choose"))
+            .navigationTitle(Asset.localizedString(forKey: "Snabble.PaymentMethods.add"))
             .navigationBarTitleDisplayMode(.inline)
             .toolbar {
                 ToolbarItem(placement: .cancellationAction) {
