@@ -12,6 +12,20 @@ import Combine
 import SnabbleAssetProviding
 import SnabbleComponents
 
+extension String {
+    static func errorString(reason: String) -> String {
+        "\(reason)\nThis should not happen! 😳"
+    }
+}
+
+struct ErrorText: View {
+    let reason: String
+
+    var body: some View {
+        Text(String.errorString(reason: reason))
+    }
+}
+
 /// Represents different types of actions that can be triggered in the application.
 public enum ActionType: Equatable, @unchecked Sendable {
     /// Nothing to display
