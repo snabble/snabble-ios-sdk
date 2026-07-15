@@ -106,6 +106,17 @@ public final class Shopper: BarcodeProcessing, Equatable {
     /// The successful checkout process to display in the success screen
     public var successfulCheckoutProcess: CheckoutProcess?
 
+    /// A navigation destination wrapping a UIViewController with a stable identity.
+    /// Each instance gets a unique UUID so replacing the target while navigating
+    /// forces SwiftUI's navigationDestination(item:) to rebuild the destination view.
+    public struct NavigationItem: Hashable, @unchecked Sendable {
+        public let id = UUID()
+        public let viewController: UIViewController
+
+        public static func == (lhs: NavigationItem, rhs: NavigationItem) -> Bool { lhs.id == rhs.id }
+        public func hash(into hasher: inout Hasher) { hasher.combine(id) }
+    }
+
     /// Initializes a new Shopper with the specified shop and barcode detector.
     ///
     /// - Parameters:
@@ -202,41 +213,39 @@ public final class Shopper: BarcodeProcessing, Equatable {
             barcodeManager.barcodeDetector.setTorch(flashlight)
         }
     }
-    private var _isNavigating: Bool = false
 
     /// Called when checkout navigation ends and the scanner resumes.
     /// The hosting app can use this to perform custom navigation, e.g. switching to a dashboard tab.
-    @ObservationIgnored public var onCheckoutCompleted: (@MainActor () -> Void)?
+    @ObservationIgnored public var onCheckoutCompleted: (@MainActor (Bool) -> Void)?
 
     /// Called for each analytics event emitted during the shopping session.
     @ObservationIgnored public var onAnalyticsEvent: (@MainActor (SnabbleCore.AnalyticsEvent) -> Void)?
 
-    public var isNavigating: Bool {
-        get { _isNavigating }
-        set {
-            logger.debug("isNavigating changed to: \(newValue)")
-            _isNavigating = newValue
-            if !newValue {
-                controller = nil
-                self.startScanner()
-                // Defer to avoid mutating @Observable state during an active SwiftUI update cycle.
-                Task { @MainActor in
-                    self.onCheckoutCompleted?()
+    /// The current navigation destination. Setting a non-nil value stops the scanner;
+    /// clearing it starts the scanner and calls onCheckoutCompleted.
+    /// Setting a new non-nil value while already navigating replaces the destination
+    /// without any scanner restart — SwiftUI's navigationDestination(item:) rebuilds
+    /// the view because each NavigationItem carries a unique UUID.
+    public var navigationItem: NavigationItem? {
+        didSet {
+            if let item = navigationItem {
+                if oldValue == nil {
+                    stopScanner()
                 }
+                logger.debug("navigationItem set: \(String(describing: type(of: item.viewController)))")
+            } else if oldValue != nil {
+                logger.debug("navigationItem cleared")
+                startScanner()
+                // onCheckoutCompleted is called explicitly by checkoutFinished, not here.
+                // This prevents a spurious SwiftUI binding write-back (e.g. when a UIKit
+                // modal inside the ContainerView is dismissed) from switching tabs prematurely.
             }
         }
     }
 
-    public var controller: UIViewController? {
-        didSet {
-            if let controller {
-                logger.debug("controller set: \(String(describing: type(of: controller)))")
-                self.stopScanner()
-                _isNavigating = true
-            } else {
-                logger.debug("controller set to nil")
-            }
-        }
+    func replaceController(with viewController: UIViewController) {
+        logger.debug("replaceController: \(String(describing: type(of: viewController)))")
+        navigationItem = NavigationItem(viewController: viewController)
     }
     
     /// Resets the scan data.
@@ -298,7 +307,7 @@ extension Shopper: ShoppingCartDelegate {
                 Task { @MainActor in
                     switch result {
                     case .success(let viewController):
-                        self.controller = viewController
+                        self.navigationItem = NavigationItem(viewController: viewController)
                         didStartPayment(true)
                         
                     case .failure(let error):
