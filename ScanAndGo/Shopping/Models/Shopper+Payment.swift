@@ -71,7 +71,7 @@ extension Shopper: PaymentMethodManagerDelegate {
         // if the selected method is missing its detail data, immediately open the edit VC for the method
         if detail == nil,
            let controller = method.editViewController(with: project.id, self) {
-            self.controller = controller
+            self.navigationItem = NavigationItem(viewController: controller)
         } else if method == .applePay && !ApplePay.canMakePayments(with: project.id) {
             ApplePay.openPaymentSetup()
         }
@@ -85,9 +85,24 @@ extension Shopper: PaymentMethodManagerDelegate {
 extension Shopper: PaymentDelegate {
     public func checkoutFinished(_ cart: SnabbleCore.ShoppingCart, _ process: SnabbleCore.CheckoutProcess?) {
         logger.debug("checkout finished with state: \(process?.paymentState.rawValue ?? "unknown")")
+        self.navigationItem = nil
+        let success: Bool
 
-        // CheckoutStepsViewController handles cart clearing, we just dismiss navigation
-        self.isNavigating = false
+        if let paymentState = process?.paymentState {
+            success = PaymentState.successStates.contains(paymentState)
+        } else {
+            success = false
+        }
+        
+        // Notify the host app that the checkout session is complete. Called here (not in
+        // navigationItem.didSet) so that spurious SwiftUI binding write-backs during
+        // UIKit modal presentation do not trigger premature tab switches.
+        Task { @MainActor in self.onCheckoutCompleted?(success) }
+    }
+
+    public func paymentRequiresNavigation(to viewController: UIViewController) {
+        logger.debug("paymentRequiresNavigation: \(String(describing: type(of: viewController)))")
+        replaceController(with: viewController)
     }
     
     public var view: UIView! {
