@@ -18,8 +18,28 @@ public struct ContainerView: UIViewControllerRepresentable {
         return ContainerViewController(viewController: viewController)
     }
     
-    // swiftlint:disable:next no_empty_block
-    public func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
+    public func updateUIViewController(_ uiViewController: UIViewController, context: Context) {
+        guard let container = uiViewController as? ContainerViewController,
+              container.viewController !== viewController else { return }
+
+        // Replace the hosted view controller in place (e.g. ApplePayVC → CheckoutStepsVC).
+        let old = container.viewController
+        old.willMove(toParent: nil)
+        old.view.removeFromSuperview()
+        old.removeFromParent()
+
+        container.addChild(viewController)
+        viewController.view.translatesAutoresizingMaskIntoConstraints = false
+        container.view.addSubview(viewController.view)
+        viewController.didMove(toParent: container)
+
+        NSLayoutConstraint.activate([
+            viewController.view.leadingAnchor.constraint(equalTo: container.view.leadingAnchor),
+            viewController.view.trailingAnchor.constraint(equalTo: container.view.trailingAnchor),
+            viewController.view.topAnchor.constraint(equalTo: container.view.topAnchor),
+            viewController.view.bottomAnchor.constraint(equalTo: container.view.bottomAnchor)
+        ])
+    }
     
     class ContainerViewController: UIViewController {
         public let viewController: UIViewController
