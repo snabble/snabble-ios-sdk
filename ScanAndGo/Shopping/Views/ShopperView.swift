@@ -34,6 +34,7 @@ public struct ShopperView: View {
     @State private var showSearch: Bool = false
     @State private var showError: Bool = false
     @State private var showBundleSelection: Bool = false
+    @State private var isNavigating: Bool = false
 
     @State private var minHeight: CGFloat = 0
     @State private var bundles: [BarcodeManager.ScannedItem] = []
@@ -51,8 +52,26 @@ public struct ShopperView: View {
         
         ShoppingScannerView(model: model, minHeight: $minHeight, configuration: configuration)
             .animation(.easeInOut, value: model.scannedItem)
-            .navigationDestination(isPresented: $model.isNavigating) {
-                model.navigationDestination(isPresented: $model.isNavigating)
+            .navigationDestination(isPresented: $isNavigating) {
+                if let item = model.navigationItem {
+                    ContainerView(viewController: item.viewController)
+                        .navigationTitle(item.viewController.navigationItem.title ?? "")
+                }
+            }
+            .onChange(of: model.navigationItem, initial: true) { _, item in
+                // Sync model → local state. Keeping isNavigating as local @State means
+                // SwiftUI's internal binding write-backs (e.g. during a replace transition)
+                // don't reach the model's didSet side effects.
+                let shouldNavigate = item != nil
+                if isNavigating != shouldNavigate {
+                    isNavigating = shouldNavigate
+                }
+            }
+            .onChange(of: isNavigating) { _, navigating in
+                // Propagate user-initiated back-navigation to the model.
+                if !navigating {
+                    model.navigationItem = nil
+                }
             }
             .alert(Asset.localizedString(forKey: "Snabble.SaleStop.ErrorMsg.title"), isPresented: $showError) {
                 Button(Asset.localizedString(forKey: "Snabble.ok")) {
