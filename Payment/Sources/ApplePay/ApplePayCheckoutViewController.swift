@@ -16,6 +16,7 @@ final class ApplePayCheckoutViewController: UIViewController {
     private let countryCode: String?
     private var authorized = false
     private var poller: PaymentProcessPoller?
+    private var applePayStarted = false
     
     private let checkoutProcess: CheckoutProcess
     private let shoppingCart: ShoppingCart
@@ -52,9 +53,16 @@ final class ApplePayCheckoutViewController: UIViewController {
         self.navigationItem.hidesBackButton = true
     }
     
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+
+        // Guard against re-entry when the Apple Pay sheet is dismissed and viewDidAppear fires again.
+        // Must run in viewDidAppear (not viewWillAppear) so the VC is fully in the window hierarchy
+        // when embedded as a child inside SwiftUI's ContainerView — presenting from a "detached"
+        // view controller corrupts the root presentation and leaves navigationController nil.
+        guard !applePayStarted else { return }
+        applePayStarted = true
+
         if let applePayAuth = createApplePayProcessor(for: checkoutProcess) {
             self.authController = applePayAuth
             self.present(applePayAuth, animated: true)
@@ -176,18 +184,14 @@ final class ApplePayCheckoutViewController: UIViewController {
     
     private func cancelPayment() {
         self.delegate?.track(.paymentCancelled)
-        
+
         self.checkoutProcess.abort(SnabbleCI.project) { result in
             Task { @MainActor in
                 switch result {
                 case .success:
                     Snabble.clearInFlightCheckout()
                     self.shoppingCart.generateNewUUID()
-                    if let cartVC = self.navigationController?.viewControllers.first(where: { $0 is ShoppingCartViewController}) {
-                        self.navigationController?.popToViewController(cartVC, animated: true)
-                    } else {
-                        self.navigationController?.popToRootViewController(animated: true)
-                    }
+                    self.delegate?.checkoutFinished(self.shoppingCart, nil)
 
                 case .failure:
                     let alert = UIAlertController(title: Asset.localizedString(forKey: "Snabble.Payment.CancelError.title"),
@@ -292,11 +296,11 @@ extension ApplePayCheckoutViewController: PKPaymentAuthorizationViewControllerDe
     
     private func paymentFinished(_ checkoutProcess: CheckoutProcess) {
         self.poller = nil
-        
+
         let paymentDisplay = CheckoutStepsViewController(shop: shop,
                                                          shoppingCart: shoppingCart,
                                                          checkoutProcess: checkoutProcess)
         paymentDisplay.paymentDelegate = delegate
-        navigationController?.pushViewController(paymentDisplay, animated: true)
+        delegate?.paymentRequiresNavigation(to: paymentDisplay)
     }
 }

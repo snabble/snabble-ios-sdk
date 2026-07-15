@@ -29,6 +29,13 @@ public protocol PaymentDelegate: AnalyticsDelegate, MessageDelegate {
     func handlePaymentError(_ method: PaymentMethod, _ error: SnabbleError) -> Bool
 
     func exitToken(_ exitToken: ExitToken, for shop: Shop)
+
+    /// Called when a payment flow needs to navigate to a new view controller.
+    /// UIKit hosts can implement this via UINavigationController directly.
+    /// SwiftUI hosts (e.g. Shopper) implement this to update their driven controller state.
+    /// Must be a protocol requirement (not only an extension default) so dynamic dispatch
+    /// routes to the concrete conformer's implementation, not the static default.
+    func paymentRequiresNavigation(to viewController: UIViewController)
 }
 
 /// provide simple default implementations
@@ -36,4 +43,6 @@ extension PaymentDelegate {
     public func handlePaymentError(_ method: PaymentMethod, _ error: SnabbleError) -> Bool {
         return false
     }
+
+    public func paymentRequiresNavigation(to viewController: UIViewController) {}
 }
