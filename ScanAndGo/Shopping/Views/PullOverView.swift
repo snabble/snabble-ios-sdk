@@ -10,39 +10,6 @@ import SwiftUI
 import SnabbleAssetProviding
 import SnabbleComponents
 
-struct DraggableModifier: ViewModifier {
-    enum Direction {
-        case vertical
-        case horizontal
-    }
-    
-    let direction: Direction
-    
-    @State private var draggedOffset: CGSize = .zero
-    
-    func body(content: Content) -> some View {
-        content
-            .offset(
-                CGSize(width: direction == .vertical ? 0 : draggedOffset.width,
-                       height: direction == .horizontal ? 0 : draggedOffset.height)
-            )
-            .gesture(
-                DragGesture()
-                    .onChanged { value in
-                        self.draggedOffset = value.translation
-                    }
-                    .onEnded { _ in
-                        self.draggedOffset = .zero
-                    }
-            )
-    }
-}
-extension View {
-    func dragDirection(_ direction: DraggableModifier.Direction) -> some View {
-        modifier(DraggableModifier(direction: direction))
-    }
-}
-
 extension DragGesture.Value {
     var isVertical: Bool {
         abs(startLocation.y - location.y) > abs(startLocation.x - location.x)
@@ -97,14 +64,16 @@ struct PullView: ViewModifier {
     @Binding var position: CGFloat
     @Binding var isDragging: Bool
     
-    @GestureState private var dragTracker = CGSize.zero
+    @State private var dragOffset: CGFloat = 0
     @State private var minYPosition: CGFloat = 0
+    @State private var directionUp: Bool = false
     
     func maxHeight(_ geom: GeometryProxy) -> CGFloat {
         geom.size.height
     }
     func setupMinHeight(geom: GeometryProxy) {
-        minYPosition = maxHeight(geom) - UITabBarController().height - (minHeight > 0 ? minHeight : paddingTop)
+        guard geom.size.height > 0, !isDragging else { return }
+        minYPosition = maxHeight(geom) - (minHeight > 0 ? minHeight : paddingTop)
         position = expanded ? paddingTop : minYPosition
     }
     func body(content: Content) -> some View {
@@ -124,7 +93,9 @@ struct PullView: ViewModifier {
             .clipShape(CardShape(radius: 24))
             .onAppear {
                 setupMinHeight(geom: geom)
-
+            }
+            .onChange(of: geom.size.height) {
+                setupMinHeight(geom: geom)
             }
             .onChange(of: minHeight) {
                 setupMinHeight(geom: geom)
@@ -132,55 +103,64 @@ struct PullView: ViewModifier {
             .onChange(of: paddingTop) {
                 setupMinHeight(geom: geom)
             }
-            .frame(maxHeight: CGFloat(max(maxHeight(geom) - (position + self.dragTracker.height), 0)))
-            .offset(y: max(0, position + self.dragTracker.height))
-            .animation(.easeInOut(duration: 0.2), value: position)
-            .animation(Animation.interpolatingSpring(stiffness: 250.0, damping: 40.0, initialVelocity: 5.0), value: isDragging)
+            .onChange(of: expanded) {
+                setupMinHeight(geom: geom)
+            }
+            .frame(maxHeight: CGFloat(max(maxHeight(geom) - (position + dragOffset), 0)))
+            .offset(y: max(0, position + dragOffset))
             .opacity(position == 0 ? 0 : 1)
-            .simultaneousGesture(DragGesture(minimumDistance: 50, coordinateSpace: .local)
-                .updating($dragTracker) { drag, state, _ in
-                    if drag.isVertical {
-                        state = drag.translation
-                    }
-                }
+            .simultaneousGesture(DragGesture(minimumDistance: 10, coordinateSpace: .local)
                 .onChanged { drag in
-                    if drag.isVertical {
-                        isDragging = true
+                    guard drag.isVertical else { return }
+                    isDragging = true
+                    dragOffset = drag.translation.height
+                    directionUp = drag.translation.height > 0
+                }
+                .onEnded { drag in
+                    isDragging = false
+                    guard drag.isVertical else {
+                        dragOffset = 0
+                        return
+                    }
+                    // Commit the current visual position before animating to the target.
+                    // Without this, resetting dragOffset to 0 causes a visible jump because
+                    // the animation would start from position (the old stored value) instead
+                    // of from where the view actually is on screen.
+                    let currentVisual = position + dragOffset
+                    let shouldCollapse = directionUp
+                    let targetPosition = shouldCollapse ? minYPosition : paddingTop
+                    let targetExpanded = !shouldCollapse
+
+                    position = currentVisual
+                    dragOffset = 0
+
+                    Task { @MainActor in
+                        withAnimation(.easeInOut(duration: 0.2)) {
+                            position = targetPosition
+                            expanded = targetExpanded
+                        }
                     }
                 }
-                .onEnded(onDragEnded)
             )
         }
-        
     }
     func expand() {
-        expanded = true
-        position = paddingTop
+        withAnimation(.easeInOut(duration: 0.2)) {
+            expanded = true
+            position = paddingTop
+        }
     }
     func collapse() {
-        expanded = false
-        position = minYPosition
+        withAnimation(.easeInOut(duration: 0.2)) {
+            expanded = false
+            position = minYPosition
+        }
     }
     func toggle() {
         if position == minYPosition {
             expand()
         } else {
             collapse()
-        }
-    }
-    private func onDragEnded(drag: DragGesture.Value) {
-        isDragging = false
-        
-        guard drag.isVertical else {
-            return
-        }
-        let dragDirection = drag.predictedEndLocation.y - drag.location.y
-        // can also calculate drag offset to make it more rigid to shrink and expand
-        if dragDirection > 0 {
-            position = minYPosition
-            collapse()
-        } else {
-            expand()
         }
     }
 }
