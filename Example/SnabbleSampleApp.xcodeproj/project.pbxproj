@@ -13,8 +13,22 @@
 		76DF385B2F5075A80050F4EC /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = 76DF385A2F5075A80050F4EC /* Snabble */; };
 /* End PBXBuildFile section */
 
+/* Begin PBXCopyFilesBuildPhase section */
+		768DF8DB3008FF7200149045 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
 /* Begin PBXFileReference section */
 		768D2E7B2F9F410A00566A40 /* SnabbleSampleApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "SnabbleSampleApp-Info.plist"; sourceTree = "<group>"; };
+		768DF8C83008FF7000149045 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
 		76DF38052F50740F0050F4EC /* SnabbleSampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SnabbleSampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -41,10 +55,19 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		768DF8C53008FF7000149045 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				768DF8C83008FF7000149045 /* SwiftUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		76DF37FC2F50740F0050F4EC = {
 			isa = PBXGroup;
 			children = (
 				76DF38072F50740F0050F4EC /* SwiftySnabble */,
+				768DF8C53008FF7000149045 /* Frameworks */,
 				76DF38062F50740F0050F4EC /* Products */,
 				768D2E7B2F9F410A00566A40 /* SnabbleSampleApp-Info.plist */,
 			);
@@ -70,6 +93,7 @@
 				76DF38012F50740F0050F4EC /* Sources */,
 				76DF38022F50740F0050F4EC /* Frameworks */,
 				76DF38032F50740F0050F4EC /* Resources */,
+				768DF8DB3008FF7200149045 /* Embed Foundation Extensions */,
 			);
 			buildRules = (
 			);
@@ -96,8 +120,8 @@
 			isa = PBXProject;
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
-				LastSwiftUpdateCheck = 2630;
-				LastUpgradeCheck = 2630;
+				LastSwiftUpdateCheck = 2660;
+				LastUpgradeCheck = 2660;
 				TargetAttributes = {
 					76DF38042F50740F0050F4EC = {
 						CreatedOnToolsVersion = 26.3;
@@ -229,6 +253,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				DEVELOPMENT_TEAM = 53K7JS449L;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
@@ -292,6 +317,7 @@
 				CLANG_WARN_UNREACHABLE_CODE = YES;
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				COPY_PHASE_STRIP = NO;
+				DEAD_CODE_STRIPPING = YES;
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				DEVELOPMENT_TEAM = 53K7JS449L;
 				ENABLE_NS_ASSERTIONS = NO;
@@ -321,6 +347,7 @@
 				CODE_SIGN_ENTITLEMENTS = SwiftySnabble/SwiftySnabble.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 53K7JS449L;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
@@ -374,6 +401,7 @@
 				CODE_SIGN_ENTITLEMENTS = SwiftySnabble/SwiftySnabble.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
+				DEAD_CODE_STRIPPING = YES;
 				DEVELOPMENT_TEAM = 53K7JS449L;
 				ENABLE_APP_SANDBOX = YES;
 				ENABLE_HARDENED_RUNTIME = YES;
