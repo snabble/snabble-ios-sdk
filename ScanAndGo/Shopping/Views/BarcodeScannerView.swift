@@ -30,7 +30,7 @@ class BarcodeScannerViewController: UIViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        self.view.backgroundColor = .systemGray
+        self.view.backgroundColor = .black
         
         if let previewLayer = detector.previewLayer {
             addLayer(previewLayer, to: self)
@@ -38,14 +38,10 @@ class BarcodeScannerViewController: UIViewController {
     }
 
     func addLayer(_ layer: CALayer, to viewController: UIViewController) {
-        let frame = viewController.view.bounds
-        let insets = UIApplication.shared.sceneKeyWindow?.safeAreaInsets ?? UIEdgeInsets()
-        
-        let rect = CGRect(x: 0, y: 0, width: frame.width, height: frame.height - insets.top - insets.bottom - UITabBarController().height)
-        
-        layer.frame = rect
-        logger.debug("preview layer size: \(rect.width) x \(rect.height)")
-        
+        let bounds = viewController.view.bounds
+        layer.frame = bounds
+        logger.debug("preview layer size: \(bounds.width) x \(bounds.height)")
+
         if layer.superlayer == nil {
             Task { @MainActor in
                 viewController.view.layer.addSublayer(layer)
