@@ -18,13 +18,13 @@ import SnabbleScanAndGo
 
 @main
 struct SwiftySnabbleApp: App {
-    
+
     @State private var router = AppRouter()
     @State private var appState = AppState()
     @State private var isInitialized = false
 
     let provider = AppAssetProvider()
-    
+
     init() {
         Asset.provider = provider
     }
@@ -57,13 +57,11 @@ struct SwiftySnabbleApp: App {
             }
 
             SnabbleCI.register(project)
-            
+
             Task { @MainActor in
-                for await shop in snabble.checkInManager.shopStream {
-                    appState.checkedInShop = shop
-                }
+                snabble.checkInManager.delegate = appState
+                snabble.checkInManager.startUpdating()
             }
-            snabble.checkInManager.startUpdating()
 
             snabble.setupProductDatabase(for: project) { _ in
                 Task { @MainActor in
