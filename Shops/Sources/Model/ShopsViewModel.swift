@@ -47,7 +47,7 @@ public final class ShopsViewModel: NSObject {
 
     @MainActor
     public func isCurrent(_ shop: ShopProviding) -> Bool {
-        Snabble.shared.checkInManager.isCheckedIn(for: shop)
+        Snabble.shared.checkInManager.state.shop?.id == shop.id
     }
 
     public let locationManager: CLLocationManager

@@ -7,29 +7,26 @@
 
 import SwiftUI
 
-import SnabbleCore
-import SnabbleAssetProviding
 import SnabbleCart
 
 struct ScannerCartView: View {
-    let model: Shopper
-
     static let TopMargin = CGFloat(20)
 
+    let model: Shopper
     @Binding var minHeight: CGFloat
+    let offset: CGFloat
 
     @State private var compactMode: Bool = true
 
-    @ScaledMetric private var barHeight = CGFloat(74)
-    @ScaledMetric private var visibleRowHeight = CGFloat(72)
-    let offset: CGFloat
+    @ScaledMetric private var barHeight = CGFloat(128)
+    @ScaledMetric private var visibleRowHeight = CGFloat(99)
 
     init(model: Shopper, minHeight: Binding<CGFloat>, offset: CGFloat = 0) {
         self.model = model
         self._minHeight = minHeight
         self.offset = offset
     }
-    
+
     var body: some View {
         VStack(spacing: 0) {
             CartCheckoutBarView(model: model)
@@ -50,7 +47,7 @@ struct ScannerCartView: View {
             update()
         }
     }
-    
+
     func update() {
         let count = model.barcodeManager.shoppingCart.numberOfItems
         let avg = visibleRowHeight

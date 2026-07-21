@@ -246,6 +246,24 @@ open class InternalBarcodeDetector: NSObject, Zoomable, @unchecked Sendable {
         self.startBatterySaverTimer()
         self.state = .scanning
         self.setRecommendedZoomFactor()
+        // Re-apply zoom on the session queue after startRunning() to handle rapid
+        // show/hide cycles: a pending stopRunning() can cancel a ramp and leave
+        // videoZoomFactor at 1.0. Running after startRunning() on the serial queue
+        // guarantees the session is live and the direct set takes effect.
+        if let zoom = self.zoomFactor, let camera = self.camera {
+            let minZoom = camera.minAvailableVideoZoomFactor
+            let maxZoom = camera.maxAvailableVideoZoomFactor
+            self.sessionQueue.async {
+                guard zoom >= minZoom, zoom <= maxZoom else { return }
+                do {
+                    try camera.lockForConfiguration()
+                    camera.videoZoomFactor = zoom
+                    camera.unlockForConfiguration()
+                } catch {
+                    // ignore
+                }
+            }
+        }
     }
     
     open func setTorch(_ switchedOn: Bool) {

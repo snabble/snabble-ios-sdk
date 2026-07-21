@@ -71,17 +71,6 @@
         }
       }
     },
-    "Developer" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Entwickler"
-          }
-        }
-      }
-    },
     "Environment" : {
 
     },
@@ -354,17 +343,6 @@
           "stringUnit" : {
             "state" : "translated",
             "value" : "Einkaufen starten"
-          }
-        }
-      }
-    },
-    "This feature is in development" : {
-      "extractionState" : "stale",
-      "localizations" : {
-        "de" : {
-          "stringUnit" : {
-            "state" : "translated",
-            "value" : "Diese Funktion ist in Entwicklung"
           }
         }
       }

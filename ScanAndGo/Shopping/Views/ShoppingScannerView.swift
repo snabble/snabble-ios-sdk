@@ -75,12 +75,12 @@ struct ShoppingScannerView: View {
                 .offset(x: 0, y: position - configuration.zoomControlOffset)
                 .opacity(model.scanningPaused || position == 0 ? 0 : 1)
             
-            if model.barcodeManager.barcodeDetector.state != .idle {
-                PullOverView(minHeight: $minHeight, expanded: $model.scanningPaused, paddingTop: $topMargin, position: $position, isDragging: $isDragging) {
-                    ScannerCartView(model: model, minHeight: $minHeight, offset: configuration.drawerOffset)
-                        .disabled(isDragging)
-                }
+            PullOverView(minHeight: $minHeight, expanded: $model.scanningPaused, paddingTop: $topMargin, position: $position, isDragging: $isDragging) {
+                ScannerCartView(model: model, minHeight: $minHeight, offset: configuration.drawerOffset)
+                    .disabled(isDragging)
             }
+            .opacity(model.barcodeManager.barcodeDetector.state != .idle ? 1 : 0)
+            .allowsHitTesting(model.barcodeManager.barcodeDetector.state != .idle)
             if model.processing || position == 0 {
                 ScannerProcessingView()
             }
