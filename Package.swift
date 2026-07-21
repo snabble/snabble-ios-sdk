@@ -113,7 +113,6 @@ let package = Package(
         .package(url: "https://github.com/weichsel/ZIPFoundation.git", .upToNextMajor(from: "0.9.19")),
         .package(url: "https://github.com/datatrans/ios-sdk.git", from: "3.7.3"),
         .package(url: "https://github.com/devicekit/DeviceKit.git", from: "5.5.0"),
-        // Pulley removed - legacy scanner deleted
         .package(url: "https://github.com/chrs1885/WCAG-Colors.git", from: "1.0.0"),
         .package(url: "https://github.com/apple/swift-log.git", from: "1.6.1"),
         .package(url: "https://github.com/divadretlaw/WindowKit", from: "2.5.2"),
