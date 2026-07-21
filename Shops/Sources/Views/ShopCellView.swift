@@ -15,10 +15,13 @@ import SnabbleComponents
 
 public struct ShopCellView: View {
     let shop: ShopProviding
-    
+
     @State var viewModel: ShopsViewModel
-    @State private var isCurrentShop = false
-    
+
+    private var isCurrentShop: Bool {
+        Snabble.shared.checkInManager.state.shop?.id == shop.id
+    }
+
     public var body: some View {
         HStack {
             VStack(alignment: .leading, spacing: 8) {
@@ -37,11 +40,6 @@ public struct ShopCellView: View {
             } else {
                 DistanceView(distance: viewModel.distance(from: shop))
                     .secondaryStyle()
-            }
-        }
-        .task {
-            for await shop in Snabble.shared.checkInManager.shopStream {
-                self.isCurrentShop = shop?.id == self.shop.id
             }
         }
     }

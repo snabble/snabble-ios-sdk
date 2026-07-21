@@ -36,7 +36,10 @@ public class CheckInManager: NSObject, @unchecked Sendable {
     /// Current checked in `Shop`
     public var shop: Shop? {
         didSet {
-            shopContinuation?.yield(shop)
+            let newShop = shop
+            Task { @MainActor in
+                state.update(shop: newShop)
+            }
             if let shop = oldValue {
                 checkedInAt = nil
                 delegate?.checkInManager(self, didCheckOutOf: shop)
@@ -49,53 +52,11 @@ public class CheckInManager: NSObject, @unchecked Sendable {
         }
     }
 
-    // MARK: - Combine API (Legacy)
+    // MARK: - Observable State (Modern)
 
-    /// Thread-safety: Combine publishers are thread-safe
-    @available(*, deprecated, message: "Use shopStream instead for modern Swift concurrency")
-    nonisolated(unsafe) public var shopPublisher = CurrentValueSubject<Shop?, Never>(nil)
-
-    /// Thread-safety: Combine publishers are thread-safe
-    @available(*, deprecated, message: "Use authorizationStream instead for modern Swift concurrency")
-    nonisolated(unsafe) public let authorizationStatusSubject = PassthroughSubject<CLAuthorizationStatus, Never>()
-
-    // MARK: - AsyncStream API (Modern)
-
-    private var shopContinuation: AsyncStream<Shop?>.Continuation?
-    private var authorizationContinuation: AsyncStream<CLAuthorizationStatus>.Continuation?
-
-    /// Modern async stream for observing shop check-in changes
-    ///
-    /// Example usage:
-    /// ```swift
-    /// Task {
-    ///     for await shop in checkInManager.shopStream {
-    ///         print("Checked into: \(shop?.name ?? "none")")
-    ///     }
-    /// }
-    /// ```
-    public var shopStream: AsyncStream<Shop?> {
-        AsyncStream { continuation in
-            self.shopContinuation = continuation
-            continuation.yield(self.shop)
-        }
-    }
-
-    /// Modern async stream for observing location authorization changes
-    ///
-    /// Example usage:
-    /// ```swift
-    /// Task {
-    ///     for await status in checkInManager.authorizationStream {
-    ///         print("Authorization: \(status)")
-    ///     }
-    /// }
-    /// ```
-    public var authorizationStream: AsyncStream<CLAuthorizationStatus> {
-        AsyncStream { continuation in
-            self.authorizationContinuation = continuation
-        }
-    }
+    /// Observable check-in state. SwiftUI views automatically track changes to `state.shop`
+    /// without needing a `.task` or `for await` loop.
+    public let state = CheckInState()
 
     private func trackCheckIn(with shop: Shop) {
         guard let location = locationManager.location, let project = shop.project else { return }
@@ -186,7 +147,6 @@ extension CheckInManager: CLLocationManagerDelegate {
         @unknown default:
             break
         }
-        authorizationContinuation?.yield(manager.authorizationStatus)
     }
 
     @available(iOS 14.0, *)

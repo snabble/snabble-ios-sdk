@@ -18,7 +18,7 @@ public struct PaymentSubjectView: View {
     @State private var subject: String = ""
     
     private func subjectLimit() -> Int? {
-        guard let projectId = Snabble.shared.checkInManager.shop?.projectId else {
+        guard let projectId = Snabble.shared.checkInManager.state.shop?.projectId else {
             return nil
         }
         let customProperty = Snabble.shared.config.customProperties.first { customProperty, _ in

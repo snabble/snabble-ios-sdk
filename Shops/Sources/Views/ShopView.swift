@@ -160,6 +160,6 @@ public struct ShopView: View {
     }
     
     private func isCheckedIn() -> Bool {
-        return Snabble.shared.checkInManager.shop?.id == self.shop.id
+        return Snabble.shared.checkInManager.state.shop?.id == self.shop.id
     }
 }
