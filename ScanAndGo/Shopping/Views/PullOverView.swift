@@ -57,7 +57,9 @@ struct PullOverView<Content>: View where Content: View {
 }
 
 struct PullView: ViewModifier {
-    
+    // Top padding added above the content to make room for the drag handle
+    static let contentTopPadding: CGFloat = 16
+
     @Binding var minHeight: CGFloat
     @Binding var expanded: Bool
     @Binding var paddingTop: CGFloat
@@ -86,7 +88,7 @@ struct PullView: ViewModifier {
                     .onTapGesture {
                         toggle()
                     }
-                content.padding(.top, 16)
+                content.padding(.top, PullView.contentTopPadding)
             }
             .frame(minWidth: UIScreen.main.bounds.width)
             .background(.regularMaterial)

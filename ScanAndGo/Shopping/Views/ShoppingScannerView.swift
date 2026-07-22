@@ -76,7 +76,7 @@ struct ShoppingScannerView: View {
                 .opacity(model.scanningPaused || position == 0 ? 0 : 1)
             
             PullOverView(minHeight: $minHeight, expanded: $model.scanningPaused, paddingTop: $topMargin, position: $position, isDragging: $isDragging) {
-                ScannerCartView(model: model, minHeight: $minHeight, offset: configuration.drawerOffset)
+                ScannerCartView(model: model, minHeight: $minHeight, offset: PullView.contentTopPadding + configuration.drawerOffset)
                     .disabled(isDragging)
             }
             .opacity(model.barcodeManager.barcodeDetector.state != .idle ? 1 : 0)
