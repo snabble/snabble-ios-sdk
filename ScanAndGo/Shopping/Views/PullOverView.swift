@@ -57,7 +57,9 @@ struct PullOverView<Content>: View where Content: View {
 }
 
 struct PullView: ViewModifier {
-    
+    // Top padding added above the content to make room for the drag handle
+    static let contentTopPadding: CGFloat = 16
+
     @Binding var minHeight: CGFloat
     @Binding var expanded: Bool
     @Binding var paddingTop: CGFloat
@@ -86,7 +88,7 @@ struct PullView: ViewModifier {
                     .onTapGesture {
                         toggle()
                     }
-                content.padding(.top, 16)
+                content.padding(.top, PullView.contentTopPadding)
             }
             .frame(minWidth: UIScreen.main.bounds.width)
             .background(.regularMaterial)
@@ -108,6 +110,7 @@ struct PullView: ViewModifier {
             }
             .frame(maxHeight: CGFloat(max(maxHeight(geom) - (position + dragOffset), 0)))
             .offset(y: max(0, position + dragOffset))
+            .animation(.default, value: minYPosition)
             .opacity(position == 0 ? 0 : 1)
             .simultaneousGesture(DragGesture(minimumDistance: 10, coordinateSpace: .local)
                 .onChanged { drag in

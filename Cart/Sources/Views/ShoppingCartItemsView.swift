@@ -44,6 +44,7 @@ extension ShoppingCartViewModel {
 public struct ShoppingCartItemsView<Footer: View>: View {
     @Bindable var cartModel: ShoppingCartViewModel
     var footer: Footer
+    var onPreviewRowHeight: ((Int, CGFloat) -> Void)?
 
     @State private var itemToDelete: CartEntry? = nil
     @State private var showingDeleteAlert = false
@@ -57,9 +58,14 @@ public struct ShoppingCartItemsView<Footer: View>: View {
         } else {
             List {
                 Section(footer: footer) {
-                    ForEach(cartModel.items, id: \.id) { item in
+                    ForEach(Array(cartModel.items.enumerated()), id: \.element.id) { index, item in
                         cartModel.view(for: item)
                             .environment(cartModel)
+                            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height in
+                                if index < 2 {
+                                    onPreviewRowHeight?(index, height)
+                                }
+                            }
                             .swipeActions(allowsFullSwipe: false) {
                                  Button {
                                      cartModel.trash(item: item)

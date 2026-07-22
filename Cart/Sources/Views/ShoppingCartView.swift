@@ -11,17 +11,24 @@ import SnabbleCore
 public struct ShoppingCartView: View {
     @Bindable var cartModel: ShoppingCartViewModel
     let compactMode: Bool
-    
-    public init(cartModel: ShoppingCartViewModel, 
-                compactMode: Bool = false) {
+    var onPreviewRowHeight: ((Int, CGFloat) -> Void)?
+
+    public init(cartModel: ShoppingCartViewModel,
+                compactMode: Bool = false,
+                onPreviewRowHeight: ((Int, CGFloat) -> Void)? = nil
+    ) {
         self.cartModel = cartModel
         self.compactMode = compactMode
+        self.onPreviewRowHeight = onPreviewRowHeight
     }
 
-    public init(shoppingCart: ShoppingCart, 
-                compactMode: Bool = false) {
+    public init(shoppingCart: ShoppingCart,
+                compactMode: Bool = false,
+                onPreviewRowHeight: ((Int, CGFloat) -> Void)? = nil
+    ) {
         self.cartModel = ShoppingCartViewModel(shoppingCart: shoppingCart)
         self.compactMode = compactMode
+        self.onPreviewRowHeight = onPreviewRowHeight
     }
 
     @ViewBuilder
@@ -37,7 +44,7 @@ public struct ShoppingCartView: View {
                 Text(keyed: "Snabble.Shoppingcart.EmptyState.description")
             }
         } else {
-            ShoppingCartItemsView(cartModel: cartModel, footer: footer)
+            ShoppingCartItemsView(cartModel: cartModel, footer: footer, onPreviewRowHeight: onPreviewRowHeight)
                 .onChange(of: cartModel.items) {
                     print("ShoppingCartView: cartModel.items did change")
                 }
