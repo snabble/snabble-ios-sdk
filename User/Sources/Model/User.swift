@@ -209,6 +209,17 @@ extension User {
         }
         return "+\(code)\(number)"
     }
+
+    /// Returns `true` only when the user has a complete, non-empty phone number.
+    /// Unlike `phoneNumber`, this correctly rejects partial data such as a country
+    /// code without a subscriber number (e.g. `phone.code = 49, phone.number = ""`),
+    /// which would cause `phoneNumber` to return `"+49"` — non-nil and non-empty.
+    public var hasValidPhoneNumber: Bool {
+        if let phone {
+            return phone.number?.isEmpty == false
+        }
+        return metadata?.phoneNumber?.isEmpty == false
+    }
 }
 
 extension User {
