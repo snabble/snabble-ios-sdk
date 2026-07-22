@@ -1,6 +1,6 @@
 //
 //  ShoppingCartItemsView.swift
-//  
+//
 //
 //  Created by Uwe Tilemann on 22.03.23.
 //
@@ -41,6 +41,17 @@ extension ShoppingCartViewModel {
     }
 }
 
+// Preference key to propagate the first two row heights out of the List without
+// triggering the "Geometry action is cycling" warning that onGeometryChange causes
+// when used inside List in iOS 18.
+private struct RowHeightPreferenceKey: PreferenceKey {
+    typealias Value = [Int: CGFloat]
+    static let defaultValue: [Int: CGFloat] = [:]
+    static func reduce(value: inout [Int: CGFloat], nextValue: () -> [Int: CGFloat]) {
+        value.merge(nextValue(), uniquingKeysWith: { max($0, $1) })
+    }
+}
+
 public struct ShoppingCartItemsView<Footer: View>: View {
     @Bindable var cartModel: ShoppingCartViewModel
     var footer: Footer
@@ -61,9 +72,17 @@ public struct ShoppingCartItemsView<Footer: View>: View {
                     ForEach(Array(cartModel.items.enumerated()), id: \.element.id) { index, item in
                         cartModel.view(for: item)
                             .environment(cartModel)
-                            .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { height in
+                            .background {
+                                // Only measure the first two rows — using GeometryReader +
+                                // PreferenceKey avoids the cycling warning that onGeometryChange
+                                // produces inside List (known iOS 18 issue).
                                 if index < 2 {
-                                    onPreviewRowHeight?(index, height)
+                                    GeometryReader { geo in
+                                        Color.clear.preference(
+                                            key: RowHeightPreferenceKey.self,
+                                            value: [index: geo.size.height]
+                                        )
+                                    }
                                 }
                             }
                             .swipeActions(allowsFullSwipe: false) {
@@ -83,6 +102,11 @@ public struct ShoppingCartItemsView<Footer: View>: View {
             .scrollBounceBehavior(.basedOnSize)
             .scrollContentBackground(.hidden)
             .background(.clear)
+            .onPreferenceChange(RowHeightPreferenceKey.self) { heights in
+                for (index, height) in heights where height > 0 {
+                    onPreviewRowHeight?(index, height)
+                }
+            }
         }
     }
 

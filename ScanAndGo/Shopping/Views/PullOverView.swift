@@ -73,10 +73,24 @@ struct PullView: ViewModifier {
     func maxHeight(_ geom: GeometryProxy) -> CGFloat {
         geom.size.height
     }
-    func setupMinHeight(geom: GeometryProxy) {
+    // animated: true for user-visible height changes (minHeight, paddingTop).
+    // false for initial layout and device rotation — those should be instant.
+    func setupMinHeight(geom: GeometryProxy, animated: Bool = false) {
         guard geom.size.height > 0, !isDragging else { return }
-        minYPosition = maxHeight(geom) - (minHeight > 0 ? minHeight : paddingTop)
-        position = expanded ? paddingTop : minYPosition
+        // When minHeight hasn't been measured yet, offer half the screen so content
+        // can render at its natural size and report a correct measurement.
+        // Using only paddingTop (20pt) would compress content and cause the measured
+        // height to oscillate upward frame by frame until convergence.
+        let effective = minHeight > paddingTop ? minHeight : geom.size.height / 2
+        let newMinYPosition = maxHeight(geom) - effective
+        let newPosition = expanded ? paddingTop : newMinYPosition
+        guard minYPosition != newMinYPosition || position != newPosition else { return }
+        minYPosition = newMinYPosition
+        if animated {
+            withAnimation(.default) { position = newPosition }
+        } else {
+            position = newPosition
+        }
     }
     func body(content: Content) -> some View {
         GeometryReader { geom in
@@ -100,17 +114,16 @@ struct PullView: ViewModifier {
                 setupMinHeight(geom: geom)
             }
             .onChange(of: minHeight) {
-                setupMinHeight(geom: geom)
+                setupMinHeight(geom: geom, animated: true)
             }
             .onChange(of: paddingTop) {
-                setupMinHeight(geom: geom)
+                setupMinHeight(geom: geom, animated: true)
             }
             .onChange(of: expanded) {
                 setupMinHeight(geom: geom)
             }
             .frame(maxHeight: CGFloat(max(maxHeight(geom) - (position + dragOffset), 0)))
             .offset(y: max(0, position + dragOffset))
-            .animation(.default, value: minYPosition)
             .opacity(position == 0 ? 0 : 1)
             .simultaneousGesture(DragGesture(minimumDistance: 10, coordinateSpace: .local)
                 .onChanged { drag in
