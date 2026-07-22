@@ -110,6 +110,7 @@ struct PullView: ViewModifier {
             }
             .frame(maxHeight: CGFloat(max(maxHeight(geom) - (position + dragOffset), 0)))
             .offset(y: max(0, position + dragOffset))
+            .animation(.default, value: minYPosition)
             .opacity(position == 0 ? 0 : 1)
             .simultaneousGesture(DragGesture(minimumDistance: 10, coordinateSpace: .local)
                 .onChanged { drag in
