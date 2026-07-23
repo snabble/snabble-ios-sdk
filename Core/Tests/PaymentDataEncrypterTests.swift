@@ -1,7 +1,7 @@
 //
 //  PaymentDataEncrypterTests.swift
 //
-//  Copyright © 2024 snabble. All rights reserved.
+//  Copyright © 2026 snabble. All rights reserved.
 //
 
 import Testing
