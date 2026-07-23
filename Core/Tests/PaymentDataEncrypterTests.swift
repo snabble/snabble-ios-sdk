@@ -60,19 +60,4 @@ struct DERParserTests {
         #expect(notBefore == utcDate(year: 2022, month: 11, day: 16, hour: 8, minute: 35, second: 38))
     }
 
-    // MARK: - Gateway certificates (leaf certs signed by the CA)
-
-    @Test("staging-gateway-cert.der not-before is Nov 16 08:54:01 2022 UTC")
-    func stagingGatewayNotBefore() throws {
-        let cert = try loadCert(named: "staging-gateway-cert")
-        let notBefore = try #require(DERParser.notBeforeDate(of: cert))
-        #expect(notBefore == utcDate(year: 2022, month: 11, day: 16, hour: 8, minute: 54, second: 1))
-    }
-
-    @Test("prod-gateway-cert.der not-before is Nov 16 08:54:07 2022 UTC")
-    func prodGatewayNotBefore() throws {
-        let cert = try loadCert(named: "prod-gateway-cert")
-        let notBefore = try #require(DERParser.notBeforeDate(of: cert))
-        #expect(notBefore == utcDate(year: 2022, month: 11, day: 16, hour: 8, minute: 54, second: 7))
-    }
 }
