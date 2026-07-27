@@ -480,9 +480,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		7621261A301797FD00BAE786 /* XCLocalSwiftPackageReference "../../snabble-ios-sdk" */ = {
+		7621261A301797FD00BAE786 /* XCLocalSwiftPackageReference ".." */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = "../../snabble-ios-sdk";
+			relativePath = "..";
 		};
 /* End XCLocalSwiftPackageReference section */
 
