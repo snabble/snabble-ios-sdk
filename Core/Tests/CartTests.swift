@@ -5,7 +5,7 @@
 //  Copyright © 2020 snabble. All rights reserved.
 //
 
-import XCTest
+import Testing
 @testable import SnabbleCore
 
 struct Mock {
@@ -97,87 +97,86 @@ struct Mock {
     nonisolated(unsafe) static let formatter = PriceFormatter(2, "de_DE",  "EUR", "€")
 }
 
-class ShoppingCartTests: XCTestCase {
+@Suite(.serialized)
+final class ShoppingCartTests {
 
-    override func setUp() {
-        // Put setup code here. This method is called before the invocation of each test method in the class.
+    init() {
         CodeMatcher.addTemplate("", "ean13_instore",     "2{code:5}{_}{embed:5}{ec}")
         CodeMatcher.addTemplate("", "ean13_instore_chk", "2{code:5}{i}{embed:5}{ec}")
     }
 
-    override func tearDown() {
-        // Put teardown code here. This method is called after the invocation of each test method in the class.
+    deinit {
         CodeMatcher.clearTemplates()
     }
 
     // ensure transmissionCode has priority over scannedCode
-    func testCart_transmissionCode() {
+    @Test func transmissionCode() {
         let code1 = ScannedCode(scannedCode: "scannedCode", transmissionCode: "xmitCode", templateId: "default", lookupCode: "scannedCode")
-        XCTAssertEqual(code1.code, "xmitCode")
+        #expect(code1.code == "xmitCode")
 
         let code2 = ScannedCode(scannedCode: "scannedCode", templateId: "default", lookupCode: "scannedCode")
-        XCTAssertEqual(code2.code, "scannedCode")
+        #expect(code2.code == "scannedCode")
     }
 
     // ensure `canMerge` is what it should be
-    func testCart_mergeability() {
-        XCTAssertTrue(Mock.simpleItem1.canMerge)
-        XCTAssertTrue(Mock.simpleItem2.canMerge)
-        XCTAssertTrue(Mock.depositItem.canMerge)
-        XCTAssertFalse(Mock.preWeighedItem.canMerge)
-        XCTAssertFalse(Mock.pieceItem.canMerge)
-        XCTAssertFalse(Mock.piece0Item.canMerge)
-        XCTAssertFalse(Mock.pricedItem.canMerge)
-        XCTAssertFalse(Mock.discountItem.canMerge)
-        XCTAssertFalse(Mock.globusWeighItem.canMerge)
+    @Test func mergeability() {
+        #expect(Mock.simpleItem1.canMerge)
+        #expect(Mock.simpleItem2.canMerge)
+        #expect(Mock.depositItem.canMerge)
+        #expect(!Mock.preWeighedItem.canMerge)
+        #expect(!Mock.pieceItem.canMerge)
+        #expect(!Mock.piece0Item.canMerge)
+        #expect(!Mock.pricedItem.canMerge)
+        #expect(!Mock.discountItem.canMerge)
+        #expect(!Mock.globusWeighItem.canMerge)
     }
 
     // ensure `editable` is what it should be
-    func testCart_editability() {
-        XCTAssertTrue(Mock.simpleItem1.editable)
-        XCTAssertTrue(Mock.simpleItem2.editable)
-        XCTAssertTrue(Mock.depositItem.editable)
-        XCTAssertFalse(Mock.preWeighedItem.editable)
-        XCTAssertFalse(Mock.pieceItem.editable)
-        XCTAssertTrue(Mock.piece0Item.editable)
-        XCTAssertFalse(Mock.pricedItem.editable)
-        XCTAssertFalse(Mock.discountItem.editable)
-        XCTAssertFalse(Mock.globusWeighItem.editable)
+    @Test func editability() {
+        #expect(Mock.simpleItem1.editable)
+        #expect(Mock.simpleItem2.editable)
+        #expect(Mock.depositItem.editable)
+        #expect(!Mock.preWeighedItem.editable)
+        #expect(!Mock.pieceItem.editable)
+        #expect(Mock.piece0Item.editable)
+        #expect(!Mock.pricedItem.editable)
+        #expect(!Mock.discountItem.editable)
+        #expect(!Mock.globusWeighItem.editable)
     }
 
     // ensure mergeable entries are merged
-    func testCart_1product_merge() {
+    @Test func oneProductMerge() {
         let cart = Mock.shoppingCart()
 
         cart.add(Mock.simpleItem1)
         cart.add(Mock.simpleItem1)
 
-        XCTAssertEqual(cart.numberOfItems, 1)
-        XCTAssertEqual(cart.numberOfProducts, 2)
+        #expect(cart.numberOfItems == 1)
+        #expect(cart.numberOfProducts == 2)
 
         cart.add(Mock.simpleItem1)
-        XCTAssertEqual(cart.numberOfItems, 1)
-        XCTAssertEqual(cart.numberOfProducts, 3)
+        #expect(cart.numberOfItems == 1)
+        #expect(cart.numberOfProducts == 3)
     }
 
     // ensure mergeable entries are merged
-    func testCart_2products_merge() {
+    @Test func twoProductsMerge() {
         let cart = Mock.shoppingCart()
 
         cart.add(Mock.simpleItem1)
         cart.add(Mock.simpleItem2)
         cart.add(Mock.simpleItem1)
 
-        XCTAssertEqual(cart.numberOfItems, 2)
-        XCTAssertEqual(cart.numberOfProducts, 3)
+        #expect(cart.numberOfItems == 2)
+        #expect(cart.numberOfProducts == 3)
 
         cart.add(Mock.simpleItem2)
-        XCTAssertEqual(cart.numberOfItems, 2)
-        XCTAssertEqual(cart.numberOfProducts, 4)
+        #expect(cart.numberOfItems == 2)
+        #expect(cart.numberOfProducts == 4)
     }
 
     // ensure non-mergeable products aren't merged
-    func testCart_2products_no_merge() {
+    @Test func twoProductsNoMerge() {
         let cart = Mock.shoppingCart()
         let item = Mock.preWeighedItem
 
@@ -185,283 +184,291 @@ class ShoppingCartTests: XCTestCase {
         cart.add(item)
         cart.add(item)
 
-        XCTAssertEqual(cart.numberOfItems, 3)
-        XCTAssertEqual(cart.numberOfProducts, 3)
+        #expect(cart.numberOfItems == 3)
+        #expect(cart.numberOfProducts == 3)
 
         cart.remove(at: 0)
 
-        XCTAssertEqual(cart.numberOfItems, 2)
-        XCTAssertEqual(cart.numberOfProducts, 2)
+        #expect(cart.numberOfItems == 2)
+        #expect(cart.numberOfProducts == 2)
     }
 
     // ensure quantities can be changed on editable products
-    func testCart_editQuantities() {
+    @Test func editQuantities() {
         let cart = Mock.shoppingCart()
         cart.add(Mock.simpleItem1)
-        XCTAssertEqual(cart.numberOfProducts, 1)
+        #expect(cart.numberOfProducts == 1)
         cart.setQuantity(3, at: 0)
-        XCTAssertEqual(cart.numberOfProducts, 3)
+        #expect(cart.numberOfProducts == 3)
 
-        XCTAssertEqual(cart.quantity(of: Mock.simpleItem1), 3)
+        #expect(cart.quantity(of: Mock.simpleItem1) == 3)
     }
 
     // ensure quantities can be changed on editable products
-    func testCart_editQuantities2() {
+    @Test func editQuantitiesForItem() {
         let cart = Mock.shoppingCart()
         cart.add(Mock.simpleItem1)
-        XCTAssertEqual(cart.numberOfProducts, 1)
+        #expect(cart.numberOfProducts == 1)
         cart.setQuantity(3, for: Mock.simpleItem1)
-        XCTAssertEqual(cart.numberOfProducts, 3)
+        #expect(cart.numberOfProducts == 3)
 
-        XCTAssertEqual(cart.quantity(of: Mock.simpleItem1), 3)
+        #expect(cart.quantity(of: Mock.simpleItem1) == 3)
     }
 
     // ensure quantities aren't changed on non-editable products
-    func testCart_noeditQuantities() {
+    @Test func noEditQuantities() {
         let cart = Mock.shoppingCart()
         cart.add(Mock.preWeighedItem)
-        XCTAssertEqual(cart.numberOfProducts, 1)
+        #expect(cart.numberOfProducts == 1)
         cart.setQuantity(3, at: 0)
-        XCTAssertEqual(cart.numberOfProducts, 1)
+        #expect(cart.numberOfProducts == 1)
         cart.add(Mock.preWeighedItem)
-        XCTAssertEqual(cart.numberOfProducts, 2)
+        #expect(cart.numberOfProducts == 2)
 
-        XCTAssertEqual(cart.quantity(of: Mock.preWeighedItem), 0)
+        #expect(cart.quantity(of: Mock.preWeighedItem) == 0)
 
         // test q=0 for non-existing products
-        XCTAssertEqual(cart.quantity(of: Mock.simpleItem1), 0)
+        #expect(cart.quantity(of: Mock.simpleItem1) == 0)
     }
 
     // ensure item and product counts are correct
-    func testCart_counts() {
+    @Test func counts() {
         let cart = Mock.shoppingCart()
         cart.add(Mock.simpleItem1)
-        XCTAssertEqual(cart.numberOfProducts, 1)
-        XCTAssertEqual(cart.numberOfItems, 1)
+        #expect(cart.numberOfProducts == 1)
+        #expect(cart.numberOfItems == 1)
 
         cart.setQuantity(3, for: Mock.simpleItem1)
-        XCTAssertEqual(cart.numberOfProducts, 3)
-        XCTAssertEqual(cart.numberOfItems, 1)
+        #expect(cart.numberOfProducts == 3)
+        #expect(cart.numberOfItems == 1)
 
-        XCTAssertEqual(cart.quantity(of: Mock.simpleItem1), 3)
+        #expect(cart.quantity(of: Mock.simpleItem1) == 3)
 
         cart.add(Mock.simpleItem2)
-        XCTAssertEqual(cart.numberOfProducts, 4)
-        XCTAssertEqual(cart.numberOfItems, 2)
+        #expect(cart.numberOfProducts == 4)
+        #expect(cart.numberOfItems == 2)
 
         cart.add(Mock.pieceItem)
-        XCTAssertEqual(cart.numberOfProducts, 5)
-        XCTAssertEqual(cart.numberOfItems, 3)
+        #expect(cart.numberOfProducts == 5)
+        #expect(cart.numberOfItems == 3)
 
         cart.add(Mock.piece0Item)
         cart.setQuantity(42, for: Mock.piece0Item)
-        XCTAssertEqual(cart.numberOfProducts, 47)
-        XCTAssertEqual(cart.numberOfItems, 4)
+        #expect(cart.numberOfProducts == 47)
+        #expect(cart.numberOfItems == 4)
 
         cart.add(Mock.preWeighedItem)
-        XCTAssertEqual(cart.numberOfProducts, 48)
-        XCTAssertEqual(cart.numberOfItems, 5)
+        #expect(cart.numberOfProducts == 48)
+        #expect(cart.numberOfItems == 5)
     }
 
     // MARK: - price tests
 
     // test cart's price total calculation
-    func testCart_simplePrice() {
+    @Test func simplePrice() {
         let cart = Mock.shoppingCart()
 
-        XCTAssertEqual(cart.total!, 0)
+        #expect(cart.total == 0)
 
         cart.add(Mock.simpleItem1)
-        XCTAssertEqual(cart.total!, 42)
+        #expect(cart.total == 42)
 
         cart.add(Mock.simpleItem2)
-        XCTAssertEqual(cart.total!, 63) // 42 + 21ct
+        #expect(cart.total == 63) // 42 + 21ct
 
         cart.setQuantity(4, at: 0)
-        XCTAssertEqual(cart.total!, 126) // 42 + 4*21ct
+        #expect(cart.total == 126) // 42 + 4*21ct
         cart.remove(at: 0)
 
         cart.add(Mock.depositItem)
-        XCTAssertEqual(cart.total!, 157)    // 42 + 115ct
+        #expect(cart.total == 157)    // 42 + 115ct
 
         cart.setQuantity(10, at: 0)
-        XCTAssertEqual(cart.total!, 1192)    // 42 + 10 * 115ct
+        #expect(cart.total == 1192)    // 42 + 10 * 115ct
     }
 
-    func testCart_noprice() {
+    @Test func noPrice() {
         let cart = Mock.shoppingCart()
         cart.add(Mock.zeroPriceItem)
 
-        XCTAssertNil(cart.total)
+        #expect(cart.total == nil)
     }
 
-    func testCart_embeddedPriceData() {
-        XCTAssertEqual(Mock.simpleItem1.price, 42)
-        XCTAssertEqual(Mock.simpleItem2.price, 21)
-        XCTAssertEqual(Mock.depositItem.price, 115)
-        XCTAssertEqual(Mock.zeroPriceItem.price, 0)
+    @Test func embeddedPriceData() {
+        #expect(Mock.simpleItem1.price == 42)
+        #expect(Mock.simpleItem2.price == 21)
+        #expect(Mock.depositItem.price == 115)
+        #expect(Mock.zeroPriceItem.price == 0)
 
-        XCTAssertEqual(Mock.pricedItem.price, 1234)
-        XCTAssertEqual(Mock.pieceItem.price, 228)
-        XCTAssertEqual(Mock.preWeighedItem.price, 250)
-        XCTAssertEqual(Mock.discountItem.price, 321)
-        XCTAssertEqual(Mock.globusWeighItem.price, 180)
-        XCTAssertEqual(Mock.globusPieceItem.price, 2016)
+        #expect(Mock.pricedItem.price == 1234)
+        #expect(Mock.pieceItem.price == 228)
+        #expect(Mock.preWeighedItem.price == 250)
+        #expect(Mock.discountItem.price == 321)
+        #expect(Mock.globusWeighItem.price == 180)
+        #expect(Mock.globusPieceItem.price == 2016)
     }
 
     // MARK: - backend tests
-    func testCart_backenddata_simple() {
+    @Test func backendDataSimple() {
         guard case let Cart.Item.product(bci) = Mock.simpleItem1.cartItems[0] else {
-            return XCTFail("not a product")
+            Issue.record("not a product")
+            return
         }
-        XCTAssertEqual(bci.sku, "1")
-        XCTAssertEqual(bci.amount, 1)
-        XCTAssertEqual(bci.scannedCode, "1234567890123")
-        XCTAssertEqual(bci.price, nil)
-        XCTAssertEqual(bci.weight, nil)
-        XCTAssertEqual(bci.units, nil)
-        XCTAssertEqual(bci.weightUnit, nil)
+        #expect(bci.sku == "1")
+        #expect(bci.amount == 1)
+        #expect(bci.scannedCode == "1234567890123")
+        #expect(bci.price == nil)
+        #expect(bci.weight == nil)
+        #expect(bci.units == nil)
+        #expect(bci.weightUnit == nil)
     }
 
-    func testCart_backenddata_preWeighed() {
+    @Test func backendDataPreWeighed() {
         guard case let Cart.Item.product(bci) = Mock.preWeighedItem.cartItems[0] else {
-            return XCTFail("not a product")
+            Issue.record("not a product")
+            return
         }
-        XCTAssertEqual(bci.sku, "4")
-        XCTAssertEqual(bci.amount, 1)
-        XCTAssertEqual(bci.scannedCode, "2000000001254")
-        XCTAssertEqual(bci.price, nil)
-        XCTAssertEqual(bci.weight, 125)
-        XCTAssertEqual(bci.units, nil)
-        XCTAssertEqual(bci.weightUnit, .gram)
+        #expect(bci.sku == "4")
+        #expect(bci.amount == 1)
+        #expect(bci.scannedCode == "2000000001254")
+        #expect(bci.price == nil)
+        #expect(bci.weight == 125)
+        #expect(bci.units == nil)
+        #expect(bci.weightUnit == .gram)
     }
 
-    func testCart_backenddata_piece() {
+    @Test func backendDataPiece() {
         guard case let Cart.Item.product(bci) = Mock.pieceItem.cartItems[0] else {
-            return XCTFail("not a product")
+            Issue.record("not a product")
+            return
         }
-        XCTAssertEqual(bci.sku, "5")
-        XCTAssertEqual(bci.amount, 1)
-        XCTAssertEqual(bci.scannedCode, "2000000000121")
-        XCTAssertEqual(bci.price, nil)
-        XCTAssertEqual(bci.weight, nil)
-        XCTAssertEqual(bci.units, 12)
-        XCTAssertEqual(bci.weightUnit, .piece)
+        #expect(bci.sku == "5")
+        #expect(bci.amount == 1)
+        #expect(bci.scannedCode == "2000000000121")
+        #expect(bci.price == nil)
+        #expect(bci.weight == nil)
+        #expect(bci.units == 12)
+        #expect(bci.weightUnit == .piece)
     }
 
-    func testCart_backenddata_priced() {
+    @Test func backendDataPriced() {
         guard case let Cart.Item.product(bci) = Mock.pricedItem.cartItems[0] else {
-            return XCTFail("not a product")
+            Issue.record("not a product")
+            return
         }
-        XCTAssertEqual(bci.sku, "6")
-        XCTAssertEqual(bci.amount, 1)
-        XCTAssertEqual(bci.scannedCode, "2000000012346")
-        XCTAssertEqual(bci.price, 1234)
-        XCTAssertEqual(bci.weight, nil)
-        XCTAssertEqual(bci.units, nil)
-        XCTAssertEqual(bci.weightUnit, .price)
+        #expect(bci.sku == "6")
+        #expect(bci.amount == 1)
+        #expect(bci.scannedCode == "2000000012346")
+        #expect(bci.price == 1234)
+        #expect(bci.weight == nil)
+        #expect(bci.units == nil)
+        #expect(bci.weightUnit == .price)
     }
 
-    func testCart_backenddata_piece0() {
+    @Test func backendDataPieceZero() {
         let cart = Mock.shoppingCart()
         cart.add(Mock.piece0Item)
         cart.setQuantity(8, at: 0)
         guard case let Cart.Item.product(bci) = cart.items[0].cartItems[0] else {
-            return XCTFail("not a product")
+            Issue.record("not a product")
+            return
         }
-        XCTAssertEqual(bci.sku, "8")
-        XCTAssertEqual(bci.amount, 1)
-        XCTAssertEqual(bci.scannedCode, "2123451000080")
-        XCTAssertEqual(bci.price, nil)
-        XCTAssertEqual(bci.weight, nil)
-        XCTAssertEqual(bci.units, 8)
-        XCTAssertEqual(bci.weightUnit, .piece)
+        #expect(bci.sku == "8")
+        #expect(bci.amount == 1)
+        #expect(bci.scannedCode == "2123451000080")
+        #expect(bci.price == nil)
+        #expect(bci.weight == nil)
+        #expect(bci.units == 8)
+        #expect(bci.weightUnit == .piece)
     }
 
-    func testCart_backenddata_discount() {
+    @Test func backendDataDiscount() {
         guard case let Cart.Item.product(bci) = Mock.discountItem.cartItems[0] else {
-            return XCTFail("not a product")
+            Issue.record("not a product")
+            return
         }
-        XCTAssertEqual(bci.sku, "6")
-        XCTAssertEqual(bci.amount, 1)
-        XCTAssertEqual(bci.scannedCode, "96xxxx")
-        XCTAssertEqual(bci.price, 321)
-        XCTAssertEqual(bci.weight, nil)
-        XCTAssertEqual(bci.units, nil)
-        XCTAssertEqual(bci.weightUnit, nil)
+        #expect(bci.sku == "6")
+        #expect(bci.amount == 1)
+        #expect(bci.scannedCode == "96xxxx")
+        #expect(bci.price == 321)
+        #expect(bci.weight == nil)
+        #expect(bci.units == nil)
+        #expect(bci.weightUnit == nil)
     }
 
-    func testCart_backenddata_coupon() {
+    @Test func backendDataCoupon() {
         let simpleItem = Mock.simpleItem1
 
-        XCTAssertEqual(simpleItem.cartItems.count, 1)
+        #expect(simpleItem.cartItems.count == 1)
         var itemUUID = "" // for now, we assume that product items are first in the array
         for item in simpleItem.cartItems {
             if case let Cart.Item.product(bci) = item {
-                XCTAssertEqual(bci.sku, "1")
-                XCTAssertEqual(bci.amount, 1)
-                XCTAssertEqual(bci.scannedCode, "1234567890123")
-                XCTAssertEqual(bci.price, nil)
-                XCTAssertEqual(bci.weight, nil)
-                XCTAssertEqual(bci.units, nil)
-                XCTAssertEqual(bci.weightUnit, nil)
+                #expect(bci.sku == "1")
+                #expect(bci.amount == 1)
+                #expect(bci.scannedCode == "1234567890123")
+                #expect(bci.price == nil)
+                #expect(bci.weight == nil)
+                #expect(bci.units == nil)
+                #expect(bci.weightUnit == nil)
                 itemUUID = bci.id
             }
             if case let Cart.Item.coupon(bci) = item {
-                XCTAssertEqual(bci.couponID, "foo")
-                XCTAssertEqual(bci.refersTo, itemUUID)
+                #expect(bci.couponID == "foo")
+                #expect(bci.refersTo == itemUUID)
             }
         }
     }
 
-    func testCart_backenddata_globusPiece() {
+    @Test func backendDataGlobusPiece() {
         guard case let Cart.Item.product(bci) = Mock.globusPieceItem.cartItems[0] else {
-            return XCTFail("not a product")
+            Issue.record("not a product")
+            return
         }
-        XCTAssertEqual(bci.sku, "6")
-        XCTAssertEqual(bci.amount, 1)
-        XCTAssertEqual(bci.scannedCode, "98xxxx")
-        XCTAssertEqual(bci.price, 48)
-        XCTAssertEqual(bci.weight, nil)
-        XCTAssertEqual(bci.units, 42)
-        XCTAssertEqual(bci.weightUnit, .piece)
+        #expect(bci.sku == "6")
+        #expect(bci.amount == 1)
+        #expect(bci.scannedCode == "98xxxx")
+        #expect(bci.price == 48)
+        #expect(bci.weight == nil)
+        #expect(bci.units == 42)
+        #expect(bci.weightUnit == .piece)
     }
 
-    func testCart_backenddata_globusWeigh() {
+    @Test func backendDataGlobusWeigh() {
         guard case let Cart.Item.product(bci) = Mock.globusWeighItem.cartItems[0] else {
-            return XCTFail("not a product")
+            Issue.record("not a product")
+            return
         }
-        XCTAssertEqual(bci.sku, "6")
-        XCTAssertEqual(bci.amount, 1)
-        XCTAssertEqual(bci.scannedCode, "98xxxx")
-        XCTAssertEqual(bci.price, 1200)
-        XCTAssertEqual(bci.weight, 150)
-        XCTAssertEqual(bci.units, nil)
-        XCTAssertEqual(bci.weightUnit, .gram)
+        #expect(bci.sku == "6")
+        #expect(bci.amount == 1)
+        #expect(bci.scannedCode == "98xxxx")
+        #expect(bci.price == 1200)
+        #expect(bci.weight == 150)
+        #expect(bci.units == nil)
+        #expect(bci.weightUnit == .gram)
     }
 
     // MARK: - qr code tests
-    func testCart_codesForQR() {
-        XCTAssertTrue(Mock.simpleItem1.cartItems[0] == QRCodeData(1, "1234567890123"))
-        XCTAssertTrue(Mock.simpleItem2.cartItems[0] == QRCodeData(1, "1234567890123"))
-        XCTAssertTrue(Mock.depositItem.cartItems[0] == QRCodeData(1, "1234567890123"))
-        XCTAssertTrue(Mock.preWeighedItem.cartItems[0] == QRCodeData(1, "2000000001254"))
-        XCTAssertTrue(Mock.pieceItem.cartItems[0] == QRCodeData(1, "2000000000121"))
-        XCTAssertTrue(Mock.piece0Item.cartItems[0] == QRCodeData(1, "2123450000005"))
-        XCTAssertTrue(Mock.pricedItem.cartItems[0] == QRCodeData(1, "2000000012346"))
-        XCTAssertTrue(Mock.discountItem.cartItems[0] == QRCodeData(1, "96xxxx"))
-        XCTAssertTrue(Mock.globusWeighItem.cartItems[0] == QRCodeData(1, "98xxxx"))
-        XCTAssertTrue(Mock.globusPieceItem.cartItems[0] == QRCodeData(1, "98xxxx"))
+    @Test func codesForQR() {
+        #expect(Mock.simpleItem1.cartItems[0] == QRCodeData(1, "1234567890123"))
+        #expect(Mock.simpleItem2.cartItems[0] == QRCodeData(1, "1234567890123"))
+        #expect(Mock.depositItem.cartItems[0] == QRCodeData(1, "1234567890123"))
+        #expect(Mock.preWeighedItem.cartItems[0] == QRCodeData(1, "2000000001254"))
+        #expect(Mock.pieceItem.cartItems[0] == QRCodeData(1, "2000000000121"))
+        #expect(Mock.piece0Item.cartItems[0] == QRCodeData(1, "2123450000005"))
+        #expect(Mock.pricedItem.cartItems[0] == QRCodeData(1, "2000000012346"))
+        #expect(Mock.discountItem.cartItems[0] == QRCodeData(1, "96xxxx"))
+        #expect(Mock.globusWeighItem.cartItems[0] == QRCodeData(1, "98xxxx"))
+        #expect(Mock.globusPieceItem.cartItems[0] == QRCodeData(1, "98xxxx"))
 
         let cart = Mock.shoppingCart()
         cart.add(Mock.piece0Item)
         cart.setQuantity(99, at: 0)
-        XCTAssertTrue(cart.items[0].cartItems[0] == QRCodeData(1, "2123453000996"))
+        #expect(cart.items[0].cartItems[0] == QRCodeData(1, "2123453000996"))
 
         cart.remove(at: 0)
         cart.add(Mock.simpleItem1)
         cart.setQuantity(42, at: 0)
-        XCTAssertTrue(cart.items[0].cartItems[0] == QRCodeData(42, "1234567890123"))
+        #expect(cart.items[0].cartItems[0] == QRCodeData(42, "1234567890123"))
     }
 
 }
