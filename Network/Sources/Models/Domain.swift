@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum Domain: String {
+public enum Domain: String, Sendable {
     case testing
     case staging
     case production
