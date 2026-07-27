@@ -94,7 +94,7 @@ struct Mock {
         return cart
     }
 
-    static let formatter = PriceFormatter(2, "de_DE",  "EUR", "€")
+    nonisolated(unsafe) static let formatter = PriceFormatter(2, "de_DE",  "EUR", "€")
 }
 
 class ShoppingCartTests: XCTestCase {
