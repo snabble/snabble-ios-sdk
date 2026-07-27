@@ -16,5 +16,5 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
-      - name: Test Network
-        run: xcodebuild -scheme Snabble-Package -destination 'platform=iOS Simulator,name=iPhone 16,OS=26.0' test
+      - name: Test
+        run: xcodebuild -workspace Snabble.xcworkspace -scheme Snabble -destination 'platform=iOS Simulator,name=iPhone 16,OS=26.0' test
