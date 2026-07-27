@@ -23,7 +23,7 @@ public final class PaymentProcess {
     /// - Parameters:
     ///   - signedCheckoutInfo: the checkout info for this process
     ///   - cart: the cart for this process
-    ///   - delegate: the `PaymentDelegate` to use
+    ///   - shop: the `Shop` to use
     public init(_ signedCheckoutInfo: SignedCheckoutInfo, _ cart: ShoppingCart, shop: Shop) {
         self.signedCheckoutInfo = signedCheckoutInfo
         self.cart = cart
