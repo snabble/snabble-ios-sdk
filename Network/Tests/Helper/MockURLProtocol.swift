@@ -8,8 +8,8 @@
 import Foundation
 
 public class MockURLProtocol: URLProtocol {
-    public static var error: Error?
-    public static var requestHandler: ((URLRequest) throws -> (HTTPURLResponse, Data))?
+    public nonisolated(unsafe) static var error: Error?
+    public nonisolated(unsafe) static var requestHandler: ((URLRequest) throws -> (HTTPURLResponse, Data))?
 
     override public class func canInit(with request: URLRequest) -> Bool {
         return true
