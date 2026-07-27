@@ -1,7 +1,7 @@
 //
 //  PaymentDataEncrypterTests.swift
 //
-//  Copyright © 2026 snabble. All rights reserved.
+//  Copyright © 2024 snabble. All rights reserved.
 //
 
 import Testing
@@ -37,27 +37,38 @@ struct DERParserTests {
         return Calendar(identifier: .gregorian).date(from: components)!
     }
 
-    // MARK: - CA certificates (self-signed, UTCTime not-before)
+    // MARK: - validityDates: both notBefore and notAfter in a single parse pass
 
-    @Test("staging-ca.der not-before is Nov 16 08:54:00 2022 UTC")
-    func stagingCANotBefore() throws {
+    @Test("staging-ca.der validity dates")
+    func stagingCAValidity() throws {
+        let cert = try loadCert(named: "staging-ca")
+        let dates = try #require(DERParser.validityDates(of: cert))
+        #expect(dates.notBefore == utcDate(year: 2022, month: 11, day: 16, hour: 8, minute: 54, second: 0))
+        #expect(dates.notAfter  == utcDate(year: 2026, month: 11, day: 15, hour: 8, minute: 54, second: 0))
+    }
+
+    @Test("prod-ca.der validity dates")
+    func prodCAValidity() throws {
+        let cert = try loadCert(named: "prod-ca")
+        let dates = try #require(DERParser.validityDates(of: cert))
+        #expect(dates.notBefore == utcDate(year: 2022, month: 11, day: 16, hour: 8, minute: 54, second: 7))
+        #expect(dates.notAfter  == utcDate(year: 2026, month: 11, day: 15, hour: 8, minute: 54, second: 7))
+    }
+
+    @Test("testing-ca.der validity dates")
+    func testingCAValidity() throws {
+        let cert = try loadCert(named: "testing-ca")
+        let dates = try #require(DERParser.validityDates(of: cert))
+        #expect(dates.notBefore == utcDate(year: 2022, month: 11, day: 16, hour: 8, minute: 35, second: 38))
+        #expect(dates.notAfter  == utcDate(year: 2026, month: 11, day: 15, hour: 8, minute: 35, second: 38))
+    }
+
+    // MARK: - notBeforeDate convenience wrapper
+
+    @Test("notBeforeDate returns notBefore from validityDates")
+    func notBeforeDateWrapper() throws {
         let cert = try loadCert(named: "staging-ca")
         let notBefore = try #require(DERParser.notBeforeDate(of: cert))
         #expect(notBefore == utcDate(year: 2022, month: 11, day: 16, hour: 8, minute: 54, second: 0))
     }
-
-    @Test("prod-ca.der not-before is Nov 16 08:54:07 2022 UTC")
-    func prodCANotBefore() throws {
-        let cert = try loadCert(named: "prod-ca")
-        let notBefore = try #require(DERParser.notBeforeDate(of: cert))
-        #expect(notBefore == utcDate(year: 2022, month: 11, day: 16, hour: 8, minute: 54, second: 7))
-    }
-
-    @Test("testing-ca.der not-before is Nov 16 08:35:38 2022 UTC")
-    func testingCANotBefore() throws {
-        let cert = try loadCert(named: "testing-ca")
-        let notBefore = try #require(DERParser.notBeforeDate(of: cert))
-        #expect(notBefore == utcDate(year: 2022, month: 11, day: 16, hour: 8, minute: 35, second: 38))
-    }
-
 }

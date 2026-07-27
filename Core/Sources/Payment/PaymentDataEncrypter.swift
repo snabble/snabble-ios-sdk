@@ -22,8 +22,9 @@ protocol PaymentRequestOrigin: Encodable { }
 /// trust anchor. Only snabble's CA is accepted; system root CAs are explicitly
 /// excluded via `SecTrustSetAnchorCertificatesOnly`.
 ///
-/// Gateway certificate expiry is not checked here. It is managed externally
-/// via the `validUntil` field on `GatewayCertificate` in the metadata response.
+/// Gateway certificate expiry is checked explicitly against the current date
+/// using the cert's own `notAfter` field, independent of `SecTrust`'s date
+/// evaluation (which is pinned to `notBefore` and would not catch expiry).
 ///
 /// ## iOS / Android parity
 ///
@@ -132,6 +133,16 @@ struct PaymentDataEncrypter {
             return nil
         }
 
+        // Reject an expired gateway cert before doing any crypto work.
+        // SecTrustSetVerifyDate (below) pins evaluation to the cert's own
+        // notBefore, which trivially passes for any correctly-issued cert and
+        // therefore does not catch expiry against real time. This explicit check
+        // matches Android's CertPathValidator.validate() behaviour.
+        if let notAfter = DERParser.validityDates(of: cert)?.notAfter, notAfter < Date() {
+            Log.error("gateway certificate has expired (notAfter: \(notAfter))")
+            return nil
+        }
+
         // Restrict trust to our bundled CA only — system root CAs must not be
         // accepted as a substitute anchor.
         SecTrustSetAnchorCertificates(trust, [root] as CFArray)
@@ -140,8 +151,7 @@ struct PaymentDataEncrypter {
         // Evaluate as of the gateway cert's Not Before date so that the local CA
         // cert's expiry does not block validation. The CA was necessarily valid when
         // it signed the gateway cert, so the signature check is still sound.
-        // Gateway cert expiry is managed externally via GatewayCertificate.validUntil.
-        if let verifyDate = DERParser.notBeforeDate(of: cert) {
+        if let verifyDate = DERParser.validityDates(of: cert)?.notBefore {
             SecTrustSetVerifyDate(trust, verifyDate as CFDate)
         }
 
@@ -169,7 +179,7 @@ struct PaymentDataEncrypter {
     }
 }
 
-// Extracts the Not Before date from an X.509 certificate by parsing the raw DER.
+// Extracts validity dates from an X.509 certificate by parsing the raw DER.
 //
 // SecCertificateCopyValues (the high-level date accessor) is macOS-only.
 // SecCertificateCopyData is available on iOS since 2.0 and returns the DER bytes,
@@ -179,7 +189,11 @@ struct PaymentDataEncrypter {
 // acceptable here because the input is always a SecCertificate already accepted
 // by SecTrust — Apple's framework has validated the DER before we see it.
 enum DERParser {
-    static func notBeforeDate(of cert: SecCertificate) -> Date? {
+
+    /// Returns both validity dates from a certificate's Validity SEQUENCE.
+    /// Both notBefore and notAfter are read in a single pass since they are
+    /// adjacent TLV elements.
+    static func validityDates(of cert: SecCertificate) -> (notBefore: Date, notAfter: Date)? {
         let der = SecCertificateCopyData(cert) as Data
         var cursor = Cursor(data: der)
 
@@ -191,17 +205,26 @@ enum DERParser {
         //       SEQUENCE signatureAlgorithm
         //       SEQUENCE issuer
         //       SEQUENCE validity
-        //         UTCTime/GeneralizedTime notBefore  ← target
-        guard cursor.enterSequence(),   // Certificate
-              cursor.enterSequence(),   // TBSCertificate
-              cursor.skip(ifTag: 0xA0), // optional [0] version
-              cursor.skipElement(),     // serialNumber
-              cursor.skipElement(),     // signatureAlgorithm
-              cursor.skipElement(),     // issuer
-              cursor.enterSequence()    // validity
+        //         UTCTime/GeneralizedTime notBefore
+        //         UTCTime/GeneralizedTime notAfter
+        guard cursor.enterSequence(),    // Certificate
+              cursor.enterSequence(),    // TBSCertificate
+              cursor.skip(ifTag: 0xA0),  // optional [0] version
+              cursor.skipElement(),      // serialNumber
+              cursor.skipElement(),      // signatureAlgorithm
+              cursor.skipElement(),      // issuer
+              cursor.enterSequence()     // validity
         else { return nil }
 
-        return cursor.readDate()
+        guard let notBefore = cursor.readDate(),
+              let notAfter = cursor.readDate()
+        else { return nil }
+
+        return (notBefore, notAfter)
+    }
+
+    static func notBeforeDate(of cert: SecCertificate) -> Date? {
+        validityDates(of: cert)?.notBefore
     }
 
     private struct Cursor {
