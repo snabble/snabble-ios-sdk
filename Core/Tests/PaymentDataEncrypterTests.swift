@@ -4,6 +4,7 @@
 //  Copyright © 2024 snabble. All rights reserved.
 //
 
+import Foundation
 import Testing
 import Security
 @testable import SnabbleCore
@@ -13,7 +14,7 @@ struct DERParserTests {
 
     // Loads a DER certificate from Core/Sources/Resources/ relative to this test file.
     private func loadCert(named name: String) throws -> SecCertificate {
-        let resourcesURL = URL(fileURLWithPath: #file)
+        let resourcesURL = URL(fileURLWithPath: #filePath)
             .deletingLastPathComponent()             // Core/Tests/
             .deletingLastPathComponent()             // Core/
             .appendingPathComponent("Sources/Resources/\(name).der")
