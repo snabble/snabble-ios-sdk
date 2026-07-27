@@ -8,6 +8,8 @@
 
 /* Begin PBXBuildFile section */
 		761C0E092F7145730000BFF1 /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = 761C0E082F7145730000BFF1 /* Snabble */; };
+		761E65E93017961E00B0662C /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = 761E65E83017961E00B0662C /* Snabble */; };
+		7621261C301797FD00BAE786 /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = 7621261B301797FD00BAE786 /* Snabble */; };
 		766BCCCA2F62C23A00D8FFAF /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = 766BCCC92F62C23A00D8FFAF /* Snabble */; };
 		768DFC1D3017286900149045 /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = 768DFC1C3017286900149045 /* Snabble */; };
 		76CFCD1E2F76B7F500166D12 /* Snabble in Frameworks */ = {isa = PBXBuildFile; productRef = 76CFCD1D2F76B7F500166D12 /* Snabble */; };
@@ -46,11 +48,13 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				761E65E93017961E00B0662C /* Snabble in Frameworks */,
 				761C0E092F7145730000BFF1 /* Snabble in Frameworks */,
 				766BCCCA2F62C23A00D8FFAF /* Snabble in Frameworks */,
 				76CFCD1E2F76B7F500166D12 /* Snabble in Frameworks */,
 				768DFC1D3017286900149045 /* Snabble in Frameworks */,
 				76DF385B2F5075A80050F4EC /* Snabble in Frameworks */,
+				7621261C301797FD00BAE786 /* Snabble in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -111,6 +115,8 @@
 				761C0E082F7145730000BFF1 /* Snabble */,
 				76CFCD1D2F76B7F500166D12 /* Snabble */,
 				768DFC1C3017286900149045 /* Snabble */,
+				761E65E83017961E00B0662C /* Snabble */,
+				7621261B301797FD00BAE786 /* Snabble */,
 			);
 			productName = SwiftySnabble;
 			productReference = 76DF38052F50740F0050F4EC /* SnabbleSampleApp.app */;
@@ -142,7 +148,7 @@
 			mainGroup = 76DF37FC2F50740F0050F4EC;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				768DFC1B3017286900149045 /* XCLocalSwiftPackageReference "../../snabble-ios-sdk" */,
+				7621261A301797FD00BAE786 /* XCLocalSwiftPackageReference ".." */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 76DF38062F50740F0050F4EC /* Products */;
@@ -474,14 +480,22 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		768DFC1B3017286900149045 /* XCLocalSwiftPackageReference "../../snabble-ios-sdk" */ = {
+		7621261A301797FD00BAE786 /* XCLocalSwiftPackageReference ".." */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = "../../snabble-ios-sdk";
+			relativePath = "..";
 		};
 /* End XCLocalSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
 		761C0E082F7145730000BFF1 /* Snabble */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Snabble;
+		};
+		761E65E83017961E00B0662C /* Snabble */ = {
+			isa = XCSwiftPackageProductDependency;
+			productName = Snabble;
+		};
+		7621261B301797FD00BAE786 /* Snabble */ = {
 			isa = XCSwiftPackageProductDependency;
 			productName = Snabble;
 		};
