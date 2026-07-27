@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct Configuration: Equatable, Hashable {
+public struct Configuration: Equatable, Hashable, Sendable {
     public let appId: String
     public let appSecret: String
     public let domain: Domain

@@ -7,7 +7,6 @@
 
 import XCTest
 @testable import SnabbleNetwork
-import Combine
 
 // Thread-safe counter for verifying request counts across concurrent network calls.
 private final class RequestCounter: @unchecked Sendable {
@@ -18,12 +17,13 @@ private final class RequestCounter: @unchecked Sendable {
     func increment() { lock.withLock { _count += 1 } }
 }
 
-final class AuthenticatorTests: XCTestCase {
+extension Authenticator: @unchecked Sendable {}
+
+@MainActor
+final class AuthenticatorTests: XCTestCase, @unchecked Sendable {
 
     var authenticator: Authenticator!
-    var cancellables = Set<AnyCancellable>()
     var configuration = Configuration(appId: "123", appSecret: "123-456-789", domain: .testing)
-    var urlSession: URLSession = .mockSession
 
     override func setUpWithError() throws {
         authenticator = .init(urlSession: .mockSession)
@@ -63,31 +63,14 @@ final class AuthenticatorTests: XCTestCase {
                 )!
                 return (response, Data())
             }
-
         }
-        let expectation = expectation(description: "validateToken")
-        authenticator.validToken(withConfiguration: configuration)
-            .sink { completion in
-                switch completion {
-                case .finished:
-                    break
-                case .failure(let error):
-                    XCTAssertThrowsError(error)
-                }
-                expectation.fulfill()
-            } receiveValue: { token in
-                XCTAssertNotNil(token)
-            }
-            .store(in: &cancellables)
-#if swift(>=5.8)
-        await fulfillment(of: [expectation], timeout: 5)
-#else
-        wait(for: [expectation], timeout: 5)
-#endif
+
+        let token = try await authenticator.validToken(withConfiguration: configuration)
+        XCTAssertNotNil(token)
     }
 
-    /// Verifies that concurrent calls to validToken share a single upstream chain and
-    /// therefore fire POST /users exactly once, not once per subscriber.
+    /// Verifies that concurrent calls to validToken share a single in-flight task and
+    /// therefore fire POST /users exactly once, not once per caller.
     func testConcurrentValidTokenCallsFireOnlyOnePostRequest() async throws {
         let postCounter = RequestCounter()
 
@@ -112,21 +95,14 @@ final class AuthenticatorTests: XCTestCase {
             }
         }
 
-        let e1 = expectation(description: "subscriber1")
-        let e2 = expectation(description: "subscriber2")
-        let e3 = expectation(description: "subscriber3")
+        // All three tasks start before any response arrives; they share the same refreshTask.
+        async let t1 = authenticator.validToken(withConfiguration: configuration)
+        async let t2 = authenticator.validToken(withConfiguration: configuration)
+        async let t3 = authenticator.validToken(withConfiguration: configuration)
+        _ = try await (t1, t2, t3)
 
-        // All three subscribe synchronously before URLSession dispatches the response,
-        // so they all share the same in-flight request via Publishers.Share.
-        for exp in [e1, e2, e3] {
-            authenticator.validToken(withConfiguration: configuration)
-                .sink { _ in exp.fulfill() } receiveValue: { _ in }
-                .store(in: &cancellables)
-        }
-
-        await fulfillment(of: [e1, e2, e3], timeout: 5)
         XCTAssertEqual(postCounter.count, 1,
-            "POST /users must be fired exactly once regardless of concurrent subscriber count")
+            "POST /users must be fired exactly once regardless of concurrent caller count")
     }
 
     /// Verifies that the token received from the first validToken call is cached and
@@ -157,19 +133,11 @@ final class AuthenticatorTests: XCTestCase {
             }
         }
 
-        // First call: must fetch AppUser (POST) and Token (GET)
-        let firstExpectation = expectation(description: "first call")
-        authenticator.validToken(withConfiguration: configuration)
-            .sink { _ in firstExpectation.fulfill() } receiveValue: { _ in }
-            .store(in: &cancellables)
-        await fulfillment(of: [firstExpectation], timeout: 5)
+        // First call: fetches AppUser (POST) and Token (GET)
+        _ = try await authenticator.validToken(withConfiguration: configuration)
 
-        // Second call: must return the cached token without any network requests
-        let secondExpectation = expectation(description: "second call — cached")
-        authenticator.validToken(withConfiguration: configuration)
-            .sink { _ in secondExpectation.fulfill() } receiveValue: { _ in }
-            .store(in: &cancellables)
-        await fulfillment(of: [secondExpectation], timeout: 5)
+        // Second call: must return the cached token without new network requests
+        _ = try await authenticator.validToken(withConfiguration: configuration)
 
         XCTAssertEqual(postCounter.count, 1, "POST /users must not repeat after token is cached")
         XCTAssertEqual(tokenCounter.count, 1, "GET /tokens must not repeat after token is cached")

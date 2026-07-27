@@ -1,25 +1,23 @@
 //
 //  NetworkManagerTests.swift
-//  
+//
 //
 //  Created by Andreas Osberghaus on 2023-05-15.
 //
 
 import XCTest
 import Foundation
-import Combine
 
 @testable import SnabbleNetwork
 
+@MainActor
 final class NetworkManagerTests: XCTestCase {
 
-    var cancellables: Set<AnyCancellable>!
     var networkManager: NetworkManager!
     var configuration: SnabbleNetwork.Configuration = .init(appId: "123", appSecret: "2", domain: .production)
     var appUser: AppUser?
 
     override func setUpWithError() throws {
-        cancellables = Set<AnyCancellable>()
         networkManager = NetworkManager(configuration: configuration, urlSession: .mockSession)
         networkManager.delegate = self
 
@@ -63,11 +61,10 @@ final class NetworkManagerTests: XCTestCase {
     }
 
     override func tearDownWithError() throws {
-        cancellables = nil
         networkManager = nil
     }
 
-    func testRequestWithError() throws {
+    func testRequestWithError() async throws {
         MockURLProtocol.error = nil
         MockURLProtocol.requestHandler = { request in
             let response = HTTPURLResponse(
@@ -81,46 +78,23 @@ final class NetworkManagerTests: XCTestCase {
 
         let endpoint = Endpoints.AppUser.post(appId: configuration.appId, appSecret: configuration.appSecret)
 
-        let expectation = expectation(description: "register")
-        networkManager.publisher(for: endpoint)
-            .sink { completion in
-                switch completion {
-                case .failure:
-                    expectation.fulfill()
-                case .finished:
-                    break
-                }
-            } receiveValue: { validation in
-                XCTAssertNil(validation)
-            }
-            .store(in: &cancellables)
-
-        wait(for: [expectation], timeout: 3.0)
+        do {
+            _ = try await networkManager.publisher(for: endpoint)
+            XCTFail("Expected error but request succeeded")
+        } catch {
+            XCTAssertNotNil(error)
+        }
     }
 
-    func testEndpoint() throws {
+    func testEndpoint() async throws {
         let endpoint = Endpoints.Phone.auth(phoneNumber: "+4915119695415")
 
-        let expectation = expectation(description: "auth")
-        networkManager.publisher(for: endpoint)
-            .sink { completion in
-                switch completion {
-                case .failure(let error):
-                    XCTAssertThrowsError(error)
-                case .finished:
-                    break
-                }
-                expectation.fulfill()
-            } receiveValue: { value in
-                print("foobar")
-                print(value)
-            }
-            .store(in: &cancellables)
-
-        wait(for: [expectation], timeout: 10.0)
+        do {
+            _ = try await networkManager.publisher(for: endpoint)
+        } catch {
+            XCTAssertNotNil(error)
+        }
     }
-
-    
 }
 
 extension NetworkManagerTests: NetworkManagerDelegate {
