@@ -349,9 +349,9 @@ Using Xcode String Catalogs (`.xcstrings`):
 ### Build & Run
 
 ```bash
-cd Example/SwiftySnabble
-open SwiftySnabble.xcodeproj
-# ⌘R to run
+# Open the workspace from the repo root (not the .xcodeproj directly)
+open Snabble.xcworkspace
+# Select the SwiftySnabble scheme, then ⌘R to run
 ```
 
 ### Configuration
@@ -493,8 +493,8 @@ The app integrates these SDK modules via Swift Package Manager:
 ### Package Dependencies
 
 If local package is not found:
-1. File > Packages > Reset Package Caches
-2. Verify package path in Project Settings
+1. Make sure you opened `Snabble.xcworkspace` (repo root), not `SnabbleSampleApp.xcodeproj` directly
+2. File > Packages > Reset Package Caches
 3. Clean and rebuild (⌘⇧K then ⌘B)
 
 ## 🆚 UIKit vs SwiftUI Comparison

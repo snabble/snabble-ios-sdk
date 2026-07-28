@@ -146,9 +146,11 @@ The `Info.plist` also requires a URL scheme entry as described in the [Datatrans
 
 ```bash
 git clone https://github.com/snabble/snabble-ios-sdk
-cd snabble-ios-sdk/Example
-open SnabbleSampleApp.xcodeproj
+cd snabble-ios-sdk
+open Snabble.xcworkspace
 ```
+
+The workspace includes both the SDK package and the `SnabbleSampleApp` example project. Open it instead of the `.xcodeproj` directly so Xcode resolves the local package dependency correctly.
 
 To run the sample app you need an application identifier and a corresponding secret. [Contact us](mailto:info@snabble.io) for access.
 
