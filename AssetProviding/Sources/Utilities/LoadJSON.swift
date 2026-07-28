@@ -16,8 +16,7 @@ import Foundation
 ///         let hello: String?
 ///     }
 ///     
-/// - Parameter filename : The filename to load.
-///
+/// - Parameter filename: The filename to load.
 /// - Returns: An initialized decodable object
 ///
 /// - Important: If the file `filename` does not exists or contains corrupt JSON data this function throws an `fatalError()`

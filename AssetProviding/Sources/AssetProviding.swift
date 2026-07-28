@@ -57,12 +57,13 @@ public protocol UrlProviding: AnyObject {
 }
 
 public protocol FontProviding: AnyObject {
-    /// Providing a font for the given `name` and `extension` compatible with the `domain`
+    /// Providing a font for the given `name` compatible with the `domain`
     /// - Parameters:
     ///   - name: The name of the font file.
-    ///   - ext: The extension of the resource file.
+    ///   - size: An optional font size
+    ///   - textStyle: An optional TextStyle
     ///   - domain: The domain, usually the current `Identifier<Project>`
-    /// - Returns: The file URL for the resource file or nil if the file could not be located.
+    /// - Returns: The font or nil if the font could not be loaded.
     func font(_ name: String, size: CGFloat?, relativeTo textStyle: Font.TextStyle?, domain: Any?) -> SwiftUI.Font?
 }
 

@@ -24,7 +24,9 @@ public protocol PaymentDelegate: AnalyticsDelegate, MessageDelegate {
 
     /// callback when an error occurred
     ///
-    /// - Parameter error: the error from the backend
+    /// - Parameters:
+    /// - method: the payment method
+    /// - error: the error from the backend
     /// - Returns: true if the error has been dealt with and no error messages need to be shown from the SDK
     func handlePaymentError(_ method: PaymentMethod, _ error: SnabbleError) -> Bool
 

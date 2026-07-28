@@ -15,7 +15,7 @@ public struct QRCodeGenerator {
     /// - Parameters:
     ///   - cart: the `ShoppingCart`
     ///   - config: the `QRCodeConfig`
-    ///   - id: the id of the checkout process, if known
+    ///   - processId: the id of the checkout process, if known
     public init(cart: ShoppingCart, config: QRCodeConfig, processId: String?) {
         self.cart = cart
         self.config = config

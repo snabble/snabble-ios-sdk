@@ -205,9 +205,10 @@ extension Project {
     ///   - method: the HTTP method to use
     ///   - url: the URL to use
     ///   - json: if true, add "application/json" as the "Accept" and "Content-Type" HTTP Headers
+    ///   - jwtRequired: if true, the jwt is required
     ///   - parameters: the query parameters to append to the URL
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
-    /// - Returns: the URLRequest
+    ///   - completion: the completion to call
     public func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, parameters: [String: String]? = nil, timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
         request(method, url, json: json, jwtRequired: jwtRequired, queryItems: parameters?.queryItems(), timeout: timeout, completion: completion)
     }
@@ -218,9 +219,10 @@ extension Project {
     ///   - method: the HTTP method to use
     ///   - url: the URL to use
     ///   - json: if true, add "application/json" as the "Accept" and "Content-Type" HTTP Headers
+    ///   - jwtRequired: if true, the jwt is required
     ///   - queryItems: the query parameters to append to the URL
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
-    /// - Returns: the URLRequest
+    ///   - completion: the completion to call
     public func request(_ method: HTTPRequestMethod, _ url: String, json: Bool = true, jwtRequired: Bool = true, queryItems: [URLQueryItem]?, timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
         guard
             let url = url.urlString(with: queryItems),
@@ -239,7 +241,7 @@ extension Project {
     ///   - url: the URL to use
     ///   - body: the JSON data to send as the HTTP body
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
-    /// - Returns: the URLRequest
+    ///   - completion: the completion to call
     public func request(_ method: HTTPRequestMethod, _ url: String, body: Data, timeout: TimeInterval, completion: @escaping (URLRequest?) -> Void) {
         guard let url = Snabble.shared.urlFor(url) else {
             return completion(nil)
@@ -259,7 +261,7 @@ extension Project {
     ///   - url: the URL to use
     ///   - body: the JSON object to send as the HTTP body
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
-    /// - Returns: the URLRequest
+    ///   - completion: the completion to call
     public func request<T: Encodable>(_ method: HTTPRequestMethod, _ url: String, body: T, timeout: TimeInterval = 0, _ completion: @escaping (URLRequest?) -> Void ) {
         guard let url = Snabble.shared.urlFor(url) else {
             return completion(nil)
@@ -309,7 +311,6 @@ extension Project {
     /// - Parameters:
     ///   - request: the `URLRequest` to perform
     ///   - completion: called on the main thread when the result is available.
-    ///   - result: the parsed result object or error
     @discardableResult
     public func perform<T: Decodable & Sendable>(_ request: URLRequest, _ completion: @escaping @Sendable (_ result: Result<T, SnabbleError>) -> Void ) -> URLSessionDataTask {
         return self.perform(request, returnRaw: false) { result, _, _ in
@@ -336,8 +337,6 @@ extension Project {
     /// - Parameters:
     ///   - request: the `URLRequest` to perform
     ///   - completion: called on the main thread when the result is available.
-    ///   - result: the parsed result object or error
-    ///   - response: the HTTPURLResponse object
     @discardableResult
     public func perform<T: Decodable & Sendable>(_ request: URLRequest, _ completion: @escaping @Sendable (_ result: Result<T, SnabbleError>, _ response: HTTPURLResponse?) -> Void ) -> URLSessionDataTask {
         return self.perform(request, returnRaw: false) { result, _, response in

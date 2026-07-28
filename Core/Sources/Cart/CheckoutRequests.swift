@@ -14,7 +14,6 @@ extension ShoppingCart {
     ///   - project: the project for this request
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     ///   - completion: is called on the main thread with the result of the API call
-    ///   - result: the `SignedCheckoutInfo` or the error
     public func createCheckoutInfo(_ project: Project, timeout: TimeInterval = 0, completion: @escaping @Sendable (_ result: Result<SignedCheckoutInfo, SnabbleError>) -> Void ) {
         self.eventTimer?.invalidate()
         // cancel any previous tasks
@@ -64,10 +63,11 @@ extension SignedCheckoutInfo {
     ///
     /// - Parameters:
     ///   - project: the project for this request
+    ///   - id: the checkout process ID
     ///   - paymentMethod: the user's chosen payment method
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
-    ///   - completion: is called on the main thread with the result of the API call,
-    ///   - result: the newly created `CheckoutProcess` or the error
+    ///   - finalizedAt: optional date when the process was finalized offline
+    ///   - completion: is called on the main thread with the result of the API call
     public func createCheckoutProcess(_ project: Project,
                                       id: String,
                                       paymentMethod: PaymentMethod,
@@ -180,9 +180,7 @@ extension CheckoutProcess {
     ///   - project: the project for this request
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
     ///   - taskCreated: is called with the `URLSessionTask` created for the request
-    ///   - task: the `URLSessionTask`
     ///   - completion: is called on the main thread with the result of the API call
-    ///   - result: the `CheckoutProcess` returned from the backend or the error
     public func update(_ project: Project,
                        timeout: TimeInterval = 0,
                        taskCreated: @escaping (_ task: URLSessionDataTask) -> Void,
@@ -207,8 +205,7 @@ extension CheckoutProcess {
     /// - Parameters:
     ///   - project: the project for this request
     ///   - timeout: the timeout for the HTTP request (0 for the system default timeout)
-    ///   - completion: is called on the main thread with the result of the API call,
-    ///   - result: the `CheckoutProcess` returned from the backend or the error
+    ///   - completion: is called on the main thread with the result of the API call
     public func abort(_ project: Project, timeout: TimeInterval = 0, completion: @escaping @Sendable (_ result: Result<CheckoutProcess, SnabbleError>) -> Void ) {
         let abort = AbortRequest(aborted: true)
 

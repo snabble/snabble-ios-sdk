@@ -28,7 +28,7 @@ public struct AppUser: Codable, Sendable {
 
     /// initialize an `AppUserId` with a received `value` and `secret`
     /// - Parameters:
-    ///   - value: the actual information of the `userId`
+    ///   - id: the actual information of the `userId`
     ///   - secret: an opaque information for the backend
     public init(id: String, secret: String) {
         self.id = id
