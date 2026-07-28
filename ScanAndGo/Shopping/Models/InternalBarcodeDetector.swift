@@ -8,7 +8,7 @@
 import Foundation
 import OSLog
 import SwiftUI
-import AVFoundation
+@preconcurrency import AVFoundation
 
 import SnabbleCore
 import SnabbleAssetProviding

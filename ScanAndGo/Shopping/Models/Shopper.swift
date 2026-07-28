@@ -138,9 +138,9 @@ public final class Shopper: BarcodeProcessing, Equatable {
 
         self.paymentManager.delegate = self
 
-        let actionPublisher = ActionManager.shared.actionPublisher
+        let actionStream = ActionManager.shared.actionStream
         actionTask = Task { @MainActor [weak self] in
-            for await action in actionPublisher.values {
+            for await action in actionStream {
                 self?.handleAction(action)
             }
         }

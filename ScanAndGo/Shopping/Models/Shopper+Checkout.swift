@@ -8,6 +8,7 @@ import SwiftUI
 
 import SnabbleCore
 import SnabbleAssetProviding
+import SnabbleComponents
 import SnabblePayment
 
 extension ShoppingCart {
@@ -20,7 +21,7 @@ extension ShoppingCart {
 }
 extension Shopper {
     public func sendAction(_ actionType: ActionType) {
-        ActionManager.shared.actionPublisher.send(actionType)
+        ActionManager.shared.send(actionType)
     }
     
     func startCheckout() {
