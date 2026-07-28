@@ -7,7 +7,6 @@
 
 import Foundation
 import CoreLocation
-import Combine
 
 public protocol CheckInManagerDelegate: AnyObject {
     /// Tells the delegate when the manager did check out of a shop.

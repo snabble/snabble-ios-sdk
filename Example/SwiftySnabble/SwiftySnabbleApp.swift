@@ -36,7 +36,7 @@ struct SwiftySnabbleApp: App {
                     RootView()
                         .environment(router)
                         .environment(appState)
-                        .shopperActions()
+                        .actionState()
                 } else {
                     LoadingView()
                 }
