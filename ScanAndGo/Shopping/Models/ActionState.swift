@@ -7,8 +7,6 @@
 
 import SwiftUI
 import OSLog
-import Combine
-
 import SnabbleAssetProviding
 import SnabbleComponents
 
@@ -98,7 +96,9 @@ public final class ActionManager {
     nonisolated(unsafe) public static let shared = ActionManager()
 
     let logger = Logger(subsystem: "io.snabble.sdk.ScanAndGo", category: "ActionManager")
-    public let actionPublisher = PassthroughSubject<ActionType, Never>()
+
+    @ObservationIgnored public private(set) var actionStream: AsyncStream<ActionType>
+    @ObservationIgnored private var actionContinuation: AsyncStream<ActionType>.Continuation?
 
     /// The current state of the action being handled.
     /// Updates to this property will trigger corresponding UI changes in subscribed views.
@@ -115,14 +115,22 @@ public final class ActionManager {
     /// This property helps in managing the presentation state of different actions.
     var isPresented: Bool = false
 
-    public init() {}
+    public init() {
+        var cont: AsyncStream<ActionType>.Continuation!
+        actionStream = AsyncStream { cont = $0 }
+        actionContinuation = cont
+    }
+
+    deinit {
+        actionContinuation?.finish()
+    }
 
     /// Sends a new action state to be handled.
     /// - Parameter actionState: The new action state to be handled.
     public func send(_ actionState: ActionType) {
         currentAction = ActionItem(type: actionState)
         self.actionState = actionState
-        actionPublisher.send(actionState)
+        actionContinuation?.yield(actionState)
     }
 }
 
@@ -191,7 +199,7 @@ public struct ShopperActionModifier: ViewModifier {
     public func body(content: Content) -> some View {
         content
             .task {
-                for await actionType in ActionManager.shared.actionPublisher.values {
+                for await actionType in ActionManager.shared.actionStream {
                     handleAction(actionType)
                 }
             }
