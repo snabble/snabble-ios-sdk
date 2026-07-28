@@ -27,7 +27,7 @@ public struct SepaAcceptView: View {
     @ViewBuilder
     var acceptButton: some View {
         Button(action: {
-            model.actionPublisher.send(["action": "accept"])
+            model.send(["action": "accept"])
         }) {
             Text(keyed: "Snabble.SEPA.iAgree")
                 .frame(maxWidth: .infinity)
@@ -38,7 +38,7 @@ public struct SepaAcceptView: View {
     @ViewBuilder
     var declineButton: some View {
         Button(action: {
-            model.actionPublisher.send(["action": "decline"])
+            model.send(["action": "decline"])
         }) {
             Text(keyed: "Snabble.SEPA.iDoNotAgree")
                 .frame(maxWidth: .infinity)

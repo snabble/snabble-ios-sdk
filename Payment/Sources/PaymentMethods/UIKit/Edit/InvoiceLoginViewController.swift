@@ -44,9 +44,9 @@ open class InvoiceViewController: UIHostingController<InvoiceView> {
 
     open override func viewDidLoad() {
         super.viewDidLoad()
-        let publisher = viewModel.invoiceLoginModel.actionPublisher
+        let stream = viewModel.invoiceLoginModel.actionStream
         actionTask = Task { @MainActor [weak self] in
-            for await info in publisher.values {
+            for await info in stream {
                 guard let self else { return }
                 delegate?.invoiceViewControllerDidEnd(self, userInfo: info)
             }

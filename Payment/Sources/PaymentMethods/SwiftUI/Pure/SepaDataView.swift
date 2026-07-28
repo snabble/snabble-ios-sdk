@@ -214,7 +214,7 @@ public struct SepaDataEditorView: View {
         Button(action: {
             if self.model.isValid {
                 hideKeyboard()
-                self.model.actionPublisher.send(["action": "save"])
+                self.model.send(["action": "save"])
             }
 
         }) {
@@ -332,7 +332,7 @@ public struct SepaDataDisplayView: View {
             isPresented: $showingDeleteAlert
         ) {
             Button(Asset.localizedString(forKey: "Snabble.delete"), role: .destructive) {
-                model.actionPublisher.send(["action": "remove"])
+                model.send(["action": "remove"])
             }
             Button(Asset.localizedString(forKey: "cancel"), role: .cancel) {}
         } message: {

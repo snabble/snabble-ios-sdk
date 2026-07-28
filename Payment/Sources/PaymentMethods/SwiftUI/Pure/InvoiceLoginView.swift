@@ -60,7 +60,7 @@ public struct InvoiceLoginView: View {
             return
         }
         hideKeyboard()
-        loginModel.actionPublisher.send(["action": LoginViewModel.Action.login.rawValue])
+        loginModel.send(["action": LoginViewModel.Action.login.rawValue])
     }
     
     @ViewBuilder
@@ -143,7 +143,7 @@ public struct InvoiceDetailView: View {
         .toolbar {
             ToolbarItem(placement: .destructiveAction) {
                 Button(action: {
-                    loginModel.actionPublisher.send(["action": LoginViewModel.Action.remove.rawValue])
+                    loginModel.send(["action": LoginViewModel.Action.remove.rawValue])
                 }) {
                     Image(systemName: "trash")
                 }
@@ -174,7 +174,7 @@ public struct InvoiceView: View {
         content
             .onChange(of: loginModel.isLoggedIn) { _, loggedIn in
                 if loggedIn, loginModel.loginInfo != nil {
-                    loginModel.actionPublisher.send(["action": LoginViewModel.Action.save.rawValue])
+                    loginModel.send(["action": LoginViewModel.Action.save.rawValue])
                 }
             }
             .navigationTitle(Asset.localizedString(forKey: "Snabble.Payment.ExternalBilling.title"))
