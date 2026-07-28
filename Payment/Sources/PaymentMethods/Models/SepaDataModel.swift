@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Combine
 
 import SnabbleCore
 import SnabbleAssetProviding
@@ -60,85 +59,28 @@ extension Locale {
     }
 }
 
-extension Publisher where Output == String?, Failure == Never {
-    func minimumOptional(_ minimum: Int) -> AnyPublisher<Bool, Never> {
-        map { input in
-            input?.count ?? 0 >= minimum
-        }
-        .eraseToAnyPublisher()
-    }
-    func maximumOptional(_ maximum: Int) -> AnyPublisher<Bool, Never> {
-        map { input in
-            input?.count ?? 0 <= maximum
-        }
-        .eraseToAnyPublisher()
-    }
-    func exactOptional(_ length: Int) -> AnyPublisher<Bool, Never> {
-        map { input in
-            input?.count == length
-        }
-        .eraseToAnyPublisher()
-    }
-}
-
-extension Publisher where Output == String, Failure == Never {
-    func minimum(_ minimum: Int) -> AnyPublisher<Bool, Never> {
-        map { input in
-            input.count >= minimum
-        }
-        .eraseToAnyPublisher()
-    }
-    func maximum(_ maximum: Int) -> AnyPublisher<Bool, Never> {
-        map { input in
-            input.count <= maximum
-        }
-        .eraseToAnyPublisher()
-    }
-    func exact(_ length: Int) -> AnyPublisher<Bool, Never> {
-        map { input in
-            input.count == length
-        }
-        .eraseToAnyPublisher()
-    }
-}
-
-extension Publisher where Failure == Never {
-    func assign<Root: AnyObject>(
-        to keyPath: ReferenceWritableKeyPath<Root, Output>,
-        onWeak object: Root
-    ) -> AnyCancellable {
-        sink { [weak object] value in
-            object?[keyPath: keyPath] = value
-        }
-    }
-}
 
 @Observable
 @MainActor
 public final class SepaDataModel {
-    private let ibanCountrySubject = CurrentValueSubject<String, Never>("")
-    private let ibanNumberSubject = CurrentValueSubject<String, Never>("")
-    private let lastnameSubject = CurrentValueSubject<String, Never>("")
-    private let citySubject = CurrentValueSubject<String, Never>("")
-
     public var formatter: IBANFormatter
 
     public var ibanCountry: String {
         didSet {
-            ibanCountrySubject.send(ibanCountry)
             if !ibanCountry.isEmpty {
                 self.formatter = IBANFormatter(country: ibanCountry)
             }
+            scheduleValidation()
         }
     }
     public var ibanNumber: String {
-        didSet { ibanNumberSubject.send(ibanNumber) }
+        didSet { scheduleValidation() }
     }
     public var lastname: String {
-        didSet { lastnameSubject.send(lastname) }
+        didSet { scheduleValidation() }
     }
     public var city: String {
-        didSet { citySubject.send(city) }
+        didSet { scheduleValidation() }
     }
 
     public var mandateReference: String?
@@ -148,8 +90,12 @@ public final class SepaDataModel {
         return paymentDetail == nil
     }
 
-    /// subscribe to this Publisher to start your login process
-    public var actionPublisher = PassthroughSubject<[String: Any]?, Never>()
+    @ObservationIgnored public private(set) var actionStream: AsyncStream<[String: Any]?>
+    @ObservationIgnored private var actionContinuation: AsyncStream<[String: Any]?>.Continuation?
+
+    public func send(_ action: sending [String: Any]?) {
+        actionContinuation?.yield(action)
+    }
 
     public var iban: String {
         if let detail = paymentDetail, case .payoneSepa(let data) = detail.methodData {
@@ -217,99 +163,49 @@ public final class SepaDataModel {
         }
     }
 
-    public var debounce: RunLoop.SchedulerTimeType.Stride = 0.25
+    public var debounce: TimeInterval = 0.25
     public var minimumInputCount: Int = 2
 
-    @ObservationIgnored private var cancellables = Set<AnyCancellable>()
+    @ObservationIgnored private var validationTask: Task<Void, Never>?
 
-    @ObservationIgnored private lazy var isLastnameValidPublisher: AnyPublisher<Bool, Never> = {
-        lastnameSubject
-            .debounce(for: debounce, scheduler: RunLoop.main)
-            .minimum(minimumInputCount)
-            .removeDuplicates()
-            .eraseToAnyPublisher()
-    }()
+    private func scheduleValidation() {
+        guard isEditable else { return }
+        validationTask?.cancel()
+        let delay = debounce
+        validationTask = Task { @MainActor [weak self] in
+            try? await Task.sleep(nanoseconds: UInt64(delay * 1_000_000_000))
+            guard let self, !Task.isCancelled else { return }
+            self.updateValidation()
+        }
+    }
 
-    @ObservationIgnored private lazy var isIbanCountryValidPublisher: AnyPublisher<Bool, Never> = {
-        ibanCountrySubject
-            .debounce(for: debounce, scheduler: RunLoop.main)
-            .removeDuplicates()
-            .map { code in
-                return IBAN.length(code.uppercased()) != nil
-            }
-            .eraseToAnyPublisher()
-    }()
+    private func updateValidation() {
+        let ibanCountryValid = IBAN.length(ibanCountry.uppercased()) != nil
+        let ibanNumberValid = countryIsValid && (ibanIsValid || !hasIbanLength)
 
-    @ObservationIgnored private lazy var isIbanNumberValidPublisher: AnyPublisher<Bool, Never> = {
-        ibanNumberSubject
-            .debounce(for: debounce, scheduler: RunLoop.main)
-            .removeDuplicates()
-            .map { _ in
-                return self.countryIsValid && (self.ibanIsValid || !self.hasIbanLength)
-            }
-            .eraseToAnyPublisher()
-    }()
-
-    @ObservationIgnored private lazy var isCityValidPublisher: AnyPublisher<Bool, Never> = {
-        citySubject
-            .debounce(for: debounce, scheduler: RunLoop.main)
-            .minimum(3)
-            .removeDuplicates()
-            .eraseToAnyPublisher()
-    }()
-
-    @ObservationIgnored private lazy var isFormValidPublisher: AnyPublisher<Bool, Never> = {
-        Publishers.CombineLatest4(isLastnameValidPublisher, isIbanCountryValidPublisher, isIbanNumberValidPublisher, isCityValidPublisher)
-            .map { lastnameIsValid, ibanCountryIsValid, ibanNumberIsValid, cityIsValid in
-                guard self.hasIbanLength else {
-                    return false
-                }
-                return lastnameIsValid && ibanCountryIsValid && ibanNumberIsValid && (cityIsValid || self.policy == .simple)
-            }
-            .eraseToAnyPublisher()
-    }()
-
-    private func setupPublishers() {
-        guard isEditable else {
-            return
+        if !ibanCountryValid && !ibanNumberValid {
+            errorMessage = SepaStrings.invalidIBAN.localizedString
+        } else if !ibanCountryValid {
+            errorMessage = SepaStrings.invalidIBANCountry.localizedString
+        } else if !ibanNumberValid {
+            errorMessage = SepaStrings.invalidIBAN.localizedString
+        } else if sanitzedIban.count < IBANLength {
+            errorMessage = ""
+        } else if !ibanIsValid {
+            errorMessage = SepaStrings.invalidIBAN.localizedString
+        } else {
+            errorMessage = ""
         }
 
-        isIbanCountryValidPublisher
-            .combineLatest(isIbanNumberValidPublisher)
-            .map { validIbanCountry, validIbanNumber in
-                if !validIbanCountry && !validIbanNumber {
-                    return SepaStrings.invalidIBAN.localizedString
-                } else if !validIbanCountry {
-                    return SepaStrings.invalidIBANCountry.localizedString
-                } else if !validIbanNumber {
-                    return SepaStrings.invalidIBAN.localizedString
-                }
-                // no error message while entering iban and entered length < required length
-                if self.sanitzedIban.count < self.IBANLength {
-                    return ""
-                }
-                // check for valid iban
-                if !self.ibanIsValid {
-                    return SepaStrings.invalidIBAN.localizedString
-                }
-                return ""
-            }
-            .assign(to: \SepaDataModel.errorMessage, onWeak: self)
-            .store(in: &cancellables)
+        if let hintState = formatter.hintState {
+            hintMessage = hintState.localizedString
+        } else {
+            hintMessage = ""
+        }
 
-        isIbanNumberValidPublisher
-            .map { _ in
-                if let hintState = self.formatter.hintState {
-                    return hintState.localizedString
-                }
-                return ""
-            }
-            .assign(to: \SepaDataModel.hintMessage, onWeak: self)
-            .store(in: &cancellables)
-
-        isFormValidPublisher
-            .assign(to: \.isValid, onWeak: self)
-            .store(in: &cancellables)
+        let lastnameValid = lastname.count >= minimumInputCount
+        let cityValid = city.count >= 3
+        isValid = hasIbanLength && lastnameValid && ibanCountryValid && ibanNumberValid && (cityValid || policy == .simple)
     }
 
     public init(paymentDetail: PaymentMethodDetail? = nil, iban: String, lastname: String, city: String? = nil, countryCode: String = "DE", projectId: Identifier<Project>? = nil) {
@@ -324,7 +220,11 @@ public final class SepaDataModel {
         self.lastname = lastname
         self.city = city ?? ""
 
-        setupPublishers()
+        var cont: AsyncStream<[String: Any]?>.Continuation!
+        actionStream = AsyncStream { cont = $0 }
+        actionContinuation = cont
+
+        scheduleValidation()
     }
 
     public convenience init(iban: String? = nil, countryCode: String = "DE", projectId: Identifier<Project>) {
@@ -333,6 +233,11 @@ public final class SepaDataModel {
 
     public convenience init(detail: PaymentMethodDetail, projectId: Identifier<Project>?) {
         self.init(paymentDetail: detail, iban: detail.displayName, lastname: "", city: "", projectId: projectId)
+    }
+
+    deinit {
+        actionContinuation?.finish()
+        validationTask?.cancel()
     }
 }
 
@@ -375,7 +280,7 @@ extension SepaDataModel {
         self.city = ""
         self.paymentDetail = nil
 
-        setupPublishers()
+        scheduleValidation()
     }
 
     public func save() async throws {

@@ -5,7 +5,6 @@
 //  Created by Uwe Tilemann on 23.11.22.
 //
 
-import Combine
 import Observation
 
 import SnabbleCore
@@ -13,15 +12,27 @@ import SnabbleTheme
 
 @Observable
 public final class SepaAcceptModel: @unchecked Sendable {
-    /// subscribe to this Publisher to  process
-    public var actionPublisher = PassthroughSubject<[String: Any]?, Never>()
-    
+    @ObservationIgnored public private(set) var actionStream: AsyncStream<[String: Any]?>
+    @ObservationIgnored private var actionContinuation: AsyncStream<[String: Any]?>.Continuation?
+
     let process: CheckoutProcess
     let paymentDetail: PaymentMethodDetail?
-    
+
     public init(process: CheckoutProcess, paymentDetail: PaymentMethodDetail? = nil) {
         self.process = process
         self.paymentDetail = paymentDetail
+
+        var cont: AsyncStream<[String: Any]?>.Continuation!
+        actionStream = AsyncStream { cont = $0 }
+        actionContinuation = cont
+    }
+
+    deinit {
+        actionContinuation?.finish()
+    }
+
+    func send(_ action: sending [String: Any]?) {
+        actionContinuation?.yield(action)
     }
     
     public var markup: String? {
@@ -92,7 +103,7 @@ extension SepaAcceptModel {
                         PaymentMethodDetails.remove(detail)
                     }
                 } else {
-                    self.actionPublisher.send(["action": "authorizingFailed"])
+                    self.send(["action": "authorizingFailed"])
                 }
             }
         }
@@ -106,7 +117,7 @@ extension SepaAcceptModel {
                 Snabble.clearInFlightCheckout()
 
             case .failure:
-                self.actionPublisher.send(["action": "cancelPaymentFailed"])
+                self.send(["action": "cancelPaymentFailed"])
             }
         }
     }
