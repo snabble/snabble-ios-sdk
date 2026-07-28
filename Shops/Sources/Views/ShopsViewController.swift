@@ -34,9 +34,9 @@ open class ShopsViewController: UIHostingController<ShopsView> {
 
     open override func viewDidLoad() {
         super.viewDidLoad()
-        let publisher = viewModel.actionPublisher
+        let stream = viewModel.actionStream
         actionTask = Task { @MainActor [weak self] in
-            for await shop in publisher.values {
+            for await shop in stream {
                 guard let self else { return }
                 delegate?.shopsViewController(self, didSelectActionOnShop: shop)
             }

@@ -81,7 +81,7 @@ public struct ShopView: View {
     var distance: some View {        
         if viewModel.isCurrent(shop) {
             Button(action: {
-                viewModel.actionPublisher.send(shop)
+                viewModel.send(shop)
             }) {
                 Text(keyed: "Snabble.Shop.Detail.shopNow")
             }
