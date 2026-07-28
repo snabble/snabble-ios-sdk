@@ -35,6 +35,8 @@ struct CartCheckoutBarView: View {
                         .foregroundStyle(model.totalPrice ?? 0 >= 0 ? Color.primary : Color.systemRed)
                         .opacity(totalString.isEmpty ? 0.0 : 1.0)
                 }
+                .animation(.default, value: totalString)
+                
                 HStack(spacing: 16) {
                     if model.hasValidPayment {
                         PaymentButtonView(model: model) {

@@ -72,6 +72,7 @@ public struct ShoppingCartItemsView<Footer: View>: View {
                     ForEach(Array(cartModel.items.enumerated()), id: \.element.id) { index, item in
                         cartModel.view(for: item)
                             .environment(cartModel)
+                            .animation(.default, value: item)
                             .background {
                                 // Only measure the first two rows — using GeometryReader +
                                 // PreferenceKey avoids the cycling warning that onGeometryChange

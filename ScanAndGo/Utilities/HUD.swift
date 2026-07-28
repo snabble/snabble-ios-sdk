@@ -19,25 +19,27 @@ struct HUD<Content: View>: View {
     }
 }
 
+private struct HUDModifier<HUDContent: View>: ViewModifier {
+    @Binding var isPresented: Bool
+    let hudContent: HUDContent
+
+    func body(content: Content) -> some View {
+        ZStack(alignment: .top) {
+            content
+            if isPresented {
+                HUD { hudContent }
+                    .transition(.move(edge: .top).combined(with: .opacity))
+            }
+        }
+        .animation(.easeOut(duration: 0.5), value: isPresented)
+    }
+}
+
 extension View {
     func hud<Content: View>(
         isPresented: Binding<Bool>,
         @ViewBuilder content: () -> Content
     ) -> some View {
-        ZStack(alignment: .top) {
-            self
-            if isPresented.wrappedValue {
-                HUD(content: content)
-                    .transition(.move(edge: .top).combined(with: .opacity))
-                    .onAppear {
-                        Task { @MainActor in
-                            try? await Task.sleep(for: .seconds(3))
-                            withAnimation {
-                                isPresented.wrappedValue = false
-                            }
-                        }
-                    }
-            }
-        }
+        modifier(HUDModifier(isPresented: isPresented, hudContent: content()))
     }
 }
