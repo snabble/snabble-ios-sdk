@@ -1,22 +1,20 @@
 //
-//  ActionState.swift
-//  SnabbleScanAndGo
+//  ActionModifier.swift
+//  SnabbleComponents
 //
 //  Created by Uwe Tilemann on 28.06.24.
 //
 
 import SwiftUI
 import OSLog
-import SnabbleAssetProviding
-import SnabbleComponents
 
-extension String {
+private extension String {
     static func errorString(reason: String) -> String {
         "\(reason)\nThis should not happen! 😳"
     }
 }
 
-struct ErrorText: View {
+private struct ErrorText: View {
     let reason: String
 
     var body: some View {
@@ -36,7 +34,7 @@ public enum ActionType: Equatable, @unchecked Sendable {
     case sheet(any View)
     /// Shows the given associated `Alert`
     case alert(Alert)
-    
+
     public static func == (lhs: ActionType, rhs: ActionType) -> Bool {
         switch (lhs, rhs) {
         case (.idle, .idle):
@@ -52,35 +50,30 @@ public enum ActionType: Equatable, @unchecked Sendable {
 extension ActionType: CustomStringConvertible {
     public var description: String {
         switch self {
-        case .idle:
-            "idle"
-        case .toast:
-            "toast"
-        case .dialog:
-            "dialog"
-        case .sheet:
-            "sheet"
-        case .alert:
-            "alert"
+        case .idle: "idle"
+        case .toast: "toast"
+        case .dialog: "dialog"
+        case .sheet: "sheet"
+        case .alert: "alert"
         }
     }
 }
 
 /// Represents an action item with a type and domain.
-struct ActionItem: Swift.Identifiable, Equatable {
-    static func == (lhs: ActionItem, rhs: ActionItem) -> Bool {
+public struct ActionItem: Swift.Identifiable, Equatable {
+    public static func == (lhs: ActionItem, rhs: ActionItem) -> Bool {
         lhs.id == rhs.id
     }
-    
-    var id: String {
+
+    public var id: String {
         domain + ":" + type.description
     }
-    
-    let type: ActionType
-    let domain: String
-    var isActive: Bool = false
-    
-    init(type: ActionType, domain: String = "global") {
+
+    public let type: ActionType
+    public let domain: String
+    public var isActive: Bool = false
+
+    public init(type: ActionType, domain: String = "global") {
         self.type = type
         self.domain = domain
     }
@@ -89,30 +82,22 @@ struct ActionItem: Swift.Identifiable, Equatable {
 /// Manages the state and handling of actions within the application.
 ///
 /// The `ActionManager` is a singleton class responsible for managing the different types of actions that can be triggered
-/// throughout the application. It publishes action states and provides a mechanism for views to observe and respond to these
-/// states.
+/// throughout the application. It publishes action states and provides a mechanism for views to observe and respond to these states.
 @Observable
 public final class ActionManager {
     nonisolated(unsafe) public static let shared = ActionManager()
 
-    let logger = Logger(subsystem: "io.snabble.sdk.ScanAndGo", category: "ActionManager")
+    let logger = Logger(subsystem: "io.snabble.sdk", category: "ActionManager")
 
     @ObservationIgnored public private(set) var actionStream: AsyncStream<ActionType>
     @ObservationIgnored private var actionContinuation: AsyncStream<ActionType>.Continuation?
 
-    /// The current state of the action being handled.
-    /// Updates to this property will trigger corresponding UI changes in subscribed views.
     var actionState: ActionType = .idle {
         didSet {
             logger.debug("handleAction: \(oldValue) -> \(self.actionState)")
         }
     }
-    /// The currently active action item.
-    /// This property holds the details of the current action, including its type and domain.
     var currentAction: ActionItem?
-
-    /// Indicates whether an action is currently presented.
-    /// This property helps in managing the presentation state of different actions.
     var isPresented: Bool = false
 
     public init() {
@@ -136,14 +121,14 @@ public final class ActionManager {
 
 /// Observes `ActionManager.shared` and renders the current action as the appropriate UI overlay.
 ///
-/// Apply this modifier once at the root of your view hierarchy when integrating `ShopperView`.
-/// Without it, toasts, dialogs, sheets, and alerts triggered by the `Shopper` model will not appear.
+/// Apply this modifier once at the root of your view hierarchy.
+/// Without it, toasts, dialogs, sheets, and alerts triggered by the `ActionManager` will not appear.
 ///
 /// ```swift
 /// RootView()
-///     .shopperActions()
+///     .actionState()
 /// ```
-public struct ShopperActionModifier: ViewModifier {
+public struct ActionModifier: ViewModifier {
     @State var actionState: ActionType = .idle {
         didSet {
             if case .toast(let toast) = actionState {
@@ -151,13 +136,13 @@ public struct ShopperActionModifier: ViewModifier {
             }
         }
     }
-    
+
     @State private var toast: Toast?
-    
+
     @State var dialogPresented: Bool = false
     @State var sheetPresented: Bool = false
     @State var alertPresented: Bool = false
-    
+
     @ViewBuilder var dialogView: some View {
         if case .dialog(let view) = actionState {
             AnyView(view)
@@ -165,7 +150,7 @@ public struct ShopperActionModifier: ViewModifier {
             ErrorText(reason: "No dialogView to be displayed.")
         }
     }
-    
+
     @ViewBuilder var sheetView: some View {
         if case .sheet(let view) = actionState {
             AnyView(view)
@@ -173,17 +158,16 @@ public struct ShopperActionModifier: ViewModifier {
             ErrorText(reason: "No sheetView to be displayed.")
         }
     }
-    
+
     private func handleAction(_ newState: ActionType) {
         actionState = newState
-        
+
         switch newState {
         case .idle:
             toast = nil
             dialogPresented = false
             sheetPresented = false
             alertPresented = false
-            
         case .toast(let toast):
             self.toast = toast
         case .dialog:
@@ -194,7 +178,7 @@ public struct ShopperActionModifier: ViewModifier {
             alertPresented = true
         }
     }
-        
+
     @ViewBuilder
     public func body(content: Content) -> some View {
         content
@@ -204,23 +188,21 @@ public struct ShopperActionModifier: ViewModifier {
                 }
             }
             .toast(item: $toast)
-            .onChange(of: toast, { oldValue, newValue in
+            .onChange(of: toast) { _, newValue in
                 resetState(newValue != nil)
-            })
+            }
             .windowDialog(isPresented: $dialogPresented) {
                 dialogView
             }
             .onChange(of: dialogPresented) {
                 resetState(dialogPresented)
             }
-        
             .windowDialog(isPresented: $sheetPresented) {
-                dialogView
+                sheetView
             }
             .onChange(of: sheetPresented) {
                 resetState(sheetPresented)
             }
-        
             .alert(isPresented: $alertPresented) {
                 if case .alert(let alert) = actionState {
                     alert
@@ -232,6 +214,7 @@ public struct ShopperActionModifier: ViewModifier {
                 resetState(alertPresented)
             }
     }
+
     func resetState(_ isPresented: Bool) {
         if !isPresented {
             ActionManager.shared.send(.idle)
@@ -240,12 +223,20 @@ public struct ShopperActionModifier: ViewModifier {
 }
 
 extension View {
-    /// Applies `ShopperActionModifier` to the view.
+    /// Applies `ActionModifier` to the view.
     ///
-    /// Required at the root of any view hierarchy that contains a `ShopperView`.
-    /// Enables the `ActionManager` to present toasts, dialogs, sheets, and alerts
-    /// triggered during a Scan & Go session.
+    /// Required at the root of any view hierarchy that uses `ActionManager`.
+    public func actionState() -> some View {
+        modifier(ActionModifier())
+    }
+
+    /// Applies `ActionModifier` to the view.
+    @available(*, deprecated, renamed: "actionState")
     public func shopperActions() -> some View {
-        self.modifier(ShopperActionModifier())
+        actionState()
     }
 }
+
+/// Backward-compatibility alias.
+@available(*, deprecated, renamed: "ActionModifier")
+public typealias ShopperActionModifier = ActionModifier
