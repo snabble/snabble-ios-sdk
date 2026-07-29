@@ -300,7 +300,7 @@ let package = Package(
                 "SnabbleComponents",
                 "CameraZoomWheel",
             ],
-            path: "ScanAndGo",
+            path: "ScanAndGo/Sources",
         ),
     ]
 )
