@@ -2,109 +2,82 @@
 
 **Layer:** 2 (UI Primitives)
 **Status:** Active
-**Dependencies:** SnabbleCore, SnabbleComponents
+**Dependencies:** SnabbleCore, SnabbleComponents, SnabbleAssetProviding, KeychainAccess
 
 ## Overview
 
-SnabbleTheme provides theme and asset management for the Snabble iOS SDK. It implements the `SnabbleAssetProviding` protocol and integrates with Core to provide a consistent visual identity across all SDK components.
+SnabbleTheme provides theme management, asset loading, and shared UI utilities for the Snabble iOS SDK. It is the central integration point between the Core data layer and the visual presentation layer.
 
-**Note:** This module was renamed from `SnabbleAssets` to `SnabbleTheme` on 2026-03-27 to better reflect its purpose.
+**Note:** This module was renamed from `SnabbleAssets` to `SnabbleTheme` on 2026-03-27.
 
 ## Purpose
 
-- Theme management (colors, fonts, images)
-- Asset loading and caching
-- Project-specific branding
-- Accessibility support (WCAG color contrast)
-- Developer mode utilities
+- Project registration and asset initialization
+- Remote asset downloading and caching (logos, icons)
+- Payment method icon resolution
+- Developer mode and environment switching
+- Barcode rendering (QR, EAN, Code128, PDF417)
+- Shared UIKit utilities (SelectionSheet, NSLayoutConstraint helpers, etc.)
 
 ## Public API
 
-### Asset Manager
+### Project Registration
+
+`SnabbleCI.register` is the main entry point. It registers the active project and automatically triggers asset initialization:
 
 ```swift
 import SnabbleTheme
 
-// Access global asset manager
-let assetManager = AssetManager.shared
+// Register the active project (call once during app setup)
+SnabbleCI.register(project)
 
-// Get project-specific colors
-let primaryColor = assetManager.color(for: .primary, in: project)
-
-// Get project-specific images
-let logo = assetManager.image(named: "logo", for: project)
+// Access the currently registered project
+let project = SnabbleCI.project
 ```
 
-### Payment Method Assets
+### Asset Initialization
 
-```swift
-// Get payment method icon
-let icon = PaymentMethodDetail.icon(for: .creditCard)
-
-// Get payment method color
-let color = PaymentMethodDetail.color(for: .sepaDebit)
-```
-
-### Developer Mode
-
-```swift
-// Toggle developer mode features
-DeveloperMode.isEnabled = true
-```
-
-## Key Features
-
-### 1. Theme System
-- Project-specific color schemes
-- Automatic dark mode support
-- WCAG-compliant color contrast
-- SF Symbols integration
-
-### 2. Asset Management
-- Efficient asset loading and caching
-- Project-specific branding
-- Fallback assets for missing resources
-- Image and icon management
-
-### 3. Accessibility
-- WCAG color contrast validation
-- High-contrast mode support
-- Accessible color utilities
-
-## Architecture
-
-```
-SnabbleAssetProviding (Protocol - Layer 1)
-         ↓ implements
-SnabbleTheme (Implementation - Layer 2)
-         ↓ uses
-SnabbleCore (Project data)
-SnabbleComponents (UI traits)
-```
-
-## Dependencies
-
-### Required
-- **SnabbleCore**: Project and shop data models
-- **SnabbleComponents**: UI trait system
-- **SnabbleAssetProviding**: Protocol definitions
-
-### External
-- **WCAG-Colors**: Color contrast validation
-
-## Usage Examples
-
-### Custom Color Theme
+For multi-project setups, initialize assets explicitly:
 
 ```swift
 import SnabbleTheme
 
-// Define custom colors for a project
-extension AssetManager {
-    func setupCustomTheme(for project: Project) {
-        register(color: .blue, for: .primary, in: project)
-        register(color: .green, for: .accent, in: project)
-    }
+// Initialize assets for multiple projects
+SnabbleCI.initializeAssets(for: projects) {
+    // Called on main thread when done
+}
+
+// Initialize with a known manifest URL
+SnabbleCI.initializeAssets(for: project.id, manifestUrl, downloadFiles: true)
+```
+
+### Asset Retrieval
+
+```swift
+import SnabbleTheme
+
+// Async retrieval
+let logo = await SnabbleCI.getAsset(.storeLogo, projectId: project.id)
+
+// Callback-based retrieval (called on main thread)
+SnabbleCI.getAsset(.storeLogo, projectId: project.id) { image in
+    imageView.image = image
+}
+```
+
+### ImageAsset
+
+```swift
+public enum ImageAsset {
+    case storeIcon          // 24x24 store icon
+    case storeLogo          // Store logo (home view, store detail)
+    case storeLogoSmall     // Store logo small (scanner/card title)
+    case customerCard       // Customer/loyalty card
+    case startTeaserLoyalty
+    case startTeaserPayment
+    case checkoutOnline
+    case checkoutOffline
+    case appBackgroundImage
 }
 ```
 
@@ -113,46 +86,80 @@ extension AssetManager {
 ```swift
 import SnabbleTheme
 
-struct PaymentMethodRow: View {
-    let method: RawPaymentMethod
-
-    var body: some View {
-        HStack {
-            Image(systemName: PaymentMethodDetail.icon(for: method))
-            Text(method.displayName)
-        }
-        .foregroundColor(PaymentMethodDetail.color(for: method))
-    }
-}
+// icon is an instance property on PaymentMethodDetail
+let icon: UIImage? = paymentMethodDetail.icon
 ```
+
+### Developer Mode
+
+```swift
+import SnabbleTheme
+
+// Check if developer mode is active (read-only)
+if DeveloperMode.isEnabled { }
+
+// Toggle developer mode (shows password prompt)
+DeveloperMode.toggle()
+
+// Read/set the API environment
+let env = DeveloperMode.environmentMode          // .staging or .production
+DeveloperMode.setEnvironmentMode(.staging)
+
+// Via UserDefaults
+UserDefaults.standard.developerMode = true
+```
+
+## Key Components
+
+### Asset System
+- `AssetManager` (actor) – downloads and caches remote project assets
+- `ImageAsset` – typed enum for all asset keys
+- `SnabbleCI` – public bridge for project registration and asset access
+
+### Barcode Rendering
+- `QRCode`, `Code128`, `PDF417` – barcode generators
+- `EANView` – SwiftUI view for EAN barcodes
+
+### Shared UI
+- `SnabbleEmptyView` – SwiftUI empty state view
+- `SelectionSheetController` – UIKit action sheet alternative
+- `DynamicFont` – dynamic type support
+- `TextFieldLimitModifier` – SwiftUI text field character limit
+- `NSLayoutConstraint` extensions (identifier, priority, variable)
+
+### Utilities
+- `DeveloperMode` – dev/staging environment management
+- `BuildConfig` – debug/release flags
+- `IBANFormatter+UI` – IBAN display formatting
+- `ExitToken+Image` – exit token QR image generation
+
+## Dependencies
+
+### Internal
+- **SnabbleCore** – `Project`, `Shop`, `PaymentMethodDetail`, and other data models
+- **SnabbleComponents** – UI trait system integration
+- **SnabbleAssetProviding** – `Asset` protocol and localization utilities
+
+### External
+- **KeychainAccess** – secure storage for developer mode credentials
+- **WCAG-Colors** – color contrast validation
 
 ## Migration Notes
 
-### From SnabbleAssets (Pre-2026-03-27)
+### From SnabbleAssets (pre 2026-03-27)
 
-The module was renamed from `SnabbleAssets` to `SnabbleTheme` to better describe its purpose:
-
-**Old:**
 ```swift
+// Before
 import SnabbleAssets
-```
 
-**New:**
-```swift
+// After
 import SnabbleTheme
 ```
 
-All public APIs remain unchanged - only the module name changed.
-
-## Testing
-
-SnabbleTheme does not currently have dedicated unit tests. Testing is performed through:
-- Integration tests in consumer apps
-- Visual regression testing
-- Accessibility audits
+All public APIs remain unchanged — only the module name changed.
 
 ## See Also
 
-- [SnabbleAssetProviding](../AssetProviding/README.md) - Protocol definition
-- [SnabbleComponents](../Components/README.md) - UI primitives
-- [SDK Architecture Guide](../documentation/SDK-Architecture.md)
+- [SnabbleAssetProviding](../AssetProviding/README.md) – Asset protocol definitions
+- [SnabbleComponents](../Components/README.md) – SwiftUI UI primitives
+- [SnabbleCore](../Core/README.md) – Project and data models
