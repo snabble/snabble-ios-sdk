@@ -44,9 +44,9 @@ open class SepaDataEditViewController: UIHostingController<SepaDataView> {
 
     open override func viewDidLoad() {
         super.viewDidLoad()
-        let publisher = viewModel.actionPublisher
+        let stream = viewModel.actionStream
         actionTask = Task { @MainActor [weak self] in
-            for await info in publisher.values {
+            for await info in stream {
                 guard let self else { return }
                 delegate?.sepaDataEditViewControllerWillSave(self, userInfo: info)
             }

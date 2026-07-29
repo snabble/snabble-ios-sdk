@@ -5,8 +5,6 @@
 //  Created by Uwe Tilemann on 09.07.25.
 //
 
-import Combine
-
 import SwiftUI
 import SnabbleCore
 import SnabbleAssetProviding
@@ -24,15 +22,15 @@ public struct TeaserView: View {
     let model: TeaserModel
     @State public var activePage: CustomizationConfig.Teaser?
 
-    public let onNavigationPublisher: PassthroughSubject<(teaser: CustomizationConfig.Teaser, image: UIImage?), Never>
+    public var onNavigation: ((CustomizationConfig.Teaser, UIImage?) -> Void)?
 
     public init(
         model: TeaserModel,
         activePage: CustomizationConfig.Teaser? = nil,
-        actionPublisher: PassthroughSubject<(teaser: CustomizationConfig.Teaser, image: UIImage?), Never> = .init()) {
-        self.model = model // State(wrappedValue: model)
+        onNavigation: ((CustomizationConfig.Teaser, UIImage?) -> Void)? = nil) {
+        self.model = model
         self.activePage = activePage
-        self.onNavigationPublisher = actionPublisher
+        self.onNavigation = onNavigation
     }
 
     public var body: some View {
@@ -49,7 +47,7 @@ public struct TeaserView: View {
                         HStack(spacing: 0) {
                             ForEach(model.teasers, id: \.self) { teaser in
                                 TeaserItemView(teaser: teaser) { image in
-                                    onNavigationPublisher.send((teaser, image))
+                                    onNavigation?(teaser, image)
                                 }
                                 .environment(model)
                                 .clipShape(RoundedRectangle(cornerRadius: 12).inset(by: 1))

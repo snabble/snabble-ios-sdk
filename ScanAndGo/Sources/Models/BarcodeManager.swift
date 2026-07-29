@@ -65,13 +65,13 @@ public final class BarcodeManager {
     }
     
     let tapticFeedback = UINotificationFeedbackGenerator()
-    public let barcodeDetector: InternalBarcodeDetector
+    public let barcodeDetector: any BarcodeDetecting
 
     public weak var scannerDelegate: ScannerDelegate?
     public weak var processingDelegate: BarcodeProcessing?
 
     @ObservationIgnored nonisolated(unsafe) private var barcodeTask: Task<Void, Never>?
-    
+
     /// Initializes a new BarcodeManager with the specified shop, shopping cart, and barcode detector.
     ///
     /// - Parameters:
@@ -80,7 +80,7 @@ public final class BarcodeManager {
     ///   - detector: The barcode detector used for scanning.
     public init(shop: Shop,
                 shoppingCart: ShoppingCart,
-                detector: InternalBarcodeDetector
+                detector: any BarcodeDetecting
     ) {
         self.shop = shop
         self.shoppingCart = shoppingCart
@@ -94,7 +94,7 @@ public final class BarcodeManager {
 
         let detector = self.barcodeDetector
         barcodeTask = Task { @MainActor [weak self] in
-            for await barcode in detector.barcodePublisher.values {
+            for await barcode in detector.barcodeStream {
                 guard let self else { return }
                 logger.debug("received barcode: \(barcode.description)")
                 handleScannedCode(barcode.code, withFormat: barcode.format)

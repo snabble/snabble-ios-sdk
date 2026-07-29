@@ -8,8 +8,7 @@
 import Foundation
 import OSLog
 import SwiftUI
-import Combine
-import AVFoundation
+@preconcurrency import AVFoundation
 
 import SnabbleCore
 import SnabbleAssetProviding
@@ -84,7 +83,8 @@ open class InternalBarcodeDetector: NSObject, Zoomable, @unchecked Sendable {
     public var torchOn = false
     public var message: String?
 
-    public let barcodePublisher = PassthroughSubject<BarcodeResult, Never>()
+    @ObservationIgnored public private(set) var barcodeStream: AsyncStream<BarcodeResult>
+    @ObservationIgnored private var barcodeContinuation: AsyncStream<BarcodeResult>.Continuation?
 
     public enum State {
         case idle
@@ -93,14 +93,16 @@ open class InternalBarcodeDetector: NSObject, Zoomable, @unchecked Sendable {
         case pausing
         case batterySaving
     }
+    @ObservationIgnored public private(set) var stateStream: AsyncStream<State>
+    @ObservationIgnored private var stateContinuation: AsyncStream<State>.Continuation?
+
     /// the current `state` of the detector
     public var state: State = .idle {
         didSet {
             logger.debug("detector changed from \(oldValue) -> \(self.state)")
-            statePublisher.send(self.state)
+            stateContinuation?.yield(self.state)
         }
     }
-    public let statePublisher = PassthroughSubject<InternalBarcodeDetector.State, Never>()
 
     public var previewLayer: AVCaptureVideoPreviewLayer?
     public var permissionGranted = false // Flag for permission
@@ -138,13 +140,26 @@ open class InternalBarcodeDetector: NSObject, Zoomable, @unchecked Sendable {
         videoDataOutput.alwaysDiscardsLateVideoFrames = true
         
         outputQueue = DispatchQueue(label: "outputQueue", qos: .background)
-        
+
+        var barcodeCont: AsyncStream<BarcodeResult>.Continuation!
+        barcodeStream = AsyncStream { barcodeCont = $0 }
+        barcodeContinuation = barcodeCont
+
+        var stateCont: AsyncStream<State>.Continuation!
+        stateStream = AsyncStream { stateCont = $0 }
+        stateContinuation = stateCont
+
         super.init()
         
         metadataOutput.setMetadataObjectsDelegate(self, queue: outputQueue)
         videoDataOutput.setSampleBufferDelegate(self, queue: outputQueue)
     }
-    
+
+    deinit {
+        barcodeContinuation?.finish()
+        stateContinuation?.finish()
+    }
+
     public var hasCamera: Bool {
         self.camera != nil
     }
@@ -369,7 +384,7 @@ open class InternalBarcodeDetector: NSObject, Zoomable, @unchecked Sendable {
             return
         }
         lastScannedTime = .now
-        barcodePublisher.send(result)
+        barcodeContinuation?.yield(result)
         logger.debug("handleBarCodeResult \(result.description)")
     }
 }

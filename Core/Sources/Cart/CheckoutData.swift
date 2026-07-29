@@ -41,7 +41,7 @@ public struct SignedCheckoutInfo: Decodable, @unchecked Sendable {
 public enum AcceptedOriginType: String, Codable, Sendable {
     case iban
     case ipgHostedDataID
-    case tegutEmployeeID
+    case employeeID = "tegutEmployeeID"
     case giropayCustomerAuthorization = "paydirektCustomerAuthorization"
     case datatransAlias
     case datatransCreditCardAlias

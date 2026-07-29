@@ -29,6 +29,7 @@ public struct ShopperConfiguration {
 /// A view that manages the shopping session for a user, integrating with the Shopper model to handle barcode scanning, displaying scan messages, and error handling.
 public struct ShopperView: View {
     @AppStorage(UserDefaults.scanningDisabledKey) var expanded: Bool = false
+    
     @SwiftUI.Environment(\.dismiss) var dismiss
 
     @State private var showSearch: Bool = false
@@ -36,7 +37,6 @@ public struct ShopperView: View {
     @State private var showBundleSelection: Bool = false
     @State private var isNavigating: Bool = false
 
-    @State private var minHeight: CGFloat = 0
     @State private var bundles: [BarcodeManager.ScannedItem] = []
 
     let model: Shopper
@@ -47,10 +47,10 @@ public struct ShopperView: View {
         self.configuration = configuration
     }
     
-    public var body: some View {
+    @ViewBuilder var content: some View {
         @Bindable var model = model
         
-        ShoppingScannerView(model: model, minHeight: $minHeight, configuration: configuration)
+        ShoppingScannerView(model: model, configuration: configuration)
             .animation(.easeInOut, value: model.scannedItem)
             .navigationDestination(isPresented: $isNavigating) {
                 if let item = model.navigationItem {
@@ -89,20 +89,8 @@ public struct ShopperView: View {
                     }
                 }
             }
-            .onAppear {
-                model.scanningPaused = expanded
-                model.scanningActivated = true
-            }
-            .onDisappear {
-                model.scanningActivated = false
-            }
             .onChange(of: model.scanningPaused) { _, newValue in
                 expanded = newValue
-            }
-            .onReceive(model.barcodeManager.barcodeDetector.statePublisher) { state in
-                if state == .ready, model.scanningActivated && !model.scanningPaused {
-                    model.startScanner()
-                }
             }
             .onChange(of: model.errorMessage) { _, message in
                 if message != nil {
@@ -145,6 +133,18 @@ public struct ShopperView: View {
                     }
                 }
             )
+    }
+    
+    public var body: some View {
+
+        content
+            .onAppear {
+                model.scanningPaused = expanded
+                model.scanningActivated = true
+            }
+            .onDisappear {
+                model.scanningActivated = false
+            }
             .onChange(of: showSearch) {
                 if showSearch {
                     model.stopScanner()

@@ -37,14 +37,12 @@ public protocol ProductStoring: AnyObject {
     /// - parameter update: if `.always` or `.ifOlderThan` , attempt to update the database to the latest revision
     /// - parameter forceFullDownload: if true, force a full download of the product database
     /// - parameter completion: This is called asynchronously on the main thread after the automatic database update check has finished
-    /// - parameter dataAvailable: indicates if new data is available
     func setup(update: ProductDbUpdate, forceFullDownload: Bool, completion: @escaping @Sendable (_ dataAvailable: ProductStoreAvailability) -> Void)
 
     /// attempt to resume a previously interrupted update of the product database
     /// calling this method when there is no previous resumable download has no effect.
     ///
     /// - parameter completion: This is called asynchronously on the main thread after the database update check has finished
-    /// - parameter dataAvailable: indicates if new data is available
     func resumeIncompleteUpdate(completion: @escaping @Sendable (_ dataAvailable: ProductStoreAvailability) -> Void)
 
     /// stop the currently running product database update, if one is in progress.

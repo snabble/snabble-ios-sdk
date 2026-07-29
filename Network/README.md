@@ -2,314 +2,189 @@
 
 **Layer:** 1 (Foundation)
 **Status:** Active
-**Dependencies:** None (Foundation only)
+**Dependencies:** SwiftOTP, KeychainAccess
 
 ## Overview
 
-SnabbleNetwork provides the API communication layer for the Snabble iOS SDK. It handles HTTP requests, authentication, error handling, and data models for network responses.
+SnabbleNetwork provides the typed HTTP networking layer for the Snabble iOS SDK. It handles authentication (token management, AppUser), endpoint definition, and request execution via `async/await`.
 
 ## Purpose
 
-- HTTP request/response handling
-- API authentication and token management
-- Network error handling and retry logic
-- Data models for API responses
-- AppUser management (keychain storage)
+- Typed `Endpoint<Response>` for all API calls
+- `NetworkManager` for authenticated request execution
+- `AppUser` model and keychain persistence
+- `Configuration` for app credentials and environment
+- `Configurable` protocol for dependency injection
 
 ## Public API
 
-### Basic Request
+### NetworkManager
+
+`NetworkManager` is the central class for executing API requests. It handles token acquisition, injection, and automatic retry on 401/403:
 
 ```swift
 import SnabbleNetwork
 
-// Perform GET request
-let request = URLRequest(url: apiURL)
-SnabbleAPI.request(request) { (result: Result<MyModel, SnabbleError>) in
-    switch result {
-    case .success(let data):
-        print("Success: \(data)")
-    case .failure(let error):
-        print("Error: \(error)")
+let config = Configuration(
+    appId: "my-app-id",
+    appSecret: "my-app-secret",
+    domain: .production
+)
+
+let networkManager = NetworkManager(configuration: config)
+networkManager.delegate = self
+
+// Execute a typed endpoint
+let appUser = try await networkManager.publisher(for: Endpoints.AppUser.create(config))
+```
+
+### NetworkManagerDelegate
+
+```swift
+extension MyClass: NetworkManagerDelegate {
+    func networkManager(_ networkManager: NetworkManager,
+                        appUserForConfiguration configuration: Configuration) -> AppUser? {
+        // Return stored AppUser for authentication
+        return AppUser.get(forConfig: configuration)
+    }
+
+    func networkManager(_ networkManager: NetworkManager,
+                        appUserUpdated appUser: AppUser) {
+        // Persist the updated AppUser
+        AppUser.set(appUser, forConfig: networkManager.configuration)
+    }
+
+    func networkManager(_ networkManager: NetworkManager,
+                        projectIdForConfiguration configuration: Configuration) -> String? {
+        return configuration.projectId
     }
 }
 ```
 
-### AppUser Management
+### Endpoint
+
+`Endpoint<Response>` is a typed value that describes a single API request:
+
+```swift
+public struct Endpoint<Response> {
+    public let method: HTTPMethod
+    public let path: String
+    public let parse: (Data) throws -> Response
+
+    // Build via predefined factories in Endpoints namespace
+}
+```
+
+Predefined endpoint factories are grouped in the `Endpoints` namespace as extensions:
+- `Endpoints.AppUser.*` – AppUser registration and retrieval
+- `Endpoints.Token.*` – Authentication token management
+- `Endpoints.Order.*` – Order history
+- `Endpoints.Phone.*` – Phone number verification
+- `Endpoints.Notification.*` – Push notification registration
+
+### Configuration
 
 ```swift
 import SnabbleNetwork
 
-// Create app user
+let config = Configuration(
+    appId: "my-app-id",
+    appSecret: "my-app-secret",
+    domain: .production,        // or .staging, .testing
+    projectId: "my-project-id" // optional
+)
+```
+
+### AppUser
+
+```swift
+import SnabbleNetwork
+
+// Create
 let appUser = AppUser(id: "user-123", secret: "secret-456")
 
-// Store in keychain
+// Store securely in Keychain
 AppUser.set(appUser, forConfig: config)
 
-// Retrieve from keychain
+// Retrieve from Keychain
 if let appUser = AppUser.get(forConfig: config) {
-    print("AppUser: \(appUser.id)")
+    print(appUser.id)
 }
 
-// Remove
+// Remove (logout)
 AppUser.set(nil, forConfig: config)
+
+// Parse from string representation ("id:secret")
+let appUser = AppUser(stringRepresentation: "user-123:secret-456")
 ```
+
+AppUser is stored per-config in the Keychain under key `Snabble.api.appUserId.{domainName}.{appId}`.
 
 ### Configurable Protocol
 
 ```swift
+public protocol Configurable {
+    var appId: String { get }
+    var domainName: String { get }
+}
+
+// Configuration conforms to Configurable
+// SnabbleCore.Config also conforms to Configurable via extension
+```
+
+### Error Handling
+
+```swift
 import SnabbleNetwork
 
-// Any type can conform to Configurable
-extension MyConfig: Configurable {
-    var appId: String { "my-app-id" }
-    var domainName: String { "production" }
+do {
+    let response = try await networkManager.publisher(for: endpoint)
+} catch let HTTPError.invalid(response, clientError) {
+    // HTTP error with status code
+    print(response.statusCode, clientError?.message ?? "")
+} catch HTTPError.unknown(let response) {
+    // Non-HTTP response
+} catch HTTPError.unexpected(let error) {
+    // Underlying URLSession error
 }
 ```
 
 ## Key Components
 
-### 1. API Client
-- HTTP request construction
-- Response parsing
-- Error mapping
-- Retry logic
-
-### 2. AppUser
-- User identification model
-- Keychain persistence
-- Config-based storage keys
-- String representation (id:secret format)
-
-### 3. Error Handling
-- `SnabbleError` enum
-- HTTP status code mapping
-- User-friendly error messages
-- Retry strategies
-
-### 4. Models
-- `Configurable` protocol
-- `AppUser` struct
-- API response models
-
-## Architecture
-
-```
-SnabbleNetwork (Layer 1)
-    ├── API Layer
-    │   ├── Request building
-    │   ├── Response parsing
-    │   └── Error handling
-    ├── Authentication
-    │   ├── Token management
-    │   └── AppUser storage
-    └── Models
-        ├── Configurable protocol
-        ├── AppUser
-        └── SnabbleError
-```
+| Type | Description |
+|---|---|
+| `NetworkManager` | `@Observable @MainActor` class for executing authenticated requests |
+| `NetworkManagerDelegate` | Delegate for AppUser provisioning and update callbacks |
+| `Endpoint<Response>` | Typed endpoint descriptor (path, method, parser) |
+| `Endpoints` | Namespace for predefined endpoint factories |
+| `Configuration` | App credentials + environment (`appId`, `appSecret`, `domain`) |
+| `Configurable` | Protocol for config injection into `AppUser` storage |
+| `AppUser` | User credentials (`id` + `secret`) with Keychain persistence |
+| `HTTPError` | Error type: `.invalid`, `.unknown`, `.unexpected` |
+| `HTTPMethod` | `.get`, `.post`, `.put`, `.patch`, `.delete` |
+| `Domain` | API environment (production, staging, testing) |
+| `Token` | Auth bearer token |
 
 ## Dependencies
 
-### Internal
-- None (Foundation layer)
-
 ### External
-- **KeychainAccess**: Secure AppUser storage
-- **Foundation**: URLSession, Codable
+- **SwiftOTP** – TOTP-based request signing
+- **KeychainAccess** – Secure AppUser storage
 
-## AppUser Storage
+## Security Notes
 
-AppUser credentials are stored securely in the Keychain:
-
-```swift
-// Storage format
-Service: "io.snabble.sdk"
-Key: "Snabble.api.appUserId.{domainName}.{appId}"
-Value: "{userId}:{secret}"
-```
-
-**Security Notes:**
-- Survives app uninstallation
-- Protected by iOS Keychain encryption
-- Per-config isolation (multi-tenant support)
-
-## Error Handling
-
-### SnabbleError Types
-
-```swift
-public enum SnabbleError {
-    case networkError(Error)
-    case invalidResponse
-    case unauthorized
-    case notFound
-    case serverError(Int)
-    case decodingError(Error)
-    case clientError
-    case empty
-}
-```
-
-### Usage
-
-```swift
-SnabbleAPI.request(request) { (result: Result<Data, SnabbleError>) in
-    switch result {
-    case .success(let data):
-        // Handle success
-
-    case .failure(let error):
-        switch error {
-        case .unauthorized:
-            // Show login screen
-        case .networkError:
-            // Show network error message
-        case .serverError(let code):
-            // Log server error
-        default:
-            // Handle other errors
-        }
-    }
-}
-```
-
-## Configuration
-
-### Configurable Protocol
-
-The `Configurable` protocol allows any type to provide configuration for API requests:
-
-```swift
-public protocol Configurable {
-    /// The appID assigned by Snabble
-    var appId: String { get }
-
-    /// The Snabble domain (environment)
-    var domainName: String { get }
-}
-```
-
-**Implementation in Core:**
-```swift
-// Core's Config conforms to Network's Configurable
-extension Config: SnabbleNetwork.Configurable {
-    // appId and domainName are already implemented
-}
-```
-
-## Testing
-
-```bash
-# Run Network tests
-xcodebuild -scheme SnabbleNetworkTests test
-```
-
-Test coverage includes:
-- AppUser encoding/decoding
-- Keychain storage/retrieval
-- Config-based key generation
-- Error handling
-
-## Usage Examples
-
-### Custom API Request
-
-```swift
-import SnabbleNetwork
-
-struct MyResponse: Codable {
-    let status: String
-    let data: [String]
-}
-
-func fetchData(config: Configurable) {
-    let url = URL(string: "https://api.snabble.io/my-endpoint")!
-    var request = URLRequest(url: url)
-    request.addValue(config.appId, forHTTPHeaderField: "Client-Id")
-
-    SnabbleAPI.request(request) { (result: Result<MyResponse, SnabbleError>) in
-        switch result {
-        case .success(let response):
-            print("Data: \(response.data)")
-        case .failure(let error):
-            print("Error: \(error)")
-        }
-    }
-}
-```
-
-### AppUser Lifecycle
-
-```swift
-import SnabbleNetwork
-
-// Login flow
-func login(userId: String, secret: String, config: Configurable) {
-    let appUser = AppUser(id: userId, secret: secret)
-    AppUser.set(appUser, forConfig: config)
-
-    // Use appUser for authenticated requests
-    print("Logged in: \(appUser.id)")
-}
-
-// Logout flow
-func logout(config: Configurable) {
-    AppUser.set(nil, forConfig: config)
-    print("Logged out")
-}
-
-// Check login status
-func isLoggedIn(config: Configurable) -> Bool {
-    return AppUser.get(forConfig: config) != nil
-}
-```
+- Never log `AppUser.secret`
+- AppUser survives app uninstallation (Keychain persistence)
+- Token is injected per-request and never stored long-term
+- 401/403 responses automatically trigger token refresh before retry
 
 ## Migration Notes
 
 ### Circular Dependency Resolution (2026-03-27)
 
-Network previously depended on Core for the `Config` type. This was resolved by:
-
-1. Extracting `Configurable` protocol to Network (no dependencies)
-2. Making Core's `Config` conform to `Configurable` via extension
-3. Using protocol instead of concrete type in Network APIs
-
-See `documentation/Circular-Dependencies-Analysis.md` for details.
-
-## Best Practices
-
-### 1. Use Configurable Protocol
-```swift
-// Good: Accept protocol
-func makeRequest(config: Configurable) { }
-
-// Avoid: Depend on concrete Config type
-func makeRequest(config: SnabbleCore.Config) { }
-```
-
-### 2. Handle All Error Cases
-```swift
-// Always handle all SnabbleError cases
-switch error {
-case .networkError: // No connection
-case .unauthorized: // Invalid credentials
-case .serverError: // Server issues
-case .decodingError: // Invalid response format
-default: // Unknown errors
-}
-```
-
-### 3. Secure AppUser Storage
-```swift
-// Never log or expose AppUser secrets
-let appUser = AppUser.get(forConfig: config)
-print(appUser?.id) // OK
-// print(appUser?.secret) // NEVER DO THIS
-```
+`Configurable` was extracted from Core to Network so that Network has no dependency on Core. Core's `Config` type now conforms to `Configurable` via extension.
 
 ## See Also
 
-- [SnabbleCore](../Core/README.md) - Uses Network for API calls
-- [SnabbleUser](../User/README.md) - Uses AppUser for authentication
-- [SDK Architecture Guide](../documentation/SDK-Architecture.md)
+- [SnabbleCore](../Core/README.md) – Uses NetworkManager for all API calls
+- [SnabbleUser](../User/README.md) – Provides `Snabble.appUser` via AppUser

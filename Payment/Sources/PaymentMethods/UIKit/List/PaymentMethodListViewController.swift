@@ -105,7 +105,8 @@ extension UIViewController {
 
     /// show the payment selection sheet
     ///
-    /// - Parameter for: the project identifier to add a payment method for
+    /// - Parameter projectId: the project identifier to add a payment method for
+    /// - Parameter shop: <#parameter description#>
     /// - Parameter analyticsDelegate: the optional analytics delegate
     public func addPaymentMethod(
         for projectId: Identifier<Project>?,

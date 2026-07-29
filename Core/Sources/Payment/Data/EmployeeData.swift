@@ -1,12 +1,12 @@
 //
-//  TegutEmployeeData.swift
+//  EmployeeData.swift
 //
 //  Copyright © 2021 snabble. All rights reserved.
 //
 
 import Foundation
 
-public struct TegutEmployeeData: Codable, EncryptedPaymentData, Equatable, Sendable {
+public struct EmployeeData: Codable, EncryptedPaymentData, Equatable, Sendable {
     // encrypted JSON string
     public let encryptedPaymentData: String
     // serial # of the certificate used to encrypt
@@ -18,7 +18,7 @@ public struct TegutEmployeeData: Codable, EncryptedPaymentData, Equatable, Senda
     public let isExpired = false
     public let validUntil: String? = nil
 
-    public let originType = AcceptedOriginType.tegutEmployeeID
+    public let originType = AcceptedOriginType.employeeID
 
     public let cardNumber: String
 

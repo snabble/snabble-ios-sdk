@@ -71,9 +71,9 @@ public final class PaymentMethodStartCheck: @unchecked Sendable {
                 Task { @MainActor [weak self] in
                     guard let self else { return }
                     let viewController = PaymentSubjectViewController()
-                    let publisher = viewController.viewModel.actionPublisher
+                    let stream = viewController.viewModel.actionStream
                     actionTask = Task { @MainActor [weak self] in
-                        for await userDict in publisher.values {
+                        for await userDict in stream {
                             guard let self else { return }
                             performAction(viewModel: viewController.viewModel, userDict: userDict)
                         }

@@ -85,6 +85,7 @@ struct BarcodeSearchView: View {
                         })
                     }
                 }
+                .padding(.horizontal)
                 Spacer()
             }
         } else {

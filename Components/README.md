@@ -2,22 +2,11 @@
 
 **Layer:** 2 (UI Primitives)
 **Status:** Active
-**Dependencies:** SnabbleAssetProviding, WindowKit, SnabbleCore
+**Dependencies:** SnabbleAssetProviding, SnabbleCore, WindowKit
 
 ## Overview
 
-SnabbleComponents provides reusable SwiftUI UI primitives and components for the Snabble iOS SDK. These are the building blocks used by higher-level modules like ScanAndGo, Payment, and other feature modules.
-
-**Architecture Note:** Components depends on Core (since 2026-03-27 circular dependency resolution) for project trait mapping.
-
-## Purpose
-
-- Reusable SwiftUI components
-- Consistent UI design system
-- Common UI patterns (buttons, dialogs, toasts)
-- Web views and browser integration
-- User notification toggles
-- Project-specific UI traits
+SnabbleComponents provides reusable SwiftUI UI primitives for the Snabble iOS SDK — buttons, HUD overlay, toast notifications, web views, async content loading, and the project trait system used for project-specific styling.
 
 ## Public API
 
@@ -26,171 +15,36 @@ SnabbleComponents provides reusable SwiftUI UI primitives and components for the
 ```swift
 import SnabbleComponents
 
-// Primary button
-PrimaryButton("Continue") {
-    // Action
+PrimaryButtonView(title: "Checkout") {
+    startCheckout()
 }
 
-// Secondary button
-SecondaryButton("Cancel") {
-    // Action
+SecondaryButtonView(title: "Cancel") {
+    dismiss()
 }
 
-// Icon button
-IconButton(systemImage: "plus") {
-    // Action
+// With disabled binding
+PrimaryButtonView(title: "Pay", disabled: $isProcessing) {
+    pay()
 }
 ```
 
-### Dialogs
+### HUD Overlay
+
+The HUD slides in from the top with a spring animation and a material background:
 
 ```swift
 import SnabbleComponents
 
-// Alert dialog
-.alert("Title", isPresented: $showAlert) {
-    Button("OK") { }
-    Button("Cancel", role: .cancel) { }
-} message: {
-    Text("Message text")
-}
+struct ScannerView: View {
+    @State private var showHUD = false
 
-// Confirmation dialog
-.confirmationDialog("Delete item?", isPresented: $showConfirmation) {
-    Button("Delete", role: .destructive) {
-        deleteItem()
-    }
-    Button("Cancel", role: .cancel) { }
-}
-```
-
-### Toast Notifications
-
-```swift
-import SnabbleComponents
-
-// Show toast
-ToastView(message: "Item added to cart")
-    .toast(isPresented: $showToast)
-
-// Success toast
-ToastView(message: "Success!", style: .success)
-    .toast(isPresented: $showSuccess)
-
-// Error toast
-ToastView(message: "Error occurred", style: .error)
-    .toast(isPresented: $showError)
-```
-
-### Web Views
-
-```swift
-import SnabbleComponents
-
-// Simple web view
-WebView(url: URL(string: "https://snabble.io")!)
-
-// In-app browser
-InAppBrowserView(url: URL(string: "https://snabble.io")!)
-    .toolbar {
-        // Browser controls included
-    }
-```
-
-## Key Components
-
-### 1. Buttons
-- `PrimaryButton` - Main action button
-- `SecondaryButton` - Secondary action button
-- `IconButton` - Icon-only button
-- `TextButton` - Text-only button
-- Consistent styling across SDK
-
-### 2. Dialogs & Sheets
-- `AlertDialog` - Standard alerts
-- `ConfirmationDialog` - Action sheets
-- `BottomSheet` - Bottom sheet modals
-- `FullScreenModal` - Full-screen modals
-
-### 3. Notifications
-- `ToastView` - Temporary messages
-- `BannerView` - Persistent banners
-- `UserNotificationToggle` - Permission toggle
-- Auto-dismiss support
-
-### 4. Web Integration
-- `WebView` - Basic WKWebView wrapper
-- `InAppBrowserView` - Full browser with controls
-- `HTMLContentView` - Render HTML strings
-- Navigation controls
-- Progress indicators
-
-### 5. UI Traits
-- `Project` trait - Project-specific styling
-- Environment-based configuration
-- Theme integration
-
-## Architecture
-
-```
-SnabbleComponents (Layer 2)
-    ├── Buttons
-    │   ├── PrimaryButton
-    │   ├── SecondaryButton
-    │   └── IconButton
-    ├── Dialogs
-    │   ├── AlertDialog
-    │   └── ConfirmationDialog
-    ├── Notifications
-    │   ├── ToastView
-    │   └── BannerView
-    ├── Web
-    │   ├── WebView
-    │   └── InAppBrowserView
-    ├── Utilities
-    │   ├── AsyncContentView
-    │   └── LoadingView
-    └── Traits
-        └── Project (UI trait system)
-```
-
-## Dependencies
-
-### Internal
-- **SnabbleAssetProviding**: Asset protocol definitions
-- **SnabbleCore**: Project model for traits
-- **WindowKit**: Window management utilities
-
-### External
-- **SwiftUI**: UI framework
-- **WebKit**: WKWebView for web content
-
-## Usage
-
-### Button Styles
-
-```swift
-import SnabbleComponents
-
-struct CheckoutView: View {
     var body: some View {
-        VStack(spacing: 16) {
-            // Primary action
-            PrimaryButton("Checkout") {
-                startCheckout()
+        CameraView()
+            .hud(isPresented: $showHUD) {
+                Text("Item added to cart")
+                    .padding()
             }
-            .disabled(cart.isEmpty)
-
-            // Secondary action
-            SecondaryButton("Add More Items") {
-                dismissCheckout()
-            }
-
-            // Text-only link
-            TextButton("Cancel") {
-                cancel()
-            }
-        }
     }
 }
 ```
@@ -201,53 +55,96 @@ struct CheckoutView: View {
 import SnabbleComponents
 
 struct CartView: View {
-    @State private var showToast = false
-    @State private var toastMessage = ""
+    @State private var toast: Toast?
 
     var body: some View {
-        VStack {
-            List {
-                // Cart items
-            }
-
-            PrimaryButton("Add Item") {
-                addItem()
-                toastMessage = "Item added"
-                showToast = true
-            }
+        List { ... }
+            .toast(item: $toast)
         }
-        .toast(message: toastMessage, isPresented: $showToast)
+    }
+
+    func showSuccess() {
+        toast = Toast(message: "Item added", style: .success)
+    }
+
+    func showError() {
+        toast = Toast(message: "Something went wrong", style: .error, duration: 5)
     }
 }
 ```
 
-### Web Content
+`Toast.Style`: `.success`, `.warning`, `.error`  
+Default duration: 3 seconds.
+
+### Async Content Loading
+
+`AsyncContentView` drives a standard loading/empty/error/loaded state machine via the `LoadableObject` protocol:
 
 ```swift
 import SnabbleComponents
 
-struct TermsView: View {
-    let termsURL = URL(string: "https://snabble.io/terms")!
+// Conform your view model to LoadableObject
+class ProductViewModel: LoadableObject {
+    var state: LoadingState<Product> = .idle
 
-    var body: some View {
-        NavigationView {
-            InAppBrowserView(url: termsURL)
-                .navigationTitle("Terms & Conditions")
-                .navigationBarTitleDisplayMode(.inline)
+    func load() {
+        state = .loading
+        Task {
+            do {
+                let product = try await fetchProduct()
+                state = .loaded(product)
+            } catch {
+                state = .failed(error)
+            }
         }
     }
 }
 
-// Or render HTML directly
-struct HTMLTermsView: View {
-    let htmlContent = """
-    <h1>Terms & Conditions</h1>
-    <p>Content here...</p>
-    """
+// Use in a view
+struct ProductView: View {
+    @State private var viewModel = ProductViewModel()
 
     var body: some View {
-        HTMLContentView(html: htmlContent)
+        AsyncContentView(source: viewModel) { product in
+            ProductDetails(product: product)
+        }
     }
+}
+```
+
+`LoadingState<Value>`: `.idle`, `.loading`, `.loaded(Value)`, `.failed(Error)`, `.empty`
+
+### Web Views
+
+```swift
+import SnabbleComponents
+
+// WKWebView wrapper
+WebView(url: url)
+
+// Full-screen web presentation with navigation
+WebViewPresentable(url: url)
+
+// Render an HTML string
+HTMLView(html: "<h1>Terms</h1>")
+
+// Embed a YouTube video
+YouTubeView(videoId: "dQw4w9WgXcQ")
+```
+
+### Dialogs & Sheets
+
+```swift
+import SnabbleComponents
+
+// Bottom sheet modal
+BottomSheet(isPresented: $showSheet) {
+    SheetContent()
+}
+
+// Window-level dialog
+WindowDialog(isPresented: $showDialog) {
+    DialogContent()
 }
 ```
 
@@ -256,222 +153,131 @@ struct HTMLTermsView: View {
 ```swift
 import SnabbleComponents
 
-struct SettingsView: View {
-    var body: some View {
-        List {
-            Section("Notifications") {
-                UserNotificationToggle()
-            }
-        }
+List {
+    Section("Notifications") {
+        UserNotificationToggle()
     }
 }
 ```
 
-### Async Content Loading
+### Page Control
 
 ```swift
 import SnabbleComponents
 
-struct ProductDetailView: View {
-    @State private var product: Product?
-    @State private var isLoading = true
-
-    var body: some View {
-        AsyncContentView(isLoading: isLoading) {
-            if let product {
-                ProductDetails(product: product)
-            } else {
-                Text("Product not found")
-            }
-        }
-        .task {
-            await loadProduct()
-        }
-    }
-
-    func loadProduct() async {
-        isLoading = true
-        product = await fetchProduct()
-        isLoading = false
-    }
-}
+PageControl(numberOfPages: 3, currentPage: $currentPage)
 ```
 
-## Project Traits
+### ActionManager
 
-Components provides a trait system for project-specific styling:
+`ActionManager` ist ein `@Observable`-Singleton, über den Toasts, Dialoge, Sheets und Alerts aus beliebigen Stellen im Code getriggert werden können — ohne direkte View-Referenz.
 
-### Usage
-
-```swift
-import SnabbleComponents
-import SnabbleCore
-
-struct ShoppingView: View {
-    let project: SnabbleCore.Project
-
-    var body: some View {
-        VStack {
-            Text("Shopping")
-        }
-        .trait(project.trait)  // Apply project-specific styling
-    }
-}
-```
-
-### Implementation
-
-The trait extension is in `Components/Sources/Extensions/Project+Trait.swift`:
-
-```swift
-extension SnabbleCore.Project {
-    public var trait: SnabbleComponents.Project {
-        .project(id: id.rawValue)
-    }
-}
-```
-
-**Note:** This extension was moved from Core to Components on 2026-03-27 to resolve circular dependencies.
-
-## Customization
-
-### Custom Button Styles
+**Setup (einmalig am Root-View):**
 
 ```swift
 import SnabbleComponents
 
-// Extend button styles
-extension PrimaryButton {
-    func withCustomStyle() -> some View {
-        self
-            .font(.headline)
-            .padding()
-            .background(Color.customPrimary)
-            .cornerRadius(12)
-    }
-}
+RootView()
+    .actionState()
 ```
 
-### Custom Toast Appearance
+**Aktionen senden (z.B. aus einem ViewModel):**
 
 ```swift
 import SnabbleComponents
 
-// Custom toast
-struct CustomToastView: View {
-    let message: String
+// Toast
+ActionManager.shared.send(.toast(Toast(message: "Artikel hinzugefügt", style: .success)))
+
+// Dialog (View muss sich selbst schließen)
+ActionManager.shared.send(.dialog(MyDialogView()))
+
+// Sheet
+ActionManager.shared.send(.sheet(MySheetView()))
+
+// Alert
+ActionManager.shared.send(.alert(Alert(title: Text("Fehler"))))
+
+// Zurücksetzen
+ActionManager.shared.send(.idle)
+```
+
+`ActionType`: `.idle`, `.toast(Toast)`, `.dialog(any View)`, `.sheet(any View)`, `.alert(Alert)`
+
+### Project Trait System
+
+Components uses `UITraitDefinition` to pass the active project through the view hierarchy for project-specific styling:
+
+```swift
+import SnabbleComponents
+
+// Set the project trait on the root view
+rootView.environment(\.projectTrait, .project(id: project.id.rawValue))
+
+// Read in a child view
+struct ThemedButton: View {
+    @Environment(\.projectTrait) var projectTrait
 
     var body: some View {
-        Text(message)
-            .padding()
-            .background(Color.black.opacity(0.8))
-            .foregroundColor(.white)
-            .cornerRadius(10)
-            .shadow(radius: 10)
+        // projectTrait is .none or .project(id:)
     }
 }
+
+// UIKit: read from trait collection
+let project = traitCollection.project  // Project enum
 ```
 
-## Accessibility
+## Key Components
 
-All components support:
-- **VoiceOver**: Proper labels and hints
-- **Dynamic Type**: Scalable text
-- **High Contrast**: Accessible colors
-- **Reduced Motion**: Respects animation preferences
+| Component | File | Description |
+|---|---|---|
+| `PrimaryButtonView` | `Buttons/PrimaryButtonView.swift` | Full-width primary action button |
+| `SecondaryButtonView` | `Buttons/SecondaryButtonView.swift` | Full-width secondary action button |
+| `HUD` | `Modifier/HUD.swift` | Top-sliding overlay with material background |
+| `.hud(isPresented:content:)` | `Modifier/HUD.swift` | View modifier to attach a HUD |
+| `Toast` | `Toast/Toast.swift` | Toast model (message, style, duration) |
+| `ToastView` | `Toast/ToastView.swift` | Toast display view |
+| `.toast(item:)` | `Toast/View+Toast.swift` | View modifier for toast presentation |
+| `AsyncContentView` | `AsyncContent/AsyncContentView.swift` | State-driven loading/content/error view |
+| `LoadableObject` | `AsyncContent/AsyncContentView.swift` | Protocol for async data sources |
+| `WebView` | `Web/WebView.swift` | WKWebView SwiftUI wrapper |
+| `WebViewPresentable` | `Web/WebViewPresentable.swift` | Full-screen web presentation |
+| `HTMLView` | `Web/HTMLView.swift` | Renders an HTML string |
+| `YouTubeView` | `Web/YouTubeView.swift` | YouTube embed |
+| `BottomSheet` | `Dialog/BottomSheet.swift` | Bottom sheet modal |
+| `WindowDialog` | `Dialog/WindowDialog.swift` | Window-level dialog |
+| `PageControl` | `PageControl/PageControl.swift` | Dot-style page indicator |
+| `UserNotificationToggle` | `UserNotification/Toggle/UserNotificationToggle.swift` | Push notification permission toggle |
+| `CardShape` | `Misc/CardShape.swift` | Rounded rectangle with per-corner radius |
+| `ActionManager` | `Modifier/ActionModifier.swift` | Singleton for sending toasts/dialogs/sheets/alerts |
+| `ActionType` | `Modifier/ActionModifier.swift` | Enum: `.toast`, `.dialog`, `.sheet`, `.alert`, `.idle` |
+| `.actionState()` | `Modifier/ActionModifier.swift` | Root view modifier — required for ActionManager to work |
+| `ProjectTrait` | `Theme/Theme+UITraitDefinition.swift` | UITraitDefinition for project styling |
 
-### Example
+## Dependencies
 
-```swift
-PrimaryButton("Checkout") {
-    checkout()
-}
-.accessibilityLabel("Proceed to checkout")
-.accessibilityHint("Double tap to start checkout process")
-```
+### Internal
+- **SnabbleAssetProviding** – `Asset` protocol for localized strings and images
+- **SnabbleCore** – `Project` model for the trait system
 
-## Testing
-
-Components are tested through:
-- SwiftUI Previews
-- Integration tests in example app
-- Manual QA
-
-### SwiftUI Previews
-
-```swift
-#Preview {
-    VStack(spacing: 20) {
-        PrimaryButton("Primary") { }
-        SecondaryButton("Secondary") { }
-        IconButton(systemImage: "plus") { }
-    }
-    .padding()
-}
-```
+### External
+- **WindowKit** – Window management for dialog presentation
 
 ## Migration Notes
 
 ### Circular Dependency Resolution (2026-03-27)
 
-The `Project+Trait.swift` extension was moved from Core to Components:
+The `Project+Trait.swift` extension was moved from Core to Components to correct the dependency direction:
 
-**Before:**
 ```
-Core/Sources/Utilities/Project+Trait.swift
-  import SnabbleComponents  // Caused circular dependency
-```
-
-**After:**
-```
-Components/Sources/Extensions/Project+Trait.swift
-  import SnabbleCore  // Correct dependency direction
+Before: Core → SnabbleComponents (circular)
+After:  Components → SnabbleCore (correct)
 ```
 
-**Impact:** None for SDK consumers. Internal architecture improvement only.
-
-## Best Practices
-
-### 1. Use Semantic Components
-
-```swift
-// ✅ Good - semantic meaning
-PrimaryButton("Checkout") { }
-SecondaryButton("Cancel") { }
-
-// ❌ Avoid - styling-based naming
-BlueButton("Checkout") { }
-GrayButton("Cancel") { }
-```
-
-### 2. Consistent Spacing
-
-```swift
-// ✅ Good - consistent padding
-VStack(spacing: 16) {
-    PrimaryButton("Action 1") { }
-    SecondaryButton("Action 2") { }
-}
-
-// ❌ Avoid - arbitrary spacing
-VStack(spacing: 7) { }
-```
-
-### 3. Accessibility Labels
-
-```swift
-// ✅ Good - descriptive labels
-IconButton(systemImage: "plus") { }
-    .accessibilityLabel("Add item")
-
-// ❌ Avoid - no label
-IconButton(systemImage: "plus") { }
-```
+No impact on SDK consumers.
 
 ## See Also
 
-- [SnabbleTheme](../Theme/README.md) - Theme and asset management
-- [SnabbleScanAndGo](../ScanAndGo/README.md) - Uses Components
-- [SnabblePayment](../Payment/README.md) - Uses Components
-- [SDK Architecture Guide](../documentation/SDK-Architecture.md)
-- [Circular Dependencies Analysis](../documentation/Circular-Dependencies-Analysis.md)
+- [SnabbleTheme](../Theme/README.md) – Theme and asset management
+- [SnabblePayment](../Payment/README.md) – Uses Components
+- [SnabbleScanAndGo](../ScanAndGo/README.md) – Uses Components

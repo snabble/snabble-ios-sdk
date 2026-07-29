@@ -23,7 +23,9 @@ public protocol ProductProviding: AnyObject {
     ///
     /// The project's `useFTS` flag must be `true` for this to work.
     ///
-    /// - Parameter name: the string to search for. The search is case- and diacritic-insensitive
+    /// - Parameters:
+    ///   - name: the string to search for. The search is case- and diacritic-insensitive
+    ///   - filterDeposits: if true, products with `isDeposit==true` are not returned
     /// - Returns: an array of matching `Product`s.
     ///   NB: the returned products do not have price information
     func productsBy(name: String, filterDeposits: Bool) -> [Product]
@@ -34,6 +36,7 @@ public protocol ProductProviding: AnyObject {
     ///   - prefix: the prefix to search for
     ///   - filterDeposits: if true, products with `isDeposit==true` are not returned
     ///   - templates: if set, the search matches any of the templates passed. if nil, only the built-in `default` template is matched
+    ///   - shopId: the shop identifier for price lookup
     /// - Returns: an array of matching `Product`s
     ///   NB: the returned products do not have price information
     func productsBy(prefix: String, filterDeposits: Bool, templates: [String]?, shopId: Identifier<Shop>) -> [Product]
@@ -47,16 +50,18 @@ public protocol ProductProviding: AnyObject {
     ///
     /// - Parameters:
     ///   - sku: the sku to look for
+    ///   - shopId: the shop identifier for price lookup
     ///   - forceDownload: if true, skip the lookup in the local DB
-    ///   - result: the product found or the error
+    ///   - completion: called on the main thread with the product found or the error
     func productBy(sku: String, shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping @Sendable (_ result: Result<Product, ProductLookupError>) -> Void )
 
     /// asynchronously get a product by (one of) its scannable codes
     ///
     /// - Parameters:
     ///   - codes: the code/template pairs to look for
+    ///   - shopId: the shop identifier for price lookup
     ///   - forceDownload: if true, skip the lookup in the local DB
-    ///   - result: the lookup result or the error
+    ///   - completion: called on the main thread with the lookup result or the error
     func scannedProductBy(codes: [(String, String)], shopId: Identifier<Shop>, forceDownload: Bool, completion: @escaping @Sendable (_ result: Result<ScannedProduct, ProductLookupError>) -> Void )
     
 }

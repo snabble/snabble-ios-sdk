@@ -351,7 +351,9 @@ public class Snabble: @unchecked Sendable {
     }
     
     /// Set up database for project
-    /// - Parameter project: `Project` associated to setup the product database
+    /// - Parameters:
+    ///   - project: `Project` associated to setup the product database
+    ///   - completion: called asynchronously on the main thread after the database setup has finished
     public func setupProductDatabase(for project: Project, completion: @escaping @Sendable (ProductStoreAvailability) -> Void) {
         productDatabase(for: project).setup(completion: completion)
     }

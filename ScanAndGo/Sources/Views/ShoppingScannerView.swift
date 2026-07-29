@@ -10,6 +10,7 @@ import SwiftUI
 import SnabbleCore
 
 import SnabbleAssetProviding
+import SnabbleComponents
 import CameraZoomWheel
 
 public struct ScannerOverlay: View {
@@ -38,7 +39,6 @@ public struct ScannerOverlay: View {
 struct ShoppingScannerView: View {
     let model: Shopper
     
-    @Binding var minHeight: CGFloat
     let configuration: ShopperConfiguration
     
     @State private var topMargin: CGFloat = ScannerCartView.TopMargin
@@ -48,10 +48,10 @@ struct ShoppingScannerView: View {
     @State private var position: CGFloat = 0
     @State private var scanMessage: ScanMessage?
     @State private var isDragging: Bool = false
-    
-    init(model: Shopper, minHeight: Binding<CGFloat>, configuration: ShopperConfiguration = .init()) {
+    @State private var minHeight: CGFloat = 0
+
+    init(model: Shopper, configuration: ShopperConfiguration = .init()) {
         self.model = model
-        self._minHeight = minHeight
         self.configuration = configuration
     }
     
@@ -121,14 +121,23 @@ struct ShoppingScannerView: View {
                 }
             }
         }
+        .onChange(of: model.barcodeManager.barcodeDetector.state) { _, state in
+            if state == .ready, model.scanningActivated && !model.scanningPaused {
+                model.startScanner()
+            }
+        }
         .onChange(of: model.scanMessage) { _, newValue in
             if newValue != nil {
                 self.scanMessage = newValue
                 model.startScanner()
-                withAnimation {
-                    showHud = true
-                }
+                showHud = true
             }
+        }
+        .task(id: showHud) {
+            guard showHud else { return }
+            try? await Task.sleep(for: .seconds(3))
+            guard !Task.isCancelled else { return }
+            showHud = false
         }
     }
 }

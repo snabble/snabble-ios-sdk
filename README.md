@@ -64,16 +64,39 @@ The SDK is organized into five layers with no circular dependencies:
 - `SnabbleShops` — shop and store views
 - `SnabbleCart` — shopping cart UI
 - `SnabbleUser` — user management
-- `SnabbleReceipts` — receipt display
+- `SnabbleReceipts` — receipt display and local archiving
+- `SnabblePhoneAuth` — phone-number-based OTP authentication
+- `SnabbleCoupons` — coupon display and activation
+- `SnabbleTeaser` — promotional teaser cards from backend config
+- `SnabbleOnboarding` — paged onboarding flow
 
 **Layer 4 — Payment**
 - `SnabblePayment` — payment processing with multiple provider support
 
 **Layer 5 — Complete Flows**
 - `SnabbleScanAndGo` — complete Scan & Go workflow (`ShopperView`)
-- `SnabblePhoneAuth` — phone-based authentication
-- `SnabbleCoupons` — coupon management
-- `SnabbleOnboarding` — onboarding flows
+
+## Modules
+
+Each module has its own README with entry points, key components, and dependency details:
+
+| Module | Layer | README |
+|--------|-------|--------|
+| `SnabbleCore` | 1 | [Core/README.md](Core/README.md) |
+| `SnabbleNetwork` | 1 | [Network/README.md](Network/README.md) |
+| `SnabbleAssetProviding` | 1 | [AssetProviding/README.md](AssetProviding/README.md) |
+| `SnabbleComponents` | 2 | [Components/README.md](Components/README.md) |
+| `SnabbleTheme` | 2 | [Theme/README.md](Theme/README.md) |
+| `SnabbleShops` | 3 | [Shops/README.md](Shops/README.md) |
+| `SnabbleCart` | 3 | [Cart/README.md](Cart/README.md) |
+| `SnabbleUser` | 3 | [User/README.md](User/README.md) |
+| `SnabbleReceipts` | 3 | [Receipts/README.md](Receipts/README.md) |
+| `SnabblePhoneAuth` | 3 | [PhoneAuth/README.md](PhoneAuth/README.md) |
+| `SnabbleCoupons` | 3 | [Coupons/README.md](Coupons/README.md) |
+| `SnabbleTeaser` | 3 | [Teaser/README.md](Teaser/README.md) |
+| `SnabbleOnboarding` | 3 | [Onboarding/README.md](Onboarding/README.md) |
+| `SnabblePayment` | 4 | [Payment/README.md](Payment/README.md) |
+| `SnabbleScanAndGo` | 5 | [ScanAndGo/README.md](ScanAndGo/README.md) |
 
 ## Integration
 

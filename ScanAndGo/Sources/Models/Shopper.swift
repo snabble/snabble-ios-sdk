@@ -122,7 +122,7 @@ public final class Shopper: BarcodeProcessing, Equatable {
     /// - Parameters:
     ///   - shop: The shop for the Shopper.
     ///   - detector: The barcode detector used for scanning.
-    public init(shop: Shop, detector: InternalBarcodeDetector = .init(detectorArea: .rectangle)) {
+    public init(shop: Shop, detector: any BarcodeDetecting = InternalBarcodeDetector(detectorArea: .rectangle)) {
         let shoppingCart = Snabble.shared.shoppingCartManager.shoppingCart(for: shop)
         let barcodeManager = BarcodeManager(shop: shop,
                                             shoppingCart: shoppingCart,
@@ -138,9 +138,9 @@ public final class Shopper: BarcodeProcessing, Equatable {
 
         self.paymentManager.delegate = self
 
-        let actionPublisher = ActionManager.shared.actionPublisher
+        let actionStream = ActionManager.shared.actionStream
         actionTask = Task { @MainActor [weak self] in
-            for await action in actionPublisher.values {
+            for await action in actionStream {
                 self?.handleAction(action)
             }
         }

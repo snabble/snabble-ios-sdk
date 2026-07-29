@@ -13,10 +13,10 @@ import AVFoundation
 import SnabbleAssetProviding
 
 class BarcodeScannerViewController: UIViewController {
-    let detector: InternalBarcodeDetector
+    let detector: any BarcodeDetecting
     let logger = Logger(subsystem: "io.snabble.sdk.ScanAndGo", category: "BarcodeScannerViewController")
-    
-    init(detector: InternalBarcodeDetector) {
+
+    init(detector: any BarcodeDetecting) {
         self.detector = detector
         super.init(nibName: nil, bundle: nil)
     }
@@ -52,10 +52,10 @@ class BarcodeScannerViewController: UIViewController {
 
 public struct BarcodeScannerView: UIViewControllerRepresentable {
 //    @SwiftUI.Environment(\.safeAreaInsets) var insets
-    
-    public let detector: InternalBarcodeDetector
-    
-    public init(detector: InternalBarcodeDetector = .init(detectorArea: .rectangle)) {
+
+    public let detector: any BarcodeDetecting
+
+    public init(detector: any BarcodeDetecting = InternalBarcodeDetector(detectorArea: .rectangle)) {
         self.detector = detector
     }
     
@@ -90,7 +90,7 @@ public struct BarcodeScannerView: UIViewControllerRepresentable {
                 if !detector.hasCamera {
                     detector.setup()
                 }
-                for await state in detector.statePublisher.values {
+                for await state in detector.stateStream {
                     if case .idle = state {
                         detector.setup()
                     }
@@ -106,9 +106,9 @@ public struct BarcodeScannerView: UIViewControllerRepresentable {
 
 // MARK: - Barcode Scanner View
 public struct BarcodeScanner: UIViewRepresentable {
-    public let detector: InternalBarcodeDetector
-    
-    public init(detector: InternalBarcodeDetector = .init(detectorArea: .rectangle)) {
+    public let detector: any BarcodeDetecting
+
+    public init(detector: any BarcodeDetecting = InternalBarcodeDetector(detectorArea: .rectangle)) {
         self.detector = detector
     }
     
@@ -147,7 +147,7 @@ public struct BarcodeScanner: UIViewRepresentable {
                 if !detector.hasCamera {
                     detector.setup()
                 }
-                for await state in detector.statePublisher.values {
+                for await state in detector.stateStream {
                     if case .idle = state {
                         detector.setup()
                     }
@@ -202,7 +202,7 @@ public class ScannerContainerView: UIView {
 }
 
 private struct BarcodeScannerInternal: UIViewRepresentable {
-    let detector: InternalBarcodeDetector
+    let detector: any BarcodeDetecting
     let size: CGSize
     
     func makeUIView(context: Context) -> UIView {

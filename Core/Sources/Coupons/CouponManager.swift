@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Combine
 
 public protocol CouponManagerDelegate: AnyObject {
     func couponManager(_ couponManager: CouponManager, didActivateCoupon coupon: Coupon)

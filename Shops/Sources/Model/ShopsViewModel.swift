@@ -6,7 +6,6 @@
 //
 
 import Foundation
-import Combine
 import CoreLocation
 import MapKit
 import SnabbleCore
@@ -22,7 +21,11 @@ public final class ShopsViewModel: NSObject {
         self.shops = shops
         self.distances = [:]
         self.locationManager = CLLocationManager()
-        
+
+        var cont: AsyncStream<ShopProviding>.Continuation!
+        actionStream = AsyncStream { cont = $0 }
+        actionContinuation = cont
+
         super.init()
 
         self.locationManager.desiredAccuracy = kCLLocationAccuracyHundredMeters
@@ -37,9 +40,12 @@ public final class ShopsViewModel: NSObject {
 
     public weak var delegate: ShopViewModelDelegate?
     
-    /// Emits if the button on ShopView is tapped
-    /// - `Output` is the current visible shop
-    public let actionPublisher = PassthroughSubject<ShopProviding, Never>()
+    @ObservationIgnored public private(set) var actionStream: AsyncStream<ShopProviding>
+    @ObservationIgnored private var actionContinuation: AsyncStream<ShopProviding>.Continuation?
+
+    public func send(_ shop: ShopProviding) {
+        actionContinuation?.yield(shop)
+    }
 
     public func distance(from shop: ShopProviding) -> Double? {
         distances[shop.id]
@@ -105,7 +111,7 @@ extension ShopsViewModel: CLLocationManagerDelegate {
     }
 }
 
-public protocol ShopProviding: AddressProviding {
+public protocol ShopProviding: AddressProviding, Sendable {
     var id: Identifier<Shop> { get }
     var name: String { get }
 
