@@ -10,6 +10,7 @@ import SwiftUI
 import SnabbleCore
 
 import SnabbleAssetProviding
+import SnabbleComponents
 import CameraZoomWheel
 
 public struct ScannerOverlay: View {

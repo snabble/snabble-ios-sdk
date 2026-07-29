@@ -1,18 +1,16 @@
 //
 //  HUD.swift
-//  SnabbleScanAndGo
+//  SnabbleComponents
 //
 //  Created by Uwe Tilemann on 05.07.24.
 //
 
 import SwiftUI
-import SnabbleAssetProviding
-import SnabbleComponents
 
-struct HUD<Content: View>: View {
+public struct HUD<Content: View>: View {
     @ViewBuilder let content: Content
 
-    var body: some View {
+    public var body: some View {
         content
             .background(.regularMaterial)
             .clipShape(CardShape(radius: 16, .top))
@@ -22,20 +20,23 @@ struct HUD<Content: View>: View {
 private struct HUDModifier<HUDContent: View>: ViewModifier {
     @Binding var isPresented: Bool
     let hudContent: HUDContent
+    @State private var hudHeight: CGFloat = 60
 
     func body(content: Content) -> some View {
         ZStack(alignment: .top) {
             content
-            if isPresented {
-                HUD { hudContent }
-                    .transition(.move(edge: .top).combined(with: .opacity))
-            }
+            HUD { hudContent }
+                .onGeometryChange(for: CGFloat.self) { $0.size.height } action: { hudHeight = $0 }
+                .offset(y: isPresented ? 0 : -hudHeight)
+                .layoutPriority(0)
+                .opacity(isPresented ? 1 : 0)
+                .allowsHitTesting(isPresented)
+                .animation(.spring(response: 0.4, dampingFraction: 0.8), value: isPresented)
         }
-        .animation(.easeOut(duration: 0.5), value: isPresented)
     }
 }
 
-extension View {
+public extension View {
     func hud<Content: View>(
         isPresented: Binding<Bool>,
         @ViewBuilder content: () -> Content
