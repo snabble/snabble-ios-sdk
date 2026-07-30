@@ -21,7 +21,7 @@ jobs:
           xcode-version: latest-stable
 
       - name: Checkout
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
 
       - name: Xcode Plugin
         run: defaults write com.apple.dt.Xcode IDESkipPackagePluginFingerprintValidatation -bool YES
@@ -67,9 +67,6 @@ jobs:
 
       - name: Static Website Onboarding
         run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabbleOnboarding.doccarchive --output-path ./static-website/onboarding --hosting-base-path /snabble-ios-sdk/onboarding
-
-      - name: Static Website Datatrans
-        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabbleDatatrans.doccarchive --output-path ./static-website/datatrans --hosting-base-path /snabble-ios-sdk/datatrans
 
       - name: Static Website PhoneAuth
         run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabblePhoneAuth.doccarchive --output-path ./static-website/phoneauth --hosting-base-path /snabble-ios-sdk/phoneauth
@@ -120,7 +117,6 @@ jobs:
             <h2>Payment</h2>
             <div class="grid">
               <a href="payment">SnabblePayment</a>
-              <a href="datatrans">SnabbleDatatrans</a>
             </div>
             <h2>Complete Flows</h2>
             <div class="grid">
