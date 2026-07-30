@@ -64,16 +64,16 @@ The SDK is organized into five layers with no circular dependencies:
 - `SnabbleCart` — shopping cart UI
 - `SnabbleUser` — user management
 - `SnabbleReceipts` — receipt display and local archiving
-- `SnabblePhoneAuth` — phone-number-based OTP authentication
-- `SnabbleCoupons` — coupon display and activation
-- `SnabbleTeaser` — promotional teaser cards from backend config
-- `SnabbleOnboarding` — paged onboarding flow
 
 **Layer 4 — Payment**
 - `SnabblePayment` — payment processing with multiple provider support
 
 **Layer 5 — Complete Flows**
 - `SnabbleScanAndGo` — complete Scan & Go workflow (`ShopperView`)
+- `SnabblePhoneAuth` — phone-number-based OTP authentication
+- `SnabbleCoupons` — coupon display and activation
+- `SnabbleTeaser` — promotional teaser cards from backend config
+- `SnabbleOnboarding` — paged onboarding flow
 
 ## Modules
 
@@ -90,12 +90,12 @@ Each module has its own README with entry points, key components, and dependency
 | `SnabbleCart` | 3 | [Cart/README.md](Cart/README.md) |
 | `SnabbleUser` | 3 | [User/README.md](User/README.md) |
 | `SnabbleReceipts` | 3 | [Receipts/README.md](Receipts/README.md) |
-| `SnabblePhoneAuth` | 3 | [PhoneAuth/README.md](PhoneAuth/README.md) |
-| `SnabbleCoupons` | 3 | [Coupons/README.md](Coupons/README.md) |
-| `SnabbleTeaser` | 3 | [Teaser/README.md](Teaser/README.md) |
-| `SnabbleOnboarding` | 3 | [Onboarding/README.md](Onboarding/README.md) |
 | `SnabblePayment` | 4 | [Payment/README.md](Payment/README.md) |
 | `SnabbleScanAndGo` | 5 | [ScanAndGo/README.md](ScanAndGo/README.md) |
+| `SnabblePhoneAuth` | 5 | [PhoneAuth/README.md](PhoneAuth/README.md) |
+| `SnabbleCoupons` | 5 | [Coupons/README.md](Coupons/README.md) |
+| `SnabbleTeaser` | 5 | [Teaser/README.md](Teaser/README.md) |
+| `SnabbleOnboarding` | 5 | [Onboarding/README.md](Onboarding/README.md) |
 
 ## Integration
 

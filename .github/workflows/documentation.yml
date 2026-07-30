@@ -68,11 +68,17 @@ jobs:
       - name: Static Website Onboarding
         run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabbleOnboarding.doccarchive --output-path ./static-website/onboarding --hosting-base-path /snabble-ios-sdk/onboarding
 
+      - name: Static Website Payment
+        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabblePayment.doccarchive --output-path ./static-website/payment --hosting-base-path /snabble-ios-sdk/payment
+
       - name: Static Website PhoneAuth
         run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabblePhoneAuth.doccarchive --output-path ./static-website/phoneauth --hosting-base-path /snabble-ios-sdk/phoneauth
 
       - name: Static Website ScanAndGo
         run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabbleScanAndGo.doccarchive --output-path ./static-website/scanandgo --hosting-base-path /snabble-ios-sdk/scanandgo
+
+      - name: Create .nojekyll
+        run: touch ./static-website/.nojekyll
 
       - name: Create root index.html
         run: |
@@ -98,33 +104,33 @@ jobs:
             <p>Select a module to browse its API documentation.</p>
             <h2>Foundation</h2>
             <div class="grid">
-              <a href="core">SnabbleCore</a>
-              <a href="network">SnabbleNetwork</a>
-              <a href="assetproviding">SnabbleAssetProviding</a>
+              <a href="core/documentation/snabblecore/">SnabbleCore</a>
+              <a href="network/documentation/snabblenetwork/">SnabbleNetwork</a>
+              <a href="assetproviding/documentation/snabbleassetproviding/">SnabbleAssetProviding</a>
             </div>
             <h2>UI Primitives</h2>
             <div class="grid">
-              <a href="components">SnabbleComponents</a>
-              <a href="theme">SnabbleTheme</a>
+              <a href="components/documentation/snabblecomponents/">SnabbleComponents</a>
+              <a href="theme/documentation/snabbletheme/">SnabbleTheme</a>
             </div>
             <h2>Domain</h2>
             <div class="grid">
-              <a href="shops">SnabbleShops</a>
-              <a href="cart">SnabbleCart</a>
-              <a href="user">SnabbleUser</a>
-              <a href="receipts">SnabbleReceipts</a>
+              <a href="shops/documentation/snabbleshops/">SnabbleShops</a>
+              <a href="cart/documentation/snabblecart/">SnabbleCart</a>
+              <a href="user/documentation/snabbleuser/">SnabbleUser</a>
+              <a href="receipts/documentation/snabblereceipts/">SnabbleReceipts</a>
             </div>
             <h2>Payment</h2>
             <div class="grid">
-              <a href="payment">SnabblePayment</a>
+              <a href="payment/documentation/snabblepayment/">SnabblePayment</a>
             </div>
             <h2>Complete Flows</h2>
             <div class="grid">
-              <a href="scanandgo">SnabbleScanAndGo</a>
-              <a href="phoneauth">SnabblePhoneAuth</a>
-              <a href="coupons">SnabbleCoupons</a>
-              <a href="onboarding">SnabbleOnboarding</a>
-              <a href="teaser">SnabbleTeaser</a>
+              <a href="scanandgo/documentation/snabblescanandgo/">SnabbleScanAndGo</a>
+              <a href="phoneauth/documentation/snabblephoneauth/">SnabblePhoneAuth</a>
+              <a href="coupons/documentation/snabblecoupons/">SnabbleCoupons</a>
+              <a href="onboarding/documentation/snabbleonboarding/">SnabbleOnboarding</a>
+              <a href="teaser/documentation/snabbleteaser/">SnabbleTeaser</a>
             </div>
           </body>
           </html>

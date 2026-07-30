@@ -1,6 +1,6 @@
 # SnabbleTeaser
 
-**Layer:** 3 (Domain Features)
+**Layer:** 5 (Complete Flows)
 **Status:** Active
 **Dependencies:** SnabbleCore, SnabbleTheme, SnabbleComponents, SnabbleAssetProviding
 
