@@ -1,0 +1,49 @@
+{
+  "sourceLanguage" : "en",
+  "strings" : {
+    "Loading…" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Lade…"
+          }
+        }
+      }
+    },
+    "No orders yet – start your first shopping session!" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Noch keine Einkäufe - Starte deinen ersten Einkauf!"
+          }
+        }
+      }
+    },
+    "Receipts" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Kassenbons"
+          }
+        }
+      }
+    },
+    "Shopping" : {
+      "localizations" : {
+        "de" : {
+          "stringUnit" : {
+            "state" : "translated",
+            "value" : "Einkaufen"
+          }
+        }
+      }
+    },
+    "Snabble" : {
+      "shouldTranslate" : false
+    }
+  },
+  "version" : "1.2"
+}

@@ -1,5 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Workspace version = "1.0">
-    <FileRef location="group:Package.swift"/>
-   <FileRef location="group:Example/SnabbleSampleApp.xcodeproj"/>
+<Workspace
+   version = "1.0">
+   <FileRef
+      location = "group:Package.swift">
+   </FileRef>
+   <FileRef
+      location = "group:Example/MinimalScanAndGo/MinimalScanAndGo.xcodeproj">
+   </FileRef>
+   <FileRef
+      location = "group:Example/SnabbleSampleApp.xcodeproj">
+   </FileRef>
 </Workspace>
