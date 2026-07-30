@@ -2,7 +2,6 @@
 
 ![License](https://img.shields.io/github/license/mashape/apistatus.svg)
 ![Swift 6.2](https://img.shields.io/badge/Swift-6.2-orange.svg)
-[![Actions Status](https://github.com/snabble/snabble-ios-sdk/workflows/Lint/badge.svg)](https://github.com/snabble/snabble-ios-sdk/actions)
 [![Contact](https://img.shields.io/badge/Contact-%40snabble__io-blue)](https://twitter.com/snabble_io)
 
 Self-scanning and checkout SDK for iOS, built with Swift 6 and SwiftUI.
@@ -131,12 +130,12 @@ struct ShoppingContainer: View {
 }
 ```
 
-Apply `.shopperActions()` once at the root of your view hierarchy. This modifier connects the `ActionManager` to your UI so that toasts, dialogs, sheets, and alerts triggered during a session are actually displayed. Without it, these overlays will be silently swallowed.
+Apply `.actionState()` once at the root of your view hierarchy. This modifier connects the `ActionManager` to your UI so that toasts, dialogs, sheets, and alerts triggered during a session are actually displayed. Without it, these overlays will be silently swallowed.
 
 ```swift
 RootView()
     .environment(router)
-    .shopperActions()
+    .actionState()
 ```
 
 `ShopperView` covers the full session lifecycle:
@@ -165,7 +164,7 @@ To enable `twint` and `postFinanceCard`, add `SnabbleDatatrans` to your app and 
 
 The `Info.plist` also requires a URL scheme entry as described in the [Datatrans SDK documentation](https://docs.datatrans.ch/docs/mobile-sdk).
 
-## Example Project
+## Example Apps
 
 ```bash
 git clone https://github.com/snabble/snabble-ios-sdk
@@ -173,9 +172,13 @@ cd snabble-ios-sdk
 open Snabble.xcworkspace
 ```
 
-The workspace includes both the SDK package and the `SnabbleSampleApp` example project. Open it instead of the `.xcodeproj` directly so Xcode resolves the local package dependency correctly.
+The workspace includes the SDK package and two example apps. See [Example/README.md](Example/README.md) for a full comparison.
 
-To run the sample app you need an application identifier and a corresponding secret. [Contact us](mailto:info@snabble.io) for access.
+**[MinimalScanAndGo](Example/MinimalScanAndGo/MinimalScanAndGo/README.md)** — one screen, two files, ~200 lines. The smallest possible ScanAndGo integration, ideal for getting started.
+
+**[SwiftySnabble](Example/SwiftySnabble/README.md)** — a complete, production-oriented SwiftUI app with multi-tab navigation, router pattern, and full feature coverage.
+
+Both apps use demo credentials against the staging environment. To integrate the SDK into your own app you need a production application identifier and secret — [contact us](mailto:info@snabble.io) for access.
 
 ## Documentation
 
