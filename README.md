@@ -174,7 +174,7 @@ open Snabble.xcworkspace
 
 The workspace includes the SDK package and two example apps. See [Example/README.md](Example/README.md) for a full comparison.
 
-**[MinimalScanAndGo](Example/MinimalScanAndGo/MinimalScanAndGo/README.md)** — one screen, two files, ~200 lines. The smallest possible ScanAndGo integration, ideal for getting started.
+**[MinimalScanAndGo](Example/MinimalScanAndGo/README.md)** — one screen, two files, ~200 lines. The smallest possible ScanAndGo integration, ideal for getting started.
 
 **[SwiftySnabble](Example/SwiftySnabble/README.md)** — a complete, production-oriented SwiftUI app with multi-tab navigation, router pattern, and full feature coverage.
 
