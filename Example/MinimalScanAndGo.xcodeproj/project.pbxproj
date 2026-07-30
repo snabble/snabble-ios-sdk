@@ -13,6 +13,7 @@
 
 /* Begin PBXFileReference section */
 		76513550301A462000D51524 /* MinimalScanAndGo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = MinimalScanAndGo.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7651358C301B53AC00D51524 /* MinimalScanAndGo.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; path = MinimalScanAndGo.xcodeproj; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
@@ -48,6 +49,13 @@
 			isa = PBXGroup;
 			children = (
 				76513550301A462000D51524 /* MinimalScanAndGo.app */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		7651358D301B53AC00D51524 /* Products */ = {
+			isa = PBXGroup;
+			children = (
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -105,11 +113,17 @@
 			mainGroup = 76513547301A462000D51524;
 			minimizedProjectReferenceProxies = 1;
 			packageReferences = (
-				76513579301B471F00D51524 /* XCLocalSwiftPackageReference "../../snabble-ios-sdk" */,
+				76513579301B471F00D51524 /* XCLocalSwiftPackageReference ".." */,
 			);
 			preferredProjectObjectVersion = 77;
 			productRefGroup = 76513551301A462000D51524 /* Products */;
 			projectDirPath = "";
+			projectReferences = (
+				{
+					ProductGroup = 7651358D301B53AC00D51524 /* Products */;
+					ProjectRef = 7651358C301B53AC00D51524 /* MinimalScanAndGo.xcodeproj */;
+				},
+			);
 			projectRoot = "";
 			targets = (
 				7651354F301A462000D51524 /* MinimalScanAndGo */,
@@ -357,9 +371,9 @@
 /* End XCConfigurationList section */
 
 /* Begin XCLocalSwiftPackageReference section */
-		76513579301B471F00D51524 /* XCLocalSwiftPackageReference "../../snabble-ios-sdk" */ = {
+		76513579301B471F00D51524 /* XCLocalSwiftPackageReference ".." */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = "..";
+			relativePath = ..;
 		};
 /* End XCLocalSwiftPackageReference section */
 
