@@ -109,13 +109,6 @@ final class AppState {
     var project: Project?
     var shops: [Shop] = []
     var checkedInShop: Shop?
-    var recentOrders: [Order] = []
-
-    init() {
-        Task {
-            await loadData()
-        }
-    }
 }
 ```
 
@@ -136,7 +129,7 @@ Each feature is self-contained with its own views and logic:
 
 ```
 Features/
-├── Dashboard/        # Home screen with quick actions
+├── Dashboard/       # Home screen with quick actions
 ├── Shops/           # Shop browsing and selection
 ├── Shopping/        # Scan & Go shopping flow
 ├── Receipts/        # Order history
@@ -151,47 +144,107 @@ Features/
 ```swift
 @main
 struct SwiftySnabbleApp: App {
-    @State private var appState = AppState()
     @State private var router = AppRouter()
-    @State private var assetProvider = AppAssetProvider()
+    @State private var appState = AppState()
+    @State private var isInitialized = false
+
+    let provider = AppAssetProvider()
 
     init() {
-        setupSnabble()
+        // Set custom asset provider synchronously before SwiftUI lifecycle starts
+        Asset.provider = provider
     }
 
-    private func setupSnabble() {
-        // Initialize SDK
-        Snabble.setup(
-            appId: Config.appId,
-            appSecret: Config.appSecret,
-            environment: DeveloperMode.environmentMode
-        )
+    var body: some Scene {
+        WindowGroup {
+            Group {
+                if isInitialized {
+                    RootView()
+                        .environment(router)
+                        .environment(appState)
+                        .actionState()
+                } else {
+                    LoadingView()
+                }
+            }
+            .task {
+                await setupSnabble()
+            }
+        }
+    }
 
-        // Set custom asset provider
-        Snabble.setAssetProvider(assetProvider)
+    @MainActor
+    private func setupSnabble() async {
+        let config = Config.config(for: DeveloperMode.environmentMode)
+
+        Snabble.setup(config: config) { snabble in
+            guard let project = snabble.projects.first else {
+                fatalError("project initialization failed - check APPID and APPSECRET")
+            }
+
+            SnabbleCI.register(project)
+
+            Task { @MainActor in
+                snabble.checkInManager.delegate = appState
+                snabble.checkInManager.startUpdating()
+            }
+
+            snabble.setupProductDatabase(for: project) { _ in
+                Task { @MainActor in
+                    appState.project = project
+                    appState.shops = project.shops
+                    snabble.checkInManager.verifyDeveloperCheckin()
+                    appState.checkedInShop = snabble.checkInManager.shop
+                    isInitialized = true
+
+                    if Onboarding.isRequired {
+                        router.presentedSheet = .onboarding
+                    }
+                }
+            }
+        }
     }
 }
 ```
 
 ### 2. Asset Provider Integration
 
-Custom asset provider for SDK theming:
+Custom asset provider for SDK theming. All methods receive an optional `domain` context
+so the provider can apply project-specific overrides:
 
 ```swift
-@Observable
-@MainActor
-class AppAssetProvider: AssetProviding {
-    public func image(named name: String) -> UIImage? {
-        return UIImage(named: name)
+final class AppAssetProvider: AssetProviding {
+    func color(named name: String, domain: Any?) -> UIColor? {
+        UIColor(named: name)
     }
 
-    public func color(named name: String) -> UIColor? {
-        return UIColor(named: name)
+    func image(named name: String, domain: Any?) -> UIImage? {
+        UIImage(named: name)
     }
 
-    public func imageDataAsset(named name: String) -> NSDataAsset? {
-        return NSDataAsset(name: name)
+    func image(named name: String, domain: Any?) -> SwiftUI.Image? {
+        guard UIImage(named: name) != nil else { return nil }
+        return SwiftUI.Image(name)
     }
+
+    func url(forResource name: String?, withExtension ext: String?, domain: Any?) -> URL? {
+        Bundle.main.url(forResource: name, withExtension: ext)
+    }
+
+    func localizedString(forKey key: String, arguments: CVarArg..., domain: Any?) -> String? {
+        let format = Bundle.main.localizedString(forKey: key, value: key, table: nil)
+        guard format != key else { return nil }
+        return String.localizedStringWithFormat(format, arguments)
+    }
+    // Implement remaining AssetProviding methods returning nil to use SDK defaults
+}
+```
+
+Register the provider **before** the SwiftUI lifecycle starts, in `init()`:
+
+```swift
+init() {
+    Asset.provider = AppAssetProvider()
 }
 ```
 
@@ -209,8 +262,7 @@ struct ShoppingView: View {
 
     var body: some View {
         NavigationStack {
-            ShopperView()
-                .environment(shopper)
+            ShopperView(model: shopper, configuration: .init(drawerOffset: 20))
         }
     }
 }
@@ -218,34 +270,23 @@ struct ShoppingView: View {
 
 ### 4. Payment Methods Management
 
-Wrapping UIKit payment controller in SwiftUI:
+`SnabblePayment` provides a native SwiftUI view — no UIKit wrapping needed:
 
 ```swift
 struct PaymentMethodsViewWrapper: View {
     var project: SnabbleCore.Project?
-    @State private var paymentVC: PaymentMethodListViewController?
 
     var body: some View {
-        if let paymentVC, let project {
-            ContainerView(viewController: paymentVC)
-                .toolbar {
-                    ToolbarItem(placement: .primaryAction) {
-                        Button(action: {
-                            paymentVC.addPaymentMethod(
-                                for: project.id,
-                                analyticsDelegate: nil
-                            )
-                        }, label: {
-                            Label("Add Payment", systemImage: "plus")
-                        })
-                    }
-                }
-        } else {
-            SnabbleEmptyView(
-                title: "Payments.emptyMessage".localized,
-                image: Image("CardPayment"),
-                imageWidth: 200
-            )
+        Group {
+            if let projectId = project?.id {
+                PaymentMethodListView(projectId: projectId, analyticsDelegate: nil)
+            } else {
+                SnabbleEmptyView(
+                    title: "Payments.emptyMessage".localized,
+                    image: Image("CardPayment"),
+                    imageWidth: 200
+                )
+            }
         }
     }
 }
@@ -260,11 +301,19 @@ struct ReceiptsView: View {
     @State private var model = PurchasesViewModel()
 
     var body: some View {
-        ReceiptsListScreen(model: model)
-            .navigationTitle("Receipts")
-            .refreshable {
-                model.load()
+        ReceiptsListScreen(
+            model: model,
+            useBuiltInNavigation: true,
+            emptyView: ContentUnavailableView {
+                Label(Asset.localizedString(forKey: "Snabble.Receipts.noReceipts"), systemImage: "receipt.fill")
+            } description: {
+                Text("Happy Shopping!")
             }
+        )
+        .navigationTitle("Receipts")
+        .refreshable {
+            model.load()
+        }
     }
 }
 ```
@@ -447,21 +496,30 @@ router.navigate(to: .shopDetail(shop), for: .shops)
 
 ### 4. Async Task Management
 
-Use structured concurrency with `.task`:
+Bridge non-isolated SDK callbacks to the main actor with `nonisolated` + `Task { @MainActor in }`:
 
 ```swift
-struct PaymentMethodsViewWrapper: View {
-    @State private var paymentVC: PaymentMethodListViewController?
+extension AppState: CheckInManagerDelegate {
+    nonisolated func checkInManager(_ manager: CheckInManager, didCheckInTo shop: Shop) {
+        Task { @MainActor in checkedInShop = shop }
+    }
+
+    nonisolated func checkInManager(_ manager: CheckInManager, didCheckOutOf shop: Shop) {
+        Task { @MainActor in checkedInShop = nil }
+    }
+}
+```
+
+Use `.refreshable` for pull-to-refresh on data views:
+
+```swift
+struct ReceiptsView: View {
+    @State private var model = PurchasesViewModel()
 
     var body: some View {
-        content
-            .task {
-                if paymentVC == nil, let projectId = project?.id {
-                    paymentVC = PaymentMethodListViewController(
-                        for: projectId,
-                        nil
-                    )
-                }
+        ReceiptsListScreen(model: model, useBuiltInNavigation: true)
+            .refreshable {
+                model.load()
             }
     }
 }
@@ -471,11 +529,15 @@ struct PaymentMethodsViewWrapper: View {
 
 The app integrates these SDK modules via Swift Package Manager:
 
-- **SnabbleCore** - Core business logic and models
-- **SnabbleUI** - Pre-built UI components
-- **SnabbleScanAndGo** - Complete shopping flow (`ShopperView`)
-- **SnabbleAssetProviding** - Asset provider protocol
-- **SnabbleComponents** - Reusable UI components
+- **SnabbleCore** - Core business logic and models (`Shop`, `Project`, `CheckInManager`)
+- **SnabbleAssetProviding** - Asset provider protocol (`AssetProviding`, `Asset`)
+- **SnabbleComponents** - Reusable UI components (`SnabbleEmptyView`, `PrimaryButtonView`)
+- **SnabbleTheme** - SDK theming and style utilities
+- **SnabbleScanAndGo** - Complete shopping flow (`Shopper`, `ShopperView`)
+- **SnabblePayment** - Payment management (`PaymentMethodListView`)
+- **SnabbleReceipts** - Order history (`PurchasesViewModel`, `ReceiptsListScreen`)
+- **SnabbleOnboarding** - First-run onboarding flow
+- **SnabbleShops** - Shop list and selection views
 
 ## 🔧 Troubleshooting
 
@@ -497,19 +559,6 @@ If local package is not found:
 2. File > Packages > Reset Package Caches
 3. Clean and rebuild (⌘⇧K then ⌘B)
 
-## 🆚 UIKit vs SwiftUI Comparison
-
-| Feature | UIKit (Snabble) | SwiftUI (SwiftySnabble) |
-|---------|-----------------|-------------------------|
-| App Lifecycle | AppDelegate | SwiftUI App |
-| Navigation | UINavigationController | NavigationStack + Router |
-| State | ViewControllers | @Observable |
-| Tab Bar | UITabBarController | TabView |
-| Scanner | ScannerViewController | ShopperView |
-| Concurrency | Callbacks | async/await |
-| Previews | ❌ | ✅ |
-| Code Lines | ~2000 | ~1200 |
-| Swift Version | 5.x | 6.2 |
 
 ## 📄 License
 
