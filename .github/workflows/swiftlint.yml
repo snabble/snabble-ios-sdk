@@ -17,7 +17,7 @@ jobs:
       image: ghcr.io/realm/swiftlint:0.65.0
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: GitHub Action for SwiftLint
         run: |
           swiftlint --reporter github-actions-logging --strict --quiet
