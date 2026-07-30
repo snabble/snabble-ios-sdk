@@ -77,6 +77,11 @@ public struct ShopView: View {
     @State private var showingAlert = false
     @State private var showingCheckin = false
 
+    public init(shop: any ShopProviding, viewModel: ShopsViewModel) {
+        self.shop = shop
+        _viewModel = State(initialValue: viewModel)
+    }
+
     @ViewBuilder
     var distance: some View {        
         if viewModel.isCurrent(shop) {
