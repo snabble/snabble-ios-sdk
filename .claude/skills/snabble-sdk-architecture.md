@@ -1,1 +1,0 @@
-../../documentation/SDK-Architecture.md
