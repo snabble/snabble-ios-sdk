@@ -5,7 +5,7 @@
       location = "group:Package.swift">
    </FileRef>
    <FileRef
-      location = "group:Example/MinimalScanAndGo/MinimalScanAndGo.xcodeproj">
+      location = "group:Example/MinimalScanAndGo.xcodeproj">
    </FileRef>
    <FileRef
       location = "group:Example/SnabbleSampleApp.xcodeproj">
