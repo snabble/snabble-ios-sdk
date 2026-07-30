@@ -23,11 +23,11 @@ final class AppState {
 
 extension AppState: CheckInManagerDelegate {
     nonisolated func checkInManager(_ checkInManager: CheckInManager, didCheckInTo shop: Shop) {
-        Task { @MainActor [self] in checkedInShop = shop }
+        Task { @MainActor in checkedInShop = shop }
     }
 
     nonisolated func checkInManager(_ checkInManager: CheckInManager, didCheckOutOf shop: Shop) {
-        Task { @MainActor [self] in checkedInShop = nil }
+        Task { @MainActor in checkedInShop = nil }
     }
 
     nonisolated func checkInManager(_ checkInManager: CheckInManager, locationAuthorizationNotGranted authorizationStatus: CLAuthorizationStatus) {}
