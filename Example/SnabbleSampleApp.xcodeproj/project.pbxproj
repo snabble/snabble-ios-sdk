@@ -183,7 +183,7 @@
 			inputPaths = (
 				"$(SRCROOT)/license_plist.yml",
 				"$(SRCROOT)/Mintfile",
-				"$(SRCROOT)/SwiftySnabble.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved",
+				"$(SRCROOT)/SnabbleSampleApp.xcodeproj/project.xcworkspace/xcshareddata/swiftpm/Package.resolved",
 				"$(SRCROOT)/../.env",
 			);
 			name = LicensePlist;
@@ -482,7 +482,7 @@
 /* Begin XCLocalSwiftPackageReference section */
 		7621261A301797FD00BAE786 /* XCLocalSwiftPackageReference ".." */ = {
 			isa = XCLocalSwiftPackageReference;
-			relativePath = "..";
+			relativePath = ..;
 		};
 /* End XCLocalSwiftPackageReference section */
 

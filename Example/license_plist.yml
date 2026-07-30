@@ -1,5 +1,5 @@
 options:
-  xcodeprojPath: "*.xcodeproj"
+  xcodeprojPath: "SnabbleSampleApp.xcodeproj"
   suppressOpeningDirectory: true
   force: false
   addVersionNumbers: false
