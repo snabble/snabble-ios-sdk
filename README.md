@@ -182,7 +182,7 @@ Both apps use demo credentials against the staging environment. To integrate the
 
 ## Documentation
 
-Full API reference: https://docs.snabble.io/docs/ios/
+Full API reference: https://docs.snabble.io/snabble-ios-sdk/
 
 ## Versioning
 
