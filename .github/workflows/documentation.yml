@@ -5,14 +5,21 @@ on:
       - "**"
 
 name: Snabble Documentation
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
 jobs:
   docc:
-    name: docc
+    name: Build Documentation
     runs-on: macos-26 # https://github.com/actions/runner-images
     steps:
       - uses: maxim-lobanov/setup-xcode@v1
         with:
           xcode-version: latest-stable
+
       - name: Checkout
         uses: actions/checkout@v4
 
@@ -28,40 +35,121 @@ jobs:
       - name: Static Website Core
         run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabbleCore.doccarchive --output-path ./static-website/core --hosting-base-path /snabble-ios-sdk/core
 
+      - name: Static Website Network
+        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabbleNetwork.doccarchive --output-path ./static-website/network --hosting-base-path /snabble-ios-sdk/network
+
+      - name: Static Website AssetProviding
+        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabbleAssetProviding.doccarchive --output-path ./static-website/assetproviding --hosting-base-path /snabble-ios-sdk/assetproviding
+
+      - name: Static Website Components
+        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabbleComponents.doccarchive --output-path ./static-website/components --hosting-base-path /snabble-ios-sdk/components
+
+      - name: Static Website Theme
+        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabbleTheme.doccarchive --output-path ./static-website/theme --hosting-base-path /snabble-ios-sdk/theme
+
+      - name: Static Website Shops
+        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabbleShops.doccarchive --output-path ./static-website/shops --hosting-base-path /snabble-ios-sdk/shops
+
+      - name: Static Website Cart
+        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabbleCart.doccarchive --output-path ./static-website/cart --hosting-base-path /snabble-ios-sdk/cart
+
+      - name: Static Website User
+        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabbleUser.doccarchive --output-path ./static-website/user --hosting-base-path /snabble-ios-sdk/user
+
+      - name: Static Website Receipts
+        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabbleReceipts.doccarchive --output-path ./static-website/receipts --hosting-base-path /snabble-ios-sdk/receipts
+
+      - name: Static Website Coupons
+        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabbleCoupons.doccarchive --output-path ./static-website/coupons --hosting-base-path /snabble-ios-sdk/coupons
+
+      - name: Static Website Teaser
+        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabbleTeaser.doccarchive --output-path ./static-website/teaser --hosting-base-path /snabble-ios-sdk/teaser
+
+      - name: Static Website Onboarding
+        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabbleOnboarding.doccarchive --output-path ./static-website/onboarding --hosting-base-path /snabble-ios-sdk/onboarding
+
+      - name: Static Website Datatrans
+        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabbleDatatrans.doccarchive --output-path ./static-website/datatrans --hosting-base-path /snabble-ios-sdk/datatrans
+
+      - name: Static Website PhoneAuth
+        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabblePhoneAuth.doccarchive --output-path ./static-website/phoneauth --hosting-base-path /snabble-ios-sdk/phoneauth
+
       - name: Static Website ScanAndGo
         run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabbleScanAndGo.doccarchive --output-path ./static-website/scanandgo --hosting-base-path /snabble-ios-sdk/scanandgo
 
-      - name: Static Website Payment
-        run: $(xcrun --find docc) process-archive transform-for-static-hosting ${{ runner.temp }}/derivedDataPath/Build/Products/Debug-iphoneos/SnabblePayment.doccarchive --output-path ./static-website/payment --hosting-base-path /snabble-ios-sdk/payment
+      - name: Create root index.html
+        run: |
+          cat > ./static-website/index.html << 'EOF'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <title>Snabble iOS SDK Documentation</title>
+            <style>
+              body { font-family: -apple-system, BlinkMacSystemFont, 'Helvetica Neue', sans-serif; max-width: 860px; margin: 60px auto; padding: 0 20px; color: #1d1d1f; }
+              h1 { font-size: 2em; margin-bottom: 0.2em; }
+              p { color: #6e6e73; margin-bottom: 2em; }
+              h2 { font-size: 1em; text-transform: uppercase; letter-spacing: 0.05em; color: #6e6e73; margin: 2em 0 0.5em; }
+              .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; }
+              a { display: block; padding: 14px 18px; background: #f5f5f7; border-radius: 10px; text-decoration: none; color: #1d1d1f; font-weight: 500; transition: background 0.15s; }
+              a:hover { background: #e8e8ed; }
+            </style>
+          </head>
+          <body>
+            <h1>Snabble iOS SDK</h1>
+            <p>Select a module to browse its API documentation.</p>
+            <h2>Foundation</h2>
+            <div class="grid">
+              <a href="core">SnabbleCore</a>
+              <a href="network">SnabbleNetwork</a>
+              <a href="assetproviding">SnabbleAssetProviding</a>
+            </div>
+            <h2>UI Primitives</h2>
+            <div class="grid">
+              <a href="components">SnabbleComponents</a>
+              <a href="theme">SnabbleTheme</a>
+            </div>
+            <h2>Domain</h2>
+            <div class="grid">
+              <a href="shops">SnabbleShops</a>
+              <a href="cart">SnabbleCart</a>
+              <a href="user">SnabbleUser</a>
+              <a href="receipts">SnabbleReceipts</a>
+            </div>
+            <h2>Payment</h2>
+            <div class="grid">
+              <a href="payment">SnabblePayment</a>
+              <a href="datatrans">SnabbleDatatrans</a>
+            </div>
+            <h2>Complete Flows</h2>
+            <div class="grid">
+              <a href="scanandgo">SnabbleScanAndGo</a>
+              <a href="phoneauth">SnabblePhoneAuth</a>
+              <a href="coupons">SnabbleCoupons</a>
+              <a href="onboarding">SnabbleOnboarding</a>
+              <a href="teaser">SnabbleTeaser</a>
+            </div>
+          </body>
+          </html>
+          EOF
 
-      - name: Zip
-        run: zip -r static-website.zip static-website
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
 
-      - name: Upload Artifacts
-        uses: actions/upload-artifact@v4
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
         with:
-          name: Documentation
-          path: static-website.zip
+          path: static-website
 
   deploy:
-    name: Deploy GitHub Page
+    name: Deploy to GitHub Pages
     runs-on: ubuntu-latest
     needs: docc
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
     steps:
-      - name: Download Artifacts
-        uses: actions/download-artifact@v4
-        with:
-          name: Documentation
-
-      - name: Unzip
-        run: unzip static-website.zip -d ./
-
-      - name: GitHub Pages Deploy
-        uses: Cecilapp/GitHub-Pages-deploy@v3
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          email: info@snabble.io
-          build_dir: static-website
-          branch: gh-pages
-          commit_message: Update documentation
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
