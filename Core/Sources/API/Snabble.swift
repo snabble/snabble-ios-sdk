@@ -46,9 +46,6 @@ public struct Config {
     /// load shop list from the `activeShops` endpoint?
     public var loadActiveShops = false
 
-    // Workaround: Bug Fix #APPS-995
-    // https://snabble.atlassian.net/browse/APPS-995
-    public var showExternalBilling = true
 
     // debug mode only:
     // SQL statements that are executed just before the product database is opened

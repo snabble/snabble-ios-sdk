@@ -57,11 +57,6 @@ extension PaymentMethodItem {
                 }
                 return items
             } else {
-                // Workaround: Bug Fix #APPS-995
-                // https://snabble.atlassian.net/browse/APPS-995
-                if method == .externalBilling && Snabble.shared.config.showExternalBilling == false {
-                    return []
-                }
                 return [PaymentMethodItem(
                     title: method.displayName,
                     subtitle: Asset.localizedString(forKey: "Snabble.Shoppingcart.noPaymentData"),
