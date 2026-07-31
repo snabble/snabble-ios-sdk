@@ -13,6 +13,20 @@ public struct PaymentMethodDescriptor: Decodable {
     public struct Links: Decodable {
         public let tokenization: Link?
     }
+
+    /// Resolves the specific payment method from id + acceptedOriginTypes,
+    /// analogous to Android's fromIdAndOrigin().
+    /// `externalBilling` is only surfaced when `contactPersonCredentials` is present;
+    /// all other origins (e.g. tegutEmployeeID) are handled outside the payment method list.
+    public var resolvedMethod: RawPaymentMethod? {
+        let origins = acceptedOriginTypes ?? []
+        switch id {
+        case .externalBilling:
+            return origins.contains(.contactPersonCredentials) ? .externalBilling : nil
+        default:
+            return id
+        }
+    }
 }
 
 public enum Provider: String, Decodable {
@@ -96,10 +110,8 @@ public enum RawPaymentMethod: String, Decodable, CaseIterable, Swift.Identifiabl
             return true
         case .qrCodePOS, .qrCodeOffline, .gatekeeperTerminal, .customerCardPOS, .applePay:
             return false
-        // Workaround: Bug Fix #APPS-995
-        // https://snabble.atlassian.net/browse/APPS-995
         case .externalBilling:
-            return Snabble.shared.config.showExternalBilling
+            return true
         }
 
     }
