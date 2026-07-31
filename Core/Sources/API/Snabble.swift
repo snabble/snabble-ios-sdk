@@ -46,7 +46,6 @@ public struct Config {
     /// load shop list from the `activeShops` endpoint?
     public var loadActiveShops = false
 
-
     // debug mode only:
     // SQL statements that are executed just before the product database is opened
     public var initialSQL: [String]?
