@@ -563,7 +563,7 @@ public struct Project: Decodable, Identifiable, @unchecked Sendable {
 
     public let paymentMethodDescriptors: [PaymentMethodDescriptor]
     public var paymentMethods: [RawPaymentMethod] {
-        paymentMethodDescriptors.map { $0.id }
+        paymentMethodDescriptors.compactMap { $0.resolvedMethod }
     }
     public var availablePaymentMethods: [RawPaymentMethod] {
         paymentMethods.filter { $0.isAvailable }
