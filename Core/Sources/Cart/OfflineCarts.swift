@@ -30,12 +30,10 @@ struct SavedCart: Codable {
 }
 
 public final class OfflineCarts: @unchecked Sendable {
-    /// Thread-safety: Singleton accessed from multiple threads. All mutations protected by serial DispatchQueue.
     public static let shared = OfflineCarts()
 
     private var inProgress = false
     private var pendingCarts = 0
-    private let queue = DispatchQueue(label: "io.snabble.saved-carts", qos: .utility)
 
     /// append a shopping cart to the list of carts that need to be sent later
     public func saveCartForLater(_ cart: ShoppingCart) {
@@ -60,71 +58,61 @@ public final class OfflineCarts: @unchecked Sendable {
         }
 
         self.inProgress = true
-        self.queue.async {
-            self.doRetrySendingCarts()
+        Task {
+            await self.doRetrySendingCarts()
         }
     }
 
-    private func doRetrySendingCarts() {
-        // Thread-safety: Mutable state protected by Mutex, accessed from concurrent closures
-        final class MutableState: @unchecked Sendable {
-            var savedCarts: [SavedCart]
-            var successIndices: [Int] = []
-            init(savedCarts: [SavedCart]) {
-                self.savedCarts = savedCarts
-            }
-        }
-        
-        let state = MutableState(savedCarts: self.readSavedCarts())
-        let group = DispatchGroup()
-        let mutex = Mutex()
+    private func doRetrySendingCarts() async {
+        var savedCarts = self.readSavedCarts()
 
-        // retry the requests
-        for (index, savedCart) in state.savedCarts.enumerated() {
-            let cart = savedCart.cart
-            guard let project = Snabble.shared.project(for: cart.projectId) else {
-                continue
-            }
+        // Each task returns (index, succeeded).
+        // Carts without a known project are skipped and not included in results.
+        let results: [(Int, Bool)] = await withTaskGroup(of: (Int, Bool).self) { group in
+            for (index, savedCart) in savedCarts.enumerated() {
+                let cart = savedCart.cart
+                guard let project = Snabble.shared.project(for: cart.projectId) else { continue }
 
-            group.enter()
-            cart.createCheckoutInfo(project, timeout: 2) { result in
-                switch result {
-                case .success(let info):
-                    info.createCheckoutProcess(project, id: cart.uuid, paymentMethod: .qrCodeOffline, finalizedAt: savedCart.finalizedAt) { result in
-                        switch result.result {
-                        case .success:
-                            mutex.lock()
-                            state.successIndices.append(index)
-                            mutex.unlock()
-                        case .failure(let error):
-                            mutex.lock()
-                            state.savedCarts[index].failures += 1
-                            mutex.unlock()
-                            Log.error("error creating process: \(error)")
+                group.addTask {
+                    await withCheckedContinuation { continuation in
+                        cart.createCheckoutInfo(project, timeout: 2) { result in
+                            switch result {
+                            case .success(let info):
+                                info.createCheckoutProcess(project, id: cart.uuid, paymentMethod: .qrCodeOffline, finalizedAt: savedCart.finalizedAt) { processResult in
+                                    switch processResult.result {
+                                    case .success:
+                                        continuation.resume(returning: (index, true))
+                                    case .failure(let error):
+                                        Log.error("error creating process: \(error)")
+                                        continuation.resume(returning: (index, false))
+                                    }
+                                }
+                            case .failure(let error):
+                                Log.error("error creating info: \(error)")
+                                continuation.resume(returning: (index, false))
+                            }
                         }
-                        group.leave()
                     }
-                case .failure(let error):
-                    mutex.lock()
-                    state.savedCarts[index].failures += 1
-                    mutex.unlock()
-                    Log.error("error creating info: \(error)")
-                    group.leave()
                 }
             }
+
+            var collected: [(Int, Bool)] = []
+            for await result in group { collected.append(result) }
+            return collected
         }
 
-        // wait for all responses
-        group.wait()
+        let successIndices = Set(results.filter { $0.1 }.map { $0.0 })
+        for (index, succeeded) in results where !succeeded {
+            savedCarts[index].failures += 1
+        }
 
-        // remove all carts where the re-sending was successful or we had too many failures
-        for idx in (0 ..< state.savedCarts.count).reversed() {
-            if state.successIndices.contains(idx) || state.savedCarts[idx].failures > 3 {
-                state.savedCarts.remove(at: idx)
+        for idx in (0 ..< savedCarts.count).reversed() {
+            if successIndices.contains(idx) || savedCarts[idx].failures > 3 {
+                savedCarts.remove(at: idx)
             }
         }
-        self.writeSavedCarts(state.savedCarts)
-        self.pendingCarts = state.savedCarts.count
+        self.writeSavedCarts(savedCarts)
+        self.pendingCarts = savedCarts.count
         self.inProgress = false
     }
 }
