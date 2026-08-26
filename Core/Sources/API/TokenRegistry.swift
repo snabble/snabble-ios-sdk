@@ -30,6 +30,12 @@ private struct TokenResponse: Decodable {
     let expiresAt: Int64
 }
 
+private struct PendingTokenRequest {
+    let projectId: Identifier<Project>
+    let date: Date?
+    let completion: @Sendable (TokenData?) -> Void
+}
+
 // stored in our token registry
 private struct TokenData {
     let jwt: String
@@ -67,6 +73,11 @@ public final class TokenRegistry: @unchecked Sendable {
     private typealias Handlers = [(String?) -> Void]
     private var pendingHandlers = [Identifier<Project>: Handlers ]()
     private var lock = ReadWriteLock()
+
+    // Serializes anonymous AppUser creation across all projects.
+    // Both fields are accessed exclusively within `lock.writing {}` blocks.
+    private var appUserCreationInFlight = false
+    private var pendingAfterAppUser: [PendingTokenRequest] = []
 
     init(appId: String, secret: String) {
         self.appId = appId
@@ -142,18 +153,11 @@ public final class TokenRegistry: @unchecked Sendable {
     // invalidate all tokens - called when the appUser changes
     public func invalidate() {
         self.refreshTimer?.invalidate()
-
-        let activeIds: [Identifier<Project>] = lock.writing {
-            let activeIds = Array(self.projectTokens.keys)
+        lock.writing {
             self.projectTokens.removeAll()
-            return activeIds
         }
-
-        for projectId in activeIds {
-            if let project = Snabble.shared.project(for: projectId) {
-                self.getToken(for: project, completion: { _ in })
-            }
-        }
+        // Tokens are re-fetched lazily on next demand; no eager re-fetch to avoid
+        // triggering concurrent anonymous AppUser creation across all active projects.
     }
 
     @objc private func appEnteredForeground(_ notification: Notification) {
@@ -190,27 +194,39 @@ public final class TokenRegistry: @unchecked Sendable {
 
     private func refreshTokens() {
         let now = Date.timeIntervalSinceReferenceDate
-
-        let group = DispatchGroup()
-
         let values = lock.reading { self.projectTokens.values }
+        let staleIds = values
+            .filter { $0.refresh.timeIntervalSinceReferenceDate < now }
+            .map { $0.projectId }
 
-        for tokenData in values where tokenData.refresh.timeIntervalSinceReferenceDate < now {
-            group.enter()
-            let projectId = tokenData.projectId
-            // Log.debug("refresh token for \(project.id)")
-            self.retrieveToken(for: projectId) { [weak self] tokenData in
-                if let tokenData = tokenData {
-                    self?.lock.writing { [weak self] in
-                        self?.projectTokens[projectId] = tokenData
+        Task { [weak self] in
+            guard let self else { return }
+            await withTaskGroup(of: Void.self) { group in
+                for projectId in staleIds {
+                    group.addTask {
+                        await withCheckedContinuation { continuation in
+                            self.retrieveToken(for: projectId) { [weak self] tokenData in
+                                if let tokenData {
+                                    self?.lock.writing {
+                                        self?.projectTokens[projectId] = tokenData
+                                    }
+                                }
+                                continuation.resume()
+                            }
+                        }
                     }
                 }
-                group.leave()
             }
-        }
-
-        group.notify(queue: DispatchQueue.main) {
             self.startRefreshTimer()
+        }
+    }
+
+    private func drainPendingRequests() -> [PendingTokenRequest] {
+        lock.writing {
+            self.appUserCreationInFlight = false
+            let requests = self.pendingAfterAppUser
+            self.pendingAfterAppUser = []
+            return requests
         }
     }
 
@@ -220,13 +236,27 @@ public final class TokenRegistry: @unchecked Sendable {
             self.retrieveTokenForUser(for: projectId, appUser, date, completion: completion)
         } else {
             if verboseToken { Log.debug("retrieveToken+User p=\(projectId.rawValue) app=\(self.appId) client=\(Client.id) date=\(String(describing: date))") }
-            self.retrieveAppUserAndToken(for: projectId, date, completion: completion)
+            // Serialize AppUser creation: if one is already in flight, queue this project.
+            let shouldStart: Bool = lock.writing {
+                if self.appUserCreationInFlight {
+                    self.pendingAfterAppUser.append(PendingTokenRequest(projectId: projectId, date: date, completion: completion))
+                    return false
+                }
+                self.appUserCreationInFlight = true
+                return true
+            }
+            if shouldStart {
+                self.retrieveAppUserAndToken(for: projectId, date, completion: completion)
+            }
         }
     }
 
     private func retrieveAppUserAndToken(for projectId: Identifier<Project>, _ date: Date? = nil, completion: @escaping @Sendable (TokenData?) -> Void) {
         guard let project = Snabble.shared.project(for: projectId) else {
-            return completion(nil)
+            let pending = drainPendingRequests()
+            completion(nil)
+            for request in pending { request.completion(nil) }
+            return
         }
 
         let url = Snabble.shared.metadata.links.createAppUser.href
@@ -236,7 +266,10 @@ public final class TokenRegistry: @unchecked Sendable {
                 var request = request,
                 let password = self.generatePassword(date)
             else {
-                return completion(nil)
+                let pending = self.drainPendingRequests()
+                completion(nil)
+                for request in pending { request.completion(nil) }
+                return
             }
             let data = Data("\(self.appId):\(password)".utf8)
             let base64 = data.base64EncodedString()
@@ -249,16 +282,27 @@ public final class TokenRegistry: @unchecked Sendable {
                     if self.verboseToken { Log.debug("retrieveAppUserAndToken succeeded") }
                     self.verboseToken = false
                     print(#function, "new appUserID: \(appUserData.appUser.id)")
-                    Snabble.shared.appUser = AppUser(id: appUserData.appUser.id, secret: appUserData.appUser.secret)
+                    let newAppUser = AppUser(id: appUserData.appUser.id, secret: appUserData.appUser.secret)
+                    Snabble.shared.appUser = newAppUser
+
+                    let pending = self.drainPendingRequests()
                     completion(TokenData(appUserData.token, projectId))
+                    for pendingRequest in pending {
+                        self.retrieveTokenForUser(for: pendingRequest.projectId, newAppUser, pendingRequest.date, completion: pendingRequest.completion)
+                    }
                 case .failure:
                     self.verboseToken = true && Snabble.debugMode
                     if self.verboseToken { Log.debug("retrieveAppUserAndToken failed") }
+
+                    let pending = self.drainPendingRequests()
                     if let response = httpResponse, response.statusCode == 403, date == nil {
                         self.retryWithServerDate(projectId, response, completion: completion)
+                        // Fail queued projects; they will retry on next getToken call.
+                        for pendingRequest in pending { pendingRequest.completion(nil) }
                         return
                     }
                     completion(nil)
+                    for pendingRequest in pending { pendingRequest.completion(nil) }
                 }
             }
         }
@@ -333,3 +377,37 @@ public final class TokenRegistry: @unchecked Sendable {
         return pass
     }
 }
+
+#if DEBUG
+extension TokenRegistry {
+    private func decodeJWTPart(_ value: String) -> [String: Any]? {
+        var base64 = value
+            .replacingOccurrences(of: "-", with: "+")
+            .replacingOccurrences(of: "_", with: "/")
+        
+        // Padding auffüllen, Base64Url hat oft kein Padding
+        while !base64.count.isMultiple(of: 4) {
+            base64 += "="
+        }
+        
+        guard let data = Data(base64Encoded: base64),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            return nil
+        }
+        return json
+    }
+
+    public func printToken(_ jwt: String?) {
+        guard let jwt else { print("token is nil"); return }
+        
+        let parts = jwt.components(separatedBy: ".")
+        guard parts.count == 3 else { print("invalid JWT"); return }
+        
+        let header = decodeJWTPart(parts[0])
+        let payload = decodeJWTPart(parts[1])
+
+        print(header ?? [:])
+        print(payload ?? [:])
+    }
+}
+#endif

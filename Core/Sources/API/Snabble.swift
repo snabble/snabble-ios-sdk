@@ -278,12 +278,22 @@ public class Snabble: @unchecked Sendable {
             guard !projects.isEmpty else {
                 return metadataLoaded()
             }
-            let group = DispatchGroup()
-            for project in projects {
-                group.enter()
-                self.tokenRegistry.getToken(for: project) { _ in group.leave() }
-            }
-            group.notify(queue: .main) {
+            Task { @MainActor [self] in
+                if self.appUser != nil {
+                    // Warm up token cache only when an AppUser already exists.
+                    // Without one, eager fetching would race with the Authenticator
+                    // (NetworkManager path) — both would create separate anonymous AppUsers.
+                    // Tokens are fetched lazily on first demand instead.
+                    await withTaskGroup(of: Void.self) { group in
+                        for project in projects {
+                            group.addTask {
+                                await withCheckedContinuation { continuation in
+                                    self.tokenRegistry.getToken(for: project) { _ in continuation.resume() }
+                                }
+                            }
+                        }
+                    }
+                }
                 metadataLoaded()
             }
         }
@@ -315,34 +325,29 @@ public class Snabble: @unchecked Sendable {
 
     private func loadCoupons(_ completion: @escaping @Sendable () -> Void) {
         // reload coupons from `coupons` endpoint where present
-        let group = DispatchGroup()
-
-        for project in metadata.projects {
-            guard let coupons = project.links.coupons?.href else {
-                continue
-            }
-
-            group.enter()
-            project.request(.get, coupons, timeout: 3) { request in
-                guard let request = request else {
-                    group.leave()
-                    return
-                }
-
-                project.perform(request) { (result: Result<CouponList, SnabbleError>) in
-                    group.leave()
-                    switch result {
-                    case .success(let couponList):
-                        self.metadata.setCoupons(couponList.coupons, for: project)
-                    case .failure(let error):
-                        print("\(#function), \(error)")
+        Task { [self] in
+            await withTaskGroup(of: Void.self) { group in
+                for project in metadata.projects {
+                    guard let coupons = project.links.coupons?.href else { continue }
+                    group.addTask {
+                        await withCheckedContinuation { continuation in
+                            project.request(.get, coupons, timeout: 3) { request in
+                                guard let request = request else { continuation.resume(); return }
+                                project.perform(request) { (result: Result<CouponList, SnabbleError>) in
+                                    switch result {
+                                    case .success(let couponList):
+                                        self.metadata.setCoupons(couponList.coupons, for: project)
+                                    case .failure(let error):
+                                        print("\(#function), \(error)")
+                                    }
+                                    continuation.resume()
+                                }
+                            }
+                        }
                     }
                 }
             }
-        }
-
-        group.notify(queue: DispatchQueue.main) {
-            completion()
+            await MainActor.run { completion() }
         }
     }
     

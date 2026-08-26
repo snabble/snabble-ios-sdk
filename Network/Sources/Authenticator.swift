@@ -86,11 +86,13 @@ final class Authenticator {
 
     private func validateAppUser(withConfiguration configuration: Configuration) async throws -> AppUser {
         if let appUser = delegate?.authenticator(self, appUserForConfiguration: configuration) {
+            print("Authenticator: using existing AppUser from Keychain: \(appUser.id)")
             return appUser
         }
         var endpoint = Endpoints.AppUser.post(appId: configuration.appId, appSecret: configuration.appSecret)
         endpoint.domain = configuration.domain
         let response: UsersResponse = try await urlSession.data(for: endpoint)
+        print("Authenticator: created new AppUser: \(response.appUser.id)")
         delegate?.authenticator(self, appUserUpdated: response.appUser)
         return response.appUser
     }

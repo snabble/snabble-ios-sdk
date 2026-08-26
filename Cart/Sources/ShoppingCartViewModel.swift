@@ -507,20 +507,20 @@ extension ShoppingCartViewModel {
         final class ReplacementCollector: @unchecked Sendable {
             private let lock = NSLock()
             private var items: [(Int, CartItem?)] = []
-            
+
             func append(_ item: (Int, CartItem?)) {
                 lock.lock()
                 items.append(item)
                 lock.unlock()
             }
-            
+
             func getAll() -> [(Int, CartItem?)] {
                 lock.lock()
                 defer { lock.unlock() }
                 return items
             }
         }
-        
+
         let group = DispatchGroup()
         let collector = ReplacementCollector()
 
@@ -553,7 +553,7 @@ extension ShoppingCartViewModel {
         // when all lookups are finished:
         group.notify(queue: DispatchQueue.main) { [weak self] in
             guard let self = self else { return }
-            
+
             let replacements = collector.getAll()
             guard !replacements.isEmpty, self.shoppingCart.lastSaved == lastSaved else {
                 Log.warn("no replacements, or cart was modified during retrieval")
