@@ -59,6 +59,7 @@ public struct CodeView: View {
                     .multilineTextAlignment(.center)
                     .minimumScaleFactor(0.5)
                 TextField(Asset.localizedString(forKey: "Snabble.Account.Code.input"), text: $otp)
+                    .textContentType(.oneTimeCode)
                     .keyboardType(.decimalPad)
                     .multilineTextAlignment(.center)
                     .focused($focusedField, equals: .code)
