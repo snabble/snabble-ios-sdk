@@ -279,9 +279,15 @@ public class Snabble: @unchecked Sendable {
                 return metadataLoaded()
             }
             let group = DispatchGroup()
-            for project in projects {
-                group.enter()
-                self.tokenRegistry.getToken(for: project) { _ in group.leave() }
+            if self.appUser != nil {
+                // Warm up token cache only when an AppUser already exists.
+                // Without one, eager fetching would race with the Authenticator
+                // (NetworkManager path) — both would create separate anonymous AppUsers.
+                // Tokens are fetched lazily on first demand instead.
+                for project in projects {
+                    group.enter()
+                    self.tokenRegistry.getToken(for: project) { _ in group.leave() }
+                }
             }
             group.notify(queue: .main) {
                 metadataLoaded()
