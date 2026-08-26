@@ -10,7 +10,7 @@ extension ProductDatabase {
     func resolveProductsLookup(_ url: String, _ codes: [(String, String)], _ shopId: Identifier<Shop>, completion: @escaping (_ result: Result<ScannedProduct, ProductLookupError>) -> Void) {
         let group = DispatchGroup()
         let mutex = Mutex()
-        
+
         // Thread-safety: Mutable state protected by Mutex, accessed from concurrent closures
         final class MutableResults: @unchecked Sendable {
             var results: [Result<ScannedProduct, ProductLookupError>] = []
@@ -33,11 +33,9 @@ extension ProductDatabase {
             var result = state.results[0]
             var found = 0
             for res in state.results {
-                switch res {
-                case .success:
+                if case .success = res {
                     result = res
                     found += 1
-                default: ()
                 }
             }
 
