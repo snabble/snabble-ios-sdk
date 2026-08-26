@@ -49,7 +49,7 @@ public struct UserInputView: View {
     let networkManager: NetworkManager
     let user: SnabbleUser.User
     
-    var onDeletion: () -> Void
+    var onDeletion: (() -> Void)?
     let onCompletion: (_ userDetails: User.Details) -> Void
     
     private static var sixteenYearAgo: Date {
@@ -68,7 +68,7 @@ public struct UserInputView: View {
         user: SnabbleUser.User,
         kind: Kind,
         onCompletion: @escaping (_ details: User.Details) -> Void,
-        onDeletion: @escaping () -> Void
+        onDeletion: (() -> Void)? = nil
     ) {
         self.networkManager = networkManager
         self.user = user
@@ -279,7 +279,7 @@ public struct UserInputView: View {
                                     country: countrySelection.code,
                                     state: stateSelection?.code ?? "")
                     })
-                if kind == .management {
+                if kind == .management, let onDeletion {
                     UserDeleteButton {
                         onDeletion()
                     }
