@@ -68,6 +68,11 @@ public final class TokenRegistry: @unchecked Sendable {
     private var pendingHandlers = [Identifier<Project>: Handlers ]()
     private var lock = ReadWriteLock()
 
+    // Serializes anonymous AppUser creation across all projects.
+    // Both fields are accessed exclusively within `lock.writing {}` blocks.
+    private var appUserCreationInFlight = false
+    private var pendingAfterAppUser: [(Identifier<Project>, Date?, @Sendable (TokenData?) -> Void)] = []
+
     init(appId: String, secret: String) {
         self.appId = appId
         self.secret = secret
@@ -142,18 +147,11 @@ public final class TokenRegistry: @unchecked Sendable {
     // invalidate all tokens - called when the appUser changes
     public func invalidate() {
         self.refreshTimer?.invalidate()
-
-        let activeIds: [Identifier<Project>] = lock.writing {
-            let activeIds = Array(self.projectTokens.keys)
+        lock.writing {
             self.projectTokens.removeAll()
-            return activeIds
         }
-
-        for projectId in activeIds {
-            if let project = Snabble.shared.project(for: projectId) {
-                self.getToken(for: project, completion: { _ in })
-            }
-        }
+        // Tokens are re-fetched lazily on next demand; no eager re-fetch to avoid
+        // triggering concurrent anonymous AppUser creation across all active projects.
     }
 
     @objc private func appEnteredForeground(_ notification: Notification) {
@@ -220,13 +218,30 @@ public final class TokenRegistry: @unchecked Sendable {
             self.retrieveTokenForUser(for: projectId, appUser, date, completion: completion)
         } else {
             if verboseToken { Log.debug("retrieveToken+User p=\(projectId.rawValue) app=\(self.appId) client=\(Client.id) date=\(String(describing: date))") }
-            self.retrieveAppUserAndToken(for: projectId, date, completion: completion)
+            // Serialize AppUser creation: if one is already in flight, queue this project.
+            let shouldStart: Bool = lock.writing {
+                if self.appUserCreationInFlight {
+                    self.pendingAfterAppUser.append((projectId, date, completion))
+                    return false
+                }
+                self.appUserCreationInFlight = true
+                return true
+            }
+            if shouldStart {
+                self.retrieveAppUserAndToken(for: projectId, date, completion: completion)
+            }
         }
     }
 
     private func retrieveAppUserAndToken(for projectId: Identifier<Project>, _ date: Date? = nil, completion: @escaping @Sendable (TokenData?) -> Void) {
         guard let project = Snabble.shared.project(for: projectId) else {
-            return completion(nil)
+            let pending = lock.writing { () -> [(Identifier<Project>, Date?, @Sendable (TokenData?) -> Void)] in
+                self.appUserCreationInFlight = false
+                let p = self.pendingAfterAppUser; self.pendingAfterAppUser = []; return p
+            }
+            completion(nil)
+            for (_, _, c) in pending { c(nil) }
+            return
         }
 
         let url = Snabble.shared.metadata.links.createAppUser.href
@@ -236,7 +251,13 @@ public final class TokenRegistry: @unchecked Sendable {
                 var request = request,
                 let password = self.generatePassword(date)
             else {
-                return completion(nil)
+                let pending = self.lock.writing { () -> [(Identifier<Project>, Date?, @Sendable (TokenData?) -> Void)] in
+                    self.appUserCreationInFlight = false
+                    let p = self.pendingAfterAppUser; self.pendingAfterAppUser = []; return p
+                }
+                completion(nil)
+                for (_, _, c) in pending { c(nil) }
+                return
             }
             let data = Data("\(self.appId):\(password)".utf8)
             let base64 = data.base64EncodedString()
@@ -249,16 +270,37 @@ public final class TokenRegistry: @unchecked Sendable {
                     if self.verboseToken { Log.debug("retrieveAppUserAndToken succeeded") }
                     self.verboseToken = false
                     print(#function, "new appUserID: \(appUserData.appUser.id)")
-                    Snabble.shared.appUser = AppUser(id: appUserData.appUser.id, secret: appUserData.appUser.secret)
+                    let newAppUser = AppUser(id: appUserData.appUser.id, secret: appUserData.appUser.secret)
+                    Snabble.shared.appUser = newAppUser
+
+                    let pending = self.lock.writing { () -> [(Identifier<Project>, Date?, @Sendable (TokenData?) -> Void)] in
+                        self.appUserCreationInFlight = false
+                        let p = self.pendingAfterAppUser
+                        self.pendingAfterAppUser = []
+                        return p
+                    }
                     completion(TokenData(appUserData.token, projectId))
+                    for (pendingId, pendingDate, pendingCompletion) in pending {
+                        self.retrieveTokenForUser(for: pendingId, newAppUser, pendingDate, completion: pendingCompletion)
+                    }
                 case .failure:
                     self.verboseToken = true && Snabble.debugMode
                     if self.verboseToken { Log.debug("retrieveAppUserAndToken failed") }
+
+                    let pending = self.lock.writing { () -> [(Identifier<Project>, Date?, @Sendable (TokenData?) -> Void)] in
+                        self.appUserCreationInFlight = false
+                        let p = self.pendingAfterAppUser
+                        self.pendingAfterAppUser = []
+                        return p
+                    }
                     if let response = httpResponse, response.statusCode == 403, date == nil {
                         self.retryWithServerDate(projectId, response, completion: completion)
+                        // Fail queued projects; they will retry on next getToken call.
+                        for (_, _, pendingCompletion) in pending { pendingCompletion(nil) }
                         return
                     }
                     completion(nil)
+                    for (_, _, pendingCompletion) in pending { pendingCompletion(nil) }
                 }
             }
         }
@@ -333,3 +375,37 @@ public final class TokenRegistry: @unchecked Sendable {
         return pass
     }
 }
+
+#if DEBUG
+extension TokenRegistry {
+    private func decodeJWTPart(_ value: String) -> [String: Any]? {
+        var base64 = value
+            .replacingOccurrences(of: "-", with: "+")
+            .replacingOccurrences(of: "_", with: "/")
+        
+        // Padding auffüllen, Base64Url hat oft kein Padding
+        while base64.count % 4 != 0 {
+            base64 += "="
+        }
+        
+        guard let data = Data(base64Encoded: base64),
+              let json = try? JSONSerialization.jsonObject(with: data) as? [String: Any] else {
+            return nil
+        }
+        return json
+    }
+
+    public func printToken(_ jwt: String?) {
+        guard let jwt else { print("token is nil"); return }
+        
+        let parts = jwt.components(separatedBy: ".")
+        guard parts.count == 3 else { print("invalid JWT"); return }
+        
+        let header = decodeJWTPart(parts[0])
+        let payload = decodeJWTPart(parts[1])
+
+        print(header ?? [:])
+        print(payload ?? [:])
+    }
+}
+#endif
