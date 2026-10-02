@@ -28,6 +28,13 @@ struct CouponItemView: View {
         }
     }
 
+    @ViewBuilder
+    var discountImage: some View {
+        let image: SwiftUI.Image? = Asset.image(named: "discount-badge")
+        if let image {
+            image
+        }
+    }
     var body: some View {
         HStack {
             leftView
@@ -35,7 +42,8 @@ struct CouponItemView: View {
                 HStack(alignment: .top) {
                     Spacer()
                     Text(itemModel.cartCoupon.coupon.name)
-                    Asset.image(named: "discount-badge")
+
+                    discountImage
                 }
 
                 if itemModel.isRedeemed == false {

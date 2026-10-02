@@ -38,7 +38,10 @@ struct DiscountItemView: View {
                         .cartPrice()
                     Spacer()
                     Text(description ?? "")
-                    Asset.image(named: "discount-badge")
+                    let image: SwiftUI.Image? = Asset.image(named: "discount-badge")
+                    if let image {
+                        image
+                    }
                 }
                 .cartInfo()
            }
