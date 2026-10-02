@@ -106,5 +106,6 @@ public struct CouponView: View {
             couponModel.loadImage()
         }
         .navigationTitle(Asset.localizedString(forKey: "Snabble.Coupons.title"))
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

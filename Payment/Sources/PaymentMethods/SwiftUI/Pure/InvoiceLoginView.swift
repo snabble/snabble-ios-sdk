@@ -178,5 +178,6 @@ public struct InvoiceView: View {
                 }
             }
             .navigationTitle(Asset.localizedString(forKey: "Snabble.Payment.ExternalBilling.title"))
+            .navigationBarTitleDisplayMode(.inline)
     }
 }
