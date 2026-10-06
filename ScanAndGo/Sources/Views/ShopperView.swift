@@ -26,6 +26,19 @@ public struct ShopperConfiguration {
     }
 }
 
+extension ToolbarContent {
+    /// Applies `.axisBehavior(.horizontalOnly)` where available.
+    /// `ViewModifier` can't be used here because `axisBehavior` is defined on `ToolbarContent`, not `View`.
+    @ToolbarContentBuilder
+    public func horizontalOnlyAxisBehavior() -> some ToolbarContent {
+        if #available(iOS 27.1, *) {
+            self.axisBehavior(.horizontalOnly)
+        } else {
+            self
+        }
+    }
+}
+
 /// A view that manages the shopping session for a user, integrating with the Shopper model to handle barcode scanning, displaying scan messages, and error handling.
 public struct ShopperView: View {
     @AppStorage(UserDefaults.scanningDisabledKey) var expanded: Bool = false
@@ -136,7 +149,7 @@ public struct ShopperView: View {
     }
     
     public var body: some View {
-
+        
         content
             .onAppear {
                 model.scanningPaused = expanded
@@ -161,6 +174,7 @@ public struct ShopperView: View {
                             Text(keyed: "Snabble.done")
                         })
                     }
+
                     ToolbarItemGroup(placement: .topBarTrailing) {
                         Button(action: {
                             model.flashlight.toggle()
@@ -175,14 +189,15 @@ public struct ShopperView: View {
                         })
                     }
                 } else {
-                    ToolbarItemGroup(placement: .topBarLeading) {
+                    ToolbarItem(placement: .topBarLeading) {
                         Button(action: {
                             model.flashlight.toggle()
                         }, label: {
                             Image(systemName: model.flashlight == true ? "flashlight.on.fill" : "flashlight.off.fill")
                         })
                     }
-                    ToolbarItemGroup(placement: .topBarTrailing) {
+                    
+                    ToolbarItem(placement: .topBarTrailing) {
                         Button(action: {
                             model.stopScanner()
                             showSearch.toggle()
@@ -190,7 +205,6 @@ public struct ShopperView: View {
                             Image(systemName: "magnifyingglass")
                         })
                     }
-                    
                 }
             }
     }
