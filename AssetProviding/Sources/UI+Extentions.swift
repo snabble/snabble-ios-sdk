@@ -20,31 +20,3 @@ extension UIApplication {
             .flatMap({ $0 as? UIWindowScene })
     }
 }
-
-public extension UITabBarController {
-    var height: CGFloat {
-        return self.tabBar.frame.size.height
-    }
-    
-    var width: CGFloat {
-        return self.tabBar.frame.size.width
-    }
-}
-//
-// private struct SafeAreaInsetsKey: EnvironmentKey {
-//    static var defaultValue: EdgeInsets {
-//        EdgeInsets()
-//    }
-// }
-//
-// private extension UIEdgeInsets {
-//    var swiftUIInsets: EdgeInsets {
-//        EdgeInsets(top: top, leading: left, bottom: bottom, trailing: right)
-//    }
-// }
-//
-// extension EnvironmentValues {
-//    public var safeAreaInsets: EdgeInsets {
-//        self[SafeAreaInsetsKey.self]
-//    }
-// }
