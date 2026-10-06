@@ -86,6 +86,7 @@ struct PullView: ViewModifier {
         let newPosition = expanded ? paddingTop : newMinYPosition
         guard minYPosition != newMinYPosition || position != newPosition else { return }
         minYPosition = newMinYPosition
+        
         if animated {
             withAnimation(.default) { position = newPosition }
         } else {
@@ -104,7 +105,7 @@ struct PullView: ViewModifier {
                     }
                 content.padding(.top, PullView.contentTopPadding)
             }
-            .frame(minWidth: UIScreen.main.bounds.width)
+            .frame(minWidth: geom.size.width)
             .background(.regularMaterial)
             .clipShape(CardShape(radius: 24))
             .onAppear {
@@ -121,7 +122,7 @@ struct PullView: ViewModifier {
             }
             .onChange(of: expanded) {
                 setupMinHeight(geom: geom)
-            }
+            }            
             .frame(maxHeight: CGFloat(max(maxHeight(geom) - (position + dragOffset), 0)))
             .offset(y: max(0, position + dragOffset))
             .opacity(position == 0 ? 0 : 1)
