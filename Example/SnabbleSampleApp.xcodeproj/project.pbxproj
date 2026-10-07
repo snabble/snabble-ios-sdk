@@ -31,6 +31,7 @@
 
 /* Begin PBXFileReference section */
 		768DF8C83008FF7000149045 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
+		76BB163430751AAB006EC8DB /* SnabbleSampleApp-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = "SnabbleSampleApp-Info.plist"; sourceTree = "<group>"; };
 		76DF38052F50740F0050F4EC /* SnabbleSampleApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = SnabbleSampleApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
@@ -71,6 +72,7 @@
 		76DF37FC2F50740F0050F4EC = {
 			isa = PBXGroup;
 			children = (
+				76BB163430751AAB006EC8DB /* SnabbleSampleApp-Info.plist */,
 				76DF38072F50740F0050F4EC /* SwiftySnabble */,
 				768DF8C53008FF7000149045 /* Frameworks */,
 				76DF38062F50740F0050F4EC /* Products */,
@@ -361,11 +363,13 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "SnabbleSampleApp-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = SnabbleSampleApp;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Scan your products";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Face ID access is required to protect online payments.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Needed to show stores in your vicinity and enable shopping in them.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Needed to show stores in your vicinity and enable shopping in them.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
@@ -414,11 +418,13 @@
 				ENABLE_PREVIEWS = YES;
 				ENABLE_USER_SELECTED_FILES = readonly;
 				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "SnabbleSampleApp-Info.plist";
 				INFOPLIST_KEY_CFBundleDisplayName = SnabbleSampleApp;
 				INFOPLIST_KEY_NSCameraUsageDescription = "Scan your products";
 				INFOPLIST_KEY_NSFaceIDUsageDescription = "Face ID access is required to protect online payments.";
 				INFOPLIST_KEY_NSLocationAlwaysAndWhenInUseUsageDescription = "Needed to show stores in your vicinity and enable shopping in them.";
 				INFOPLIST_KEY_NSLocationWhenInUseUsageDescription = "Needed to show stores in your vicinity and enable shopping in them.";
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphoneos*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSceneManifest_Generation[sdk=iphonesimulator*]" = YES;
 				"INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents[sdk=iphoneos*]" = YES;
