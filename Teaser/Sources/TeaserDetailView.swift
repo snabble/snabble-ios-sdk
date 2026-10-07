@@ -110,6 +110,7 @@ public struct TeaserDetailView: View {
         .scrollBounceBehavior(.basedOnSize, axes: [.vertical])
         .font(.font("SnabbleUI.CustomFont.teaser", size: 17, relativeTo: .body, domain: nil))
         .navigationTitle(Asset.localizedString(forKey: "Snabble.Teaser.title"))
+        .navigationBarTitleDisplayMode(.inline)
     }
     
     @MainActor

@@ -72,6 +72,7 @@ struct ScannerCartView: View {
             // below the cart items.
             Spacer(minLength: 1)
         }
+        .navigationBarBackButtonHidden(false)
         // Single write point. Skip the write when row heights for the current item
         // count haven't been measured yet: onPreferenceChange fires in the same layout
         // pass and will trigger another onChange with the fully-measured value, avoiding

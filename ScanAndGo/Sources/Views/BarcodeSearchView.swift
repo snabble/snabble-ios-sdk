@@ -124,6 +124,8 @@ struct BarcodeSearchView: View {
         }
         .keyboardType(.numberPad)
         .task {
+            // Presenting the search programmatically throws on macOS (UIScreen focus system is unsupported)
+            guard !ProcessInfo.processInfo.isiOSAppOnMac, !ProcessInfo.processInfo.isMacCatalystApp else { return }
             try? await Task.sleep(nanoseconds: 1_200_000_000)
             showSearch = true
         }

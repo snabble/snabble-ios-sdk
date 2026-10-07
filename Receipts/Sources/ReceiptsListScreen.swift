@@ -160,22 +160,20 @@ public struct ReceiptsListScreen<SomeEmptyView: View>: View {
     
     public var body: some View {
         AsyncContentView(source: viewModel, content: { output in
-            VStack {
-                List {
-                    archiveListItemView
-                    ForEach(output, id: \.combinedID) { provider in
-                        receiptRow(for: provider)
-                            .contextMenu {
-                                menuButtons(provider)
-                            }
-                    }
-                    .listRowInsets(EdgeInsets(top: 10, leading: 4, bottom: 10, trailing: 16))
+            List {
+                archiveListItemView
+                ForEach(output, id: \.combinedID) { provider in
+                    receiptRow(for: provider)
+                        .contextMenu {
+                            menuButtons(provider)
+                        }
                 }
-                .id(viewModel.listRefreshTrigger)
-                .listStyle(.plain)
-                .refreshable {
-                    viewModel.refresh()
-                }
+                .listRowInsets(EdgeInsets(top: 10, leading: 4, bottom: 10, trailing: 16))
+            }
+            .id(viewModel.listRefreshTrigger)
+            .listStyle(.plain)
+            .refreshable {
+                viewModel.refresh()
             }
         }, empty: {
             Group {
@@ -201,7 +199,7 @@ public struct ReceiptsListScreen<SomeEmptyView: View>: View {
             viewModel.reset()
         }
         .toolbar {
-            ToolbarItem(placement: .navigationBarTrailing) {
+            ToolbarItem {
                 Menu {
                     Button(action: {
                         viewModel.markAllAsRead()
@@ -223,6 +221,7 @@ public struct ReceiptsListScreen<SomeEmptyView: View>: View {
         }
         .badge(viewModel.numberOfUnread)
         .navigationTitle(Asset.localizedString(forKey: "Snabble.Receipts.title"))
+        .navigationBarTitleDisplayMode(.inline)
 
     }
 

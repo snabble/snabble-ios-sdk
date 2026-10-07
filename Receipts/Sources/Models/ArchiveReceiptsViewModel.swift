@@ -25,16 +25,16 @@ final class ArchiveReceiptsViewModel {
 
     func startArchive(orders: [Order]) {
         archiveTask?.cancel()
-        archiveTask = Task {
+        archiveTask = Task { [weak self] in
             do {
                 let url = try await OrderArchiveManager.createArchive(from: orders) { [weak self] progress in
                     self?.state = .archiving(progress)
                 }
-                state = .done(url)
+                self?.state = .done(url)
             } catch is CancellationError {
-                state = .idle
+                self?.state = .idle
             } catch {
-                state = .failed(error)
+                self?.state = .failed(error)
             }
         }
     }

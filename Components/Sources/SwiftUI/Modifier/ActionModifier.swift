@@ -82,15 +82,28 @@ public struct ActionItem: Swift.Identifiable, Equatable {
 /// Manages the state and handling of actions within the application.
 ///
 /// The `ActionManager` is a singleton class responsible for managing the different types of actions that can be triggered
-/// throughout the application. It publishes action states and provides a mechanism for views to observe and respond to these states.
+/// throughout the application. Every call to `actionStream` returns a new stream, and each action sent is delivered
+/// to all active streams. This allows multiple consumers, e.g. one `ActionModifier` per window, to observe the same actions.
 @Observable
-public final class ActionManager {
-    nonisolated(unsafe) public static let shared = ActionManager()
+public final class ActionManager: @unchecked Sendable {
+    public static let shared = ActionManager()
 
     let logger = Logger(subsystem: "io.snabble.sdk", category: "ActionManager")
 
-    @ObservationIgnored public private(set) var actionStream: AsyncStream<ActionType>
-    @ObservationIgnored private var actionContinuation: AsyncStream<ActionType>.Continuation?
+    @ObservationIgnored private let lock = NSLock()
+    @ObservationIgnored private var continuations: [UUID: AsyncStream<ActionType>.Continuation] = [:]
+
+    /// A new stream receiving every action sent after the call. Each consumer should obtain its own stream.
+    public var actionStream: AsyncStream<ActionType> {
+        let id = UUID()
+        return AsyncStream { continuation in
+            lock.withLock { continuations[id] = continuation }
+            continuation.onTermination = { [weak self] _ in
+                guard let self else { return }
+                self.lock.withLock { _ = self.continuations.removeValue(forKey: id) }
+            }
+        }
+    }
 
     var actionState: ActionType = .idle {
         didSet {
@@ -100,22 +113,19 @@ public final class ActionManager {
     var currentAction: ActionItem?
     var isPresented: Bool = false
 
-    public init() {
-        var cont: AsyncStream<ActionType>.Continuation!
-        actionStream = AsyncStream { cont = $0 }
-        actionContinuation = cont
-    }
+    public init() {}
 
     deinit {
-        actionContinuation?.finish()
+        lock.withLock { continuations.values.forEach { $0.finish() } }
     }
 
-    /// Sends a new action state to be handled.
+    /// Sends a new action state to all active streams.
     /// - Parameter actionState: The new action state to be handled.
     public func send(_ actionState: ActionType) {
         currentAction = ActionItem(type: actionState)
         self.actionState = actionState
-        actionContinuation?.yield(actionState)
+        let targets = lock.withLock { Array(continuations.values) }
+        targets.forEach { $0.yield(actionState) }
     }
 }
 
@@ -138,6 +148,7 @@ public struct ActionModifier: ViewModifier {
     }
 
     @State private var toast: Toast?
+    @Environment(\.scenePhase) private var scenePhase
 
     @State var dialogPresented: Bool = false
     @State var sheetPresented: Bool = false
@@ -184,6 +195,8 @@ public struct ActionModifier: ViewModifier {
         content
             .task {
                 for await actionType in ActionManager.shared.actionStream {
+                    // With multiple windows every modifier receives the action, only visible scenes present it
+                    guard scenePhase != .background else { continue }
                     handleAction(actionType)
                 }
             }

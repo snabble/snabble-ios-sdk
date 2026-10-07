@@ -30,11 +30,11 @@ public struct UserNotificationToggle: View {
                 get: { isAuthorized },
                 set: { newValue in
                     if newValue {
-                        Task {
+                        Task { 
                             let settings = await notificationCenter.notificationSettings()
                             switch settings.authorizationStatus {
                             case .notDetermined:
-                                let isAuthorized = try await notificationCenter.requestAuthorization(options: [.alert, .sound, .badge])
+                                let isAuthorized = (try? await notificationCenter.requestAuthorization(options: [.alert, .sound, .badge])) ?? false
                                 didRequestAuthorization?(isAuthorized)
                             case .denied:
                                 await openSettings()
