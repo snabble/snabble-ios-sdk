@@ -1,0 +1,12 @@
+{
+  "images" : [
+    {
+      "filename" : "snabble-pay-schriftzug.svg",
+      "idiom" : "universal"
+    }
+  ],
+  "info" : {
+    "author" : "xcode",
+    "version" : 1
+  }
+}

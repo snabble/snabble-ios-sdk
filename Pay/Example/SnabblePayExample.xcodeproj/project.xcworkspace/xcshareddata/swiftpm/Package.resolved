@@ -1,6 +1,15 @@
 {
-  "originHash" : "1728681fce276561850eb9d7a5099de39f0c55f116e42a9175ae0876aa0e54c0",
+  "originHash" : "f45f22abbb808115201d7b0a2d8cbdf15ebf6c28dc51d17e7932227f31d58650",
   "pins" : [
+    {
+      "identity" : "bettersafariview",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/stleamist/BetterSafariView",
+      "state" : {
+        "revision" : "884533749e55949b2566030948c6fdbe2873ed0c",
+        "version" : "2.4.2"
+      }
+    },
     {
       "identity" : "camerazoomwheel",
       "kind" : "remoteSourceControl",
@@ -15,8 +24,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/devicekit/DeviceKit.git",
       "state" : {
-        "revision" : "56b997e8a61707218f9af09f32b2a1d1806fd792",
-        "version" : "5.8.0"
+        "revision" : "19528aa07e1426626ea9fb2c4a161edf43c4f9e8",
+        "version" : "5.9.0"
       }
     },
     {
@@ -33,8 +42,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/datatrans/ios-sdk.git",
       "state" : {
-        "revision" : "2cc71be787214b2d9608c301bffb0bc2c6125ef7",
-        "version" : "3.11.0"
+        "revision" : "fee49f5aecc252ee221d5ca9039a6f74be273901",
+        "version" : "3.11.1"
       }
     },
     {
@@ -47,21 +56,12 @@
       }
     },
     {
-      "identity" : "swift-asn1",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-asn1.git",
-      "state" : {
-        "revision" : "a9a5efd40eaf558a2bcd48d64b1d1646be686008",
-        "version" : "1.7.1"
-      }
-    },
-    {
       "identity" : "swift-crypto",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-crypto.git",
       "state" : {
-        "revision" : "95ba0316a9b733e92bb6b071255ff46263bbe7dc",
-        "version" : "3.15.1"
+        "revision" : "bc1c29221f6dfeb0ebbfbc98eb95cd3d4967868e",
+        "version" : "3.4.0"
       }
     },
     {
@@ -132,8 +132,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/weichsel/ZIPFoundation.git",
       "state" : {
-        "revision" : "22787ffb59de99e5dc1fbfe80b19c97a904ad48d",
-        "version" : "0.9.20"
+        "revision" : "02b6abe5f6eef7e3cbd5f247c5cc24e246efcfe0",
+        "version" : "0.9.19"
       }
     }
   ],

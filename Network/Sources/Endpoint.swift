@@ -34,6 +34,10 @@ public struct Endpoint<Response>: @unchecked Sendable {
     var headerFields: [String: String] = [:]
     var domain: Domain = .production
 
+    /// Overrides `domain.baseURL` when set. Used by consumers (e.g. SnabblePay) whose API host
+    /// isn't one of the `Domain` cases but who still want to reuse `Endpoint`'s request building.
+    public var baseURLOverride: URL?
+
     public init(path: String, method: HTTPMethod, parse: @escaping (Data) throws -> Response) {
         self.path = path
         self.method = method
@@ -46,9 +50,23 @@ public struct Endpoint<Response>: @unchecked Sendable {
 }
 
 extension Endpoint {
+    /// Returns a copy of this endpoint with the given base URL and/or additional header fields applied.
+    public func with(baseURLOverride: URL? = nil, additionalHeaderFields: [String: String] = [:]) -> Endpoint<Response> {
+        var copy = self
+        if let baseURLOverride {
+            copy.baseURLOverride = baseURLOverride
+        }
+        if !additionalHeaderFields.isEmpty {
+            copy.headerFields.merge(additionalHeaderFields, uniquingKeysWith: { _, new in new })
+        }
+        return copy
+    }
+}
+
+extension Endpoint {
     public func urlRequest() throws -> URLRequest {
         var components = URLComponents(
-            url: domain.baseURL,
+            url: baseURLOverride ?? domain.baseURL,
             resolvingAgainstBaseURL: false
         )
         components?.path = path.addingPercentEncoding(withAllowedCharacters: .urlPathAllowed) ?? path

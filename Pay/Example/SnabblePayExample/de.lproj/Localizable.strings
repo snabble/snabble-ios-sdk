@@ -1,0 +1,42 @@
+/* 
+  Localizable.strings
+  SnabblePayExample
+
+  Created by Uwe Tilemann on 24.02.23.
+  
+*/
+
+"MISSING" = "SEPA Mandat nicht vorhanden";
+"ACCEPTED" = "SEPA Mandat erteilt";
+"PENDING" = "SEPA Mandat ausstehend";
+"DECLINED" = "SEPA Mandat abgelehnt";
+
+"Reset all accounts" = "Alle Karten löschen";
+"Reset" = "Löschen";
+
+"Add your first account now!" = "Füge dein erstes Bankkonto hinzu!";
+
+"Accept" = "Ich stimme zu";
+"Decline" = "Ich stimme nicht zu";
+"No Mandate" = "Mandat konnte nicht geladen werden.";
+
+"Your account" = "Dein Konto";
+"Account Name" = "Kontobezeichnung";
+"Give this account a name." = "Gib deinem Konto einen Namen.";
+"Edit name" = "Name barbeiten";
+"Delete account" = "Karte löschen";
+"Delete" = "Löschen";
+
+/* Error handling */
+"Error for action" = "Fehler beim %@";
+
+"Loading Accounts" = "Laden der Konten";
+"Start Account Check" = "Starten der Kontoprüfung";
+
+"Request Mandate" = "Anfragen des Mandats";
+"Create Mandate" = "Erstellen des Mandats";
+"Accept Mandate" = "Akzeptieren des Mandats";
+"Decline Mandate" = "Widerrufen des Mandats";
+
+"Start Session" = "Laden des QR Codes";
+"Refresh Token" = "Aktualisieren des QR Codes";

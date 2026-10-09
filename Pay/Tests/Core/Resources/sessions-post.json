@@ -1,0 +1,23 @@
+{
+  "id": "1",
+  "token": {
+      "id": "1",
+      "value": "3489f@asd2",
+      "createdAt": "2022-12-22T09:34:38Z",
+      "refreshAt": "2022-12-22T09:24:38Z",
+      "expiresAt": "2022-12-22T09:44:38Z"
+  },
+  "account": {
+      "id": "1",
+      "name": "John Doe's Account",
+      "holderName": "John Doe",
+      "currencyCode": "EUR",
+      "createdAt": "2022-12-22T09:24:38Z",
+      "bank": "Bank Name",
+      "iban": "DE123**********",
+      "mandateState": "ACCEPTED"
+  },
+  "expiresAt": "2022-12-22T09:44:38Z",
+  "createdAt": "2022-12-22T09:34:38Z",
+  "transaction": null
+}
