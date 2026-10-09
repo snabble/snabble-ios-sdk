@@ -130,7 +130,7 @@ struct CartItemView: View {
                 if let image = discount.image {
                     image
                         .resizable()
-                        .aspectRatio(contentMode: .fit)
+                        .scaledToFit()
                         .frame(width: 16 * scale, height: 16 * scale)
                 }
             }

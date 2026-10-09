@@ -55,6 +55,10 @@ struct TimeRange: CustomStringConvertible {
         self.endDate = end?.dateFromServerTime
     }
 
+    var isAllDay: Bool {
+        start == "00:00" && (end == "23:59" || end == "24:00")
+    }
+
     var startString: String? {
         return self.startDate?.localTimeString ?? self.start
     }
@@ -97,6 +101,11 @@ public struct OpeningHourViewModel: Swift.Identifiable, OpeningHourProvider {
     public let day: String?
     public let hour: String?
 
+    init(day: String?, hour: String?) {
+        self.day = day
+        self.hour = hour
+    }
+
     init(forWeekday weekday: String, withSpecification specification: [OpeningHoursSpecification]) {
         let filteredSpecification = specification.filter { $0.dayOfWeek == weekday }
         if let dayKey = filteredSpecification.first?.dayOfWeek {
@@ -109,5 +118,86 @@ public struct OpeningHourViewModel: Swift.Identifiable, OpeningHourProvider {
             .sorted(by: { $0.opens.prefix(2) < $1.opens.prefix(2) })
             .map { TimeRange(start: String($0.opens.prefix(5)), end: String($0.closes.prefix(5))).description }
             .joined(separator: "\n")
+    }
+}
+
+private struct DayEntry {
+    let localizedDay: String
+    let hourString: String
+    let isAllDay: Bool
+}
+
+private struct DayGroup {
+    let firstDay: String
+    var lastDay: String?
+    let hourString: String
+    let isAllDay: Bool
+    var count: Int
+    
+    init(firstDay: String, lastDay: String? = nil, hourString: String, isAllDay: Bool, count: Int) {
+        self.firstDay = firstDay
+        self.lastDay = lastDay
+        self.hourString = hourString
+        self.isAllDay = isAllDay
+        self.count = count
+    }
+}
+
+public extension ShopProviding {
+    var openingHoursViewModel: [OpeningHourViewModel] {
+        let weekdays = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+
+        let entries: [DayEntry] = weekdays.compactMap { weekday -> DayEntry? in
+            let specs = openingHoursSpecification.filter { $0.dayOfWeek == weekday }
+            guard !specs.isEmpty else { return nil }
+            var seen = Set<String>()
+            let ranges = specs
+                .sorted { $0.opens.prefix(2) < $1.opens.prefix(2) }
+                .compactMap { spec -> TimeRange? in
+                    let key = "\(spec.opens)-\(spec.closes)"
+                    guard seen.insert(key).inserted else { return nil }
+                    return TimeRange(start: String(spec.opens.prefix(5)), end: String(spec.closes.prefix(5)))
+                }
+            let localized = weekday.localDayOfWeek
+            let isAllDay = (ranges.count == 1 && ranges.first?.isAllDay ?? false)
+            return DayEntry(
+                localizedDay: localized.isEmpty ? weekday : localized,
+                hourString: ranges.map(\.description).joined(separator: "\n"),
+                isAllDay: isAllDay
+            )
+        }
+
+        var groups: [DayGroup] = []
+        for entry in entries {
+            if !groups.isEmpty && groups[groups.count - 1].hourString == entry.hourString {
+                groups[groups.count - 1].lastDay = entry.localizedDay
+                groups[groups.count - 1].count += 1
+            } else {
+                groups.append(DayGroup(
+                    firstDay: entry.localizedDay,
+                    lastDay: nil,
+                    hourString: entry.hourString,
+                    isAllDay: entry.isAllDay,
+                    count: 1
+                ))
+            }
+        }
+
+        if groups.count == 1 && groups[0].count == 7 && groups[0].isAllDay {
+            return [OpeningHourViewModel(day: "24/7", hour: nil)]
+        }
+
+        return groups.map { group in
+            let dayLabel: String
+            if let last = group.lastDay {
+                dayLabel = "\(group.firstDay) – \(last)"
+            } else {
+                dayLabel = group.firstDay
+            }
+            let hourLabel = group.isAllDay
+                ? Asset.localizedString(forKey: "Snabble.Shop.Detail.allDay")
+                : group.hourString
+            return OpeningHourViewModel(day: dayLabel.isEmpty ? nil : dayLabel, hour: hourLabel)
+        }
     }
 }
