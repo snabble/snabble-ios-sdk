@@ -24,7 +24,7 @@ public struct TeaserItemView: View {
                 if let image {
                     Image(uiImage: image)
                         .resizable()
-                        .aspectRatio(contentMode: .fill)
+                        .scaledToFill()
                         .frame(width: geometry.size.width, height: 124)
                         .clipped()
                 } else if isLoading {

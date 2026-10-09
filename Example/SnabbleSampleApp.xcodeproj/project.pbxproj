@@ -360,7 +360,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if [[ -z \"$CI_XCODE_CLOUD\" ]]; then\n    if [ $CONFIGURATION = \"Debug\" ]; then\n            if which mint > /dev/null; then\n            source \"$PROJECT_DIR/../.env\"\n            mint run mono0926/LicensePlist --output-path Snabble/Settings.bundle --force\n        else\n            echo \"warning: Mint not installed, download from https://github.com/yonaskolb/Mint\"\n        fi\n    fi\nfi\n";
+			shellScript = "if [[ -z \"$CI_XCODE_CLOUD\" ]]; then\n    if [ $CONFIGURATION = \"Debug\" ]; then\n            cd \"$PROJECT_DIR\"\n\n            # Clean old output directory before running\n            rm -rf \"$PROJECT_DIR/Snabble/Settings.bundle/com.mono0926.LicensePlist\"\n\n            if [ -f \"$PROJECT_DIR/../.env\" ]; then\n                source \"$PROJECT_DIR/../.env\"\n            fi\n\n            mint run mono0926/LicensePlist \\\n                --xcodeproj-path \"$PROJECT_DIR/SnabbleSampleApp.xcodeproj\" \\\n                --package-path \"$PROJECT_DIR/../Package.resolved\" \\\n                --output-path \"$PROJECT_DIR/Snabble/Settings.bundle\" --force\n    fi\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
