@@ -228,9 +228,9 @@ final class QRCheckoutViewController: UIViewController {
 
     private func startPoller() {
         let poller = PaymentProcessPoller(self.process, SnabbleCI.project)
-        poller.waitFor([.paymentSuccess]) { events in
+        poller.waitFor([.paymentSuccess]) { [weak self] events in
             if let success = events[.paymentSuccess] {
-                Task { @MainActor [weak self] in
+                Task { @MainActor in
                     self?.paymentFinished(success, poller.updatedProcess)
                 }
             }
