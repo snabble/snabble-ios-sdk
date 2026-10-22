@@ -70,10 +70,8 @@ struct ShoppingView: View {
     }
 
     var body: some View {
-        NavigationStack {
-            ShopperView(model: shopper, configuration: .init(drawerOffset: 20))
-                .navigationBarHidden(false)
-        }
+        ShopperView(model: shopper, configuration: .init(drawerOffset: 20))
+            .navigationBarHidden(false)
     }
 }
 

@@ -17,7 +17,7 @@ public struct ShopperConfiguration {
     
     public init(
         drawerOffset: CGFloat = 0,
-        zoomControlOffset: CGFloat = 100,
+        zoomControlOffset: CGFloat = 40,
         showDismiss: Bool = true,
     ) {
         self.drawerOffset = drawerOffset
@@ -61,15 +61,10 @@ public struct ShopperView: View {
     }
     
     @ViewBuilder var content: some View {
-        @Bindable var model = model
-        
         ShoppingScannerView(model: model, configuration: configuration)
             .animation(.easeInOut, value: model.scannedItem)
             .navigationDestination(isPresented: $isNavigating) {
-                if let item = model.navigationItem {
-                    ContainerView(viewController: item.viewController)
-                        .navigationTitle(item.viewController.navigationItem.title ?? "")
-                }
+                model.navigationDestinationView()
             }
             .onChange(of: model.navigationItem, initial: true) { _, item in
                 // Sync model → local state. Keeping isNavigating as local @State means
