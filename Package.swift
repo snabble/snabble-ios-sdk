@@ -105,10 +105,6 @@ let package = Package(
             name: "SnabbleDatatrans",
             targets: ["SnabblePayment", "SnabbleDatatrans"]
         ),
-        .library(
-            name: "SnabblePay",
-            targets: ["SnabblePay"]
-        ),
     ],
     dependencies: [
         .package(url: "https://github.com/lachlanbell/SwiftOTP", from: "3.0.2"),
@@ -118,15 +114,18 @@ let package = Package(
         .package(url: "https://github.com/datatrans/ios-sdk.git", from: "3.7.3"),
         .package(url: "https://github.com/devicekit/DeviceKit.git", from: "5.5.0"),
         .package(url: "https://github.com/chrs1885/WCAG-Colors.git", from: "1.0.0"),
-        .package(url: "https://github.com/apple/swift-log.git", from: "1.6.1"),
         .package(url: "https://github.com/divadretlaw/WindowKit", from: "2.5.2"),
         .package(url: "https://github.com/utilem/CameraZoomWheel.git", from: "2.1.0"),
-        .package(url: "https://github.com/pointfreeco/swift-tagged", from: "0.10.0")
+        .package(url: "https://github.com/snabble/snabble-http.git", from: "1.0.0")
     ],
     targets: [
         .target(
             name: "SnabbleNetwork",
-            dependencies: ["SwiftOTP", "KeychainAccess"],
+            dependencies: [
+                .product(name: "SnabbleHTTP", package: "snabble-http"),
+                "SwiftOTP",
+                "KeychainAccess",
+            ],
             path: "Network/Sources",
         ),
         .testTarget(
@@ -306,58 +305,6 @@ let package = Package(
                 "CameraZoomWheel",
             ],
             path: "ScanAndGo/Sources",
-        ),
-        .target(
-            name: "SnabbleLogger",
-            dependencies: [
-                .product(name: "Logging", package: "swift-log"),
-            ],
-            path: "Pay/Sources/Logger"
-        ),
-        .target(
-            name: "SnabblePayNetwork",
-            dependencies: [
-                "SnabbleLogger",
-                "SnabbleNetwork",
-            ],
-            path: "Pay/Sources/Network"
-        ),
-        .target(
-            name: "SnabblePay",
-            dependencies: [
-                .product(name: "Tagged", package: "swift-tagged"),
-                "SnabblePayNetwork",
-                "SnabbleNetwork",
-                "SnabbleLogger",
-            ],
-            path: "Pay/Sources/Core"
-        ),
-        .target(
-            name: "TestHelper",
-            dependencies: [],
-            path: "Pay/Tests/Helper"
-        ),
-        .testTarget(
-            name: "SnabblePayCoreTests",
-            dependencies: [
-                "SnabblePay",
-                "TestHelper"
-            ],
-            path: "Pay/Tests/Core",
-            resources: [
-                .process("Resources")
-            ]
-        ),
-        .testTarget(
-            name: "SnabblePayNetworkTests",
-            dependencies: [
-                "SnabblePayNetwork",
-                "TestHelper",
-            ],
-            path: "Pay/Tests/Network",
-            resources: [
-                .process("Resources")
-            ]
         ),
     ]
 )

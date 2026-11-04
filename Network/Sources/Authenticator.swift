@@ -74,14 +74,13 @@ final class Authenticator {
         guard let projectId = delegate?.authenticator(self, projectIdForConfiguration: configuration) ?? configuration.projectId else {
             throw Error.missingProject
         }
-        var endpoint = Endpoints.Token.get(
+        let endpoint = Endpoints.Token.get(
             appId: configuration.appId,
             appSecret: configuration.appSecret,
             appUser: appUser,
             projectId: projectId
         )
-        endpoint.domain = configuration.domain
-        return try await urlSession.data(for: endpoint)
+        return try await urlSession.data(for: endpoint.applying(domain: configuration.domain))
     }
 
     private func validateAppUser(withConfiguration configuration: Configuration) async throws -> AppUser {
@@ -89,9 +88,8 @@ final class Authenticator {
             print("Authenticator: using existing AppUser from Keychain: \(appUser.id)")
             return appUser
         }
-        var endpoint = Endpoints.AppUser.post(appId: configuration.appId, appSecret: configuration.appSecret)
-        endpoint.domain = configuration.domain
-        let response: UsersResponse = try await urlSession.data(for: endpoint)
+        let endpoint = Endpoints.AppUser.post(appId: configuration.appId, appSecret: configuration.appSecret)
+        let response: UsersResponse = try await urlSession.data(for: endpoint.applying(domain: configuration.domain))
         print("Authenticator: created new AppUser: \(response.appUser.id)")
         delegate?.authenticator(self, appUserUpdated: response.appUser)
         return response.appUser

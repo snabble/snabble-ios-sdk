@@ -15,11 +15,9 @@ final class NotificationEndpointTests: XCTestCase {
 
     func testSubscribe() throws {
         let endpoint = Endpoints.Notification.subscribe(fcmToken: "1234-567-890", appId: "555")
-        XCTAssertEqual(endpoint.domain, .production)
         XCTAssertEqual(endpoint.method.value, "POST")
         XCTAssertEqual(endpoint.path, "/notifications/subscribe/me")
-        XCTAssertNil(endpoint.token)
-        let urlRequest = try endpoint.urlRequest()
+        let urlRequest = try endpoint.applying(domain: .production).urlRequest()
         XCTAssertEqual(urlRequest.url?.absoluteString, "https://api.snabble.io/notifications/subscribe/me")
         XCTAssertEqual(urlRequest.httpMethod, "POST")
         let data = try! JSONSerialization.data(withJSONObject: [
@@ -31,11 +29,9 @@ final class NotificationEndpointTests: XCTestCase {
 
     func testUnsubscribe() throws {
         let endpoint = Endpoints.Notification.unsubscribe(appId: "555")
-        XCTAssertEqual(endpoint.domain, .production)
         XCTAssertEqual(endpoint.method.value, "POST")
         XCTAssertEqual(endpoint.path, "/notifications/unsubscribe/me")
-        XCTAssertNil(endpoint.token)
-        let urlRequest = try endpoint.urlRequest()
+        let urlRequest = try endpoint.applying(domain: .production).urlRequest()
         XCTAssertEqual(urlRequest.url?.absoluteString, "https://api.snabble.io/notifications/unsubscribe/me")
         XCTAssertEqual(urlRequest.httpMethod, "POST")
         let data = try! JSONSerialization.data(withJSONObject: [

@@ -23,12 +23,10 @@ final class TokenEndpointTests: XCTestCase {
 
     func testGet() throws {
         let endpoint = Endpoints.Token.get(appId: configuration.appId, appSecret: configuration.appSecret, appUser: appUser, projectId: "2")
-        XCTAssertEqual(endpoint.domain, .production)
         XCTAssertEqual(endpoint.method.value, "GET")
         XCTAssertEqual(endpoint.path, "/tokens")
         XCTAssertNotNil(endpoint.headerFields["Authorization"])
-        XCTAssertNil(endpoint.token)
-        let urlRequest = try endpoint.urlRequest()
+        let urlRequest = try endpoint.applying(domain: .production).urlRequest()
         XCTAssertEqual(urlRequest.url?.absoluteString, "https://api.snabble.io/tokens?project=2&role=retailerApp")
         XCTAssertEqual(urlRequest.httpMethod, "GET")
         XCTAssertNil(urlRequest.httpBody)

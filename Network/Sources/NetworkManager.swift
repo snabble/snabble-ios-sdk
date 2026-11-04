@@ -44,10 +44,7 @@ public final class NetworkManager {
 
     private func perform<Response: Sendable>(_ endpoint: Endpoint<Response>) async throws -> Response {
         let token = try await authenticator.validToken(withConfiguration: configuration)
-        var modifiedEndpoint = endpoint
-        modifiedEndpoint.domain = configuration.domain
-        modifiedEndpoint.token = token
-        let response = try await authenticator.urlSession.data(for: modifiedEndpoint)
+        let response = try await authenticator.urlSession.data(for: endpoint.applying(domain: configuration.domain, token: token))
         if let appUser = response as? AppUser {
             authenticator.updateAppUser(appUser)
         }
