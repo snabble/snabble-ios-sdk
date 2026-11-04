@@ -24,7 +24,7 @@ enum NetworkTests {
 
         init() throws {
             resourceData = try loadResource(inBundle: .module, filename: "UsersResponse", withExtension: "json")
-            endpointUsers = Endpoints.AppUser.post(appId: "123-456-789", appSecret: "1")
+            endpointUsers = Endpoints.AppUser.post(appId: "123-456-789", appSecret: "1").applying(domain: .production)
         }
 
         @Test func data() async throws {
@@ -107,7 +107,7 @@ enum NetworkTests {
                 return (response, Data())
             }
 
-            let endpoint = Endpoints.AppUser.post(appId: configuration.appId, appSecret: configuration.appSecret)
+            let endpoint = Endpoints.AppUser.post(appId: configuration.appId, appSecret: configuration.appSecret).applying(domain: .production)
             await #expect(throws: (any Error).self) {
                 _ = try await networkManager.publisher(for: endpoint)
             }
@@ -151,7 +151,7 @@ enum NetworkTests {
                     return (response, Data())
                 }
             }
-            let endpoint = Endpoints.Phone.auth(phoneNumber: "+4915119695415")
+            let endpoint = Endpoints.Phone.auth(phoneNumber: "+4915119695415").applying(domain: .production)
             _ = try? await networkManager.publisher(for: endpoint)
         }
     }

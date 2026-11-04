@@ -14,12 +14,10 @@ final class AppUserEndpointTests: XCTestCase {
 
     func testPostWithoutProject() throws {
         let endpoint = Endpoints.AppUser.post(appId: configuration.appId, appSecret: configuration.appSecret)
-        XCTAssertEqual(endpoint.domain, .production)
         XCTAssertEqual(endpoint.method.value, "POST")
         XCTAssertEqual(endpoint.path, "/apps/1/users")
         XCTAssertNotNil(endpoint.headerFields["Authorization"])
-        XCTAssertNil(endpoint.token)
-        let urlRequest = try endpoint.urlRequest()
+        let urlRequest = try endpoint.applying(domain: .production).urlRequest()
         XCTAssertEqual(urlRequest.url?.absoluteString, "https://api.snabble.io/apps/1/users")
         XCTAssertEqual(urlRequest.httpMethod, "POST")
         XCTAssertNil(urlRequest.httpBody)
@@ -27,12 +25,10 @@ final class AppUserEndpointTests: XCTestCase {
 
     func testPostWithProject() throws {
         let endpoint = Endpoints.AppUser.post(appId: configuration.appId, appSecret: configuration.appSecret)
-        XCTAssertEqual(endpoint.domain, .production)
         XCTAssertEqual(endpoint.method.value, "POST")
         XCTAssertEqual(endpoint.path, "/apps/1/users")
         XCTAssertNotNil(endpoint.headerFields["Authorization"])
-        XCTAssertNil(endpoint.token)
-        let urlRequest = try endpoint.urlRequest()
+        let urlRequest = try endpoint.applying(domain: .production).urlRequest()
         XCTAssertEqual(urlRequest.url?.absoluteString, "https://api.snabble.io/apps/1/users")
         XCTAssertEqual(urlRequest.httpMethod, "POST")
         XCTAssertNil(urlRequest.httpBody)

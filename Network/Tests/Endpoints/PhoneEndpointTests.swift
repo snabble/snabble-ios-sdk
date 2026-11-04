@@ -26,11 +26,9 @@ final class PhoneEndpointTests: XCTestCase {
 
     func testAuth() throws {
         let endpoint = Endpoints.Phone.auth(phoneNumber: phoneNumber)
-        XCTAssertEqual(endpoint.domain, .production)
         XCTAssertEqual(endpoint.method.value, "POST")
         XCTAssertEqual(endpoint.path, "/apps/users/me/verification/phone-number")
-        XCTAssertNil(endpoint.token)
-        let urlRequest = try endpoint.urlRequest()
+        let urlRequest = try endpoint.applying(domain: .production).urlRequest()
         XCTAssertEqual(urlRequest.url?.absoluteString, "https://api.snabble.io/apps/users/me/verification/phone-number")
         XCTAssertEqual(urlRequest.httpMethod, "POST")
 
@@ -42,11 +40,9 @@ final class PhoneEndpointTests: XCTestCase {
 
     func testSignIn() throws {
         let endpoint = Endpoints.Phone.signIn(phoneNumber: phoneNumber, OTP: otp)
-        XCTAssertEqual(endpoint.domain, .production)
         XCTAssertEqual(endpoint.method.value, "POST")
         XCTAssertEqual(endpoint.path, "/apps/users/me/verification/phone-number/otp")
-        XCTAssertNil(endpoint.token)
-        let urlRequest = try endpoint.urlRequest()
+        let urlRequest = try endpoint.applying(domain: .production).urlRequest()
         XCTAssertEqual(urlRequest.url?.absoluteString, "https://api.snabble.io/apps/users/me/verification/phone-number/otp")
         XCTAssertEqual(urlRequest.httpMethod, "POST")
 
@@ -60,11 +56,9 @@ final class PhoneEndpointTests: XCTestCase {
     
     func testChangePhoneNumber() throws {
         let endpoint = Endpoints.Phone.changePhoneNumber(phoneNumber: phoneNumber, OTP: otp)
-        XCTAssertEqual(endpoint.domain, .production)
         XCTAssertEqual(endpoint.method.value, "POST")
         XCTAssertEqual(endpoint.path, "/apps/users/me/verification/phone-number/otp")
-        XCTAssertNil(endpoint.token)
-        let urlRequest = try endpoint.urlRequest()
+        let urlRequest = try endpoint.applying(domain: .production).urlRequest()
         XCTAssertEqual(urlRequest.url?.absoluteString, "https://api.snabble.io/apps/users/me/verification/phone-number/otp")
         XCTAssertEqual(urlRequest.httpMethod, "POST")
 
@@ -78,11 +72,9 @@ final class PhoneEndpointTests: XCTestCase {
 
     func testDelete() throws {
         let endpoint = Endpoints.Phone.delete()
-        XCTAssertEqual(endpoint.domain, .production)
         XCTAssertEqual(endpoint.method.value, "DELETE")
         XCTAssertEqual(endpoint.path, "/apps/users/me/phone-number")
-        XCTAssertNil(endpoint.token)
-        let urlRequest = try endpoint.urlRequest()
+        let urlRequest = try endpoint.applying(domain: .production).urlRequest()
         XCTAssertEqual(urlRequest.url?.absoluteString, "https://api.snabble.io/apps/users/me/phone-number")
         XCTAssertEqual(urlRequest.httpMethod, "DELETE")
     }

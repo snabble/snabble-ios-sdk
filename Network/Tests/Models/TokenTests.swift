@@ -26,3 +26,15 @@ final class TokenTests: XCTestCase {
         XCTAssertFalse(token2.isValid())
     }
 }
+
+final class EndpointAuthorizationTests: XCTestCase {
+    func testApplyingDomainAndToken() throws {
+        let endpoint: Endpoint<String> = .init(path: "/apps/mock", method: .get(nil)) { _ in "" }
+        XCTAssertNil(try endpoint.applying(domain: .production).urlRequest().allHTTPHeaderFields?["Authorization"])
+
+        let token = Token(id: "1", value: "accessToken", issuedAt: Date(), expiresAt: .distantFuture)
+        let request = try endpoint.applying(domain: .staging, token: token).urlRequest()
+        XCTAssertEqual(request.allHTTPHeaderFields?["Authorization"], "Bearer accessToken")
+        XCTAssertEqual(request.url, "https://api.snabble-staging.io/apps/mock")
+    }
+}

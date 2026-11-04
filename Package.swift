@@ -114,14 +114,18 @@ let package = Package(
         .package(url: "https://github.com/datatrans/ios-sdk.git", from: "3.7.3"),
         .package(url: "https://github.com/devicekit/DeviceKit.git", from: "5.5.0"),
         .package(url: "https://github.com/chrs1885/WCAG-Colors.git", from: "1.0.0"),
-        .package(url: "https://github.com/apple/swift-log.git", from: "1.6.1"),
         .package(url: "https://github.com/divadretlaw/WindowKit", from: "2.5.2"),
-        .package(url: "https://github.com/utilem/CameraZoomWheel.git", from: "2.1.0")
+        .package(url: "https://github.com/utilem/CameraZoomWheel.git", from: "2.1.0"),
+        .package(url: "https://github.com/snabble/snabble-http.git", from: "1.0.0")
     ],
     targets: [
         .target(
             name: "SnabbleNetwork",
-            dependencies: ["SwiftOTP", "KeychainAccess"],
+            dependencies: [
+                .product(name: "SnabbleHTTP", package: "snabble-http"),
+                "SwiftOTP",
+                "KeychainAccess",
+            ],
             path: "Network/Sources",
         ),
         .testTarget(

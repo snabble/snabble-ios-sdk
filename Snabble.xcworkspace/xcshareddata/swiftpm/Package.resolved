@@ -47,6 +47,15 @@
       }
     },
     {
+      "identity" : "snabble-http",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/snabble/snabble-http.git",
+      "state" : {
+        "revision" : "3bccefc52dff76f680ae64086a780fb327b87a85",
+        "version" : "1.0.0"
+      }
+    },
+    {
       "identity" : "swift-asn1",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-asn1.git",

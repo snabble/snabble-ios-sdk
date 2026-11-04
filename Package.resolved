@@ -1,13 +1,13 @@
 {
-  "originHash" : "e74a972cd6498e1d99670ee21539ef45f02d3bcbeee16f26f8db6c447fca3057",
+  "originHash" : "4ee0d6813df257d2ad8645d49f7fc47de6fcd9058b24de6ad4de33882e4b445e",
   "pins" : [
     {
       "identity" : "camerazoomwheel",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/utilem/CameraZoomWheel.git",
       "state" : {
-        "revision" : "46a0462131849870cd0b73775de4c76474620420",
-        "version" : "2.0.0"
+        "revision" : "c8eb8e530d3bca3ecca9f8fc92cd6de72aace8aa",
+        "version" : "2.1.0"
       }
     },
     {
@@ -47,6 +47,15 @@
       }
     },
     {
+      "identity" : "snabble-http",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/snabble/snabble-http.git",
+      "state" : {
+        "revision" : "3bccefc52dff76f680ae64086a780fb327b87a85",
+        "version" : "1.0.0"
+      }
+    },
+    {
       "identity" : "swift-asn1",
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/apple/swift-asn1.git",
@@ -62,15 +71,6 @@
       "state" : {
         "revision" : "95ba0316a9b733e92bb6b071255ff46263bbe7dc",
         "version" : "3.15.1"
-      }
-    },
-    {
-      "identity" : "swift-log",
-      "kind" : "remoteSourceControl",
-      "location" : "https://github.com/apple/swift-log.git",
-      "state" : {
-        "revision" : "5073617dac96330a486245e4c0179cb0a6fd2256",
-        "version" : "1.12.0"
       }
     },
     {
