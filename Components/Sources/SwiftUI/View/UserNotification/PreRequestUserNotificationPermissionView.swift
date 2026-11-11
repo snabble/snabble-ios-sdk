@@ -117,7 +117,7 @@ struct UserNotificationDialogViewModifier: ViewModifier {
             let settings = await notificationCenter.notificationSettings()
             switch settings.authorizationStatus {
             case .notDetermined:
-                isAuthorized = try await notificationCenter.requestAuthorization(options: options)
+                isAuthorized = (try? await notificationCenter.requestAuthorization(options: options)) ?? false
             case .denied:
                 isAuthorized = false
             case .authorized, .provisional, .ephemeral:

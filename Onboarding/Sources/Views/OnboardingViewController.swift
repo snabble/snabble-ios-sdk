@@ -50,7 +50,7 @@ public final class OnboardingViewController: UIHostingController<OnboardingView>
     private func observeIsDone() {
         withObservationTracking {
             _ = viewModel.isDone
-        } onChange: {
+        } onChange: { [weak self] in
             Task { @MainActor [weak self] in
                 guard let self = self else { return }
                 if self.viewModel.isDone {

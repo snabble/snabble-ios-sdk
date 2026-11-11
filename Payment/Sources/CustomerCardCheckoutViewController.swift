@@ -232,9 +232,9 @@ final class CustomerCardCheckoutViewController: UIViewController {
     }
 
     private func setupIcons() {
-        SnabbleCI.getAsset(.checkoutOffline, bundlePath: "Checkout/\(SnabbleCI.project.id)/checkout-offline") { img in
+        SnabbleCI.getAsset(.checkoutOffline, bundlePath: "Checkout/\(SnabbleCI.project.id)/checkout-offline") { [weak self] img in
             if let img = img {
-                Task { @MainActor [weak self] in
+                Task { @MainActor in
                     guard let self else { return }
                     
                     self.iconImageView?.image = img

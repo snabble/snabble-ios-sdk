@@ -205,10 +205,10 @@ public final class TokenRegistry: @unchecked Sendable {
                 for projectId in staleIds {
                     group.addTask {
                         await withCheckedContinuation { continuation in
-                            self.retrieveToken(for: projectId) { [weak self] tokenData in
+                            self.retrieveToken(for: projectId) { tokenData in
                                 if let tokenData {
-                                    self?.lock.writing {
-                                        self?.projectTokens[projectId] = tokenData
+                                    self.lock.writing {
+                                        self.projectTokens[projectId] = tokenData
                                     }
                                 }
                                 continuation.resume()

@@ -65,16 +65,16 @@ extension InvoiceViewController: InvoiceViewControllerDelegate {
     }
     
     func save(model: InvoiceLoginProcessor) {
-        Task {
+        Task { @MainActor [weak self] in
             do {
                 try await model.save()
-                self.navigationController?.popViewController(animated: true)
+                self?.navigationController?.popViewController(animated: true)
             } catch {
                 let alert = UIAlertController(title: nil, message: Asset.localizedString(forKey: "Snabble.SEPA.encryptionError"), preferredStyle: .alert)
-                alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .default) { [weak self] _ in
+                alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .default) { _ in
                     self?.navigationController?.popViewController(animated: true)
                 })
-                self.present(alert, animated: true)
+                self?.present(alert, animated: true)
             }
         }
     }

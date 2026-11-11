@@ -147,11 +147,11 @@ extension PaymentMethodListManager {
                 continue
             }
 
-            let brandProjects = Snabble.shared.projects.filter { $0.brandId == brandId }
             let replacement: ProjectEntry
 
-            if brandProjects.count == 1 {
-                // Only one project in brand, use the project's entry without brand
+            if entries.count == 1 {
+                // Only one displayable project in this brand, flatten to the project's
+                // entry without brand so navigation skips the redundant brand level
                 replacement = ProjectEntry(
                     projectId: first.projectId,
                     brandId: nil,

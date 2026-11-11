@@ -12,6 +12,27 @@ import AVFoundation
 
 import SnabbleAssetProviding
 
+extension AVCaptureVideoPreviewLayer {
+    /// Aligns the preview with the interface orientation of the given window scene.
+    /// Needed for resizable windows (Mac Designed for iPad, Stage Manager) where the
+    /// window aspect ratio changes without a device rotation.
+    @MainActor
+    func updateRotation(for orientation: UIInterfaceOrientation?) {
+        guard let connection, let orientation else { return }
+        let angle: CGFloat
+        switch orientation {
+        case .portrait: angle = 90
+        case .portraitUpsideDown: angle = 270
+        case .landscapeLeft: angle = 180
+        case .landscapeRight: angle = 0
+        default: return
+        }
+        if connection.isVideoRotationAngleSupported(angle), connection.videoRotationAngle != angle {
+            connection.videoRotationAngle = angle
+        }
+    }
+}
+
 class BarcodeScannerViewController: UIViewController {
     let detector: any BarcodeDetecting
     let logger = Logger(subsystem: "io.snabble.sdk.ScanAndGo", category: "BarcodeScannerViewController")
@@ -37,6 +58,13 @@ class BarcodeScannerViewController: UIViewController {
         }
     }
 
+    override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        guard let previewLayer = detector.previewLayer, previewLayer.superlayer === view.layer else { return }
+        previewLayer.frame = view.bounds
+        previewLayer.updateRotation(for: view.window?.windowScene?.interfaceOrientation)
+    }
+
     func addLayer(_ layer: CALayer, to viewController: UIViewController) {
         let bounds = viewController.view.bounds
         layer.frame = bounds
@@ -51,8 +79,6 @@ class BarcodeScannerViewController: UIViewController {
 }
 
 public struct BarcodeScannerView: UIViewControllerRepresentable {
-//    @SwiftUI.Environment(\.safeAreaInsets) var insets
-
     public let detector: any BarcodeDetecting
 
     public init(detector: any BarcodeDetecting = InternalBarcodeDetector(detectorArea: .rectangle)) {
@@ -172,6 +198,17 @@ public class ScannerContainerView: UIView {
         
         // Initial frame setzen (wird später aktualisiert)
         layer.frame = self.bounds
+        updatePreviewRotation()
+    }
+    
+    private func updatePreviewRotation() {
+        (previewLayer as? AVCaptureVideoPreviewLayer)?
+            .updateRotation(for: window?.windowScene?.interfaceOrientation)
+    }
+    
+    override public func didMoveToWindow() {
+        super.didMoveToWindow()
+        updatePreviewRotation()
     }
     
     func updatePreviewLayerFrame() {
@@ -198,6 +235,7 @@ public class ScannerContainerView: UIView {
         
         // Zusätzliche Sicherheit: Frame auch in layoutSubviews setzen
         updatePreviewLayerFrame()
+        updatePreviewRotation()
     }
 }
 

@@ -43,30 +43,32 @@ public final class PaymentMethodManager {
         self.delegate = delegate
         
         self.details = PaymentMethodDetails.read().filter { detail in
-            SnabbleCI.project.paymentMethods.available.contains { $0 == detail.rawMethod }
+            project.paymentMethods.available.contains { $0 == detail.rawMethod }
         }
         self.updateSelectionVisibility()
         self.setDefaultPaymentMethod()
         
         let nc = NotificationCenter.default
-        _ = nc.addObserver(forName: .snabblePaymentMethodAdded, object: nil, queue: OperationQueue.main) { notification in
+        _ = nc.addObserver(forName: .snabblePaymentMethodAdded, object: nil, queue: OperationQueue.main) { [weak self] notification in
             guard let detail = notification.userInfo?["detail"] as? PaymentMethodDetail else {
                 return
             }
-            Task { @MainActor [weak self] in
-                self?.details = PaymentMethodDetails.read().filter { detail in
-                    SnabbleCI.project.paymentMethods.available.contains { $0 == detail.rawMethod }
+            Task { @MainActor  in
+                guard let self else { return }
+                self.details = PaymentMethodDetails.read().filter { detail in
+                    self.project.paymentMethods.available.contains { $0 == detail.rawMethod }
                 }
-                self?.selectMethodIfValid(detail)
+                self.selectMethodIfValid(detail)
             }
         }
         
         _ = nc.addObserver(forName: .snabblePaymentMethodDeleted, object: nil, queue: OperationQueue.main) { [weak self] _ in
             Task { @MainActor [weak self] in
-                self?.details = PaymentMethodDetails.read().filter { detail in
-                    SnabbleCI.project.paymentMethods.available.contains { $0 == detail.rawMethod }
+                guard let self else { return }
+                self.details = PaymentMethodDetails.read().filter { detail in
+                    self.project.paymentMethods.available.contains { $0 == detail.rawMethod }
                 }
-                self?.selectMethodIfValid()
+                self.selectMethodIfValid()
             }
         }
     }

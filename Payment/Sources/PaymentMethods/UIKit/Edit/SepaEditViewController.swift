@@ -300,14 +300,14 @@ public final class SepaEditViewController: UIViewController {
         let project = SnabbleCI.project
 
         let origin = [ "origin": encryptedOrigin ]
-        project.request(.post, url, body: origin, timeout: 2) { request in
+        project.request(.post, url, body: origin, timeout: 2) { [weak self] request in
             guard let request = request else {
                 return
             }
 
             project.perform(request) { (_: Result<Empty, SnabbleError>, response) in
                 if response?.statusCode == 201 { // created
-                    Task { @MainActor [weak self] in
+                    Task { @MainActor in
                         self?.goBack()
                     }
                 }
