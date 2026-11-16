@@ -29,17 +29,12 @@ struct RootView: View {
             }
             .tag(AppRouter.AppTab.start)
 
-            NavigationStack(path: $router[.shops]) {
-                ShopListView()
-                    .navigationDestination(for: AppRouter.Destination.self) { destination in
-                        router.view(for: destination)
-                    }
-                    .navigationTitle("Shops")
-           }
-            .tabItem {
-                Label("Shops", systemImage: "storefront.fill")
-            }
-            .tag(AppRouter.AppTab.shops)
+            // ShopListView owns a NavigationSplitView, which must not be nested in a NavigationStack.
+            ShopListView()
+                .tabItem {
+                    Label("Shops", systemImage: "storefront.fill")
+                }
+                .tag(AppRouter.AppTab.shops)
 
             NavigationStack(path: $router[.shopping]) {
                 ShoppingLandingView()
