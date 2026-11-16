@@ -27,6 +27,8 @@ struct ShoppingScannerView: View {
     /// scanner uses the full space with the pull-over drawer. Follows window resizing.
     @State private var isDetailVisibleAlongside: Bool = false
 
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
+
     init(model: Shopper, configuration: ShopperConfiguration = .init()) {
         self.model = model
         self.configuration = configuration
@@ -40,9 +42,11 @@ struct ShoppingScannerView: View {
             // only recovers after an orientation round-trip forces a relayout. A manual
             // HStack sidesteps that bug entirely since it isn't a navigation container.
             if isDetailVisibleAlongside {
-                if #available(iOS 27.1, *) {
-                    // A split arrangement divides the space along the fold when a foldable
-                    // device is partially open, instead of a fixed scanner width.
+                // A split arrangement divides the space along the fold when a foldable device
+                // is partially open. It only splits in regular width, though: in compact width
+                // (e.g. iPhone in landscape) it shows the primary view only, so the HStack is
+                // used there.
+                if #available(iOS 27.1, *), horizontalSizeClass == .regular {
                     ArrangementView {
                         scannerContent
                     } secondary: {
