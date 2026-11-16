@@ -15,12 +15,14 @@ import SnabbleAssetProviding
 struct DashboardView: View {
     @Environment(AppRouter.self) private var router
     @Environment(AppState.self) private var appState
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     var body: some View {
         Group {
-            if #available(iOS 27.1, *) {
-                // Side by side when wider than tall (split at the fold on a partially
-                // open foldable), stacked otherwise.
+            // Side by side when wider than tall (split at the fold on a partially open
+            // foldable), stacked otherwise. The split arrangement shows only its primary
+            // view in compact width, so the scrolling stack is used there instead.
+            if #available(iOS 27.1, *), horizontalSizeClass == .regular {
                 ArrangementView {
                     shopCard
                         .padding()
