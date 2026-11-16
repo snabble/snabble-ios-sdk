@@ -58,6 +58,12 @@ struct ShoppingScannerView: View {
                 scannerContent
             }
         }
+        // Reset only when switching between drawer and side-by-side layout. Resetting in
+        // onAppear would also fire when popping back from a pushed destination, where the
+        // still-alive ScannerCartView has no reason to re-measure and minHeight stays 0.
+        .onChange(of: isDetailVisibleAlongside) {
+            minHeight = 0
+        }
         .hud(isPresented: $showHud) {
             ScanMessageView(message: scanMessage, isPresented: $showHud)
         }
@@ -137,9 +143,6 @@ struct ShoppingScannerView: View {
             if model.processing {
                 ScannerProcessingView()
             }
-        }
-        .onAppear {
-            minHeight = 0
         }
     }
 }

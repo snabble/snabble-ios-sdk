@@ -152,6 +152,7 @@ public final class PaymentMethodManager {
 
     private func setDefaultPaymentMethod() {
         self.selectedPayment = project.preferredPayment
+        delegate?.paymentMethodManager(didSelectPayment: self.selectedPayment)
     }
     
     public func setSelectedPaymentItem(_ item: PaymentMethodItem) {
