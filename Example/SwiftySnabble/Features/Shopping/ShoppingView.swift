@@ -70,8 +70,11 @@ struct ShoppingView: View {
     }
 
     var body: some View {
-        ShopperView(model: shopper, configuration: .init(drawerOffset: 20))
-            .navigationBarHidden(false)
+        // Presented as a full screen cover, so it needs its own NavigationStack for
+        // ShopperView's toolbar items and its payment navigationDestination.
+        NavigationStack {
+            ShopperView(model: shopper, configuration: .init(drawerOffset: 20))
+        }
     }
 }
 

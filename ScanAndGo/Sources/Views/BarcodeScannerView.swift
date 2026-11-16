@@ -46,7 +46,7 @@ class BarcodeScannerViewController: UIViewController {
     }
     
     override public func loadView() {
-        self.view = UIView(frame: UIScreen.main.bounds)
+        self.view = UIView(frame: .zero)
     }
     
     override func viewDidLoad() {

@@ -21,14 +21,11 @@ struct ShoppingScannerView: View {
     @State private var minHeight: CGFloat = 0
     @State private var detailMinHeight: CGFloat = 0
 
-    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
-
-    /// Regular width also matches large iPhones (e.g. Pro Max) in landscape - there, as on iPad
-    /// or an unfolded foldable, the cart is shown as its own detail pane next to the scanner
-    /// instead of the pull-over drawer used in compact width.
-    private var isDetailVisibleAlongside: Bool {
-        horizontalSizeClass == .regular
-    }
+    /// Driven by the aspect ratio of the available space, not by size class or device
+    /// orientation: when it is wider than tall (landscape iPhone, iPad, an unfolded foldable
+    /// held sideways), the cart is shown as its own pane next to the scanner. Otherwise the
+    /// scanner uses the full space with the pull-over drawer. Follows window resizing.
+    @State private var isDetailVisibleAlongside: Bool = false
 
     init(model: Shopper, configuration: ShopperConfiguration = .init()) {
         self.model = model
@@ -43,20 +40,31 @@ struct ShoppingScannerView: View {
             // only recovers after an orientation round-trip forces a relayout. A manual
             // HStack sidesteps that bug entirely since it isn't a navigation container.
             if isDetailVisibleAlongside {
-                HStack(spacing: 0) {
-                    scannerContent
-                        .frame(minWidth: 320, maxWidth: 400)
+                if #available(iOS 27.1, *) {
+                    // A split arrangement divides the space along the fold when a foldable
+                    // device is partially open, instead of a fixed scanner width.
+                    ArrangementView {
+                        scannerContent
+                    } secondary: {
+                        detailCartContent
+                    }
+                    .arrangementViewStyle(.split.axes(.horizontal))
+                } else {
+                    HStack(spacing: 0) {
+                        scannerContent
+                            .frame(minWidth: 320, maxWidth: 400)
 
-                    GeometryReader { reader in
-                        CartView(model: model, minHeight: $detailMinHeight)
-                            .onAppear {
-                                detailMinHeight = reader.size.height
-                            }
+                        detailCartContent
                     }
                 }
             } else {
                 scannerContent
             }
+        }
+        .onGeometryChange(for: Bool.self) { proxy in
+            proxy.size.width > proxy.size.height
+        } action: { isWide in
+            isDetailVisibleAlongside = isWide
         }
         // Reset only when switching between drawer and side-by-side layout. Resetting in
         // onAppear would also fire when popping back from a pushed destination, where the
@@ -97,6 +105,15 @@ struct ShoppingScannerView: View {
             try? await Task.sleep(for: .seconds(3))
             guard !Task.isCancelled else { return }
             showHud = false
+        }
+    }
+
+    private var detailCartContent: some View {
+        GeometryReader { reader in
+            CartView(model: model, minHeight: $detailMinHeight)
+                .onAppear {
+                    detailMinHeight = reader.size.height
+                }
         }
     }
 
