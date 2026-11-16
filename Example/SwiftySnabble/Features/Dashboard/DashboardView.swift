@@ -17,22 +17,46 @@ struct DashboardView: View {
     @Environment(AppState.self) private var appState
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 24) {
-                // Hero Section - Eingecheckter Shop
-                if let shop = appState.checkedInShop {
-                    CheckedInShopCard(shop: shop)
-                } else {
-                    SelectShopCard()
+        Group {
+            if #available(iOS 27.1, *) {
+                // Side by side when wider than tall (split at the fold on a partially
+                // open foldable), stacked otherwise.
+                ArrangementView {
+                    shopCard
+                        .padding()
+                        .frame(maxHeight: .infinity, alignment: .top)
+                        // In a vertical split, keep the card at its natural height and
+                        // leave the remaining space to the actions.
+                        .splitArrangementFixedLayoutSize(horizontal: false, vertical: true)
+                } secondary: {
+                    ScrollView {
+                        QuickActionsGrid()
+                            .padding()
+                    }
                 }
-
-                // Quick Actions Grid
-                QuickActionsGrid()
+                .arrangementViewStyle(.split)
+            } else {
+                ScrollView {
+                    VStack(spacing: 24) {
+                        shopCard
+                        QuickActionsGrid()
+                    }
+                    .padding()
+                }
             }
-            .padding()
         }
         .navigationTitle("Snabble")
         .background(Color(.systemGroupedBackground))
+    }
+
+    // Hero Section - Eingecheckter Shop
+    @ViewBuilder
+    private var shopCard: some View {
+        if let shop = appState.checkedInShop {
+            CheckedInShopCard(shop: shop)
+        } else {
+            SelectShopCard()
+        }
     }
 }
 
