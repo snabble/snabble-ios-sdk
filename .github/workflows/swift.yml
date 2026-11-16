@@ -16,5 +16,8 @@ jobs:
 
     steps:
       - uses: actions/checkout@v5
+      - uses: maxim-lobanov/setup-xcode@v1
+        with:
+          xcode-version: latest-stable
       - name: Test
         run: xcodebuild -workspace .swiftpm/xcode/package.xcworkspace -scheme Snabble-Package -destination 'platform=iOS Simulator,name=iPhone 17 Pro,OS=latest' test
