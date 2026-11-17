@@ -49,7 +49,7 @@ ShopperView(
     model: shopper,
     configuration: .init(
         drawerOffset: 100,       // bottom offset for the cart drawer (default: 0)
-        zoomControlOffset: 100,  // bottom offset for the zoom control (default: 100)
+        zoomControlOffset: 100,  // bottom offset for the zoom control (default: 40)
         showDismiss: false       // show/hide the built-in dismiss button (default: true)
     )
 )
@@ -104,7 +104,8 @@ struct ShoppingView: View {
 ### 2. ShopperView
 - Main container view
 - Camera scanner
-- Cart drawer (Pulley-style)
+- Cart drawer (Pulley-style) when the available space is taller than wide
+- Cart beside the scanner when the space is wider than tall (iPad, Stage Manager, resizable windows, iPhone in landscape); on iOS 27.1+ in regular width a split `ArrangementView` divides scanner and cart at the fold of a partially open iPhone Duo
 - Search interface
 - Checkout flow
 

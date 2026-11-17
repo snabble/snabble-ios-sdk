@@ -61,8 +61,8 @@ import SnabbleAssetProviding // Theming and branding
 ### Minimum Requirements
 
 - iOS 17.0+
-- Swift 6.0+
-- Xcode 16.0+
+- Swift 6.3+
+- Xcode 27.1+ (iOS 27.1 SDK)
 
 ---
 
