@@ -179,8 +179,8 @@ public final class PayoneCreditCardEditViewController: UIViewController {
     // get the tokenization data and show the data entry form
     private func tokenizeWithPayone(_ project: Project, _ descriptor: PaymentMethodDescriptor) {
         let link = descriptor.links?.tokenization
-        self.getPayoneTokenization(for: project, link) { result in
-            Task { @MainActor [weak self] in
+        self.getPayoneTokenization(for: project, link) { [weak self] result in
+            Task { @MainActor  in
                 self?.activityIndicator?.stopAnimating()
                 switch result {
                 case .failure:
@@ -378,8 +378,8 @@ public final class PayoneCreditCardEditViewController: UIViewController {
             return
         }
 
-        startPayonePreauthorization(for: project, payoneTokenization?.links.preAuth, response) { result in
-            Task { @MainActor [weak self] in
+        startPayonePreauthorization(for: project, payoneTokenization?.links.preAuth, response) { [weak self] result in
+            Task { @MainActor in
                 switch result {
                 case .failure(let error):
                     print(error)

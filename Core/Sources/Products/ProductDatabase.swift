@@ -279,8 +279,7 @@ final class ProductDatabase: ProductStoring, @unchecked Sendable {
                 }
             }
 
-            Task { @MainActor [weak self] in
-                guard let self else { return }
+            Task { @MainActor in
                 self.updateInProgress = false
                 self.availability = dataAvailable
                 completion(dataAvailable)

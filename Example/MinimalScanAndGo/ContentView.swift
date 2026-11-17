@@ -17,10 +17,12 @@ struct ContentView: View {
     @State private var showShopper = false
     @State private var navigateToShop = false
     @State private var receiptsModel = PurchasesViewModel()
+    @State private var shopper: Shopper
 
     init(shop: Shop) {
         self.shop = shop
         _shopsViewModel = State(initialValue: ShopsViewModel(shops: [shop]))
+        _shopper = State(initialValue: Shopper(shop: shop))
     }
 
     var body: some View {
@@ -36,9 +38,9 @@ struct ContentView: View {
             .navigationDestination(isPresented: $navigateToShop) {
                 ShopView(shop: shop, viewModel: shopsViewModel)
             }
-        }
-        .fullScreenCover(isPresented: $showShopper) {
-            ShoppingScreen(shop: shop)
+            .navigationDestination(isPresented: $showShopper) {
+                ShopperView(model: shopper, configuration: .init(showDismiss: false))
+            }
         }
         .task {
             receiptsModel.reset()
@@ -51,7 +53,11 @@ struct ContentView: View {
     @ViewBuilder
     private var shopSection: some View {
         Section("Shopping") {
-            ShopCard(shop: shop, onShopTapped: { navigateToShop = true }, onStartShopping: { showShopper = true })
+            ShopCard(
+                shop: shop,
+                onShopTapped: { navigateToShop = true },
+                onStartShopping: { showShopper = true }
+            )
         }
     }
 
@@ -76,6 +82,9 @@ struct ContentView: View {
                     }
                 }
             }
+        }
+        .onAppear {
+            receiptsModel.load()
         }
     }
 }
@@ -107,6 +116,7 @@ private struct ShopCard: View {
                         .font(.caption)
                         .foregroundStyle(.tertiary)
                 }
+                .contentShape(Rectangle())
             }
             .buttonStyle(.plain)
 
@@ -123,19 +133,5 @@ private struct ShopCard: View {
         .background(Color(.systemBackground))
         .clipShape(RoundedRectangle(cornerRadius: 14))
         .shadow(color: .black.opacity(0.06), radius: 10, x: 0, y: 2)
-    }
-}
-
-private struct ShoppingScreen: View {
-    @State private var shopper: Shopper
-
-    init(shop: Shop) {
-        _shopper = State(initialValue: Shopper(shop: shop))
-    }
-
-    var body: some View {
-        NavigationStack {
-            ShopperView(model: shopper, configuration: .init(drawerOffset: 20))
-        }
     }
 }

@@ -17,12 +17,25 @@ public struct ShopperConfiguration {
     
     public init(
         drawerOffset: CGFloat = 0,
-        zoomControlOffset: CGFloat = 100,
+        zoomControlOffset: CGFloat = 40,
         showDismiss: Bool = true,
     ) {
         self.drawerOffset = drawerOffset
         self.zoomControlOffset = zoomControlOffset
         self.showDismiss = showDismiss
+    }
+}
+
+extension ToolbarContent {
+    /// Applies `.axisBehavior(.horizontalOnly)` where available.
+    /// `ViewModifier` can't be used here because `axisBehavior` is defined on `ToolbarContent`, not `View`.
+    @ToolbarContentBuilder
+    public func horizontalOnlyAxisBehavior() -> some ToolbarContent {
+        if #available(iOS 27.1, *) {
+            self.axisBehavior(.horizontalOnly)
+        } else {
+            self
+        }
     }
 }
 
@@ -48,15 +61,10 @@ public struct ShopperView: View {
     }
     
     @ViewBuilder var content: some View {
-        @Bindable var model = model
-        
         ShoppingScannerView(model: model, configuration: configuration)
             .animation(.easeInOut, value: model.scannedItem)
             .navigationDestination(isPresented: $isNavigating) {
-                if let item = model.navigationItem {
-                    ContainerView(viewController: item.viewController)
-                        .navigationTitle(item.viewController.navigationItem.title ?? "")
-                }
+                model.navigationDestinationView()
             }
             .onChange(of: model.navigationItem, initial: true) { _, item in
                 // Sync model → local state. Keeping isNavigating as local @State means
@@ -136,7 +144,7 @@ public struct ShopperView: View {
     }
     
     public var body: some View {
-
+        
         content
             .onAppear {
                 model.scanningPaused = expanded
@@ -161,6 +169,7 @@ public struct ShopperView: View {
                             Text(keyed: "Snabble.done")
                         })
                     }
+
                     ToolbarItemGroup(placement: .topBarTrailing) {
                         Button(action: {
                             model.flashlight.toggle()
@@ -175,14 +184,15 @@ public struct ShopperView: View {
                         })
                     }
                 } else {
-                    ToolbarItemGroup(placement: .topBarLeading) {
+                    ToolbarItem(placement: .topBarLeading) {
                         Button(action: {
                             model.flashlight.toggle()
                         }, label: {
                             Image(systemName: model.flashlight == true ? "flashlight.on.fill" : "flashlight.off.fill")
                         })
                     }
-                    ToolbarItemGroup(placement: .topBarTrailing) {
+                    
+                    ToolbarItem(placement: .topBarTrailing) {
                         Button(action: {
                             model.stopScanner()
                             showSearch.toggle()
@@ -190,7 +200,6 @@ public struct ShopperView: View {
                             Image(systemName: "magnifyingglass")
                         })
                     }
-                    
                 }
             }
     }

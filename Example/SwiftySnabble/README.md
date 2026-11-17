@@ -390,9 +390,9 @@ Using Xcode String Catalogs (`.xcstrings`):
 
 ### Prerequisites
 
-- Xcode 16.4+
+- Xcode 27.1+
 - iOS 17.0+
-- Swift 6.2
+- Swift 6.3+
 - Snabble API Credentials
 
 ### Build & Run

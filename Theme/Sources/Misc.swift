@@ -146,27 +146,6 @@ extension UIImage {
     }
 }
 
-extension UIApplication {
-    class func topViewController(_ base: UIViewController? = UIApplication.shared.sceneKeyWindow?.rootViewController) -> UIViewController? {
-        if let nav = base as? UINavigationController {
-            return topViewController(nav.visibleViewController)
-        }
-        if let tab = base as? UITabBarController {
-            if let selected = tab.selectedViewController {
-                return topViewController(selected)
-            }
-        }
-        if let presented = base?.presentedViewController {
-            return topViewController(presented)
-        }
-        return base
-    }
-
-    class func topNavigationController() -> UINavigationController? {
-        return topViewController()?.navigationController
-    }
-}
-
 extension UINavigationController {
     /// pop to the top-most instance of the given UIViewController, or one where it is a child viewController
     /// If none found, pop one level

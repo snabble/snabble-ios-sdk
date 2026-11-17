@@ -315,8 +315,8 @@ public struct UserInputView: View {
                 }
             }
         }
-        .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(Asset.localizedString(forKey: kind.title))
+        .navigationBarTitleDisplayMode(.inline)
         .padding()
     }
     

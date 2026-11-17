@@ -1,16 +1,16 @@
 # Snabble iOS SDK
 
 ![License](https://img.shields.io/github/license/mashape/apistatus.svg)
-![Swift 6.2](https://img.shields.io/badge/Swift-6.2-orange.svg)
+![Swift 6.3](https://img.shields.io/badge/Swift-6.3-orange.svg)
 [![Contact](https://img.shields.io/badge/Contact-%40snabble__io-blue)](https://twitter.com/snabble_io)
 
 Self-scanning and checkout SDK for iOS, built with Swift 6 and SwiftUI.
 
 ## Requirements
 
-- Xcode 17.0 or later
+- Xcode 27.1 or later (the iOS 27.1 SDK is required to build)
 - iOS 17.0 or later
-- Swift 6.2
+- Swift 6.3 or later
 
 ## Installation
 
@@ -179,6 +179,19 @@ The workspace includes the SDK package and two example apps. See [Example/README
 **[SwiftySnabble](Example/SwiftySnabble/README.md)** — a complete, production-oriented SwiftUI app with multi-tab navigation, router pattern, and full feature coverage.
 
 Both apps use demo credentials against the staging environment. To integrate the SDK into your own app you need a production application identifier and secret — [contact us](mailto:info@snabble.io) for access.
+
+## Running Tests
+
+The SDK is iOS-only, so `swift test` (which builds for macOS) does not work. Run the tests on an iOS simulator instead:
+
+```bash
+xcodebuild test \
+  -workspace .swiftpm/xcode/package.xcworkspace \
+  -scheme Snabble-Package \
+  -destination 'platform=iOS Simulator,name=iPhone 18 Pro'
+```
+
+Use `-only-testing:<TestTarget>` (e.g. `SnabbleCoreTests`) to run a single test target.
 
 ## Documentation
 

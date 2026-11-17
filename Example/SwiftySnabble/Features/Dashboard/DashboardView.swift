@@ -15,24 +15,50 @@ import SnabbleAssetProviding
 struct DashboardView: View {
     @Environment(AppRouter.self) private var router
     @Environment(AppState.self) private var appState
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     var body: some View {
-        ScrollView {
-            VStack(spacing: 24) {
-                // Hero Section - Eingecheckter Shop
-                if let shop = appState.checkedInShop {
-                    CheckedInShopCard(shop: shop)
-                } else {
-                    SelectShopCard()
+        Group {
+            // Side by side when wider than tall (split at the fold on a partially open
+            // foldable), stacked otherwise. The split arrangement shows only its primary
+            // view in compact width, so the scrolling stack is used there instead.
+            if #available(iOS 27.1, *), horizontalSizeClass == .regular {
+                ArrangementView {
+                    shopCard
+                        .padding()
+                        .frame(maxHeight: .infinity, alignment: .top)
+                        // In a vertical split, keep the card at its natural height and
+                        // leave the remaining space to the actions.
+                        .splitArrangementFixedLayoutSize(horizontal: false, vertical: true)
+                } secondary: {
+                    ScrollView {
+                        QuickActionsGrid()
+                            .padding()
+                    }
                 }
-
-                // Quick Actions Grid
-                QuickActionsGrid()
+                .arrangementViewStyle(.split)
+            } else {
+                ScrollView {
+                    VStack(spacing: 24) {
+                        shopCard
+                        QuickActionsGrid()
+                    }
+                    .padding()
+                }
             }
-            .padding()
         }
         .navigationTitle("Snabble")
         .background(Color(.systemGroupedBackground))
+    }
+
+    // Hero Section - Eingecheckter Shop
+    @ViewBuilder
+    private var shopCard: some View {
+        if let shop = appState.checkedInShop {
+            CheckedInShopCard(shop: shop)
+        } else {
+            SelectShopCard()
+        }
     }
 }
 

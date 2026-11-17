@@ -51,7 +51,7 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/snabble/snabble-http.git",
       "state" : {
-        "revision" : "3bccefc52dff76f680ae64086a780fb327b87a85",
+        "revision" : "537b7ced030f3ee5d59ea0005d411fe6d8de52c9",
         "version" : "1.0.0"
       }
     },

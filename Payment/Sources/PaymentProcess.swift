@@ -289,8 +289,8 @@ extension PaymentProcess {
         let project = shop.project ?? .none
         let id = self.cart.uuid
         
-        self.signedCheckoutInfo.createCheckoutProcess(project, id: id, paymentMethod: method, timeout: Self.createTimeout) { result in
-            Task { @MainActor [weak self] in
+        self.signedCheckoutInfo.createCheckoutProcess(project, id: id, paymentMethod: method, timeout: Self.createTimeout) { [weak self] result in
+            Task { @MainActor in
                 guard let self else { return }
                 
                 self.handleCheckoutResult(result, method: method, completion: completion)

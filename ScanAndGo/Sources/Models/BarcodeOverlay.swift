@@ -60,8 +60,11 @@ public final class BarcodeOverlay: UIView {
         if Snabble.debugMode && debugReticle {
             reticle.layer.borderColor = UIColor.systemGreen().cgColor
             reticle.layer.cornerRadius = 5
-            reticle.layer.borderWidth = 1 / UIScreen.main.scale
+            reticle.layer.borderWidth = 1 / traitCollection.displayScale
             reticle.layer.masksToBounds = true
+            registerForTraitChanges([UITraitDisplayScale.self]) { (self: Self, _: UITraitCollection) in
+                self.reticle.layer.borderWidth = 1 / self.traitCollection.displayScale
+            }
         }
         addSubview(reticle)
 

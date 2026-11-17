@@ -60,10 +60,12 @@ open class SepaAcceptViewController: UIHostingController<SepaAcceptView> {
 extension SepaAcceptViewController: SepaAcceptViewControllerDelegate {
         
     nonisolated func showErrorMessage(title: String?, message: String?) {
-        Task { @MainActor in
+        Task { @MainActor [weak self]  in
+            guard let self = self else { return }
+            
             let alert = UIAlertController(title: title, message: message, preferredStyle: .alert)
-            alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .default) { [weak self] _ in
-                self?.dismiss()
+            alert.addAction(UIAlertAction(title: Asset.localizedString(forKey: "ok"), style: .default) { _ in
+                self.dismiss()
             })
             self.present(alert, animated: true)
         }

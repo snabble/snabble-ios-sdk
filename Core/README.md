@@ -233,7 +233,11 @@ Core previously had circular dependencies with User and Components modules. Thes
 
 ```bash
 # Run Core tests
-xcodebuild -scheme SnabbleCoreTests test
+xcodebuild test \
+  -workspace .swiftpm/xcode/package.xcworkspace \
+  -scheme Snabble-Package \
+  -destination 'platform=iOS Simulator,name=iPhone 18 Pro' \
+  -only-testing:SnabbleCoreTests
 ```
 
 Test coverage includes:

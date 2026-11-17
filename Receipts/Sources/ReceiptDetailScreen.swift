@@ -64,6 +64,7 @@ public struct ReceiptDetailScreen: View {
             }
         }
         .navigationTitle(order?.dateString ?? "")
+        .navigationBarTitleDisplayMode(.inline)
         .toolbar {
             if receiptURL != nil {
                 ToolbarItem(placement: .navigationBarTrailing) {

@@ -92,8 +92,8 @@ final class PaymentMethodAddCell: UITableViewCell {
         let modelProjectId = viewModel.projectId
         
         projectId = modelProjectId
-        SnabbleCI.getAsset(.storeIcon, projectId: modelProjectId) { img in
-            Task { @MainActor [weak self] in
+        SnabbleCI.getAsset(.storeIcon, projectId: modelProjectId) { [weak self] img in
+            Task { @MainActor in
                 if self?.projectId == modelProjectId {
                     self?.icon?.image = img
                 }

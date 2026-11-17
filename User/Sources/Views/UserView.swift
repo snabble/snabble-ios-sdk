@@ -265,7 +265,7 @@ public struct UserView: View {
             Spacer()
         }
         .padding()
-        .navigationBarTitleDisplayMode(.inline)
         .navigationTitle(Asset.localizedString(forKey: "Snabble.UserView.title"))
+        .navigationBarTitleDisplayMode(.inline)
     }
 }

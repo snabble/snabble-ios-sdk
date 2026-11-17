@@ -7,108 +7,79 @@
 
 import SwiftUI
 
-import SnabbleCore
-
 import SnabbleAssetProviding
-import SnabbleComponents
-import CameraZoomWheel
-
-public struct ScannerOverlay: View {
-    @Binding public var offset: CGFloat
-    
-    @State var overlay: SwiftUI.Image = Asset.image(named: "SnabbleSDK/barcode-overlay")!
-    
-    public init(offset: Binding<CGFloat>) {
-        self._offset = offset
-    }
-    
-    public var body: some View {
-        VStack {
-            Spacer()
-            HStack {
-                Spacer()
-                overlay
-                Spacer()
-            }
-            .padding(.bottom, offset)
-            Spacer()
-        }
-    }
-}
 
 struct ShoppingScannerView: View {
+
     let model: Shopper
-    
+
     let configuration: ShopperConfiguration
-    
+
     @State private var topMargin: CGFloat = ScannerCartView.TopMargin
     @State private var showHud: Bool = false
-    @State private var zoomLevel: CGFloat = 1
-    @State private var zoomSteps: [ZoomStep] = ZoomStep.defaultSteps
-    @State private var position: CGFloat = 0
     @State private var scanMessage: ScanMessage?
-    @State private var isDragging: Bool = false
     @State private var minHeight: CGFloat = 0
+    @State private var detailMinHeight: CGFloat = 0
+
+    /// Driven by the aspect ratio of the available space, not by size class or device
+    /// orientation: when it is wider than tall (landscape iPhone, iPad, an unfolded foldable
+    /// held sideways), the cart is shown as its own pane next to the scanner. Otherwise the
+    /// scanner uses the full space with the pull-over drawer. Follows window resizing.
+    @State private var isDetailVisibleAlongside: Bool = false
+
+    @Environment(\.horizontalSizeClass) private var horizontalSizeClass
 
     init(model: Shopper, configuration: ShopperConfiguration = .init()) {
         self.model = model
         self.configuration = configuration
     }
-    
+
     var body: some View {
-        @Bindable var model = self.model
-        
-        ZStack(alignment: .top) {
-            BarcodeScannerView(detector: model.barcodeManager.barcodeDetector)
-            ScannerOverlay(offset: $minHeight)
-                .background {
-                    if model.barcodeManager.barcodeDetector.previewLayer == nil {
-                        LinearGradient(
-                            colors: [Color.projectPrimary(), .white],
-                            startPoint: .top,
-                            endPoint: .bottom
-                        )
-                        .frame(maxWidth: .infinity, maxHeight: .infinity)
+        Group {
+            // NavigationSplitView is intentionally avoided here: nesting it inside the
+            // outer NavigationStack (ShopperView is pushed as a destination) leaves the
+            // sidebar column unrendered on the very first compact-width layout pass, and
+            // only recovers after an orientation round-trip forces a relayout. A manual
+            // HStack sidesteps that bug entirely since it isn't a navigation container.
+            if isDetailVisibleAlongside {
+                // A split arrangement divides the space along the fold when a foldable device
+                // is partially open. It only splits in regular width, though: in compact width
+                // (e.g. iPhone in landscape) it shows the primary view only, so the HStack is
+                // used there.
+                if #available(iOS 27.1, *), horizontalSizeClass == .regular {
+                    ArrangementView {
+                        scannerContent
+                    } secondary: {
+                        detailCartContent
+                    }
+                    .arrangementViewStyle(.split.axes(.horizontal))
+                } else {
+                    HStack(spacing: 0) {
+                        scannerContent
+                            .frame(minWidth: 320, maxWidth: 400)
+
+                        detailCartContent
                     }
                 }
-            ZoomControl(zoomLevel: $zoomLevel, steps: zoomSteps)
-                .offset(x: 0, y: position - configuration.zoomControlOffset)
-                .opacity(model.scanningPaused || position == 0 ? 0 : 1)
-            
-            PullOverView(minHeight: $minHeight, expanded: $model.scanningPaused, paddingTop: $topMargin, position: $position, isDragging: $isDragging) {
-                ScannerCartView(model: model, minHeight: $minHeight, offset: PullView.contentTopPadding + configuration.drawerOffset)
-                    .disabled(isDragging)
-            }
-            .opacity(model.barcodeManager.barcodeDetector.state != .idle ? 1 : 0)
-            .allowsHitTesting(model.barcodeManager.barcodeDetector.state != .idle)
-            if model.processing || position == 0 {
-                ScannerProcessingView()
+            } else {
+                scannerContent
             }
         }
-        .edgesIgnoringSafeArea(.bottom)
+        .onGeometryChange(for: Bool.self) { proxy in
+            proxy.size.width > proxy.size.height
+        } action: { isWide in
+            isDetailVisibleAlongside = isWide
+        }
+        // Reset only when switching between drawer and side-by-side layout. Resetting in
+        // onAppear would also fire when popping back from a pushed destination, where the
+        // still-alive ScannerCartView has no reason to re-measure and minHeight stays 0.
+        .onChange(of: isDetailVisibleAlongside) {
+            minHeight = 0
+        }
         .hud(isPresented: $showHud) {
             ScanMessageView(message: scanMessage, isPresented: $showHud)
         }
-        .task {
-            if let zoomFactor = model.barcodeManager.barcodeDetector.zoomFactor {
-                zoomLevel = zoomFactor
-            }
-            if let steps = model.barcodeManager.barcodeDetector.zoomSteps {
-                zoomSteps = steps
-            }
-        }
         // Syncs detector → view: fires when camera becomes available and setRecommendedZoomFactor() runs
-        .onChange(of: model.barcodeManager.barcodeDetector.zoomFactor) { _, newValue in
-            guard let newValue, newValue != zoomLevel else { return }
-            zoomLevel = newValue
-            if let steps = model.barcodeManager.barcodeDetector.zoomSteps {
-                zoomSteps = steps
-            }
-        }
-        .onChange(of: zoomLevel) { _, newValue in
-            guard model.barcodeManager.barcodeDetector.zoomFactor != newValue else { return }
-            model.barcodeManager.barcodeDetector.zoomFactor = newValue
-        }
         .onChange(of: showHud) {
             if !showHud {
                 model.scanMessage = nil
@@ -138,6 +109,61 @@ struct ShoppingScannerView: View {
             try? await Task.sleep(for: .seconds(3))
             guard !Task.isCancelled else { return }
             showHud = false
+        }
+    }
+
+    private var detailCartContent: some View {
+        GeometryReader { reader in
+            CartView(model: model, minHeight: $detailMinHeight)
+                .onAppear {
+                    detailMinHeight = reader.size.height
+                }
+        }
+    }
+
+    @ViewBuilder
+    private var scannerContent: some View {
+        ZStack(alignment: .top) {
+            // Only the camera feed and its gradient fallback bleed into the bottom safe
+            // area (edge-to-edge look). The drawer below measures its drag positions
+            // against this ZStack's safe-area-respecting height, so its checkout bar stays
+            // above a host-provided bottom bar (e.g. a TabView's tab bar) no matter how few
+            // items (or none) are in the cart - only its material background and any rows
+            // beyond that are allowed to visually overflow into the ignored area below.
+            Group {
+                BarcodeScannerView(detector: model.barcodeManager.barcodeDetector)
+
+                ScannerOverlay(offset: $minHeight)
+                    .background {
+                        if model.barcodeManager.barcodeDetector.previewLayer == nil {
+                            LinearGradient(
+                                colors: [Color.projectPrimary(), .white],
+                                startPoint: .top,
+                                endPoint: .bottom
+                            )
+                            .frame(maxWidth: .infinity, maxHeight: .infinity)
+                        }
+                    }
+            }
+            .ignoresSafeArea(.container, edges: .bottom)
+
+            // VerticalCartView's PullOverView contains a GeometryReader, which - like a
+            // Spacer - has no intrinsic height. Wrapping it in a Spacer-VStack (as done for
+            // ZoomControlView below) would make the two flexible views split the available
+            // space instead of the drawer getting the full height it measures its drag
+            // positions against, so it's placed as a direct ZStack child instead.
+            if !isDetailVisibleAlongside {
+                VerticalCartView(model: model, configuration: configuration, minHeight: $minHeight, topMargin: $topMargin)
+            } else {
+                VStack {
+                    Spacer()
+                    ZoomControlView(model: model)
+                        .opacity(model.scanningPaused ? 0 : 1)
+                }
+            }
+            if model.processing {
+                ScannerProcessingView()
+            }
         }
     }
 }

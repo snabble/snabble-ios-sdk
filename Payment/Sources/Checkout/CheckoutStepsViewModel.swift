@@ -60,12 +60,12 @@ final class CheckoutStepsViewModel {
             guard let self, let project = self.shop.project else { return }
             self.checkoutProcess?.update(
                 project,
-                taskCreated: { [weak self] in
-                    self?.processSessionTask = $0
+                taskCreated: { task in
+                    self.processSessionTask = task
                 },
                 completion: { result in
-                    Task { @MainActor [weak self] in
-                        self?.update(result)
+                    Task { @MainActor in
+                        self.update(result)
                     }
                 }
             )

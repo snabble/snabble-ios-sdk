@@ -12,26 +12,52 @@ import SnabbleCore
 import SnabbleComponents
 import SnabbleShops
 
+/// Shows the shops as a split view: the list in the sidebar and the selected shop as detail.
+/// In compact width the split view collapses into a navigation stack.
 struct ShopListView: View {
+    @Environment(AppRouter.self) private var router
     @Environment(AppState.self) private var appState
-    
+
     @State private var useSDKFeature: Bool = true
-    
+    @State private var selection: Identifier<Shop>?
+    @State private var shopsViewModel = ShopsViewModel(shops: [])
+
     var body: some View {
-        Group {
+        NavigationSplitView {
+            Group {
+                if useSDKFeature {
+                    // Showing the SDK's build-in List of shops
+                    ShopsListView(viewModel: shopsViewModel, selection: $selection)
+                } else {
+                    // Showing a custom searchable list
+                    CustomShopListView(selection: $selection)
+                }
+            }
+            .navigationTitle("Shops")
+            .toolbar {
+                ToolbarItem {
+                    Toggle(isOn: $useSDKFeature) {
+                        Text("Use SDK")
+                    }
+                }
+            }
+        } detail: {
             if useSDKFeature {
-                // Showing the SDK's build-in List of shops
-                ShopsView(shops: appState.shops)
+                ShopsDetailView(viewModel: shopsViewModel, selection: selection)
+            } else if let shop = appState.shops.first(where: { $0.id == selection }) {
+                ShopDetailView(shop: shop)
             } else {
-                // Showing a custom searchable list
-                CustomShopListView()
+                ContentUnavailableView("Select a Shop", systemImage: "storefront")
             }
         }
-        .toolbar {
-            ToolbarItem {
-                Toggle(isOn: $useSDKFeature) {
-                    Text("Use SDK")
-                }
+        .task(id: appState.shops.map(\.id)) {
+            // A fresh view model per run: its actionStream finishes once the iterating
+            // task is cancelled (e.g. when switching tabs), so it can't be listened to again.
+            let viewModel = ShopsViewModel(shops: appState.shops)
+            shopsViewModel = viewModel
+            for await shop in viewModel.actionStream {
+                guard let shop = appState.shops.first(where: { $0.id == shop.id }) else { continue }
+                router.showFullScreen(.shopping(shop))
             }
         }
     }
@@ -39,8 +65,8 @@ struct ShopListView: View {
 
 
 struct CustomShopListView: View {
-    @Environment(AppRouter.self) private var router
     @Environment(AppState.self) private var appState
+    @Binding var selection: Identifier<Shop>?
 
     @State private var searchText = ""
 
@@ -55,23 +81,21 @@ struct CustomShopListView: View {
     }
     
     var body: some View {
-        List {
+        List(selection: $selection) {
             if let checkedInShop = appState.checkedInShop {
                 Section("Checked In") {
                     ShopRow(shop: checkedInShop, isCheckedIn: true)
+                        .tag(checkedInShop.id)
                 }
             }
-            
+
             Section("All Shops") {
                 ForEach(filteredShops) { shop in
                     ShopRow(
                         shop: shop,
                         isCheckedIn: shop.id == appState.checkedInShop?.id
                     )
-                    .contentShape(Rectangle())
-                    .onTapGesture {
-                        router.navigate(to: .shopDetail(shop), for: .shops)
-                    }
+                    .tag(shop.id)
                 }
             }
         }
@@ -126,9 +150,7 @@ struct ShopRow: View {
 }
 
 #Preview {
-    NavigationStack {
-        ShopListView()
-            .environment(AppRouter())
-            .environment(AppState())
-    }
+    ShopListView()
+        .environment(AppRouter())
+        .environment(AppState())
 }

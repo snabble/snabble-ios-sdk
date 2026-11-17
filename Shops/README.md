@@ -17,8 +17,17 @@ The module is used by `SnabbleCart` (to identify the current shop context) and c
 ```swift
 import SnabbleShops
 
-// Full shop list with search and navigation to detail view
+// Full shop list with search and the selected shop as detail (NavigationSplitView).
+// Must not be nested in another NavigationStack or NavigationSplitView.
 ShopsView(shops: shops)
+
+// Building blocks for a custom NavigationSplitView
+@State var selection: Identifier<Shop>?
+NavigationSplitView {
+    ShopsListView(viewModel: viewModel, selection: $selection)
+} detail: {
+    ShopsDetailView(viewModel: viewModel, selection: selection)
+}
 
 // Single shop detail view
 ShopView(shop: shop, viewModel: viewModel)
@@ -89,7 +98,9 @@ The protocol also provides default implementations for `location: CLLocation` an
 
 | File | Purpose |
 |------|---------|
-| `ShopsView` | Root list view with search bar; navigates to `ShopView` |
+| `ShopsView` | `NavigationSplitView` with the shop list as sidebar and the selected shop as detail; collapses to a stack in compact width |
+| `ShopsListView` | Searchable shop list without its own navigation container, for use as a split view sidebar |
+| `ShopsDetailView` | Detail column showing `ShopView` for the selection, or a placeholder when nothing is selected |
 | `ShopCellView` | List row showing shop name, address, distance, and a "You are here" badge |
 | `ShopView` | Detail screen with map, address, distance/navigation, phone number, and opening hours |
 | `ShopMapView` | Interactive `MapKit` map with a shop pin, address callout, and location/navigation controls |
