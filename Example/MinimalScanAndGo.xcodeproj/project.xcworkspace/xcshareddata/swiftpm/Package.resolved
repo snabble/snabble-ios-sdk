@@ -33,8 +33,8 @@
       "kind" : "remoteSourceControl",
       "location" : "https://github.com/datatrans/ios-sdk.git",
       "state" : {
-        "revision" : "fee49f5aecc252ee221d5ca9039a6f74be273901",
-        "version" : "3.11.1"
+        "revision" : "4f0c7084c556baa0f9d64b7640473bbc9e480062",
+        "version" : "3.11.3"
       }
     },
     {
@@ -44,6 +44,15 @@
       "state" : {
         "revision" : "84e546727d66f1adc5439debad16270d0fdd04e7",
         "version" : "4.2.2"
+      }
+    },
+    {
+      "identity" : "snabble-http",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/snabble/snabble-http.git",
+      "state" : {
+        "revision" : "537b7ced030f3ee5d59ea0005d411fe6d8de52c9",
+        "version" : "1.0.0"
       }
     },
     {
