@@ -1,0 +1,16 @@
+name: Package.resolved
+
+on:
+  pull_request:
+    paths:
+      - '**/Package.resolved'
+      - 'Package.swift'
+      - 'scripts/packages.sh'
+
+jobs:
+  Check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Check that all Package.resolved files match
+        run: scripts/packages.sh check
