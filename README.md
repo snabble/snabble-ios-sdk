@@ -191,7 +191,19 @@ xcodebuild test \
   -destination 'platform=iOS Simulator,name=iPhone 18 Pro'
 ```
 
-Use `-only-testing:<TestTarget>` (e.g. `SnabbleCoreTests`) to run a single test target.
+Use `-only-testing:<TestTarget>` (e.g. `SnabbleCoreTests`) to run a single test target, or use `make test`, `make test-core`, etc.
+
+## Updating Dependencies
+
+The repository contains four `Package.resolved` files: the root package (CI tests), `Snabble.xcworkspace` (local development and documentation) and the two example projects (Xcode Cloud). The root file is the single source of truth:
+
+```bash
+make packages-update   # update dependencies and propagate the pins
+make packages-sync     # propagate the current root pins only
+make packages-check    # verify that all four files match (also runs in CI)
+```
+
+Don't use *File › Packages › Update to Latest Package Versions* in Xcode, as it only updates the file of the opened container.
 
 ## Documentation
 
